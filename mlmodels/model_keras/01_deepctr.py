@@ -187,6 +187,7 @@ def _preprocess_movielens(df, **kw):
 
         else:
             df[sparse_col] = df[sparse_col].astype(str)
+
             # 1.Use hashing encoding on the fly for sparse features,and process sequence features
             genres_list = list(map(lambda x: x.split('|'), df['genres'].values))
             genres_length = np.array(list(map(len, genres_list)))
@@ -195,8 +196,8 @@ def _preprocess_movielens(df, **kw):
             # Notice : padding=`post`
             genres_list = pad_sequences(genres_list, maxlen=max_len, padding='post', dtype=str,   value=0)
 
-            # 2.set hashing space for each sparse field and generate feature config for sequence feature
 
+            # 2.set hashing space for each sparse field and generate feature config for sequence feature
             fixlen_cols = [
                 SparseFeat(feat, df[feat].nunique() * 5, embedding_dim=4, use_hash=True,   dtype='string')
                 for feat in sparse_col]
@@ -205,6 +206,7 @@ def _preprocess_movielens(df, **kw):
                     SparseFeat('genres', vocabulary_size=100, embedding_dim=4, use_hash=True,    dtype="string"),
                     maxlen=max_len, combiner='mean',
                 )]  # Notice : value 0 is for padding for sequence input feature
+
 
             linear_cols = fixlen_cols + varlen_cols
             dnn_cols = fixlen_cols + varlen_cols
@@ -215,7 +217,7 @@ def _preprocess_movielens(df, **kw):
             model_input = {name: df[name] for name in feature_names}
             model_input['genres'] = genres_list
 
-        train, test = model_input, model_input
+        train, test, model_input, model_input
 
     return df, linear_cols, dnn_cols, train, test, target
 
@@ -342,7 +344,8 @@ def load(path):
 
 ########################################################################################################################
 def path_setup(out_folder="", sublevel=1, data_path="dataset/"):
-    data_path = os_package_root_path(__file__, sublevel=sublevel, path_add=data_path)
+    #### Relative path
+    data_path = os_package_root_path(__file__, sublevel=sublevel, path_add=data_path) 
     out_path = os.getcwd() + "/" + out_folder
     os.makedirs(out_path, exist_ok=True)
     log(data_path, out_path)
