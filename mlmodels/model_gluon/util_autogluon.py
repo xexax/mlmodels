@@ -110,7 +110,9 @@ def predict(model, data_pars, compute_pars=None, out_pars=None, **kwargs):
     ## load test dataset
     data_pars['train'] = False
     test_ds, label = get_dataset(**data_pars)
-    test_ds = test_ds.drop(labels=[label], axis=1)  # remove label
+    # remove label in test data if have
+    if label in test_ds.columns:
+        test_ds = test_ds.drop(labels=[label], axis=1)
 
     y_pred = model.predict(test_ds)
 
