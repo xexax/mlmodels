@@ -93,13 +93,24 @@ def fit(model, data=None, model_pars=None, compute_pars=None, out_pars=None, ses
         raise Exception("Missing data or invalid data format for fitting!")
 
     train_ds, label = data
+    nn_options = {
+        'num_epochs': compute_pars['num_epochs'],
+        'learning_rate': model_pars['learning_rate'],
+        'activation': model_pars['activation'],
+        'layers': model_pars['layers'],
+        'dropout_prob': model_pars['dropout_prob'],
+    }
+    gbm_options = {
+        'num_boost_round': model_pars['num_boost_round'],
+        'num_leaves': model_pars['num_leaves'],
+    }
     predictor = model.model.fit(train_data=train_ds, label=label,
                                 output_directory=out_pars['outpath'],
                                 time_limits=compute_pars['time_limits'],
                                 num_trials=compute_pars['num_trials'],
                                 hyperparameter_tune=compute_pars['hp_tune'],
-                                hyperparameters={'NN': compute_pars['nn_options'],
-                                                 'GBM': compute_pars['gbm_options']},
+                                hyperparameters={'NN': nn_options,
+                                                 'GBM': gbm_options},
                                 search_strategy=compute_pars['search_strategy'])
     return predictor
 

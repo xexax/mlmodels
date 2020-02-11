@@ -100,30 +100,24 @@ def get_params(choice=0, data_path="dataset/", **kw):
         data_pars = {"train": True, "dt_source": "amazon_aws", "dt_name": "Inc"}
 
         log("#### Model params   ################################################")
-        model_pars = {"model_type": "tabular"}
+        model_pars = {"model_type": "tabular",
+                      'learning_rate': ag.space.Real(1e-4, 1e-2, default=5e-4, log=True),
+                      'activation': ag.space.Categorical('relu', 'softrelu', 'tanh'),
+                      # activation function used in NN (categorical hyperparameter, default = first entry)
+                      'layers': ag.space.Categorical([100], [1000], [200, 100],
+                                                     [300, 200, 100]),
+                      # Each choice for categorical hyperparameter 'layers' corresponds to list of sizes for each NN layer to use
+                      'dropout_prob': ag.space.Real(0.0, 0.5, default=0.1),
+                      # dropout probability (real-valued hyperparameter)
+                      # specifies non-default hyperparameter values for neural network models
+                      'num_boost_round': 100,
+                      # number of boosting rounds (controls training time of GBM models)
+                      'num_leaves': ag.space.Int(lower=26, upper=66, default=36)
+                      }
 
         compute_pars = {"hp_tune": True,
-                        "nn_options": {
-                            # specifies non-default hyperparameter values for neural network models
-                            'num_epochs': 10,
-                            # number of training epochs (controls training time of NN models)
-                            'learning_rate': ag.space.Real(1e-4, 1e-2, default=5e-4, log=True),
-                            # learning rate used in training (real-valued hyperparameter searched on log-scale)
-                            'activation': ag.space.Categorical('relu', 'softrelu', 'tanh'),
-                            # activation function used in NN (categorical hyperparameter, default = first entry)
-                            'layers': ag.space.Categorical([100], [1000], [200, 100],
-                                                           [300, 200, 100]),
-                            # Each choice for categorical hyperparameter 'layers' corresponds to list of sizes for each NN layer to use
-                            'dropout_prob': ag.space.Real(0.0, 0.5, default=0.1),
-                            # dropout probability (real-valued hyperparameter)
-                        },
-                        "gbm_options": {
-                            # specifies non-default hyperparameter values for lightGBM gradient boosted trees
-                            'num_boost_round': 100,
-                            # number of boosting rounds (controls training time of GBM models)
-                            'num_leaves': ag.space.Int(lower=26, upper=66, default=36),
-                            # number of leaves in trees (integer hyperparameter)
-                        },
+                        'num_epochs': 10,
+                        # number of leaves in trees (integer hyperparameter)
                         "time_limits": 2 * 60,  # train various models for ~2 min
                         "num_trials": 5,
                         # try at most 3 different hyperparameter configurations for each type of model
@@ -179,7 +173,8 @@ def test(data_path="dataset/", pars_choice=0):
     ### Local test
 
     log("#### Loading params   ##############################################")
-    model_pars, data_pars, compute_pars, out_pars = get_params(choice=pars_choice, data_path=data_path)
+    model_pars, data_pars, compute_pars, out_pars = get_params(choice=pars_choice,
+                                                               data_path=data_path)
 
     log("#### Loading dataset   #############################################")
     gluon_ds = get_dataset(**data_pars)
