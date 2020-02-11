@@ -82,15 +82,17 @@ def get_dataset(**kw):
 
 
 # Model fit
-def fit(model, data_pars=None, model_pars=None, compute_pars=None, out_pars=None, session=None,
+def fit(model, data=None, model_pars=None, compute_pars=None, out_pars=None, session=None,
         **kwargs):
     ##loading dataset
     """
       Classe Model --> model,   model.model contains thte sub-model
 
     """
-    print(out_pars)
-    train_ds, label = get_dataset(**data_pars)
+    if data is None or not isinstance(data, (list, tuple)):
+        raise Exception("Missing data or invalid data format for fitting!")
+
+    train_ds, label = data
     predictor = model.model.fit(train_data=train_ds, label=label,
                                 output_directory=out_pars['outpath'],
                                 time_limits=compute_pars['time_limits'],
