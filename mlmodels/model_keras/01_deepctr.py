@@ -1,4 +1,7 @@
 """"
+
+Most difficult part is pre-processing.
+
 # DeepCTR
 https://github.com/shenweichen/DeepCTR
 https://deepctr-doc.readthedocs.io/en/latest/Examples.html#classification-criteo
@@ -29,19 +32,26 @@ along with lots of core components layers which can be used to easily build cust
 |     Deep Session Interest Network      | [IJCAI 2019][Deep Session Interest Network for Click-Through Rate Prediction ](https://arxiv.org/abs/1905.06482)                                                |
 |                FiBiNET                 | [RecSys 2019][FiBiNET: Combining Feature Importance and Bilinear feature Interaction for Click-Through Rate Prediction](https://arxiv.org/pdf/1905.09433.pdf)   |
 
+
+
 """
 import os
 
 import numpy as np
 import pandas as pd
+
 from deepctr.inputs import SparseFeat, VarLenSparseFeat, DenseFeat, get_feature_names
 from deepctr.layers import custom_objects
 from deepctr.models import DeepFM
+
 from keras.preprocessing.sequence import pad_sequences
 from sklearn.metrics import log_loss, roc_auc_score, mean_squared_error
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder, MinMaxScaler
-from tensorflow.python.keras.models import save_model, load_model
+from keras.models import save_model, load_model
+
+
+# from preprocess import _preprocess_criteo, _preprocess_movielens
 
 
 ####################################################################################################
@@ -72,6 +82,9 @@ class Model:
 
         if not model_pars.get('model_type'):
             raise Exception("Missing model type when init model object!")
+
+
+
         else:
             _, linear_cols, dnn_cols, _, _, _ = kwargs.get('dataset')
             self.model = DeepFM(linear_cols, dnn_cols, task=compute_pars['task'])
@@ -80,7 +93,9 @@ class Model:
                            metrics=['binary_crossentropy'], )
 
 
-####################################################################################################
+
+
+##################################################################################################
 def _preprocess_criteo(df, **kw):
     hash_feature = kw.get('hash_feature')
     sparse_col = ['C' + str(i) for i in range(1, 27)]
@@ -88,6 +103,7 @@ def _preprocess_criteo(df, **kw):
     df[sparse_col] = df[sparse_col].fillna('-1', )
     df[dense_col] = df[dense_col].fillna(0, )
     target = ["label"]
+
 
     # set hashing space for each sparse field,and record dense feature field name
     if hash_feature:
@@ -97,10 +113,9 @@ def _preprocess_criteo(df, **kw):
         sparse_col = ['C' + str(i) for i in range(1, 27)]
         dense_col = ['I' + str(i) for i in range(1, 14)]
 
-        fixlen_cols = [SparseFeat(feat, vocabulary_size=1000, embedding_dim=4, use_hash=True,
-                                  dtype='string')  # since the input is string
-                       for feat in sparse_col] + [DenseFeat(feat, 1, )
-                                                  for feat in dense_col]
+        fixlen_cols = [SparseFeat(feat, vocabulary_size=1000, embedding_dim=4, use_hash=True, dtype='string')  # since the input is string
+                       for feat in sparse_col] + [DenseFeat(feat, 1, )  for feat in dense_col]
+
     else:
         for feat in sparse_col:
             lbe = LabelEncoder()
@@ -108,8 +123,8 @@ def _preprocess_criteo(df, **kw):
         mms = MinMaxScaler(feature_range=(0, 1))
         df[dense_col] = mms.fit_transform(df[dense_col])
         fixlen_cols = [SparseFeat(feat, vocabulary_size=df[feat].nunique(), embedding_dim=4)
-                       for i, feat in enumerate(sparse_col)] + [DenseFeat(feat, 1, )
-                                                                for feat in dense_col]
+                       for i, feat in enumerate(sparse_col)] + [DenseFeat(feat, 1, )   for feat in dense_col]
+
     linear_cols = fixlen_cols
     dnn_cols = fixlen_cols
     train, test = train_test_split(df, test_size=kw['test_size'])
@@ -151,18 +166,15 @@ def _preprocess_movielens(df, **kw):
             max_len = max(genres_length)
             # Notice : padding=`post`
             genres_list = pad_sequences(genres_list, maxlen=max_len, padding='post', )
-            fixlen_cols = [SparseFeat(feat, df[feat].nunique(), embedding_dim=4) for feat in
-                           sparse_col]
+            fixlen_cols = [SparseFeat(feat, df[feat].nunique(), embedding_dim=4) for feat in  sparse_col]
 
             use_weighted_sequence = False
             if use_weighted_sequence:
                 varlen_cols = [VarLenSparseFeat(SparseFeat('genres', vocabulary_size=len(
-                    key2index) + 1, embedding_dim=4), maxlen=max_len, combiner='mean',
-                                                weight_name='genres_weight')]  # Notice : value 0 is for padding for sequence input feature
+                    key2index) + 1, embedding_dim=4), maxlen=max_len, combiner='mean',  weight_name='genres_weight')]  # Notice : value 0 is for padding for sequence input feature
             else:
                 varlen_cols = [VarLenSparseFeat(SparseFeat('genres', vocabulary_size=len(
-                    key2index) + 1, embedding_dim=4), maxlen=max_len, combiner='mean',
-                                                weight_name=None)]  # Notice : value 0 is for padding for sequence input feature
+                    key2index) + 1, embedding_dim=4), maxlen=max_len, combiner='mean',  weight_name=None)]  # Notice : value 0 is for padding for sequence input feature
 
             linear_cols = fixlen_cols + varlen_cols
             dnn_cols = fixlen_cols + varlen_cols
@@ -172,6 +184,7 @@ def _preprocess_movielens(df, **kw):
             model_input["genres"] = genres_list
             model_input["genres_weight"] = np.random.randn(df.shape[0], max_len, 1)
 
+
         else:
             df[sparse_col] = df[sparse_col].astype(str)
             # 1.Use hashing encoding on the fly for sparse features,and process sequence features
@@ -180,24 +193,23 @@ def _preprocess_movielens(df, **kw):
             max_len = max(genres_length)
 
             # Notice : padding=`post`
-            genres_list = pad_sequences(genres_list, maxlen=max_len, padding='post', dtype=str,
-                                        value=0)
+            genres_list = pad_sequences(genres_list, maxlen=max_len, padding='post', dtype=str,   value=0)
 
             # 2.set hashing space for each sparse field and generate feature config for sequence feature
 
             fixlen_cols = [
-                SparseFeat(feat, df[feat].nunique() * 5, embedding_dim=4, use_hash=True,
-                           dtype='string')
+                SparseFeat(feat, df[feat].nunique() * 5, embedding_dim=4, use_hash=True,   dtype='string')
                 for feat in sparse_col]
             varlen_cols = [
                 VarLenSparseFeat(
-                    SparseFeat('genres', vocabulary_size=100, embedding_dim=4, use_hash=True,
-                               dtype="string"),
+                    SparseFeat('genres', vocabulary_size=100, embedding_dim=4, use_hash=True,    dtype="string"),
                     maxlen=max_len, combiner='mean',
                 )]  # Notice : value 0 is for padding for sequence input feature
+
             linear_cols = fixlen_cols + varlen_cols
             dnn_cols = fixlen_cols + varlen_cols
             feature_names = get_feature_names(linear_cols + dnn_cols)
+
 
             # 3.generate input data for model
             model_input = {name: df[name] for name in feature_names}
@@ -272,7 +284,7 @@ def predict(model, data_pars, compute_pars=None, out_pars=None, **kwargs):
     multiple_value = data_pars.get('multiple_value', None)
     ## predict
     if multiple_value is None:
-        pred_ans = model.model.predict(test_model_input, batch_size=256)
+        pred_ans = model.model.predict(test_model_input, batch_size= compute_pars['batch_size'])
 
     else:
         pred_ans = None
@@ -438,10 +450,12 @@ def test(data_path="dataset/", pars_choice=0):
 
     log("#### Plot   #######################################################")
 
+
     log("#### Save/Load   ##################################################")
     save(model, out_pars['path'] + f"/model_{pars_choice}.h5")
     model2 = load(out_pars['path'] + f"/model_{pars_choice}.h5")
     print(model2)
+
 
 
 if __name__ == '__main__':
