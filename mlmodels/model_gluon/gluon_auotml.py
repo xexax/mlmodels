@@ -125,45 +125,7 @@ def get_params(choice=0, data_path="dataset/", **kw):
                         # to tune hyperparameters using SKopt Bayesian optimization routine
                         }
 
-        outpath = out_path + "result"
-
-        out_pars = {"outpath": outpath}
-    elif choice == 1:
-        log("#### Path params   ################################################")
-        data_path = os_package_root_path(__file__, sublevel=1, path_add=data_path)
-        out_path = os.getcwd() + "/GLUON_deepAR/"
-        os.makedirs(out_path, exist_ok=True)
-        model_path = os.getcwd() + "/GLUON/model_deepAR/"
-        os.makedirs(model_path, exist_ok=True)
-        log(data_path, out_path, model_path)
-
-        train_data_path = data_path + "GLUON-GLUON-train.csv"
-        test_data_path = data_path + "GLUON-test.csv"
-        start = pd.Timestamp("01-01-1750", freq='1H')
-        data_pars = {"train_data_path": train_data_path, "test_data_path": test_data_path,
-                     "train": False,
-                     'prediction_length': 48, 'freq': '1H', "start": start, "num_series": 245,
-                     "save_fig": "./series.png", "modelpath": model_path}
-
-        log("#### Model params   ################################################")
-        model_pars = {"prediction_length": data_pars["prediction_length"],
-                      "freq": data_pars["freq"],
-                      "num_layers": 2, "num_cells": 40, "cell_type": 'lstm', "dropout_rate": 0.1,
-                      "use_feat_dynamic_real": False, "use_feat_static_cat": False,
-                      "use_feat_static_real": False,
-                      "scaling": True, "num_parallel_samples": 100}
-
-        compute_pars = {"batch_size": 32, "clip_gradient": 100, "ctx": None, "epochs": 1,
-                        "init": "xavier",
-                        "learning_rate": 1e-3,
-                        "learning_rate_decay_factor": 0.5, "hybridize": False,
-                        "num_batches_per_epoch": 100,
-                        'num_samples': 100,
-                        "minimum_learning_rate": 5e-05, "patience": 10, "weight_decay": 1e-08}
-
-        outpath = out_path + "result"
-
-        out_pars = {"outpath": outpath, "plot_prob": True, "quantiles": [0.1, 0.5, 0.9]}
+        out_pars = {"outpath": out_path}
 
     return model_pars, data_pars, compute_pars, out_pars
 
@@ -195,8 +157,13 @@ def test(data_path="dataset/", pars_choice=0):
     print(metrics_val)
 
     log("#### Plot   #######################################################")
-    # plot_prob_forecasts(ypred, out_pars)
-    # plot_predict(item_metrics, out_pars)
+
+    log("#### Save/Load   ##################################################")
+    save(model)
+    model2 = load(out_pars['outpath'])
+    #     ypred = predict(model2, data_pars, compute_pars, out_pars)
+    #     metrics_val = metrics(model2, ypred, data_pars, compute_pars, out_pars)
+    print(model2)
 
 
 if __name__ == '__main__':

@@ -112,7 +112,8 @@ def fit(model, data=None, model_pars=None, compute_pars=None, out_pars=None, ses
                                 hyperparameters={'NN': nn_options,
                                                  'GBM': gbm_options},
                                 search_strategy=compute_pars['search_strategy'])
-    return predictor
+    model.predictor = predictor
+    return model
 
 
 # Model p redict
@@ -125,7 +126,7 @@ def predict(model, data_pars, compute_pars=None, out_pars=None, **kwargs):
     if label in test_ds.columns:
         test_ds = test_ds.drop(labels=[label], axis=1)
 
-    y_pred = model.predict(test_ds)
+    y_pred = model.predictor.predict(test_ds)
 
     ### output stats for prediction
     if VERBOSE:
@@ -140,7 +141,7 @@ def metrics(model, ypred, data_pars, compute_pars=None, out_pars=None, **kwargs)
     y_test = test_ds[label]
 
     ## evaluate
-    acc = model.evaluate_predictions(y_true=y_test, y_pred=ypred, auxiliary_metrics=False)
+    acc = model.predictor.evaluate_predictions(y_true=y_test, y_pred=ypred, auxiliary_metrics=False)
     metrics_dict = {"ACC": acc}
     return metrics_dict
 
@@ -178,21 +179,23 @@ def plot_predict(item_metrics, out_pars=None):
 class Model_empty(object):
     def __init__(self, model_pars=None, compute_pars=None):
         ## Empty model for Seaialization
-        self.model = None
+        self.model = tabular_task
 
 
-def save(model, path):
-    if os.path.exists(path):
-        model.model.serialize(Path(path))
+def save(model):
+    if not model:
+        print("model do not exist!")
+    else:
+        model.predictor.save()
 
 
 def load(path):
-    if os.path.exists(path):
-        predictor_deserialized = Predictor.deserialize(Path(path))
+    if not os.path.exists(path):
+        print("model file do not exist!")
+        return None
+    else:
+        model = Model_empty()
+        model.predictor = tabular_task.load(path)
 
-    model = Model_empty()
-    model.model = predictor_deserialized
-    #### Add back the model parameters...
-
-
-    return model
+        #### Add back the model parameters...
+        return model
