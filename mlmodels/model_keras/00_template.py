@@ -1,13 +1,9 @@
 
 import os
-
 import numpy as np
 import pandas as pd
 
 from keras.models import save_model, load_model
-
-
-# from preprocess import _preprocess_criteo, _preprocess_movielens
 
 
 ####################################################################################################
@@ -39,142 +35,15 @@ class Model:
         if not model_pars.get('model_type'):
             raise Exception("Missing model type when init model object!")
 
-
-
         else:
-            _, linear_cols, dnn_cols, _, _, _ = kwargs.get('dataset')
-            self.model = DeepFM(linear_cols, dnn_cols, task=compute_pars['task'])
+            self.model = None
 
-        self.model.compile(model_pars["optimization"], model_pars["cost"],
-                           metrics=['binary_crossentropy'], )
 
 
 
 
 ##################################################################################################
-def _preprocess_criteo(df, **kw):
-    hash_feature = kw.get('hash_feature')
-    sparse_col = ['C' + str(i) for i in range(1, 27)]
-    dense_col = ['I' + str(i) for i in range(1, 14)]
-    df[sparse_col] = df[sparse_col].fillna('-1', )
-    df[dense_col] = df[dense_col].fillna(0, )
-    target = ["label"]
-
-
-    # set hashing space for each sparse field,and record dense feature field name
-    if hash_feature:
-        # Transformation for dense features
-        mms = MinMaxScaler(feature_range=(0, 1))
-        df[dense_col] = mms.fit_transform(df[dense_col])
-        sparse_col = ['C' + str(i) for i in range(1, 27)]
-        dense_col = ['I' + str(i) for i in range(1, 14)]
-
-        fixlen_cols = [SparseFeat(feat, vocabulary_size=1000, embedding_dim=4, use_hash=True, dtype='string')  # since the input is string
-                       for feat in sparse_col] + [DenseFeat(feat, 1, )  for feat in dense_col]
-
-    else:
-        for feat in sparse_col:
-            lbe = LabelEncoder()
-            df[feat] = lbe.fit_transform(df[feat])
-        mms = MinMaxScaler(feature_range=(0, 1))
-        df[dense_col] = mms.fit_transform(df[dense_col])
-        fixlen_cols = [SparseFeat(feat, vocabulary_size=df[feat].nunique(), embedding_dim=4)
-                       for i, feat in enumerate(sparse_col)] + [DenseFeat(feat, 1, )   for feat in dense_col]
-
-    linear_cols = fixlen_cols
-    dnn_cols = fixlen_cols
-    train, test = train_test_split(df, test_size=kw['test_size'])
-
-    return df, linear_cols, dnn_cols, train, test, target
-
-
-def _preprocess_movielens(df, **kw):
-    multiple_value = kw.get('multiple_value')
-    sparse_col = ["movie_id", "user_id", "gender", "age", "occupation", "zip"]
-    target = ['rating']
-
-    # 1.Label Encoding for sparse features,and do simple Transformation for dense features
-    for feat in sparse_col:
-        lbe = LabelEncoder()
-        df[feat] = lbe.fit_transform(df[feat])
-    if not multiple_value:
-        # 2.count #unique features for each sparse field
-        fixlen_cols = [SparseFeat(feat, df[feat].nunique(), embedding_dim=4) for feat in sparse_col]
-        linear_cols = fixlen_cols
-        dnn_cols = fixlen_cols
-        train, test = train_test_split(df, test_size=0.2)
-
-    else:
-        hash_feature = kw.get('hash_feature', False)
-        if not hash_feature:
-            def split(x):
-                key_ans = x.split('|')
-                for key in key_ans:
-                    if key not in key2index:
-                        # Notice : input value 0 is a special "padding",so we do not use 0 to encode valid feature for sequence input
-                        key2index[key] = len(key2index) + 1
-                return list(map(lambda x: key2index[x], key_ans))
-
-            # preprocess the sequence feature
-            key2index = {}
-            genres_list = list(map(split, df['genres'].values))
-            genres_length = np.array(list(map(len, genres_list)))
-            max_len = max(genres_length)
-            # Notice : padding=`post`
-            genres_list = pad_sequences(genres_list, maxlen=max_len, padding='post', )
-            fixlen_cols = [SparseFeat(feat, df[feat].nunique(), embedding_dim=4) for feat in  sparse_col]
-
-            use_weighted_sequence = False
-            if use_weighted_sequence:
-                varlen_cols = [VarLenSparseFeat(SparseFeat('genres', vocabulary_size=len(
-                    key2index) + 1, embedding_dim=4), maxlen=max_len, combiner='mean',  weight_name='genres_weight')]  # Notice : value 0 is for padding for sequence input feature
-            else:
-                varlen_cols = [VarLenSparseFeat(SparseFeat('genres', vocabulary_size=len(
-                    key2index) + 1, embedding_dim=4), maxlen=max_len, combiner='mean',  weight_name=None)]  # Notice : value 0 is for padding for sequence input feature
-
-            linear_cols = fixlen_cols + varlen_cols
-            dnn_cols = fixlen_cols + varlen_cols
-
-            # generate input data for model
-            model_input = {name: df[name] for name in sparse_col}  #
-            model_input["genres"] = genres_list
-            model_input["genres_weight"] = np.random.randn(df.shape[0], max_len, 1)
-
-
-        else:
-            df[sparse_col] = df[sparse_col].astype(str)
-
-            # 1.Use hashing encoding on the fly for sparse features,and process sequence features
-            genres_list = list(map(lambda x: x.split('|'), df['genres'].values))
-            genres_length = np.array(list(map(len, genres_list)))
-            max_len = max(genres_length)
-
-            # Notice : padding=`post`
-            genres_list = pad_sequences(genres_list, maxlen=max_len, padding='post', dtype=str,   value=0)
-
-
-            # 2.set hashing space for each sparse field and generate feature config for sequence feature
-            fixlen_cols = [
-                SparseFeat(feat, df[feat].nunique() * 5, embedding_dim=4, use_hash=True,   dtype='string')
-                for feat in sparse_col]
-            varlen_cols = [
-                VarLenSparseFeat(
-                    SparseFeat('genres', vocabulary_size=100, embedding_dim=4, use_hash=True,    dtype="string"),
-                    maxlen=max_len, combiner='mean',
-                )]  # Notice : value 0 is for padding for sequence input feature
-
-
-            linear_cols = fixlen_cols + varlen_cols
-            dnn_cols = fixlen_cols + varlen_cols
-            feature_names = get_feature_names(linear_cols + dnn_cols)
-
-
-            # 3.generate input data for model
-            model_input = {name: df[name] for name in feature_names}
-            model_input['genres'] = genres_list
-
-        train, test, model_input, model_input
-
+def _preprocess_XXXX(df, **kw):
     return df, linear_cols, dnn_cols, train, test, target
 
 
@@ -190,17 +59,11 @@ def get_dataset(**kw):
     else:
         df = pd.read_csv(data_path)
 
-    if data_type == "criteo":
+    if data_type == "xxxx":
         df, linear_cols, dnn_cols, train, test, target = _preprocess_criteo(df, **kw)
-
-    elif data_type == "movie_len":
-        df, linear_cols, dnn_cols, train, test, target = _preprocess_movielens(df, **kw)
-
+        
     else:  ## Already define
-        linear_cols = kw['linear_cols']
-        dnn_cols = kw['dnn_cols']
-        train, test = train_test_split(df, test_size=kw['test_size'])
-        target = kw['target_col']
+
 
     return df, linear_cols, dnn_cols, train, test, target
 
@@ -211,27 +74,17 @@ def fit(model, session=None, data_pars=None, model_pars=None, compute_pars=None,
     """
           Classe Model --> model,   model.model contains thte sub-model
     """
-    data, linear_cols, dnn_cols, train, test, target = get_dataset(**data_pars)
+    _ = get_dataset(**data_pars)
     multiple_value = data_pars.get('multiple_value', None)
 
     m = compute_pars
-
-    if multiple_value is None:
-        feature_names = get_feature_names(linear_cols + dnn_cols)
-        train_model_input = {name: train[name] for name in feature_names}
-        model.model.fit(train_model_input, train[target].values,
+   
+    model.model.fit(train, data[target].values,
                         batch_size=m['batch_size'], epochs=m['epochs'], verbose=2,
                         validation_split=m['validation_split'], )
-
-    else:
-        model.model.fit(train, data[target].values,
-                        batch_size=m['batch_size'], epochs=m['epochs'], verbose=2,
-                        validation_split=m['validation_split'], )
-
     return model
 
 
-# Model p redict
 def predict(model, data_pars, compute_pars=None, out_pars=None, **kwargs):
     ##  Model is class
     ## load test dataset
@@ -243,7 +96,6 @@ def predict(model, data_pars, compute_pars=None, out_pars=None, **kwargs):
     ## predict
     if multiple_value is None:
         pred_ans = model.model.predict(test_model_input, batch_size= compute_pars['batch_size'])
-
     else:
         pred_ans = None
 
@@ -253,22 +105,15 @@ def predict(model, data_pars, compute_pars=None, out_pars=None, **kwargs):
 def metrics(ypred, data_pars, compute_pars=None, out_pars=None, **kwargs):
     ## load test dataset
     _, linear_cols, dnn_cols, _, test, target = get_dataset(**data_pars)
-
-    if compute_pars.get("task") == "binary":
-        metrics_dict = {"LogLoss": log_loss(test[target].values, ypred),
+    metrics_dict = {"LogLoss": log_loss(test[target].values, ypred),
                         "AUC": roc_auc_score(test[target].values, ypred)}
-
-    elif compute_pars.get("task") == "regression":
-        multiple_value = data_pars.get('multiple_value', None)
-        if multiple_value is None:
-            metrics_dict = {"MSE": mean_squared_error(test[target].values, ypred)}
-        else:
-            metrics_dict = {}
     return metrics_dict
 
 
 def reset_model():
     pass
+
+
 
 
 ########################################################################################################################
@@ -292,7 +137,6 @@ def load(path):
     else:
         model = Model_empty()
         model_keras = load_model(path, custom_objects)
-        model.model = model_keras
 
         #### Add back the model parameters...
         return model
@@ -319,65 +163,6 @@ def get_params(choice=0, data_path="dataset/", **kw):
         log("#### Model params   #################################################")
         model_pars = {"model_type": "DeepFM", "optimization": "adam", "cost": "binary_crossentropy"}
         compute_pars = {"task": "binary", "batch_size": 256, "epochs": 10, "validation_split": 0.2}
-        out_pars = {"path": out_path}
-
-
-    elif choice == 1:
-        log("#### Path params   ##################################################")
-        data_path, out_path = path_setup(out_folder="/deepctr_test/", data_path=data_path)
-
-        train_data_path = data_path + "criteo_sample.txt"
-        data_pars = {"train_data_path": train_data_path, "hash_feature": True,
-                     "dataset_type": "criteo", "test_size": 0.2}
-
-        log("#### Model params   #################################################")
-        model_pars = {"model_type": "DeepFM", "optimization": "adam", "cost": "binary_crossentropy"}
-        compute_pars = {"task": "binary", "batch_size": 256, "epochs": 10, "validation_split": 0.2}
-        out_pars = {"path": out_path}
-
-
-    elif choice == 2:
-        log("#### Path params   ################################################")
-        data_path, out_path = path_setup(out_folder="/deepctr_test/", data_path=data_path)
-
-        train_data_path = data_path + "movielens_sample.txt"
-        data_pars = {"train_data_path": train_data_path, "dataset_type": "movie_len",
-                     "test_size": 0.2}
-
-        log("#### Model params   ################################################")
-        model_pars = {"model_type": "DeepFM", "optimization": "adam", "cost": "mse"}
-        compute_pars = {"task": "regression", "batch_size": 256, "epochs": 10,
-                        "validation_split": 0.2}
-        out_pars = {"path": out_path}
-
-
-    elif choice == 3:
-        log("#### Path params   ##################################################")
-        data_path, out_path = path_setup(out_folder="/deepctr_test/", data_path=data_path)
-
-        train_data_path = data_path + "movielens_sample.txt"
-        data_pars = {"train_data_path": train_data_path, "multiple_value": True,
-                     "dataset_type": "movie_len", "test_size": 0.2}
-
-        log("#### Model params   ################################################")
-        model_pars = {"model_type": "DeepFM", "optimization": "adam", "cost": "mse"}
-        compute_pars = {"task": "regression", "batch_size": 256, "epochs": 10,
-                        "validation_split": 0.2}
-        out_pars = {"path": out_path}
-
-
-    elif choice == 4:
-        log("#### Path params   #################################################")
-        data_path, out_path = path_setup(out_folder="/deepctr_test/", data_path=data_path)
-
-        train_data_path = data_path + "movielens_sample.txt"
-        data_pars = {"train_data_path": train_data_path, "multiple_value": True,
-                     "hash_feature": True, "dataset_type": "movie_len", "test_size": 0.2}
-
-        log("#### Model params   ################################################")
-        model_pars = {"model_type": "DeepFM", "optimization": "adam", "cost": "mse"}
-        compute_pars = {"task": "regression", "batch_size": 256, "epochs": 10,
-                        "validation_split": 0.2}
         out_pars = {"path": out_path}
 
     return model_pars, data_pars, compute_pars, out_pars
@@ -420,58 +205,8 @@ def test(data_path="dataset/", pars_choice=0):
 if __name__ == '__main__':
     VERBOSE = True
     test(pars_choice=0)
-    test(pars_choice=1)
-    test(pars_choice=2)
-    test(pars_choice=3)
-    test(pars_choice=4)
 
-"""
+   
 
-
-    data = pd.read_csv('./criteo_sample.txt')
-
-    sparse_col = ['C' + str(i) for i in range(1, 27)]
-    dense_col = ['I' + str(i) for i in range(1, 14)]
-
-    data[sparse_col] = data[sparse_col].fillna('-1', )
-    data[dense_col] = data[dense_col].fillna(0, )
-    target = ['label']
-
-    # 1.do simple Transformation for dense features
-    mms = MinMaxScaler(feature_range=(0, 1))
-    data[dense_col] = mms.fit_transform(data[dense_col])
-
-    # 2.set hashing space for each sparse field,and record dense feature field name
-
-    fixlen_cols = [SparseFeat(feat, vocabulary_size=1000,embedding_dim=4, use_hash=True, dtype='string')  # since the input is string
-                              for feat in sparse_col] + [DenseFeat(feat, 1, )
-                          for feat in dense_col]
-
-    linear_cols = fixlen_cols
-    dnn_cols = fixlen_cols
-    feature_names = get_feature_names(linear_cols + dnn_cols, )
-
-    # 3.generate input data for model
-
-    train, test = train_test_split(data, test_size=0.2)
-
-    train_model_input = {name:train[name] for name in feature_names}
-    test_model_input = {name:test[name] for name in feature_names}
-
-
-    # 4.Define Model,train,predict and evaluate
-    model = DeepFM(linear_cols,dnn_cols, task='binary')
-    model.compile("adam", "binary_crossentropy",
-                  metrics=['binary_crossentropy'], )
-
-    pred_ans = model.predict(test_model_input, batch_size=256)
-    print("test LogLoss", round(log_loss(test[target].values, pred_ans), 4))
-    print("test AUC", round(roc_auc_score(test[target].values, pred_ans), 4))
-
-
-
-
-
-"""
 
 
