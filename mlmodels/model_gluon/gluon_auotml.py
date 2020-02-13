@@ -11,6 +11,7 @@ https://autogluon.mxnet.io/tutorials/tabular_prediction/tabular-quickstart.html
 import autogluon as ag
 
 from mlmodels.model_gluon.util_autogluon import *
+from mlmodels.config.model_gluon.gluon_automl_cf import config
 
 """
 
@@ -97,34 +98,12 @@ def get_params(choice=0, data_path="dataset/", **kw):
         os.makedirs(model_path, exist_ok=True)
         log(data_path, out_path, model_path)
 
-        data_pars = {"train": True, "dt_source": "amazon_aws", "dt_name": "Inc"}
+        data_pars = config['test']['data_pars']
 
         log("#### Model params   ################################################")
-        model_pars = {"model_type": "tabular",
-                      'learning_rate': ag.space.Real(1e-4, 1e-2, default=5e-4, log=True),
-                      'activation': ag.space.Categorical('relu', 'softrelu', 'tanh'),
-                      # activation function used in NN (categorical hyperparameter, default = first entry)
-                      'layers': ag.space.Categorical([100], [1000], [200, 100],
-                                                     [300, 200, 100]),
-                      # Each choice for categorical hyperparameter 'layers' corresponds to list of sizes for each NN layer to use
-                      'dropout_prob': ag.space.Real(0.0, 0.5, default=0.1),
-                      # dropout probability (real-valued hyperparameter)
-                      # specifies non-default hyperparameter values for neural network models
-                      'num_boost_round': 100,
-                      # number of boosting rounds (controls training time of GBM models)
-                      'num_leaves': ag.space.Int(lower=26, upper=66, default=36)
-                      }
+        model_pars = config['test']['model_pars']
 
-        compute_pars = {"hp_tune": True,
-                        'num_epochs': 10,
-                        # number of leaves in trees (integer hyperparameter)
-                        "time_limits": 2 * 60,  # train various models for ~2 min
-                        "num_trials": 5,
-                        # try at most 3 different hyperparameter configurations for each type of model
-                        "search_strategy": 'skopt',
-                        # to tune hyperparameters using SKopt Bayesian optimization routine
-                        }
-
+        compute_pars = config['test']['compute_pars']
         out_pars = {"outpath": out_path}
 
     return model_pars, data_pars, compute_pars, out_pars
