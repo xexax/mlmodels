@@ -90,7 +90,7 @@ class Model(object):
 
 ########################################################################################################################
 def get_params(choice=0, data_path="dataset/", **kw):
-    with open(Path(os.path.realpath(__file__)).parent / "config/model_gluon/gluon_automl.json",
+    with open(Path(os.path.realpath(__file__)).parent.parent / "config/model_gluon/gluon_automl.json",
               encoding='utf-8') as config_f:
         config = json.load(config_f)
     if choice == 0:
