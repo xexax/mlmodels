@@ -8,10 +8,11 @@ https://autogluon.mxnet.io/tutorials/tabular_prediction/tabular-quickstart.html
 
 """
 
+import json
+
 import autogluon as ag
 
 from mlmodels.model_gluon.util_autogluon import *
-from mlmodels.config.model_gluon.gluon_automl_cf import config
 
 """
 
@@ -89,6 +90,9 @@ class Model(object):
 
 ########################################################################################################################
 def get_params(choice=0, data_path="dataset/", **kw):
+    with open(Path(os.path.realpath(__file__)).parent / "config/model_gluon/gluon_automl.json",
+              encoding='utf-8') as config_f:
+        config = json.load(config_f)
     if choice == 0:
         log("#### Path params   ################################################")
         data_path = os_package_root_path(__file__, sublevel=1, path_add=data_path)
@@ -98,10 +102,25 @@ def get_params(choice=0, data_path="dataset/", **kw):
         os.makedirs(model_path, exist_ok=True)
         log(data_path, out_path, model_path)
 
-        data_pars = config['test']['data_pars']
+        data_pars = config["test"]["data_pars"]
 
         log("#### Model params   ################################################")
-        model_pars = config['test']['model_pars']
+        model_pars_cf = config["test"]["model_pars"]
+        model_pars = {"model_type": model_pars_cf["model_type"],
+                      "learning_rate": ag.space.Real(model_pars_cf["learning_rate_min"],
+                                                     model_pars_cf["learning_rate_max"],
+                                                     default=model_pars_cf["learning_rate_default"],
+                                                     log=True),
+                      "activation": tuple(model_pars_cf["activation"]),
+                      "layers": tuple(model_pars_cf["layers"]),
+                      'dropout_prob': ag.space.Real(model_pars_cf["dropout_prob_min"],
+                                                    model_pars_cf["dropout_prob_max"],
+                                                    default=model_pars_cf["dropout_prob_default"]),
+                      'num_boost_round': 100,
+                      'num_leaves': ag.space.Int(lower=model_pars_cf["num_leaves_lower"],
+                                                 upper=model_pars_cf["num_leaves_upper"],
+                                                 default=model_pars_cf["num_leaves_default"])
+                      }
 
         compute_pars = config['test']['compute_pars']
         out_pars = {"outpath": out_path}
