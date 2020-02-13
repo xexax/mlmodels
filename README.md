@@ -2,10 +2,11 @@
 
 ```
 Lightweight Functional interface to wrap access to Deep Learning, ML models
-and Hyper Params Search.
-Logic follows Scikit Learn API for easy extentions logic.
+and Hyper Params Search, cross platforms ; tensorflow, pytorch, gluon, keras,...
 
-*Goal to facilitate Prototype script code to Semi-Prod code in a minimal amount of code refactoring ... *
+Logic follows Scikit Learn API: fit, predict, transform, metrics, save, load
+
+*Goal is to facilitate POC script code to Semi-Prod code with a minimal amount of code refactoring ... *
 
 
 #### Docs here:   https://mlmodels.readthedocs.io/en/latest/  (incomplete docs)
@@ -30,13 +31,14 @@ ml_optim
 numpy>=1.16.4
 pandas>=0.24.2
 scipy>=1.3.0
-scikit-learn>=0.21.2
 numexpr>=2.6.8 
-sqlalchemy>=1.3.8
+scikit-learn>=0.21.2
+
 tensorflow>=1.14.0
 pytorch>=0.4.0
 optuna
-
+gluon
+gluonts
 
 #################################################################################################
 ######### Entry CLI  ############################################################################
@@ -112,7 +114,7 @@ ml_optim --modelname model_tf.1_lstm.py  --do search
       def predict(model, sess, data_pars, compute_pars, out_pars )         : Predict the results
       def metric(ypred, data_pars, compute_pars, out_pars )         : Measure the results
 
-      def get_pars()                    : example of parameters of the model
+      def get_params()                  : example of parameters of the model
       def get_dataset(data_pars)        : load dataset
       def test()                        : example running the model     
       def test2()                       : example running the model in global settings  
