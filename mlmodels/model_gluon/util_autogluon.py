@@ -4,9 +4,12 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import pandas as pd
 
-from autogluon import TabularPrediction as tabular_task
+#from autogluon import TabularPrediction as tabular_task
 
 
+### Requieres to install mlmodels
+from mlmodels import data
+# print(data)
 VERBOSE = False
 
 
@@ -57,31 +60,20 @@ def _get_dataset_from_aws(**kw):
 def get_dataset(**kw):
 
     if kw['uri_type'] == 'amazon_aws':
-        return _get_dataset_from_aws(**kw)
+        data, label = _get_dataset_from_aws(**kw)
+        return data, label
 
 
     ##check whether dataset is of kind train or test
-    data_path = kw['train_data_path'] if kw['train'] else kw['test_data_path']
+    # data_path = kw['train_data_path'] if kw['train'] else kw['test_data_path']
 
-
-    #### read from csv file
-    if kw["uri_type"] in ["pickle", "pandas_pickle" ]:
-        df = pd.read_pickle(data_path)
-
-    if kw["uri_type"] in ["numpy", "npz" ]:
-       df  = np.load( data_path  ) 
-
-    if kw["uri_type"] in ["csv", "pandas_csv" ]:
-       df = pd.read_csv(data_path)
-
-    else:
-       df = pd.read_csv(data_path)
-
+    df = data.import_data_fromfile(**kw )
 
     if VERBOSE:
         pass
 
     return df
+
 
 
 ####################################################################################################
@@ -185,3 +177,13 @@ def load(path):
 
         #### Add back the model parameters...
         return model
+
+
+
+
+if __name__ == '__main__':
+   VERBOSE = True
+   df = get_dataset(data_path="../dataset/milk.csv", uri_type="csv")
+   print(df)
+
+
