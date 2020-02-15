@@ -3,15 +3,12 @@ from pathlib import Path
 
 import matplotlib.pyplot as plt
 import pandas as pd
+
 from autogluon import TabularPrediction as tabular_task
-from gluonts.dataset.common import ListDataset
-from gluonts.dataset.field_names import FieldName
-from gluonts.dataset.util import to_pandas
-from gluonts.model.predictor import Predictor
+
 
 VERBOSE = False
-URL_INC_TRAIN = 'https://autogluon.s3.amazonaws.com/datasets/Inc/train.csv'
-URL_INC_TEST = 'https://autogluon.s3.amazonaws.com/datasets/Inc/test.csv'
+
 
 
 ####################################################################################################
@@ -35,8 +32,12 @@ def log(*s, n=0, m=1):
     print(sjump, sspace, s, sspace, flush=True)
 
 
+
 ####################################################################################################
 def _get_dataset_from_aws(**kw):
+    URL_INC_TRAIN = 'https://autogluon.s3.amazonaws.com/datasets/Inc/train.csv'
+    URL_INC_TEST = 'https://autogluon.s3.amazonaws.com/datasets/Inc/test.csv'
+
     dt_name = kw['dt_name']
     if dt_name == 'Inc':
         if kw['train']:
@@ -54,41 +55,45 @@ def _get_dataset_from_aws(**kw):
 
 # Dataset
 def get_dataset(**kw):
-    if kw['dt_source'] == 'amazon_aws':
+
+    if kw['uri_type'] == 'amazon_aws':
         return _get_dataset_from_aws(**kw)
+
+
+    ##check whether dataset is of kind train or test
+    data_path = kw['train_data_path'] if kw['train'] else kw['test_data_path']
+
+
+    #### read from csv file
+    if kw["uri_type"] in ["pickle", "pandas_pickle" ]:
+        df = pd.read_pickle(data_path)
+
+    if kw["uri_type"] in ["numpy", "npz" ]:
+       df  = np.load( data_path  ) 
+
+    if kw["uri_type"] in ["csv", "pandas_csv" ]:
+       df = pd.read_csv(data_path)
+
     else:
-        ##check whether dataset is of kind train or test
-        data_path = kw['train_data_path'] if kw['train'] else kw['test_data_path']
-
-        #### read from csv file
-        if kw.get("uri_type") == "pickle":
-            data_set = pd.read_pickle(data_path)
-        else:
-            data_set = pd.read_csv(data_path)
-
-        ### convert to gluont format
-        gluonts_ds = ListDataset(
-            [{FieldName.TARGET: data_set.iloc[i].values, FieldName.START: kw['start']}
-             for i in range(kw['num_series'])], freq=kw['freq'])
-
-        if VERBOSE:
-            entry = next(iter(gluonts_ds))
-            train_series = to_pandas(entry)
-            train_series.plot()
-            save_fig = kw['save_fig']
-            plt.savefig(save_fig)
-
-        return gluonts_ds
+       df = pd.read_csv(data_path)
 
 
+    if VERBOSE:
+        pass
+
+    return df
+
+
+####################################################################################################
 # Model fit
-def fit(model, data=None, model_pars=None, compute_pars=None, out_pars=None, session=None,
+def fit(model, data_pars=None, model_pars=None, compute_pars=None, out_pars=None, session=None,
         **kwargs):
     ##loading dataset
     """
       Classe Model --> model,   model.model contains thte sub-model
 
     """
+    data  = get_dataset(data_pars)
     if data is None or not isinstance(data, (list, tuple)):
         raise Exception("Missing data or invalid data format for fitting!")
 
@@ -100,10 +105,13 @@ def fit(model, data=None, model_pars=None, compute_pars=None, out_pars=None, ses
         'layers': model_pars['layers'],
         'dropout_prob': model_pars['dropout_prob'],
     }
+    
     gbm_options = {
         'num_boost_round': model_pars['num_boost_round'],
         'num_leaves': model_pars['num_leaves'],
     }
+  
+    ## Attribut model has the model
     predictor = model.model.fit(train_data=train_ds, label=label,
                                 output_directory=out_pars['outpath'],
                                 time_limits=compute_pars['time_limits'],
@@ -112,7 +120,7 @@ def fit(model, data=None, model_pars=None, compute_pars=None, out_pars=None, ses
                                 hyperparameters={'NN': nn_options,
                                                  'GBM': gbm_options},
                                 search_strategy=compute_pars['search_strategy'])
-    model.predictor = predictor
+    model.model = predictor
     return model
 
 
@@ -126,7 +134,7 @@ def predict(model, data_pars, compute_pars=None, out_pars=None, **kwargs):
     if label in test_ds.columns:
         test_ds = test_ds.drop(labels=[label], axis=1)
 
-    y_pred = model.predictor.predict(test_ds)
+    y_pred = model.model.predict(test_ds)
 
     ### output stats for prediction
     if VERBOSE:
@@ -141,37 +149,15 @@ def metrics(model, ypred, data_pars, compute_pars=None, out_pars=None, **kwargs)
     y_test = test_ds[label]
 
     ## evaluate
-    acc = model.predictor.evaluate_predictions(y_true=y_test, y_pred=ypred, auxiliary_metrics=False)
+    acc = model.model.evaluate_predictions(y_true=y_test, y_pred=ypred, auxiliary_metrics=False)
     metrics_dict = {"ACC": acc}
     return metrics_dict
 
 
 ###############################################################################################################
 ### different plots and output metric
-def plot_prob_forecasts(ypred, out_pars=None):
-    forecast_entry = ypred["forecasts"][0]
-    ts_entry = ypred["tss"][0]
-
-    plot_length = 150
-    prediction_intervals = (50.0, 90.0)
-    legend = ["observations", "median prediction"] + [f"{k}% prediction interval" for k in
-                                                      prediction_intervals][::-1]
-
-    fig, ax = plt.subplots(1, 1, figsize=(10, 7))
-    ts_entry[-plot_length:].plot(ax=ax)  # plot the time series
-    forecast_entry.plot(prediction_intervals=prediction_intervals, color='g')
-    plt.grid(which="both")
-    plt.legend(legend, loc="upper left")
-    plt.show()
 
 
-def plot_predict(item_metrics, out_pars=None):
-    item_metrics.plot(x='MSIS', y='MASE', kind='scatter')
-    plt.grid(which="both")
-    outpath = out_pars['outpath']
-    plt.savefig(outpath)
-    plt.clf()
-    print('Saved image to {}.'.format(outpath))
 
 
 ###############################################################################################################
@@ -195,7 +181,7 @@ def load(path):
         return None
     else:
         model = Model_empty()
-        model.predictor = tabular_task.load(path)
+        model.model = tabular_task.load(path)
 
         #### Add back the model parameters...
         return model
