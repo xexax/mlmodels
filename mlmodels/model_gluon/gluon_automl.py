@@ -72,12 +72,12 @@ def _config_process( config) :
 
 def get_params(choice="", data_path="dataset/", config_mode="test", **kw):
     if choice == "json" :
+        # data_path = Path(os.path.realpath(__file__)).parent.parent + "/model_gluon/gluon_automl.json" if data_path == "dataset" else data_path
         data_path = Path(os.path.realpath(__file__)).parent.parent + "/model_gluon/gluon_automl.json" if data_path == "dataset" else data_path
 
         with open( data_path , encoding='utf-8') as config_f:
               config = json.load(config_f)
               config = config[config_mode]
-
 
         model_pars, data_pars, compute_pars, out_pars = _config_process(config)
         return model_pars, data_pars, compute_pars, out_pars
@@ -87,11 +87,8 @@ def get_params(choice="", data_path="dataset/", config_mode="test", **kw):
         log("#### Path params   #################################################")
         data_path, out_path, model_path = path_setup(out_folder="", sublevel=1, data_path="dataset/")
 
-
         data_pars = { "train": true, "dt_source": "amazon_aws", "dt_name": "Inc"}
         
-
-        log("#### Model params   ################################################")
         model_pars = {"model_type": model_pars_cf["model_type"],
                       "learning_rate": ag.space.Real(  1e-4, 1e-2, default= 5e-4, log=True),
                       "activation": tuple( ["relu", "softrelu", "tanh"]), 
@@ -108,7 +105,7 @@ def get_params(choice="", data_path="dataset/", config_mode="test", **kw):
 
 
 ########################################################################################################################
-def test(data_path="dataset/", pars_choice=0):
+def test(data_path="dataset/", pars_choice=""):
     ### Local test
 
     log("#### Loading params   ##############################################")
@@ -118,22 +115,27 @@ def test(data_path="dataset/", pars_choice=0):
     log("#### Loading dataset   #############################################")
     gluon_ds = get_dataset(**data_pars)
 
+
     log("#### Model init, fit   #############################################")
     model = Model(model_pars, compute_pars)
-    # model=m.model    ### WE WORK WITH THE CLASS (not the attribute GLUON )
-    model = fit(model, gluon_ds, model_pars, compute_pars, out_pars)
+    model = fit(model, data_pars, model_pars, compute_pars, out_pars)
 
-    log("#### save the trained model  #############################################")
+
+    log("#### save the trained model  #######################################")
     # save(model, data_pars["modelpath"])
+
 
     log("#### Predict   ####################################################")
     ypred = predict(model, data_pars, compute_pars, out_pars)
+
 
     log("#### metrics   ####################################################")
     metrics_val = metrics(model, ypred, data_pars, compute_pars, out_pars)
     print(metrics_val)
 
+
     log("#### Plot   #######################################################")
+
 
     log("#### Save/Load   ##################################################")
     save(model)
@@ -146,7 +148,8 @@ def test(data_path="dataset/", pars_choice=0):
 
 if __name__ == '__main__':
     VERBOSE = True
-    test(pars_choice=0)
+    test(pars_choice="json")
+    test(pars_choice="test01")
 
 
 
