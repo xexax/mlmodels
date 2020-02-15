@@ -25,4 +25,45 @@ def import_data_tch(name="", mode="train", node_id=0, data_folder_root=""):
 
 
 
+def import_data_fromfile(**kw):
+   """
+       data_pars["data_path"]
+   
+   """ 
+   import pandas as pd
+   import numpy as np
+
+   m = kw
+   if m.get("uri_type") in ["pickle", "pandas_pickle" ]:
+       df = pd.read_pickle(m["data_path"])
+       return df
+
+
+   if m.get("uri_type") in ["csv", "pandas_csv" ]:
+       df = pd.read_csv(m["data_path"])
+       return df
+
+
+   if m.get("uri_type") in [ "dask" ]:
+       df = pd.read_csv(m["data_path"])
+       return df
+
+
+   if ".npz" in m['data_path'] :
+       arr = import_to_numpy(data_pars, mode=mode, **kw)
+       return arr
+
+
+   if ".csv" in m['data_path'] or ".txt" in m['data_path']  :
+       df = import_to_pandas(data_pars, mode=mode, **kw)
+       return df
+
+
+   if ".pkl" in m['data_path']   :
+       df = pd.read_pickle(m["data_path"], **kw)
+       return df
+
+
+
+
 

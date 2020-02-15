@@ -13,6 +13,14 @@ class to_namespace(object):
     return self.__dict__.get(key)
 
 
+def log(*s, n=0, m=1):
+    sspace = "#" * n
+    sjump = "\n" * m
+    print(sjump, sspace, s, sspace, flush=True)
+
+
+
+####################################################################################################
 def os_package_root_path(add_path="",n=0):
   from pathlib import Path
   add_path = os.path.join(Path(__file__).parent.absolute(), add_path)
@@ -20,11 +28,30 @@ def os_package_root_path(add_path="",n=0):
   return add_path
 
 
+
+
+def os_package_root_path(filepath, sublevel=0, path_add=""):
+    """
+       get the module package root folder
+    """
+    from pathlib import Path
+    path = Path(os.path.realpath(filepath)).parent
+    for i in range(1, sublevel + 1):
+        path = path.parent
+
+    path = os.path.join(path.absolute(), path_add)
+    return path
+
+
+
+
+
 def os_file_current_path():
   val = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
   # return current_dir + "/"
   # Path of current file
   # from pathlib import Path
+
   # val = Path().absolute()
   val = str(os.path.join(val, ""))
   # print(val)
