@@ -1,14 +1,8 @@
 import os
-from pathlib import Path
 
-import matplotlib.pyplot as plt
-import pandas as pd
-
-#from autogluon import TabularPrediction as tabular_task
-
+from autogluon import TabularPrediction as tabular_task
 
 ### Requieres to install mlmodels
-from mlmodels import data
 # print(data)
 VERBOSE = False
 
@@ -37,6 +31,7 @@ def log(*s, n=0, m=1):
 
 
 ####################################################################################################
+################ Dataset   #########################################################################
 def _get_dataset_from_aws(**kw):
     URL_INC_TRAIN = 'https://autogluon.s3.amazonaws.com/datasets/Inc/train.csv'
     URL_INC_TEST = 'https://autogluon.s3.amazonaws.com/datasets/Inc/test.csv'
@@ -56,7 +51,8 @@ def _get_dataset_from_aws(**kw):
         print(f"Not support {dt_name} yet!")
 
 
-# Dataset
+
+
 def get_dataset(**kw):
 
     if kw['uri_type'] == 'amazon_aws':
@@ -66,13 +62,20 @@ def get_dataset(**kw):
 
     ##check whether dataset is of kind train or test
     # data_path = kw['train_data_path'] if kw['train'] else kw['test_data_path']
-
     df = data.import_data_fromfile(**kw )
+
+    col_target = kw.get('col_target') if kw.get('col_target') else 'y'
+    colX = list(df.columns)
+    colX.remove( col_target)
+
+    label = df[col_target].values
+    train = df[colX].values
+    return data, label
+  
 
     if VERBOSE:
         pass
 
-    return df
 
 
 
@@ -85,7 +88,7 @@ def fit(model, data_pars=None, model_pars=None, compute_pars=None, out_pars=None
       Classe Model --> model,   model.model contains thte sub-model
 
     """
-    data  = get_dataset(data_pars)
+    data  = get_dataset(**data_pars)
     if data is None or not isinstance(data, (list, tuple)):
         raise Exception("Missing data or invalid data format for fitting!")
 
@@ -105,7 +108,7 @@ def fit(model, data_pars=None, model_pars=None, compute_pars=None, out_pars=None
   
     ## Attribut model has the model
     predictor = model.model.fit(train_data=train_ds, label=label,
-                                output_directory=out_pars['outpath'],
+                                output_directory=out_pars['out_path'],
                                 time_limits=compute_pars['time_limits'],
                                 num_trials=compute_pars['num_trials'],
                                 hyperparameter_tune=compute_pars['hp_tune'],
@@ -160,11 +163,11 @@ class Model_empty(object):
         self.model = tabular_task
 
 
-def save(model):
+def save(model, out_pars):
     if not model:
         print("model do not exist!")
     else:
-        model.predictor.save()
+        model.model.save()
 
 
 def load(path):
