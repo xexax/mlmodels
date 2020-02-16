@@ -31,6 +31,7 @@ def log(*s, n=0, m=1):
 
 
 ####################################################################################################
+################ Dataset   #########################################################################
 def _get_dataset_from_aws(**kw):
     URL_INC_TRAIN = 'https://autogluon.s3.amazonaws.com/datasets/Inc/train.csv'
     URL_INC_TEST = 'https://autogluon.s3.amazonaws.com/datasets/Inc/test.csv'
@@ -50,7 +51,8 @@ def _get_dataset_from_aws(**kw):
         print(f"Not support {dt_name} yet!")
 
 
-# Dataset
+
+
 def get_dataset(**kw):
 
     if kw['uri_type'] == 'amazon_aws':
@@ -60,13 +62,20 @@ def get_dataset(**kw):
 
     ##check whether dataset is of kind train or test
     # data_path = kw['train_data_path'] if kw['train'] else kw['test_data_path']
-
     df = data.import_data_fromfile(**kw )
+
+    col_target = kw.get('col_target') if kw.get('col_target') else 'y'
+    colX = list(df.columns)
+    colX.remove( col_target)
+
+    label = df[col_target].values
+    train = df[colX].values
+    return data, label
+  
 
     if VERBOSE:
         pass
 
-    return df
 
 
 
