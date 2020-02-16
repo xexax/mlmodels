@@ -53,8 +53,8 @@ def _config_process( config) :
                                                      model_pars_cf["learning_rate_max"],
                                                      default=model_pars_cf["learning_rate_default"],
                                                      log=True),
-                      "activation": ag.space.Categorical(tuple(model_pars_cf["activation"])),
-                      "layers": ag.space.Categorical(tuple(model_pars_cf["layers"])),
+                      "activation": ag.space.Categorical(*tuple(model_pars_cf["activation"])),
+                      "layers": ag.space.Categorical(*tuple(model_pars_cf["layers"])),
                       "dropout_prob": ag.space.Real(model_pars_cf["dropout_prob_min"],
                                                     model_pars_cf["dropout_prob_max"],
                                                     default=model_pars_cf["dropout_prob_default"]),
@@ -75,8 +75,8 @@ def get_params(choice="", data_path="dataset/", config_mode="test", **kw):
         data_path = Path(os.path.realpath(__file__)).parent.parent/"model_gluon/gluon_automl.json" if data_path == "dataset/" else data_path
 
         with open( data_path , encoding='utf-8') as config_f:
-              config = json.load(config_f)
-              config = config[config_mode]
+            config = json.load(config_f)
+            config = config[config_mode]
 
         model_pars, data_pars, compute_pars, out_pars = _config_process(config)
         return model_pars, data_pars, compute_pars, out_pars
@@ -86,12 +86,12 @@ def get_params(choice="", data_path="dataset/", config_mode="test", **kw):
         log("#### Path params   #################################################")
         data_path, out_path, model_path = path_setup(out_folder="", sublevel=1, data_path="dataset/")
 
-        data_pars = { "train": True, "dt_source": "amazon_aws", "dt_name": "Inc"}
+        data_pars = { "train": True, "uri_type": "amazon_aws", "dt_name": "Inc"}
         
         model_pars = {"model_type": "tabular",
                       "learning_rate": ag.space.Real(  1e-4, 1e-2, default= 5e-4, log=True),
-                      "activation": tuple( ["relu", "softrelu", "tanh"]), 
-                      "layers": tuple([[100 ], [1000 ], [200, 100 ], [300, 200, 100 ] ]), 
+                      "activation": ag.space.Categorical(*tuple( ["relu", "softrelu", "tanh"])),
+                      "layers": ag.space.Categorical(*tuple([[100 ], [1000 ], [200, 100 ], [300, 200, 100 ] ])),
                       'dropout_prob': ag.space.Real(0.0, 0.5,  default= 0.1),
                       'num_boost_round': 100,
                       'num_leaves': ag.space.Int(lower= 26, upper= 66, default= 36) }
