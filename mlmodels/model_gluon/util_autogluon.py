@@ -85,7 +85,7 @@ def fit(model, data_pars=None, model_pars=None, compute_pars=None, out_pars=None
       Classe Model --> model,   model.model contains thte sub-model
 
     """
-    data  = get_dataset(data_pars)
+    data  = get_dataset(**data_pars)
     if data is None or not isinstance(data, (list, tuple)):
         raise Exception("Missing data or invalid data format for fitting!")
 
@@ -111,6 +111,7 @@ def fit(model, data_pars=None, model_pars=None, compute_pars=None, out_pars=None
                                 hyperparameter_tune=compute_pars['hp_tune'],
                                 hyperparameters={'NN': nn_options,
                                                  'GBM': gbm_options},
+                                auto_stack=compute_pars['auto_stack'],
                                 search_strategy=compute_pars['search_strategy'])
     model.model = predictor
     return model
@@ -164,7 +165,7 @@ def save(model):
     if not model:
         print("model do not exist!")
     else:
-        model.predictor.save()
+        model.model.save()
 
 
 def load(path):

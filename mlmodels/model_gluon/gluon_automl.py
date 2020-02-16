@@ -53,27 +53,26 @@ def _config_process( config) :
                                                      model_pars_cf["learning_rate_max"],
                                                      default=model_pars_cf["learning_rate_default"],
                                                      log=True),
-                      "activation": tuple(model_pars_cf["activation"]),
-                      "layers": tuple(model_pars_cf["layers"]),
-                      'dropout_prob': ag.space.Real(model_pars_cf["dropout_prob_min"],
+                      "activation": ag.space.Categorical(tuple(model_pars_cf["activation"])),
+                      "layers": ag.space.Categorical(tuple(model_pars_cf["layers"])),
+                      "dropout_prob": ag.space.Real(model_pars_cf["dropout_prob_min"],
                                                     model_pars_cf["dropout_prob_max"],
                                                     default=model_pars_cf["dropout_prob_default"]),
-                      'num_boost_round': 100,
-                      'num_leaves': ag.space.Int(lower=model_pars_cf["num_leaves_lower"],
+                      "num_boost_round": 100,
+                      "num_leaves": ag.space.Int(lower=model_pars_cf["num_leaves_lower"],
                                                  upper=model_pars_cf["num_leaves_upper"],
                                                  default=model_pars_cf["num_leaves_default"])
                       }
 
-        compute_pars = config['compute_pars']
-        out_pars = {"out_path": config['out_path']}
+        compute_pars = config["compute_pars"]
+        out_pars = config["out_pars"]
         return model_pars, data_pars, compute_pars, out_pars
 
 
 
 def get_params(choice="", data_path="dataset/", config_mode="test", **kw):
     if choice == "json" :
-        # data_path = Path(os.path.realpath(__file__)).parent.parent + "/model_gluon/gluon_automl.json" if data_path == "dataset" else data_path
-        data_path = Path(os.path.realpath(__file__)).parent.parent + "/model_gluon/gluon_automl.json" if data_path == "dataset/" else data_path
+        data_path = Path(os.path.realpath(__file__)).parent.parent/"model_gluon/gluon_automl.json" if data_path == "dataset/" else data_path
 
         with open( data_path , encoding='utf-8') as config_f:
               config = json.load(config_f)
@@ -87,9 +86,9 @@ def get_params(choice="", data_path="dataset/", config_mode="test", **kw):
         log("#### Path params   #################################################")
         data_path, out_path, model_path = path_setup(out_folder="", sublevel=1, data_path="dataset/")
 
-        data_pars = { "train": true, "dt_source": "amazon_aws", "dt_name": "Inc"}
+        data_pars = { "train": True, "dt_source": "amazon_aws", "dt_name": "Inc"}
         
-        model_pars = {"model_type": model_pars_cf["model_type"],
+        model_pars = {"model_type": "tabular",
                       "learning_rate": ag.space.Real(  1e-4, 1e-2, default= 5e-4, log=True),
                       "activation": tuple( ["relu", "softrelu", "tanh"]), 
                       "layers": tuple([[100 ], [1000 ], [200, 100 ], [300, 200, 100 ] ]), 
@@ -97,7 +96,7 @@ def get_params(choice="", data_path="dataset/", config_mode="test", **kw):
                       'num_boost_round': 100,
                       'num_leaves': ag.space.Int(lower= 26, upper= 66, default= 36) }
 
-        compute_pars =  {"hp_tune": true, "num_epochs": 10, "time_limits": 120, "num_trials": 5, "search_strategy": "skopt"}
+        compute_pars =  {"hp_tune": True, "num_epochs": 10, "time_limits": 120, "num_trials": 5, "search_strategy": "skopt"}
         out_pars = {"outpath": out_path}
 
     return model_pars, data_pars, compute_pars, out_pars
@@ -139,7 +138,7 @@ def test(data_path="dataset/", pars_choice=""):
 
     log("#### Save/Load   ##################################################")
     save(model)
-    model2 = load(out_pars['outpath'])
+    model2 = load(out_pars['out_path'])
     #     ypred = predict(model2, data_pars, compute_pars, out_pars)
     #     metrics_val = metrics(model2, ypred, data_pars, compute_pars, out_pars)
     print(model2)

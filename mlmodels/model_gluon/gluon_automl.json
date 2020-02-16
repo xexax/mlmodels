@@ -1,7 +1,7 @@
 {
     "test": {
         "data_pars": {
-            "train": true, "dt_source": "amazon_aws", "dt_name": "Inc"},
+            "train": true, "uri_type": "amazon_aws", "dt_name": "Inc"},
 
 
         "model_pars": {
@@ -31,7 +31,8 @@
 
 
         "compute_pars": {
-            "hp_tune": true,
+            "hp_tune": false,
+            "auto_stack": true,
             "num_epochs": 10,
             "time_limits": 120,
             "num_trials": 5,
