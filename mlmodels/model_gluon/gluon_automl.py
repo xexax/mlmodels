@@ -103,7 +103,7 @@ def get_params(choice="", data_path="dataset/", config_mode="test", **kw):
 
 
 ########################################################################################################################
-def test(data_path="dataset/", pars_choice=""):
+def test(data_path="dataset/", pars_choice="json"):
     ### Local test
 
     log("#### Loading params   ##############################################")
