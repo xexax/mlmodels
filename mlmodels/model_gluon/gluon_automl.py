@@ -65,7 +65,7 @@ def _config_process( config) :
                       }
 
         compute_pars = config['compute_pars']
-        out_pars = {"outpath": out_path}
+        out_pars = {"out_path": config['out_path']}
         return model_pars, data_pars, compute_pars, out_pars
 
 
@@ -73,7 +73,7 @@ def _config_process( config) :
 def get_params(choice="", data_path="dataset/", config_mode="test", **kw):
     if choice == "json" :
         # data_path = Path(os.path.realpath(__file__)).parent.parent + "/model_gluon/gluon_automl.json" if data_path == "dataset" else data_path
-        data_path = Path(os.path.realpath(__file__)).parent.parent + "/model_gluon/gluon_automl.json" if data_path == "dataset" else data_path
+        data_path = Path(os.path.realpath(__file__)).parent.parent + "/model_gluon/gluon_automl.json" if data_path == "dataset/" else data_path
 
         with open( data_path , encoding='utf-8') as config_f:
               config = json.load(config_f)

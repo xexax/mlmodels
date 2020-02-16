@@ -4,7 +4,7 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import pandas as pd
 
-#from autogluon import TabularPrediction as tabular_task
+from autogluon import TabularPrediction as tabular_task
 
 
 ### Requieres to install mlmodels
@@ -105,7 +105,7 @@ def fit(model, data_pars=None, model_pars=None, compute_pars=None, out_pars=None
   
     ## Attribut model has the model
     predictor = model.model.fit(train_data=train_ds, label=label,
-                                output_directory=out_pars['outpath'],
+                                output_directory=out_pars['out_path'],
                                 time_limits=compute_pars['time_limits'],
                                 num_trials=compute_pars['num_trials'],
                                 hyperparameter_tune=compute_pars['hp_tune'],
