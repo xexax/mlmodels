@@ -31,8 +31,7 @@
 
 
         "compute_pars": {
-            "hp_tune": false,
-            "auto_stack": true,
+            "hp_tune": true,
             "num_epochs": 10,
             "time_limits": 120,
             "num_trials": 5,

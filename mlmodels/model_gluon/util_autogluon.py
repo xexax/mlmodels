@@ -111,7 +111,6 @@ def fit(model, data_pars=None, model_pars=None, compute_pars=None, out_pars=None
                                 hyperparameter_tune=compute_pars['hp_tune'],
                                 hyperparameters={'NN': nn_options,
                                                  'GBM': gbm_options},
-                                auto_stack=compute_pars['auto_stack'],
                                 search_strategy=compute_pars['search_strategy'])
     model.model = predictor
     return model
