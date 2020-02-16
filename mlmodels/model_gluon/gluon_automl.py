@@ -131,7 +131,7 @@ def test(data_path="dataset/", pars_choice="json"):
     log("#### Plot   #######################################################")
 
     log("#### Save/Load   ##################################################")
-    save(model)
+    save(model, out_pars)
     model2 = load(out_pars['out_path'])
     #     ypred = predict(model2, data_pars, compute_pars, out_pars)
     #     metrics_val = metrics(model2, ypred, data_pars, compute_pars, out_pars)

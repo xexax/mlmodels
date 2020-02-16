@@ -154,7 +154,7 @@ class Model_empty(object):
         self.model = tabular_task
 
 
-def save(model):
+def save(model, out_pars):
     if not model:
         print("model do not exist!")
     else:
