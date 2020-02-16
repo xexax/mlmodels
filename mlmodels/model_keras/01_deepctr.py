@@ -352,7 +352,24 @@ def path_setup(out_folder="", sublevel=1, data_path="dataset/"):
     return data_path, out_path
 
 
+def config_load(data_path, file_default) :
+        data_path = Path(os.path.realpath(
+            __file__)).parent.parent / file_default if data_path == "dataset/" else data_path
+
+        config = json.load(open(data_path, encoding='utf-8') )
+        config = config[config_mode]
+
+        model_pars, data_pars, compute_pars, out_pars = _config_process(config)
+        return model_pars, data_pars, compute_pars, out_pars
+
+
 def get_params(choice=0, data_path="dataset/", **kw):
+    if choice == "json":
+        model_pars, data_pars, compute_pars, out_pars = config_load(data_path, 
+                                                                    file_default="model_keras/01_deepctr.json") 
+        return model_pars, data_pars, compute_pars, out_pars
+        
+
     if choice == 0:
         log("#### Path params   ###################################################")
         data_path, out_path = path_setup(out_folder="/deepctr_test/", data_path=data_path)
