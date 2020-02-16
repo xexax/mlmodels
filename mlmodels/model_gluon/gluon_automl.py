@@ -15,8 +15,6 @@ import autogluon as ag
 from mlmodels.model_gluon.util_autogluon import *
 
 
-
-
 ########################################################################################################################
 #### Model defintion
 class Model(object):
@@ -32,75 +30,75 @@ class Model(object):
 
 ########################################################################################################################
 def path_setup(out_folder="", sublevel=1, data_path="dataset/"):
-        data_path = os_package_root_path(__file__, sublevel=sublevel, path_add=data_path)
-        out_path = os.getcwd() + "/" + out_folder
-        os.makedirs(out_path, exist_ok=True)
-        model_path = out_path + "/model_gluon/"
-        os.makedirs(model_path, exist_ok=True)
+    data_path = os_package_root_path(__file__, sublevel=sublevel, path_add=data_path)
+    out_path = os.getcwd() + "/" + out_folder
+    os.makedirs(out_path, exist_ok=True)
+    model_path = out_path + "/model_gluon/"
+    os.makedirs(model_path, exist_ok=True)
 
-        log(data_path, out_path, model_path)
-        return data_path, out_path, model_path
+    log(data_path, out_path, model_path)
+    return data_path, out_path, model_path
 
 
+def _config_process(config):
+    data_pars = config["data_pars"]
 
-def _config_process( config) :
-        data_pars = config["data_pars"]
+    log("#### Model params   ################################################")
+    model_pars_cf = config["model_pars"]
+    model_pars = {"model_type": model_pars_cf["model_type"],
+                  "learning_rate": ag.space.Real(model_pars_cf["learning_rate_min"],
+                                                 model_pars_cf["learning_rate_max"],
+                                                 default=model_pars_cf["learning_rate_default"],
+                                                 log=True),
+                  "activation": ag.space.Categorical(*tuple(model_pars_cf["activation"])),
+                  "layers": ag.space.Categorical(*tuple(model_pars_cf["layers"])),
+                  "dropout_prob": ag.space.Real(model_pars_cf["dropout_prob_min"],
+                                                model_pars_cf["dropout_prob_max"],
+                                                default=model_pars_cf["dropout_prob_default"]),
+                  "num_boost_round": 100,
+                  "num_leaves": ag.space.Int(lower=model_pars_cf["num_leaves_lower"],
+                                             upper=model_pars_cf["num_leaves_upper"],
+                                             default=model_pars_cf["num_leaves_default"])
+                  }
 
-        log("#### Model params   ################################################")
-        model_pars_cf = config["model_pars"]
-        model_pars = {"model_type": model_pars_cf["model_type"],
-                      "learning_rate": ag.space.Real(model_pars_cf["learning_rate_min"],
-                                                     model_pars_cf["learning_rate_max"],
-                                                     default=model_pars_cf["learning_rate_default"],
-                                                     log=True),
-                      "activation": ag.space.Categorical(*tuple(model_pars_cf["activation"])),
-                      "layers": ag.space.Categorical(*tuple(model_pars_cf["layers"])),
-                      "dropout_prob": ag.space.Real(model_pars_cf["dropout_prob_min"],
-                                                    model_pars_cf["dropout_prob_max"],
-                                                    default=model_pars_cf["dropout_prob_default"]),
-                      "num_boost_round": 100,
-                      "num_leaves": ag.space.Int(lower=model_pars_cf["num_leaves_lower"],
-                                                 upper=model_pars_cf["num_leaves_upper"],
-                                                 default=model_pars_cf["num_leaves_default"])
-                      }
-
-        compute_pars = config["compute_pars"]
-        out_pars = config["out_pars"]
-        return model_pars, data_pars, compute_pars, out_pars
-
+    compute_pars = config["compute_pars"]
+    out_pars = config["out_pars"]
+    return model_pars, data_pars, compute_pars, out_pars
 
 
 def get_params(choice="", data_path="dataset/", config_mode="test", **kw):
-    if choice == "json" :
-        data_path = Path(os.path.realpath(__file__)).parent.parent/"model_gluon/gluon_automl.json" if data_path == "dataset/" else data_path
+    if choice == "json":
+        data_path = Path(os.path.realpath(
+            __file__)).parent.parent / "model_gluon/gluon_automl.json" if data_path == "dataset/" else data_path
 
-        with open( data_path , encoding='utf-8') as config_f:
+        with open(data_path, encoding='utf-8') as config_f:
             config = json.load(config_f)
             config = config[config_mode]
 
         model_pars, data_pars, compute_pars, out_pars = _config_process(config)
         return model_pars, data_pars, compute_pars, out_pars
- 
 
     if choice == "test01":
         log("#### Path params   #################################################")
-        data_path, out_path, model_path = path_setup(out_folder="", sublevel=1, data_path="dataset/")
+        data_path, out_path, model_path = path_setup(out_folder="", sublevel=1,
+                                                     data_path="dataset/")
 
-        data_pars = { "train": True, "uri_type": "amazon_aws", "dt_name": "Inc"}
-        
+        data_pars = {"train": True, "uri_type": "amazon_aws", "dt_name": "Inc"}
+
         model_pars = {"model_type": "tabular",
-                      "learning_rate": ag.space.Real(  1e-4, 1e-2, default= 5e-4, log=True),
-                      "activation": ag.space.Categorical(*tuple( ["relu", "softrelu", "tanh"])),
-                      "layers": ag.space.Categorical(*tuple([[100 ], [1000 ], [200, 100 ], [300, 200, 100 ] ])),
-                      'dropout_prob': ag.space.Real(0.0, 0.5,  default= 0.1),
+                      "learning_rate": ag.space.Real(1e-4, 1e-2, default=5e-4, log=True),
+                      "activation": ag.space.Categorical(*tuple(["relu", "softrelu", "tanh"])),
+                      "layers": ag.space.Categorical(
+                          *tuple([[100], [1000], [200, 100], [300, 200, 100]])),
+                      'dropout_prob': ag.space.Real(0.0, 0.5, default=0.1),
                       'num_boost_round': 100,
-                      'num_leaves': ag.space.Int(lower= 26, upper= 66, default= 36) }
+                      'num_leaves': ag.space.Int(lower=26, upper=66, default=36)}
 
-        compute_pars =  {"hp_tune": True, "num_epochs": 10, "time_limits": 120, "num_trials": 5, "search_strategy": "skopt"}
+        compute_pars = {"hp_tune": True, "num_epochs": 10, "time_limits": 120, "num_trials": 5,
+                        "search_strategy": "skopt"}
         out_pars = {"out_path": out_path}
 
     return model_pars, data_pars, compute_pars, out_pars
-
 
 
 ########################################################################################################################
@@ -114,11 +112,9 @@ def test(data_path="dataset/", pars_choice=""):
     log("#### Loading dataset   #############################################")
     gluon_ds = get_dataset(**data_pars)
 
-
     log("#### Model init, fit   #############################################")
     model = Model(model_pars, compute_pars)
     model = fit(model, data_pars, model_pars, compute_pars, out_pars)
-
 
     log("#### save the trained model  #######################################")
     # save(model, data_pars["modelpath"])
@@ -127,14 +123,11 @@ def test(data_path="dataset/", pars_choice=""):
     log("#### Predict   ####################################################")
     ypred = predict(model, data_pars, compute_pars, out_pars)
 
-
     log("#### metrics   ####################################################")
     metrics_val = metrics(model, ypred, data_pars, compute_pars, out_pars)
     print(metrics_val)
 
-
     log("#### Plot   #######################################################")
-
 
     log("#### Save/Load   ##################################################")
     save(model)
@@ -144,22 +137,10 @@ def test(data_path="dataset/", pars_choice=""):
     print(model2)
 
 
-
 if __name__ == '__main__':
     VERBOSE = True
     test(pars_choice="json")
     test(pars_choice="test01")
-
-
-
-
-
-
-
-
-
-
-
 
 """
 

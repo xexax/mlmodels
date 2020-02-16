@@ -1,14 +1,8 @@
 import os
-from pathlib import Path
-
-import matplotlib.pyplot as plt
-import pandas as pd
 
 from autogluon import TabularPrediction as tabular_task
 
-
 ### Requieres to install mlmodels
-from mlmodels import data
 # print(data)
 VERBOSE = False
 
