@@ -97,7 +97,7 @@ def get_params(choice="", data_path="dataset/", config_mode="test", **kw):
                       'num_leaves': ag.space.Int(lower= 26, upper= 66, default= 36) }
 
         compute_pars =  {"hp_tune": True, "num_epochs": 10, "time_limits": 120, "num_trials": 5, "search_strategy": "skopt"}
-        out_pars = {"outpath": out_path}
+        out_pars = {"out_path": out_path}
 
     return model_pars, data_pars, compute_pars, out_pars
 
