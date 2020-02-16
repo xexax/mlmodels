@@ -74,6 +74,11 @@ scikit-learn>=0.21.2
 
 
 
+JSON config file is in  /mlmodels/mlmodels/model_XXXX/mymodel.json
+
+Test results are in :  /mlmodels/mlmodels/ztest/model_XXXX/model_folder
+
+  
 
 
 
