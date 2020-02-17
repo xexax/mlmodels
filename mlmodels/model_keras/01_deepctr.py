@@ -52,6 +52,8 @@ from sklearn.preprocessing import LabelEncoder, MinMaxScaler
 from keras.models import save_model, load_model
 
 
+from mlmodels.model_keras.util import load, save
+
 # from preprocess import _preprocess_criteo, _preprocess_movielens
 
 
@@ -293,18 +295,18 @@ def predict(model, data_pars, compute_pars=None, out_pars=None, **kwargs):
     return pred_ans
 
 
-def metrics(ypred, data_pars, compute_pars=None, out_pars=None, **kwargs):
+def metrics(ypred, ytrue, data_pars, compute_pars=None, out_pars=None, **kwargs):
     ## load test dataset
-    _, linear_cols, dnn_cols, _, test, target = get_dataset(**data_pars)
+    #  _, linear_cols, dnn_cols, _, test, target = get_dataset(**data_pars)
 
     if compute_pars.get("task") == "binary":
-        metrics_dict = {"LogLoss": log_loss(test[target].values, ypred),
-                        "AUC": roc_auc_score(test[target].values, ypred)}
+        metrics_dict = {"LogLoss": log_loss( ytrue, ypred),
+                        "AUC": roc_auc_score( ytrue, ypred)}
 
     elif compute_pars.get("task") == "regression":
         multiple_value = data_pars.get('multiple_value', None)
         if multiple_value is None:
-            metrics_dict = {"MSE": mean_squared_error(test[target].values, ypred)}
+            metrics_dict = {"MSE": mean_squared_error( ytrue, ypred)}
         else:
             metrics_dict = {}
     return metrics_dict
@@ -315,30 +317,6 @@ def reset_model():
 
 
 ########################################################################################################################
-class Model_empty(object):
-    def __init__(self, model_pars=None, compute_pars=None):
-        ## Empty model for Seaialization
-        self.model = None
-
-
-def save(model, path):
-    if not os.path.exists(os.path.dirname(path)):
-        print("model file path do not exist!")
-    else:
-        save_model(model.model, path)
-
-
-def load(path):
-    if not os.path.exists(path):
-        print("model file do not exist!")
-        return None
-    else:
-        model = Model_empty()
-        model_keras = load_model(path, custom_objects)
-        model.model = model_keras
-
-        #### Add back the model parameters...
-        return model
 
 
 ########################################################################################################################
@@ -351,7 +329,7 @@ def path_setup(out_folder="", sublevel=1, data_path="dataset/"):
     return data_path, out_path
 
 
-def config_load(data_path, file_default) :
+def config_load(data_path, file_default, config_mode) :
         data_path = Path(os.path.realpath(
             __file__)).parent.parent / file_default if data_path == "dataset/" else data_path
 
