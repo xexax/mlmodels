@@ -3,13 +3,21 @@
 Gluon
 
 """
+import os
+import json
+from pathlib import Path
+import pandas as pd
+
 from gluonts.trainer import Trainer
 from gluonts.model.deepar import DeepAREstimator
 
 
 
-from mlmodels.model_gluon.util import *
-import os
+from mlmodels.model_gluon.util import log, os_package_root_path
+from mlmodels.model_gluon.util import get_dataset, fit, predict, save, load, metrics, _config_process
+from mlmodels.model_gluon.util import plot_predict, plot_prob_forecasts
+
+
 
 ########################################################################################################################
 #### Model defintion
@@ -43,17 +51,21 @@ class Model(object) :
 
 
 
-
 ########################################################################################################################
-def get_params(choice=0, data_path="dataset/", **kw) :
-    if choice == 0 :
+def get_params(choice="", data_path="dataset/", config_mode="test", **kw):
+    if choice == "json":
+       return _config_process(data_path, config_mode=config_mode)
+
+
+    if choice == "test01" :
         log("#### Path params   ################################################")
         data_path = os_package_root_path(__file__, sublevel=1, path_add=data_path)
-        out_path = os.getcwd() + "/GLUON_deepAR/"
+        out_path = os.getcwd() + "/gluon_deepar/"
         os.makedirs(out_path, exist_ok=True)
-        model_path = os.getcwd() + "/GLUON/model_deepAR/"
+        model_path = os.getcwd() + "/gluon_deepar/model/"
         os.makedirs(model_path, exist_ok=True)
         log(data_path, out_path,model_path)
+
 
         train_data_path = data_path + "GLUON-GLUON-train.csv"
         test_data_path = data_path + "GLUON-test.csv"
@@ -61,6 +73,7 @@ def get_params(choice=0, data_path="dataset/", **kw) :
         data_pars = {"train_data_path": train_data_path, "test_data_path": test_data_path, "train": False,
                      'prediction_length': 48, 'freq': '1H', "start": start, "num_series": 245,
                      "save_fig": "./series.png","modelpath":model_path}
+
 
         log("#### Model params   ################################################")
         model_pars = {"prediction_length": data_pars["prediction_length"], "freq": data_pars["freq"],
@@ -102,9 +115,8 @@ def test2(data_path="dataset/", out_path="GLUON/gluon.png", reset=True):
 
     model=fit(model, None, data_pars, model_pars, compute_pars)
 
-    log("#### save the trained model  #############################################")
+    log("#### save the trained model  ######################################")
     save(model, data_pars["modelpath"])
-
 
     log("#### Predict   ###################################################")
     ypred = predict(model, data_pars, compute_pars, out_pars)
@@ -121,11 +133,11 @@ def test2(data_path="dataset/", out_path="GLUON/gluon.png", reset=True):
 
 
 
-def test(data_path="dataset/"):
+def test(data_path="dataset/", choice=""):
     ### Local test
 
     log("#### Loading params   ##############################################")
-    model_pars, data_pars, compute_pars, out_pars = get_params(choice=0, data_path=data_path)
+    model_pars, data_pars, compute_pars, out_pars = get_params(choice=choice, data_path=data_path)
 
 
     log("#### Loading dataset   #############################################")
@@ -137,7 +149,7 @@ def test(data_path="dataset/"):
     #model=m.model    ### WE WORK WITH THE CLASS (not the attribute GLUON )
     model=fit(model, data_pars, model_pars, compute_pars)
 
-    log ("#### save the trained model  #############################################")
+    log ("#### save the trained model  ######################################")
     save(model,data_pars["modelpath"])
 
     log("#### Predict   ####################################################")
@@ -157,6 +169,9 @@ def test(data_path="dataset/"):
 
 if __name__ == '__main__':
     VERBOSE = True
-    test()
+    test(data_path="dataset/", choice="test01")
+    test(data_path="dataset/", choice="json")
+
+
 
 

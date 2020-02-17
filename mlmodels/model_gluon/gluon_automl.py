@@ -12,8 +12,11 @@ import json
 from pathlib import Path
 
 import autogluon as ag
+from autogluon import TabularPrediction as tabular_task
 
-from mlmodels.model_gluon.util_autogluon import *
+
+from mlmodels.model_gluon.util_autogluon import fit, predict, save, load, get_dataset
+from mlmodels.model_gluon.util_autogluon import log, os_package_root_path
 
 
 ########################################################################################################################
@@ -34,7 +37,7 @@ def path_setup(out_folder="", sublevel=1, data_path="dataset/"):
     data_path = os_package_root_path(__file__, sublevel=sublevel, path_add=data_path)
     out_path = os.getcwd() + "/" + out_folder
     os.makedirs(out_path, exist_ok=True)
-    model_path = out_path + "/model_gluon/"
+    model_path = out_path + "/model_gluon_automl/"
     os.makedirs(model_path, exist_ok=True)
 
     log(data_path, out_path, model_path)

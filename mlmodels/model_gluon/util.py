@@ -39,6 +39,18 @@ def log(*s, n=0, m=1):
 
 
 ####################################################################################################
+def _config_process(data_path, config_mode="test"):
+    data_path = Path(os.path.realpath(
+        __file__)).parent.parent / "model_gluon/gluon_deepar.json" if data_path == "dataset/" else data_path
+
+    with open(data_path, encoding='utf-8') as config_f:
+        config = json.load(config_f)
+        config = config[config_mode]
+
+    return config["model_pars"], config["data_pars"], config["compute_pars"], config["out_pars"]
+
+
+
 # Dataaset
 def get_dataset(**kw):
     ##check whether dataset is of kind train or test

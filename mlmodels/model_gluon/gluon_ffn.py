@@ -1,7 +1,23 @@
+# -*- coding: utf-8 -*-
+"""
+GluonTS
+# First install package from terminal:  pip install mxnet autogluon
+https://autogluon.mxnet.io/tutorials/tabular_prediction/tabular-quickstart.html
+
+
+
+"""
+import os
+import json
+from pathlib import Path
+import pandas as pd
 
 from gluonts.model.simple_feedforward import SimpleFeedForwardEstimator
 from gluonts.trainer import Trainer
-from mlmodels.model_gluon.util import *
+
+from mlmodels.model_gluon.util import log, os_package_root_path
+from mlmodels.model_gluon.util import get_dataset, fit, predict, save, load, metrics, _config_process
+from mlmodels.model_gluon.util import plot_predict, plot_prob_forecasts
 
 VERBOSE = False
 
@@ -33,14 +49,18 @@ class Model(object) :
 
 
 ########################################################################################################################
-def get_params(choice=0, data_path="dataset/", **kw):
-    if choice == 0:
-        log("#### Path params   ################################################")
+def get_params(choice="", data_path="dataset/", config_mode="test", **kw):
+    if choice == "json":
+       return _config_process(data_path, config_mode=config_mode)
+
+
+    if choice == "test01":
+        log("#### Path params   #####################################################")
         data_path = os_package_root_path(__file__, sublevel=1, path_add=data_path)
-        out_path = os.getcwd() + "/GLUON_ffn/"
+        out_path = os.getcwd() + "/model_gluon_ffn/"
         os.makedirs(out_path, exist_ok=True)
 
-        model_path = os.getcwd() + "/GLUON/model_ffn/"
+        model_path = os.getcwd() + "/model_gluon/model_ffn/"
         os.makedirs(model_path, exist_ok=True)
         log(data_path, out_path,model_path)
 
@@ -76,7 +96,7 @@ def test2(data_path="dataset/", out_path="GLUON/gluon.png", reset=True):
     # arg = load_arguments()
 
     log("#### Loading params   ##############################################")
-    model_pars, data_pars, compute_pars, out_pars = get_params(choice=0, data_path=data_path)
+    model_pars, data_pars, compute_pars, out_pars = get_params(choice="test01", data_path=data_path)
     model_uri = "model_gluon/gluon_ffn.py"
 
 
@@ -91,7 +111,7 @@ def test2(data_path="dataset/", out_path="GLUON/gluon.png", reset=True):
 
     model=fit(model, None, data_pars, model_pars, compute_pars)
 
-    log("#### save the trained model  #############################################")
+    log("#### save the trained model  ######################################")
     save(model, data_pars["modelpath"])
 
 
@@ -113,11 +133,11 @@ def test2(data_path="dataset/", out_path="GLUON/gluon.png", reset=True):
 
 
 
-def test(data_path="dataset/"):
+def test(data_path="dataset/", choice="test01"):
     ### Local test
 
     log("#### Loading params   ##############################################")
-    model_pars, data_pars, compute_pars, out_pars = get_params(choice=0, data_path=data_path)
+    model_pars, data_pars, compute_pars, out_pars = get_params(choice=choice, data_path=data_path)
 
 
     log("#### Loading dataset   #############################################")
@@ -129,7 +149,7 @@ def test(data_path="dataset/"):
     #model=m.model    ### WE WORK WITH THE CLASS (not the attribute GLUON )
     model=fit(model, data_pars, model_pars, compute_pars)
 
-    log("#### save the trained model  #############################################")
+    log("#### save the trained model  ######################################")
     save(model, data_pars["modelpath"])
 
 
@@ -151,8 +171,8 @@ def test(data_path="dataset/"):
                         
 if __name__ == '__main__':
     VERBOSE=True
-    test()
-    
+    test(data_path="dataset/", choice="test01")
+    test(data_path="dataset/", choice="json")
     
     
     
