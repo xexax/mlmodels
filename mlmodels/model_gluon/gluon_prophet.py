@@ -1,9 +1,30 @@
+# -*- coding: utf-8 -*-
+"""
+GluonTS
+# First install package from terminal:  pip install mxnet autogluon
+https://autogluon.mxnet.io/tutorials/tabular_prediction/tabular-quickstart.html
+
+
+
+"""
+import os
+import json
+from pathlib import Path
+import pandas as pd
+
 from gluonts.trainer import Trainer
-from mlmodels.model_gluon.util import *
 from gluonts.model.prophet import ProphetPredictor
 
+from mlmodels.model_gluon.util import log, os_package_root_path
+from mlmodels.model_gluon.util import get_dataset, fit, predict, save, load, metrics, _config_process
+from mlmodels.model_gluon.util import plot_predict, plot_prob_forecasts
 
-######################################################################################################
+VERBOSE = False
+
+
+
+
+########################################################################################################################
 #### Model defintion
 class Model(object) :
     def __init__(self, model_pars=None, compute_pars=None) :
@@ -19,8 +40,12 @@ class Model(object) :
 
 
 ########################################################################################################################
-def get_params(choice=0, data_path="dataset/", **kw):
-    if choice == 0:
+def get_params(choice="", data_path="dataset/", config_mode="test", **kw):
+    if choice == "json":
+       return _config_process(data_path, config_mode=config_mode)
+
+
+    if choice == "test01":
         log("#### Path params   ################################################")
         data_path = os_package_root_path(__file__, sublevel=1, path_add=data_path)
         out_path = os.getcwd() + "/GLUON_prophet/"
@@ -46,6 +71,7 @@ def get_params(choice=0, data_path="dataset/", **kw):
         out_pars = {"outpath": outpath, "plot_prob": True, "quantiles": [0.1, 0.5, 0.9]}
 
     return model_pars, data_pars, compute_pars, out_pars
+
 
 
 ########################################################################################################################
@@ -84,6 +110,7 @@ def test2(data_path="dataset/", out_path="GLUON/gluon.png", reset=True):
     plot_predict(ypred, metrics_val, out_pars)
 
 
+
 def test(data_path="dataset/"):
     ### Local test
 
@@ -118,6 +145,16 @@ def test(data_path="dataset/"):
     plot_predict(item_metrics, out_pars)
 
 
+
 if __name__ == '__main__':
     VERBOSE = True
-    test()
+    test(data_path="dataset/" , choice="test01" )
+
+
+
+
+
+
+
+
+

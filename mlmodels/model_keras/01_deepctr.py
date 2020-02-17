@@ -36,9 +36,10 @@ along with lots of core components layers which can be used to easily build cust
 
 """
 import os
-
-import numpy as np
+import json
+from pathlib import Path
 import pandas as pd
+import numpy as np
 
 from deepctr.inputs import SparseFeat, VarLenSparseFeat, DenseFeat, get_feature_names
 from deepctr.layers import custom_objects
@@ -82,8 +83,6 @@ class Model:
 
         if not model_pars.get('model_type'):
             raise Exception("Missing model type when init model object!")
-
-
 
         else:
             _, linear_cols, dnn_cols, _, _, _ = kwargs.get('dataset')
@@ -363,10 +362,11 @@ def config_load(data_path, file_default) :
         return model_pars, data_pars, compute_pars, out_pars
 
 
-def get_params(choice=0, data_path="dataset/", **kw):
+def get_params(choice="", data_path="dataset/", config_mode="test", **kw):
     if choice == "json":
         model_pars, data_pars, compute_pars, out_pars = config_load(data_path, 
-                                                                    file_default="model_keras/01_deepctr.json") 
+                                                                    file_default="model_keras/01_deepctr.json",
+                                                                    config_mode=config_mode)
         return model_pars, data_pars, compute_pars, out_pars
         
 
@@ -486,52 +486,5 @@ if __name__ == '__main__':
     test(pars_choice=3)
     test(pars_choice=4)
 
-"""
 
-
-    data = pd.read_csv('./criteo_sample.txt')
-
-    sparse_col = ['C' + str(i) for i in range(1, 27)]
-    dense_col = ['I' + str(i) for i in range(1, 14)]
-
-    data[sparse_col] = data[sparse_col].fillna('-1', )
-    data[dense_col] = data[dense_col].fillna(0, )
-    target = ['label']
-
-    # 1.do simple Transformation for dense features
-    mms = MinMaxScaler(feature_range=(0, 1))
-    data[dense_col] = mms.fit_transform(data[dense_col])
-
-    # 2.set hashing space for each sparse field,and record dense feature field name
-
-    fixlen_cols = [SparseFeat(feat, vocabulary_size=1000,embedding_dim=4, use_hash=True, dtype='string')  # since the input is string
-                              for feat in sparse_col] + [DenseFeat(feat, 1, )
-                          for feat in dense_col]
-
-    linear_cols = fixlen_cols
-    dnn_cols = fixlen_cols
-    feature_names = get_feature_names(linear_cols + dnn_cols, )
-
-    # 3.generate input data for model
-
-    train, test = train_test_split(data, test_size=0.2)
-
-    train_model_input = {name:train[name] for name in feature_names}
-    test_model_input = {name:test[name] for name in feature_names}
-
-
-    # 4.Define Model,train,predict and evaluate
-    model = DeepFM(linear_cols,dnn_cols, task='binary')
-    model.compile("adam", "binary_crossentropy",
-                  metrics=['binary_crossentropy'], )
-
-    pred_ans = model.predict(test_model_input, batch_size=256)
-    print("test LogLoss", round(log_loss(test[target].values, pred_ans), 4))
-    print("test AUC", round(roc_auc_score(test[target].values, pred_ans), 4))
-
-
-
-
-
-"""
 
