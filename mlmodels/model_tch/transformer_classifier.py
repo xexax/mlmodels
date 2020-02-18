@@ -246,6 +246,9 @@ def fit(train_dataset, model, tokenizer):
 def predict(model, data_pars, compute_pars=None, out_pars=None, **kwargs):
     ##  Model is class
     ## load test dataset
+    pass
+
+    """
     data, linear_cols, dnn_cols, train, test, target = get_dataset(**data_pars)
     feature_names = get_feature_names(linear_cols + dnn_cols, )
     test_model_input = {name: test[name] for name in feature_names}
@@ -258,7 +261,7 @@ def predict(model, data_pars, compute_pars=None, out_pars=None, **kwargs):
         pred_ans = None
 
     return pred_ans
-
+    """
 
 
 
@@ -455,9 +458,7 @@ def test(data_path="dataset/", pars_choice=0):
         model_to_save.save_pretrained(args['output_dir'])
         tokenizer.save_pretrained(args['output_dir'])
         torch.save(args, os.path.join(args['output_dir'], 'training_args.bin')) 
-    # save(model, out_pars['path'] + f"/model_{pars_choice}.h5")
-    # model2 = load(out_pars['path'] + f"/model_{pars_choice}.h5")
-    # print(model2)
+
 
     log("#### metrics   ####################################################")
     results = {}
