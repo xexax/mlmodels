@@ -25,7 +25,7 @@ from pytorch_transformers import (WEIGHTS_NAME, BertConfig, BertForSequenceClass
 
 from pytorch_transformers import AdamW, WarmupLinearSchedule
 
-from utils import (convert_examples_to_features,
+from util_transformer import (convert_examples_to_features,
                         output_modes, processors)
 
 logging.basicConfig(level=logging.INFO)
