@@ -136,13 +136,21 @@ def pipe_run_fit(pipe_list, in_pars, out_pars, compute_pars=None, checkpoint=Tru
     """
       Save the processsor state
     :return:
+
+     args: Meta arguments
+
+     args_pexec : process argument
+
+
     """
     log('Start execution')
     dfin = None
-    for (pname, pexec, args) in pipe_list:
-        out_file = out_pars['out_path'] + f"/{pname}/dfout.pkl"
+    for (pname, pexec, args, args_pexec) in pipe_list:
+        out_path = out_pars['out_path'] + f"/{pname}/"
+        out_file = out_path + f"/dfout.pkl"
+
         log(pname, pexec, out_file)
-        os.makedirs(out_pars['out_path'] + f"/{pname}/", exist_ok=True)
+        os.makedirs( out_path, exist_ok=True)
 
         #######
         if args.get("saved_model"):
@@ -151,20 +159,20 @@ def pipe_run_fit(pipe_list, in_pars, out_pars, compute_pars=None, checkpoint=Tru
 
         elif args.get("model_class"):
             ##### Class approach
-            pexec_ = pexec(**args)
+            pexec_ = pexec(**args_pexec)
         else:
             #### Functional approach
             # dfout = pexec(dfin, **args)
             from sklearn.preprocessing import FunctionTransformer
-            pexec_ = FunctionTransformer(pexec, kw_args=args, validate=False)
+            pexec_ = FunctionTransformer(pexec, kw_args=args_pexec, validate=False)
 
         pexec_.fit(dfin)
         dfout = pexec_.transform(dfin)
 
         dfin = dfout
         if checkpoint:
-            pipe_checkpoint(dfout, {'out_path': out_file, 'type': 'pandas'})
-            pipe_checkpoint(pexec_, {'out_path': out_file, 'type': 'model'})
+            pipe_checkpoint(dfout, {'out_path': out_path, 'type': 'pandas'})
+            pipe_checkpoint(pexec_, {'out_path': out_path, 'type': 'model'})
 
     return dfout
 
@@ -176,7 +184,7 @@ def pipe_run_inference(pipe_list, in_pars, out_pars, compute_pars=None, checkpoi
     """
     log('Start execution')
     dfin = None
-    for (pname, pexec, args) in pipe_list:
+    for (pname, pexec, args, args_pexec ) in pipe_list:
         out_file = out_pars['out_path'] + f"/{pname}/dfout.pkl"
         log(pname, pexec, out_file)
         os.makedirs(out_pars['out_path'] + f"/{pname}/", exist_ok=True)
@@ -228,23 +236,30 @@ def test(data_path="/dataset/", pars_choice="json"):
     ### Split data
     file_list = pipe_split(in_pars, out_pars, compute_pars)
     print("=== ", file_list)
+    
     ### Pipeline colnum
     in_pars['in_path'] = file_list['colnum']
-    pipe_list = [("00_Load_data", pipe_load, in_pars),
-                 ("01_NA_values", pd_na_values, {"default": 0.0, "out_path": out_path}),
-                 ("02_SVD", TruncatedSVD_fun, {"n_components": 1, "out_path": out_path}),
-                 ("03_save", pipe_checkpoint, {"out_path": out_path}),
-                 ]
+    pipe_list = [ ("00_Load_data", pipe_load, in_pars,  {} ),
+                  ("01_NA_values", pd_na_values,    {"default": 0.0},      {"model_class": None }  ),
+                  ("02_SVD",       TruncatedSVD,    {"n_components": 1},   {"model_class": True }  ),
+                  ("03_save",      pipe_checkpoint, {"out_path": out_path}, {}   ),
+                ]
+
     pipe_run_fit(pipe_list, in_pars, out_pars, compute_pars)
+
+
+
 
     ### Pipeline colcat
     in_pars['in_path'] = file_list['colcat']
-    pipe_list = [("00_Load_data", pipe_load, in_pars),
-                 ("01_NA_values", pd_na_values, {"default": 0.0, "out_path": out_path}),
-                 ("02_onehot_encoder", onehot_encoder, {"cols": in_pars["col_group"]["colcat"]}),
-                 ("03_SVD", TruncatedSVD_fun, {"n_components": 1, "out_path": out_path}),
+    pipe_list = [("00_Load_data",      pipe_load, in_pars, {} ),
+                 ("01_NA_values",      pd_na_values,       {"default": 0.0},      {"model_class": None }  ),
+                 ("02_onehot_encoder", onehot_encoder,     {"cols": in_pars["col_group"]["colcat"]}, {"model_class": True }   ),
+                 ("02_SVD",            TruncatedSVD,       {"n_components": 1},   {"model_class": True }  ),
                  ]
     pipe_run_fit(pipe_list, in_pars, out_pars, compute_pars)
+
+
 
     log("#### save the trained model  #######################################")
     # save(model, data_pars["modelpath"])
@@ -261,3 +276,7 @@ def test(data_path="/dataset/", pars_choice="json"):
 if __name__ == '__main__':
     VERBOSE = True
     test(pars_choice="json")
+
+
+
+
