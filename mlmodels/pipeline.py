@@ -81,20 +81,28 @@ def pd_concat(df1, df2, colid1) :
   return df3
 
 
+def TruncatedSVD_fun(df, n_components) :
+       svd = TruncatedSVD(n_components=n_components, n_iter=7, random_state=42)
+       return svd.fit_transform(df.values)    
+
+
 
 ###################################################################################################
 def pipe_split(in_pars, out_pars, compute_pars, **kw) :
     df = pd.read_csv(in_pars['in_path'])
     colid = in_pars['colid']
     path = out_pars['out_path']
-    file_list = []
+    file_list = {}
+
     for colname, cols in in_pars['col_group'].items() :
        dfi =  df[ [colid] + cols ].set_index(colid)
        os.makedirs(   f"{path}/{colname}/", exist_ok=True )
        fname = f'{path}/{colname}/df_{colname}.pkl' 
+       
        dfi.to_pickle( fname)
        log(colname, fname, cols )
-       file_list.append( fname )
+       file_list[colname] = fname 
+
     return file_list
 
 
@@ -109,7 +117,7 @@ def pipe_merge(in_pars, out_pars, compute_pars, **kw) :
 
 
 
-def pipe_load(in_pars) :
+def pipe_load(df, in_pars) :
     path = in_pars['in_path']
     log( path )
 
@@ -121,7 +129,8 @@ def pipe_load(in_pars) :
 
     else :
       return None
-
+    
+    log("file loaded", df.head(3))
     return df
 
 
@@ -130,10 +139,8 @@ def pipeline_run( pipe_list, in_pars, out_pars, compute_pars, **kw) :
     :param pipe_list:
     :return:
     """
-
-    dfin = pipe_load(in_pars)
-    log("file loaded", dfin.head(3))
     log('Start execution')
+    dfin = None
     for (pname, pexec, args) in pipe_list :
           out_file = out_pars['out_path']+  f"/{pname}/dfout.pkl"
           log(pname, pexec, out_file  )
@@ -148,22 +155,13 @@ def pipeline_run( pipe_list, in_pars, out_pars, compute_pars, **kw) :
 
     return dfout
 
-"""
-
-pipe_split(in_pars, out_pars, compute_pars, **kw) 
-
-pipeline_run( pipe_list, in_pars={ df_colcat }, out_pars, compute_pars, **kw) 
 
 
-
-
-"""
-
-
+###################################################################################################
 def test(data_path="/dataset/", pars_choice="json"):
     ### Local test
     root = os_package_root_path(__file__,0)
-
+    out_path = f"{os.getcwd()}/ztest/pipeline_01/"
     log("#### Loading params   ##############################################")
     in_pars  = { "in_path"  :  f"{root}/{data_path}/movielens_sample.txt" ,
                 "colid"     :  "user_id",
@@ -173,35 +171,35 @@ def test(data_path="/dataset/", pars_choice="json"):
 
 
      }
-    out_pars = { "out_path" :  f"{os.getcwd()}/ztest/pipeline_01/",
+    out_pars = { "out_path" :  out_path
 
-              }
+               }
 
     compute_pars = { "cpu" : True }
 
-
-    def TruncatedSVD_fun(df, n_components) :
-       svd = TruncatedSVD(n_components=n_components, n_iter=7, random_state=42)
-       return svd.fit_transform(df.values)    
-
-
     
+    ### Split data
     file_list = pipe_split(in_pars, out_pars, compute_pars) 
 
-
-    in_pars['in_path'] = file_list[0]
-    pipe_list = [  ("01_NA_values", pd_na_values, { "default": 0.0 }    ),
-                   ("02_SVD",       TruncatedSVD_fun, { "n_components": 5 }    ),
-                ]
-
-
+    ### Pipeline colnum
+    in_pars['in_path'] = file_list['colnum']
+    pipe_list = [  ("00_Load_data", pipe_load,  in_pars    ),
+                   ("01_NA_values", pd_na_values, { "default": 0.0, "out_path" :  out_path  }    ),
+                   ("02_SVD",       TruncatedSVD_fun, { "n_components": 5, "out_path" : out_path }    ),
+                  ]
     pipeline_run( pipe_list, in_pars, out_pars, compute_pars) 
 
 
-    log("#### Loading dataset   #############################################")
+    ### Pipeline colcat
+    in_pars['in_path'] = file_list['colcat']
+    pipe_list = [  ("00_Load_data", pipe_load,  in_pars    ),
+                   ("01_NA_values", pd_na_values, { "default": 0.0, "out_path" :   out_path}    ),
+                   ("02_SVD",       TruncatedSVD_fun, { "n_components": 5, "out_path" :  out_path  }    ),
+                  ]
+    pipeline_run( pipe_list, in_pars, out_pars, compute_pars) 
 
 
-    log("#### Model init, fit   #############################################")
+
 
 
     log("#### save the trained model  #######################################")
