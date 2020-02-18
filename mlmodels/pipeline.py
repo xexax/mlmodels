@@ -146,13 +146,18 @@ def pipeline_run( pipe_list, in_pars, out_pars, compute_pars=None, checkpoint=Tr
     for (pname, pexec, args) in pipe_list :
           out_file = out_pars['out_path']+  f"/{pname}/dfout.pkl"
           log(pname, pexec, out_file  )
-
           os.makedirs( out_pars['out_path']+  f"/{pname}/" , exist_ok=True)
+
+          #######
+          if args.get("saved_model") :
+            pexec = load_model( args.get("saved_model")  )
+
           dfout = pexec(dfin, **args)
 
           dfin = dfout
           if checkpoint :
-            pipe_checkpoint( dfout, { 'out_path': out_file   } ) 
+            pipe_checkpoint( dfout, { 'out_path': out_file, 'type' :'pandas'   } ) 
+            pipe_checkpoint( pexec, { 'out_path': out_file, 'type': 'model'   } ) 
 
 
     return dfout
@@ -162,6 +167,16 @@ def pipeline_run( pipe_list, in_pars, out_pars, compute_pars=None, checkpoint=Tr
 def pipe_checkpoint( df, out_pars,   **kw) :
    dfout.to_pickle( out_pars['out_path'] )
 
+
+
+def load_model(path):
+  import piickle
+  return pickle.load(open(path, mode='b'))
+
+
+def save_model(model, path):
+  import piickle
+  pickle.save(model, open(path, mode='b'))
 
 
 
