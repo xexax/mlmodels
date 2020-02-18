@@ -150,26 +150,30 @@ def pipe_run_fit( pipe_list, in_pars, out_pars, compute_pars=None, checkpoint=Tr
 
           #######
           if args.get("saved_model") :
-            pexec = load_model( args.get("saved_model")  )
+            pexec_ = load_model( args.get("saved_model")  )
 
-          if args.get("model_class") :
+
+          elif args.get("model_class") :
             ##### Class approach
-            pexec_instance = pexec(**args) 
-            pexec_instance.fit(dfin)
-            pexec_instance.transform(dfin)
-
+            pexec_ = pexec(**args) 
           else :
              #### Functional approach
-             dfout = pexec(dfin, **args)
+             # dfout = pexec(dfin, **args)
+             from sklearn.preprocessing import FunctionTransformer
+             pexec_ = FunctionTransformer(pexec, kw_args=args)
+
+
+          pexec_.fit(dfin)
+          dfout = pexec_.transform(dfin)
+
 
           dfin = dfout
           if checkpoint :
-            pipe_checkpoint( dfout, { 'out_path': out_file, 'type' :'pandas'   } ) 
-            pipe_checkpoint( pexec, { 'out_path': out_file, 'type': 'model'   } ) 
+            pipe_checkpoint( dfout,  { 'out_path': out_file, 'type' :'pandas'   } ) 
+            pipe_checkpoint( pexec_, { 'out_path': out_file, 'type': 'model'   } ) 
 
 
     return dfout
-
 
 
 
@@ -189,16 +193,11 @@ def pipe_run_inference( pipe_list, in_pars, out_pars, compute_pars=None, checkpo
 
           #######
           if args.get("saved_model") :
-            pexec = load_model( args.get("saved_model")  )
+            pexec_ = load_model( args.get("saved_model")  )
 
-          if args.get("model_class") :
-            ##### Class approach
-            pexec_instance = pexec(**args) 
-            dfout = pexec_instance.transform(dfin)
-          
-          else :
-             #### Functional approach
-             dfout = pexec(dfin, **args)
+
+          pexec_.fit(dfin)
+          dfout = pexec_.transform(dfin)
 
           dfin = dfout
           if checkpoint :
