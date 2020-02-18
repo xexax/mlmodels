@@ -1,3 +1,10 @@
+# -*- coding: utf-8 -*-
+"""
+
+
+
+"""
+
 from __future__ import absolute_import, division, print_function
 
 import random
@@ -25,8 +32,10 @@ from pytorch_transformers import (WEIGHTS_NAME, BertConfig, BertForSequenceClass
 
 from pytorch_transformers import AdamW, WarmupLinearSchedule
 
-from utils import (convert_examples_to_features,
+from util_transformer import (convert_examples_to_features,
                         output_modes, processors)
+
+
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -37,6 +46,8 @@ with open('args.json', 'r') as f:
 
 if os.path.exists(args['output_dir']) and os.listdir(args['output_dir']) and args['do_train'] and not args['overwrite_output_dir']:
     raise ValueError("Output directory ({}) already exists and is not empty. Use --overwrite_output_dir to overcome.".format(args['output_dir']))
+
+
 
 MODEL_CLASSES = {
     'bert': (BertConfig, BertForSequenceClassification, BertTokenizer),
@@ -103,11 +114,11 @@ def get_dataset(task, tokenizer, evaluate=False):
     cached_features_file = os.path.join(args['data_dir'], f"cached_{mode}_{args['model_name']}_{args['max_seq_length']}_{task}")
     
     if os.path.exists(cached_features_file) and not args['reprocess_input_data']:
-        logger.info("Loading features from cached file %s", cached_features_file)
+        log("Loading features from cached file %s", cached_features_file)
         features = torch.load(cached_features_file)
                
     else:
-        logger.info("Creating features from dataset file at %s", args['data_dir'])
+        log("Creating features from dataset file at %s", args['data_dir'])
         label_list = processor.get_labels()
         examples = processor.get_dev_examples(args['data_dir']) if evaluate else processor.get_train_examples(args['data_dir'])
         
@@ -122,7 +133,7 @@ def get_dataset(task, tokenizer, evaluate=False):
                 pad_token=tokenizer.convert_tokens_to_ids([tokenizer.pad_token])[0],
                 pad_token_segment_id=4 if args['model_type'] in ['xlnet'] else 0)
         
-        logger.info("Saving features into cached file %s", cached_features_file)
+        log("Saving features into cached file %s", cached_features_file)
         torch.save(features, cached_features_file)
         
     all_input_ids = torch.tensor([f.input_ids for f in features], dtype=torch.long)
@@ -164,12 +175,12 @@ def fit(train_dataset, model, tokenizer):
             raise ImportError("Please install apex from https://www.github.com/nvidia/apex to use fp16 training.")
         model, optimizer = amp.initialize(model, optimizer, opt_level=args['fp16_opt_level'])
         
-    logger.info("***** Running training *****")
-    logger.info("  Num examples = %d", len(train_dataset))
-    logger.info("  Num Epochs = %d", args['num_train_epochs'])
-    logger.info("  Total train batch size  = %d", args['train_batch_size'])
-    logger.info("  Gradient Accumulation steps = %d", args['gradient_accumulation_steps'])
-    logger.info("  Total optimization steps = %d", t_total)
+    log("***** Running training *****")
+    log("  Num examples = %d", len(train_dataset))
+    log("  Num Epochs = %d", args['num_train_epochs'])
+    log("  Total train batch size  = %d", args['train_batch_size'])
+    log("  Gradient Accumulation steps = %d", args['gradient_accumulation_steps'])
+    log("  Total optimization steps = %d", t_total)
 
     global_step = 0
     tr_loss, logging_loss = 0.0, 0.0
@@ -208,6 +219,7 @@ def fit(train_dataset, model, tokenizer):
                 model.zero_grad()
                 global_step += 1
 
+
                 if args['logging_steps'] > 0 and global_step % args['logging_steps'] == 0:
                     # Log metrics
                     if args['evaluate_during_training']:  # Only evaluate when single GPU otherwise metrics may not average well
@@ -218,6 +230,7 @@ def fit(train_dataset, model, tokenizer):
                     tb_writer.add_scalar('loss', (tr_loss - logging_loss)/args['logging_steps'], global_step)
                     logging_loss = tr_loss
 
+
                 if args['save_steps'] > 0 and global_step % args['save_steps'] == 0:
                     # Save model checkpoint
                     output_dir = os.path.join(args['output_dir'], 'checkpoint-{}'.format(global_step))
@@ -225,10 +238,12 @@ def fit(train_dataset, model, tokenizer):
                         os.makedirs(output_dir)
                     model_to_save = model.module if hasattr(model, 'module') else model  # Take care of distributed/parallel training
                     model_to_save.save_pretrained(output_dir)
-                    logger.info("Saving model checkpoint to %s", output_dir)
+                    log("Saving model checkpoint to %s", output_dir)
 
 
     return global_step, tr_loss / global_step
+
+
 
 def predict(model, data_pars, compute_pars=None, out_pars=None, **kwargs):
     ##  Model is class
@@ -245,6 +260,8 @@ def predict(model, data_pars, compute_pars=None, out_pars=None, **kwargs):
         pred_ans = None
 
     return pred_ans
+
+
 
 from sklearn.metrics import mean_squared_error, matthews_corrcoef, confusion_matrix
 from scipy.stats import pearsonr
@@ -267,9 +284,11 @@ def get_eval_report(labels, preds):
         "fn": fn
     }, get_mismatched(labels, preds)
 
+
 def compute_metrics(task_name, preds, labels):
     assert len(preds) == len(labels)
     return get_eval_report(labels, preds)
+
 
 def evaluate(model, tokenizer, prefix=""):
     # Loop to handle MNLI double evaluation (matched, mis-matched)
@@ -287,9 +306,9 @@ def evaluate(model, tokenizer, prefix=""):
     eval_dataloader = DataLoader(eval_dataset, sampler=eval_sampler, batch_size=args['eval_batch_size'])
 
     # Eval!
-    logger.info("***** Running evaluation {} *****".format(prefix))
-    logger.info("  Num examples = %d", len(eval_dataset))
-    logger.info("  Batch size = %d", args['eval_batch_size'])
+    log("***** Running evaluation {} *****".format(prefix))
+    log("  Num examples = %d", len(eval_dataset))
+    log("  Batch size = %d", args['eval_batch_size'])
     eval_loss = 0.0
     nb_eval_steps = 0
     preds = None
@@ -318,16 +337,18 @@ def evaluate(model, tokenizer, prefix=""):
     eval_loss = eval_loss / nb_eval_steps
     if args['output_mode'] == "classification":
         preds = np.argmax(preds, axis=1)
+
     elif args['output_mode'] == "regression":
         preds = np.squeeze(preds)
+
     result, wrong = compute_metrics(EVAL_TASK, preds, out_label_ids)
     results.update(result)
 
     output_eval_file = os.path.join(eval_output_dir, "eval_results.txt")
     with open(output_eval_file, "w") as writer:
-        logger.info("***** Eval results {} *****".format(prefix))
+        log("***** Eval results {} *****".format(prefix))
         for key in sorted(result.keys()):
-            logger.info("  %s = %s", key, str(result[key]))
+            log("  %s = %s", key, str(result[key]))
             writer.write("%s = %s\n" % (key, str(result[key])))
 
     return results, wrong
@@ -396,7 +417,6 @@ def get_params(choice=0, data_path="dataset/", **kw):
 ########################################################################################################################
 def test(data_path="dataset/", pars_choice=0):
     ### Local test
-
     log("#### Loading params   ##############################################")
 
 
@@ -419,15 +439,16 @@ def test(data_path="dataset/", pars_choice=0):
     if args['do_train']:
         train_dataset = get_dataset(task, model.tokenizer)
         global_step, tr_loss = fit(train_dataset, model, model.tokenizer)
-        logger.info(" global_step = %s, average loss = %s", global_step, tr_loss)
+        log(" global_step = %s, average loss = %s", global_step, tr_loss)
        
+
     # log("#### Predict   ####################################################")
     # ypred = predict(model, data_pars, compute_pars, out_pars)
     log("#### Save/Load   ##################################################")
     if args['do_train']:
         if not os.path.exists(args['output_dir']):
                 os.makedirs(args['output_dir'])
-        logger.info("Saving model checkpoint to %s", args['output_dir'])
+        log("Saving model checkpoint to %s", args['output_dir'])
         
         model_to_save = model.module if hasattr(model, 'module') else model  # Take care of distributed/parallel training
         model_to_save.save_pretrained(args['output_dir'])
@@ -436,6 +457,7 @@ def test(data_path="dataset/", pars_choice=0):
     # save(model, out_pars['path'] + f"/model_{pars_choice}.h5")
     # model2 = load(out_pars['path'] + f"/model_{pars_choice}.h5")
     # print(model2)
+
     log("#### metrics   ####################################################")
     results = {}
     if args['do_eval']:
@@ -443,7 +465,8 @@ def test(data_path="dataset/", pars_choice=0):
         if args['eval_all_checkpoints']:
             checkpoints = list(os.path.dirname(c) for c in sorted(glob.glob(args['output_dir'] + '/**/' + WEIGHTS_NAME, recursive=True)))
             logging.getLogger("pytorch_transformers.modeling_utils").setLevel(logging.WARN)  # Reduce logging
-        logger.info("Evaluate the following checkpoints: %s", checkpoints)
+
+        log("Evaluate the following checkpoints: %s", checkpoints)
         for checkpoint in checkpoints:
             global_step = checkpoint.split('-')[-1] if len(checkpoints) > 1 else ""
             model = model_class.from_pretrained(checkpoint)
