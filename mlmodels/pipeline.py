@@ -70,7 +70,7 @@ def log(*s, n=0, m=1):
 def pd_na_values(df, cols=None, default=0.0) :
   cols = cols if cols is not None else list(df.columns)
   for t in cols :
-    df[t] = df[t.fillna(default)]
+    df[t] = df[t].fillna(default)
 
   return df
 
@@ -110,7 +110,18 @@ def pipe_merge(in_pars, out_pars, compute_pars, **kw) :
 
 
 def pipe_load(in_pars) :
-    df = pd.read_csv(in_pars['in_path'])
+    path = in_pars['in_path']
+    log( path )
+
+    if ".pkl" in  path :
+      df = pd.read_pickle(path)
+
+    elif  path[-4:] in [ '.csv', '.txt', 'gz' ] :
+      df = pd.read_csv( path ) 
+
+    else :
+      return None
+
     return df
 
 
@@ -121,15 +132,19 @@ def pipeline_run( pipe_list, in_pars, out_pars, compute_pars, **kw) :
     """
 
     dfin = pipe_load(in_pars)
+    log("file loaded", dfin.head(3))
+    log('Start execution')
     for (pname, pexec, args) in pipe_list :
-        try :
-          log(pname, pexec, out_pars['out_path']+  "/{pname}/dfout.pkl" )
-          os.makedirs( out_pars['out_path']+  "/{pname}/" )
+          out_file = out_pars['out_path']+  f"/{pname}/dfout.pkl"
+          log(pname, pexec, out_file  )
+
+          os.makedirs( out_pars['out_path']+  f"/{pname}/" , exist_ok=True)
           dfout = pexec(dfin, **args)
-          dfout.to_pickle( out_pars['out_path'] +  "/{pname}/dfout.pkl"  )
+
+          # os.remove( out_file )
+          dfout.to_pickle( out_file )
           dfin = dfout
-        except Exception as e :
-          log(pname, e)
+
 
     return dfout
 
