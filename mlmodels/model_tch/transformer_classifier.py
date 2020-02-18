@@ -37,16 +37,8 @@ from util_transformer import (convert_examples_to_features,
 
 
 
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+
 ###################################################################################################
-# Constants 
-with open('args.json', 'r') as f:
-    args = json.load(f)
-
-if os.path.exists(args['output_dir']) and os.listdir(args['output_dir']) and args['do_train'] and not args['overwrite_output_dir']:
-    raise ValueError("Output directory ({}) already exists and is not empty. Use --overwrite_output_dir to overcome.".format(args['output_dir']))
-
 
 
 MODEL_CLASSES = {
@@ -70,6 +62,9 @@ def os_package_root_path(filepath, sublevel=0, path_add=""):
     path = os.path.join(path.absolute(), path_add)
     return path
 
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 def log(*s, n=0, m=1):
     sspace = "#" * n
@@ -285,7 +280,7 @@ def get_eval_report(labels, preds):
     }, get_mismatched(labels, preds)
 
 
-def compute_metrics(task_name, preds, labels):
+def metrics(task_name, preds, labels):
     assert len(preds) == len(labels)
     return get_eval_report(labels, preds)
 
@@ -341,7 +336,7 @@ def evaluate(model, tokenizer, prefix=""):
     elif args['output_mode'] == "regression":
         preds = np.squeeze(preds)
 
-    result, wrong = compute_metrics(EVAL_TASK, preds, out_label_ids)
+    result, wrong = metrics(EVAL_TASK, preds, out_label_ids)
     results.update(result)
 
     output_eval_file = os.path.join(eval_output_dir, "eval_results.txt")
@@ -418,8 +413,6 @@ def get_params(choice=0, data_path="dataset/", **kw):
 def test(data_path="dataset/", pars_choice=0):
     ### Local test
     log("#### Loading params   ##############################################")
-
-
     task = args['task_name']
 
     if task in processors.keys() and task in output_modes.keys():
@@ -435,6 +428,7 @@ def test(data_path="dataset/", pars_choice=0):
     log("#### Model init, fit   #############################################")
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model = Model(args,device)
+
     log("#### Loading dataset   #############################################")
     if args['do_train']:
         train_dataset = get_dataset(task, model.tokenizer)
@@ -485,6 +479,15 @@ def test(data_path="dataset/", pars_choice=0):
 
 if __name__ == '__main__':
     VERBOSE = True
+
+    # Constants 
+    with open('args.json', 'r') as f:
+      args = json.load(f)
+
+    if os.path.exists(args['output_dir']) and os.listdir(args['output_dir']) and args['do_train'] and not args['overwrite_output_dir']:
+      raise ValueError("Output directory ({}) already exists and is not empty. Use --overwrite_output_dir to overcome.".format(args['output_dir']))
+
+
     test(pars_choice=0)
 
    
