@@ -136,9 +136,9 @@ def pipe_load(df, in_pars) :
     return df
 
 
-def pipeline_run( pipe_list, in_pars, out_pars, compute_pars=None, checkpoint=True, **kw) :
+def pipe_run_fit( pipe_list, in_pars, out_pars, compute_pars=None, checkpoint=True, **kw) :
     """
-    :param pipe_list:
+      Save the processsor state 
     :return:
     """
     log('Start execution')
@@ -152,7 +152,15 @@ def pipeline_run( pipe_list, in_pars, out_pars, compute_pars=None, checkpoint=Tr
           if args.get("saved_model") :
             pexec = load_model( args.get("saved_model")  )
 
-          dfout = pexec(dfin, **args)
+          if args.get("model_class") :
+            ##### Class approach
+            pexec_instance = pexec(**args) 
+            pexec_instance.fit(dfin)
+            pexec_instance.transform(dfin)
+
+          else :
+             #### Functional approach
+             dfout = pexec(dfin, **args)
 
           dfin = dfout
           if checkpoint :
@@ -164,8 +172,47 @@ def pipeline_run( pipe_list, in_pars, out_pars, compute_pars=None, checkpoint=Tr
 
 
 
+def pipe_run_inference( pipe_list, in_pars, out_pars, compute_pars=None, checkpoint=True, **kw) :
+    """
+    :Only using the processing, no saving
+    :return:
+    """
+    log('Start execution')
+    dfin = None
+    for (pname, pexec, args) in pipe_list :
+          out_file = out_pars['out_path']+  f"/{pname}/dfout.pkl"
+          log(pname, pexec, out_file  )
+          os.makedirs( out_pars['out_path']+  f"/{pname}/" , exist_ok=True)
+
+          #######
+          if args.get("saved_model") :
+            pexec = load_model( args.get("saved_model")  )
+
+          if args.get("model_class") :
+            ##### Class approach
+            pexec_instance = pexec(**args) 
+            dfout = pexec_instance.transform(dfin)
+          
+          else :
+             #### Functional approach
+             dfout = pexec(dfin, **args)
+
+          dfin = dfout
+          if checkpoint :
+            pipe_checkpoint( dfout, { 'out_path': out_file, 'type' :'pandas'   } ) 
+
+
+    return dfout
+
+
+
+
+
+
+
 def pipe_checkpoint( df, out_pars,   **kw) :
-   dfout.to_pickle( out_pars['out_path'] )
+
+          if args.get("saved_model") :   dfout.to_picklmodel_class['out_path'] )
 
 
 
@@ -211,7 +258,7 @@ def test(data_path="/dataset/", pars_choice="json"):
                    ("02_SVD",       TruncatedSVD_fun, { "n_components": 5, "out_path" : out_path }    ),
                    ("03_save",      pipe_checkpoint, {  "out_path" : out_path }    ),
                   ]
-    pipeline_run( pipe_list, in_pars, out_pars, compute_pars) 
+    pipe_run_fit( pipe_list, in_pars, out_pars, compute_pars) 
 
 
 
@@ -221,7 +268,7 @@ def test(data_path="/dataset/", pars_choice="json"):
                    ("01_NA_values", pd_na_values, { "default": 0.0, "out_path" :   out_path}       ),
                    ("02_SVD",       TruncatedSVD_fun, { "n_components": 5, "out_path" :  out_path  }    ),
                   ]
-    pipeline_run( pipe_list, in_pars, out_pars, compute_pars) 
+    pipe_run_fit( pipe_list, in_pars, out_pars, compute_pars) 
 
 
 
