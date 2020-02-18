@@ -172,6 +172,9 @@ def pipe_run_fit( pipe_list, in_pars, out_pars, compute_pars=None, checkpoint=Tr
 
 
 
+
+
+
 def pipe_run_inference( pipe_list, in_pars, out_pars, compute_pars=None, checkpoint=True, **kw) :
     """
     :Only using the processing, no saving
