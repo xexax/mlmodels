@@ -227,7 +227,7 @@ def test(data_path="/dataset/", pars_choice="json"):
 
     ### Split data
     file_list = pipe_split(in_pars, out_pars, compute_pars)
-
+    print("=== ", file_list)
     ### Pipeline colnum
     in_pars['in_path'] = file_list['colnum']
     pipe_list = [("00_Load_data", pipe_load, in_pars),
@@ -241,8 +241,8 @@ def test(data_path="/dataset/", pars_choice="json"):
     in_pars['in_path'] = file_list['colcat']
     pipe_list = [("00_Load_data", pipe_load, in_pars),
                  ("01_NA_values", pd_na_values, {"default": 0.0, "out_path": out_path}),
-                 ("011_onehot_encoder", onehot_encoder, {"cols": ["genres", "gender"]}),
-                 ("02_SVD", TruncatedSVD_fun, {"n_components": 1, "out_path": out_path}),
+                 ("02_onehot_encoder", onehot_encoder, {"cols": in_pars["col_group"]["colcat"]}),
+                 ("03_SVD", TruncatedSVD_fun, {"n_components": 1, "out_path": out_path}),
                  ]
     pipe_run_fit(pipe_list, in_pars, out_pars, compute_pars)
 
@@ -261,4 +261,3 @@ def test(data_path="/dataset/", pars_choice="json"):
 if __name__ == '__main__':
     VERBOSE = True
     test(pars_choice="json")
-
