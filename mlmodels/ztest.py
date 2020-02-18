@@ -53,7 +53,7 @@ test_list =[
 
 for cmd in test_list :
     print(cmd)
-    os.system( cmd )
+    os.system( cmd , flush=True)
 
 
 

@@ -76,10 +76,6 @@ def pd_na_values(df, cols=None, default=0.0) :
 
 
 
-def pd_concat(df1, df2, colid1) :
-  df3 = df1.join( df2.set_index(colid), on=colid, how="left")
-  return df3
-
 
 def TruncatedSVD_fun(df, n_components) :
        svd = TruncatedSVD(n_components=n_components, n_iter=7, random_state=42)
@@ -88,6 +84,11 @@ def TruncatedSVD_fun(df, n_components) :
 
 
 ###################################################################################################
+def pd_concat(df1, df2, colid1) :
+  df3 = df1.join( df2.set_index(colid), on=colid, how="left")
+  return df3
+
+
 def pipe_split(in_pars, out_pars, compute_pars, **kw) :
     df = pd.read_csv(in_pars['in_path'])
     colid = in_pars['colid']
@@ -106,7 +107,8 @@ def pipe_split(in_pars, out_pars, compute_pars, **kw) :
     return file_list
 
 
-def pipe_merge(in_pars, out_pars, compute_pars, **kw) :
+def pipe_merge(in_pars, out_pars, compute_pars=None, **kw) :
+    dfall= None
     for filename in in_pars['file_list'] :
       log(filename)
       dfi = pd.read_pickle(filename)
@@ -134,7 +136,7 @@ def pipe_load(df, in_pars) :
     return df
 
 
-def pipeline_run( pipe_list, in_pars, out_pars, compute_pars, **kw) :
+def pipeline_run( pipe_list, in_pars, out_pars, compute_pars=None, checkpoint=True, **kw) :
     """
     :param pipe_list:
     :return:
@@ -148,12 +150,18 @@ def pipeline_run( pipe_list, in_pars, out_pars, compute_pars, **kw) :
           os.makedirs( out_pars['out_path']+  f"/{pname}/" , exist_ok=True)
           dfout = pexec(dfin, **args)
 
-          # os.remove( out_file )
-          dfout.to_pickle( out_file )
           dfin = dfout
+          if checkpoint :
+            pipe_checkpoint( dfout, { 'out_path': out_file   } ) 
 
 
     return dfout
+
+
+
+def pipe_checkpoint( df, out_pars,   **kw) :
+   dfout.to_pickle( out_pars['out_path'] )
+
 
 
 
@@ -170,9 +178,9 @@ def test(data_path="/dataset/", pars_choice="json"):
 
 
 
-     }
-    out_pars = { "out_path" :  out_path
+    }
 
+    out_pars = { "out_path" :  out_path
                }
 
     compute_pars = { "cpu" : True }
@@ -186,14 +194,16 @@ def test(data_path="/dataset/", pars_choice="json"):
     pipe_list = [  ("00_Load_data", pipe_load,  in_pars    ),
                    ("01_NA_values", pd_na_values, { "default": 0.0, "out_path" :  out_path  }    ),
                    ("02_SVD",       TruncatedSVD_fun, { "n_components": 5, "out_path" : out_path }    ),
+                   ("03_save",      pipe_checkpoint, {  "out_path" : out_path }    ),
                   ]
     pipeline_run( pipe_list, in_pars, out_pars, compute_pars) 
+
 
 
     ### Pipeline colcat
     in_pars['in_path'] = file_list['colcat']
     pipe_list = [  ("00_Load_data", pipe_load,  in_pars    ),
-                   ("01_NA_values", pd_na_values, { "default": 0.0, "out_path" :   out_path}    ),
+                   ("01_NA_values", pd_na_values, { "default": 0.0, "out_path" :   out_path}       ),
                    ("02_SVD",       TruncatedSVD_fun, { "n_components": 5, "out_path" :  out_path  }    ),
                   ]
     pipeline_run( pipe_list, in_pars, out_pars, compute_pars) 
@@ -204,9 +214,6 @@ def test(data_path="/dataset/", pars_choice="json"):
 
     log("#### save the trained model  #######################################")
     # save(model, data_pars["modelpath"])
-
-
-    log("#### Predict   ####################################################")
 
 
     log("#### metrics   ####################################################")

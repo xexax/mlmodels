@@ -66,3 +66,19 @@ def import_data_fromfile(**kw):
 
 
 
+
+
+def import_data_dask(**kw):
+
+  if m.get("use_dask", False):
+    import dask.dataframe as dd
+    if extension in [".csv", ".txt"]: 
+       df = dd.read_csv(m["data_path"])
+    elif extension in [".pkl"]: 
+       df = dd.read_pickle(m["data_path"])
+    elif extension in [".npz"]: 
+       df = dd.read_pickle(m["data_path"])
+    else: raise Exception(f"Not support extension {extension}")
+  return df
+
+
