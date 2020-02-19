@@ -141,6 +141,37 @@ server = "https://public.ukp.informatik.tu-darmstadt.de/reimers/sentence-transfo
 
 
 
+
+
+####################################################################################################
+####################################################################################################
+embedder = SentenceTransformer('bert-base-nli-mean-tokens')
+
+# Corpus with example sentences
+corpus = ['A man is eating food.',
+          'A man is eating a piece of bread.',
+          'The girl is carrying a baby.',
+          'A man is riding a horse.',
+          'A woman is playing violin.',
+          'Two men pushed carts through the woods.',
+          'A man is riding a white horse on an enclosed ground.',
+          'A monkey is playing drums.',
+          'A cheetah is running behind its prey.']
+
+corpus_embeddings = embedder.encode(corpus)
+
+queries = ['A man is eating pasta.', 'Someone in a gorilla costume is playing a set of drums.', 'A cheetah chases prey on across a field.']
+query_embeddings = embedder.encode(queries)
+
+
+
+import scipy
+for query, query_embedding in zip(queries, query_embeddings):
+    distances = scipy.spatial.distance.cdist([query_embedding], corpus_embeddings, "cosine")[0]
+    
+    
+    
+    
 ###################################################################################################
 """
 The system trains BERT on the SNLI + MultiNLI (AllNLI) dataset

@@ -80,21 +80,16 @@ def log(*s, n=0, m=1):
 ####################################################################################################
 class Model:
     def __init__(self, args,device):
-        # 4.Define Model
+        # 4.Define Model    
+        config_class, model_class, tokenizer_class = MODEL_CLASSES[args['model_type']]
 
-        if not args.get('model_type'):
-            raise Exception("Missing model type when init model object!")
+        self.config = config_class.from_pretrained(args['model_name'], num_labels=2, 
+                                                   finetuning_task=args['task_name'])
+        self.tokenizer = tokenizer_class.from_pretrained(args['model_name'])
 
-        else:
-            
-            config_class, model_class, tokenizer_class = MODEL_CLASSES[args['model_type']]
-
-            self.config = config_class.from_pretrained(args['model_name'], num_labels=2, finetuning_task=args['task_name'])
-            self.tokenizer = tokenizer_class.from_pretrained(args['model_name'])
-
-            self.model = model_class.from_pretrained(args['model_name'])
-            self.model.to(device);
-
+        self.model = model_class.from_pretrained(args['model_name'])
+        self.model.to(device)
+ 
 
 
 

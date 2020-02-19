@@ -132,6 +132,74 @@ def pipe_load(df, **in_pars):
     return df
 
 
+
+class pipe(Object) :
+
+  def __init__(self, pipe_list, in_pars, out_pars, compute_pars=None, checkpoint=True, **kw):
+
+     self.pipe_list = pipe_list
+     self.in_pars = in_pars
+
+
+
+
+  def run(self) :
+    log('Start execution')
+    dfin = None
+    for (pname, pexec, args, args_pexec) in pipe_list:
+        out_path = out_pars['out_path'] + f"/{pname}/"
+        out_file = out_path + f"/dfout.pkl"
+
+        log(pname, pexec, out_file)
+        os.makedirs( out_path, exist_ok=True)
+
+        #######
+        if args.get("saved_model"):
+            pexec_ = load_model(args.get("saved_model"))
+
+
+        elif args.get("model_class"):
+            ##### Class approach
+            pexec_ = pexec(**args_pexec)
+        else:
+            #### Functional approach
+            # dfout = pexec(dfin, **args)
+            from sklearn.preprocessing import FunctionTransformer
+            pexec_ = FunctionTransformer(pexec, kw_args=args_pexec, validate=False)
+
+        pexec_.fit(dfin)
+        dfout = pexec_.transform(dfin)
+
+        dfin = dfout
+        if checkpoint:
+            pipe_checkpoint(dfout, {'out_path': out_path, 'type': 'pandas'})
+            pipe_checkpoint(pexec_, {'out_path': out_path, 'type': 'model'})
+
+
+  def get_output(self, key="") :
+     pass 
+
+
+
+  def get_checkpoint(self) :
+     #### Get the path of checkpoint
+     """
+        checkpoint['data'] :
+        checkpoint['model_path'] :
+
+
+     """
+
+
+  def get_model_path(self) :
+
+     return self.model_path_list  
+
+
+
+
+
+
 def pipe_run_fit(pipe_list, in_pars, out_pars, compute_pars=None, checkpoint=True, **kw):
     """
       Save the processsor state
