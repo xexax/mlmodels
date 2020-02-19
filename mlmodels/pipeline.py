@@ -66,6 +66,21 @@ def pd_na_values(df, cols=None, default=0.0, **kw):
 
     return df
 
+def generate_data(df, num_data=0, means=[], cov=[[1, 0], [0, 1]]):
+    import numpy as np
+    means = means
+    cov = cov
+    N = num_data
+    for idx, m in enumerate(means):
+        x = np.random.multivariate_normal(m, cov, N)
+        if idx == 0:
+            X = x
+        else:
+            X = np.concatenate((X, x), axis=0)
+
+    label = np.asarray([0] * N + [1] * N + [2] * N).T
+
+    return X, label
 
 ###################################################################################################
 def pd_concat(df1, df2, colid1):
@@ -158,6 +173,7 @@ class Pipe(object):
 
             dfin = dfout
             if args.get("checkpoint", True):
+                print("????: ", dfout)
                 pipe_checkpoint(dfout, {'out_path': out_file, 'type': args.get('type', "pandas")})
 
     def get_output(self, key=""):
@@ -203,10 +219,10 @@ def pipe_run_inference(pipe_list, in_pars, out_pars, compute_pars=None, checkpoi
     return dfout
 
 
-def pipe_checkpoint(df, out_path, **kw):
+def pipe_checkpoint(df, **kw):
     if kw.get("type") == "pandas":
         import pickle
-        with open(out_path, 'wb') as f:
+        with open(kw["out_path"], 'wb') as f:
             pickle.dump(df, f)
     elif kw.get("type") == "model":
         pass
@@ -265,6 +281,15 @@ def get_params(choice="", data_path="dataset/", config_mode="test", **kw):
                      ("02_onehot_encoder", OneHotEncoder, {}, {"model_class": True}),
                      ("03_SVD", TruncatedSVD, {"n_components": 1}, {"model_class": True}),
                      ]
+    elif choice == "cluster":
+        in_pars = {"num_data": 500, "means": [[2, 2], [8, 3], [3, 6]], "cov": [[1, 0], [0, 1]]}
+
+        out_path = f"{os.getcwd()}/ztest/pipeline_{choice}/"
+        out_pars = {"out_path": out_path}
+
+        ### Pipeline cluster
+        pipe_list = [("00_Load_data", generate_data, in_pars, {}),
+                     ]
     else: raise Exception(f"Not support {choice} yet!")
     return pipe_list, in_pars, out_pars, compute_pars
 
@@ -295,3 +320,4 @@ if __name__ == '__main__':
     VERBOSE = True
     test(pars_choice="colnum")
     test(pars_choice="colcat")
+    test(pars_choice="cluster")
