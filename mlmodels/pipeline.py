@@ -120,13 +120,13 @@ def pipe_load(df, **in_pars):
 
 
 class Pipe(object):
-    def __init__(self, pipe_list, in_pars, out_pars, compute_pars=None, checkpoint=True, **kw):
+    def __init__(self, pipe_list, in_pars, out_pars, compute_pars=None, **kw):
 
         self.pipe_list = pipe_list
         self.in_pars = in_pars
         self.out_pars = out_pars
         self.compute_pars = compute_pars
-        self.checkpoint = checkpoint
+        self.kw = kw
 
     def run(self):
         if not self.pipe_list: raise Exception("Need init pipe list before running!")
@@ -157,9 +157,8 @@ class Pipe(object):
             dfout = pexec_.transform(dfin)
 
             dfin = dfout
-            if self.checkpoint:
-                pipe_checkpoint(dfout, {'out_path': out_path, 'type': 'pandas'})
-                pipe_checkpoint(pexec_, {'out_path': out_path, 'type': 'model'})
+            if args.get("checkpoint", True):
+                pipe_checkpoint(dfout, {'out_path': out_file, 'type': args.get('type', "pandas")})
 
     def get_output(self, key=""):
         pass
@@ -176,51 +175,6 @@ class Pipe(object):
     def get_model_path(self):
 
         return self.model_path_list
-
-
-def pipe_run_fit(pipe_list, in_pars, out_pars, compute_pars=None, checkpoint=True, **kw):
-    """
-      Save the processsor state
-    :return:
-
-     args: Meta arguments
-
-     args_pexec : process argument
-
-
-    """
-    log('Start execution')
-    dfin = None
-    for (pname, pexec, args, args_pexec) in pipe_list:
-        out_path = out_pars['out_path'] + f"/{pname}/"
-        out_file = out_path + f"/dfout.pkl"
-
-        log(pname, pexec, out_file)
-        os.makedirs(out_path, exist_ok=True)
-
-        #######
-        if args.get("saved_model"):
-            pexec_ = load_model(args.get("saved_model"))
-
-
-        elif args.get("model_class"):
-            ##### Class approach
-            pexec_ = pexec(**args_pexec)
-        else:
-            #### Functional approach
-            # dfout = pexec(dfin, **args)
-            from sklearn.preprocessing import FunctionTransformer
-            pexec_ = FunctionTransformer(pexec, kw_args=args_pexec, validate=False)
-
-        pexec_.fit(dfin)
-        dfout = pexec_.transform(dfin)
-
-        dfin = dfout
-        if checkpoint:
-            pipe_checkpoint(dfout, {'out_path': out_path, 'type': 'pandas'})
-            pipe_checkpoint(pexec_, {'out_path': out_path, 'type': 'model'})
-
-    return dfout
 
 
 def pipe_run_inference(pipe_list, in_pars, out_pars, compute_pars=None, checkpoint=True, **kw):
@@ -250,8 +204,12 @@ def pipe_run_inference(pipe_list, in_pars, out_pars, compute_pars=None, checkpoi
 
 
 def pipe_checkpoint(df, out_path, **kw):
-    if kw.get("saved_model"):   df.to_pickle(out_path)
-
+    if kw.get("type") == "pandas":
+        import pickle
+        with open(out_path, 'wb') as f:
+            pickle.dump(df, f)
+    elif kw.get("type") == "model":
+        pass
 
 def load_model(path):
     return pickle.load(open(path, mode='b'))
@@ -274,8 +232,7 @@ def test(data_path="/dataset/", pars_choice="json"):
 
                }
 
-    out_pars = {"out_path": out_path
-                }
+    out_pars = {"out_path": out_path}
 
     compute_pars = {"cpu": True}
 
@@ -285,9 +242,8 @@ def test(data_path="/dataset/", pars_choice="json"):
     ### Pipeline colnum
     in_pars['in_path'] = file_list['colnum']
     pipe_list = [("00_Load_data", pipe_load, in_pars, {}),
-                 ("01_NA_values", pd_na_values, {"default": 0.0}, {"model_class": None}),
+                 ("01_NA_values", pd_na_values, {"default": 0.0}, {"model_class": False}),
                  ("02_SVD", TruncatedSVD, {"n_components": 1}, {"model_class": True}),
-                 ("03_save", pipe_checkpoint, {"out_path": out_path}, {}),
                  ]
 
     pipe_colnum = Pipe(pipe_list, in_pars, out_pars, compute_pars)
@@ -296,7 +252,7 @@ def test(data_path="/dataset/", pars_choice="json"):
     ### Pipeline colcat
     in_pars['in_path'] = file_list['colcat']
     pipe_list = [("00_Load_data", pipe_load, in_pars, {}),
-                 ("01_NA_values", pd_na_values, {"default": 0.0}, {"model_class": None}),
+                 ("01_NA_values", pd_na_values, {"default": 0.0}, {"model_class": False}),
                  ("02_onehot_encoder", OneHotEncoder, {}, {"model_class": True}),
                  ("03_SVD", TruncatedSVD, {"n_components": 1}, {"model_class": True}),
                  ]
