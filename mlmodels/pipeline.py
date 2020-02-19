@@ -82,6 +82,11 @@ def generate_data(df, num_data=0, means=[], cov=[[1, 0], [0, 1]]):
 
     return X, label
 
+def drop_cols(df, cols=None, **kw):
+    for t in cols:
+        df.drop(t, axis=1)
+    return df
+
 ###################################################################################################
 def pd_concat(df1, df2, colid1):
     df3 = df1.join(df2.set_index(colid), on=colid, how="left")
@@ -173,8 +178,7 @@ class Pipe(object):
 
             dfin = dfout
             if args.get("checkpoint", True):
-                print("????: ", dfout)
-                pipe_checkpoint(dfout, {'out_path': out_file, 'type': args.get('type', "pandas")})
+                pipe_checkpoint(dfout, **{'out_path': out_file, 'type': args.get('type', "pandas")})
 
     def get_output(self, key=""):
         pass
@@ -214,7 +218,7 @@ def pipe_run_inference(pipe_list, in_pars, out_pars, compute_pars=None, checkpoi
 
         dfin = dfout
         if checkpoint:
-            pipe_checkpoint(dfout, {'out_path': out_file, 'type': 'pandas'})
+            pipe_checkpoint(dfout, **{'out_path': out_file, 'type': 'pandas'})
 
     return dfout
 
@@ -282,13 +286,19 @@ def get_params(choice="", data_path="dataset/", config_mode="test", **kw):
                      ("03_SVD", TruncatedSVD, {"n_components": 1}, {"model_class": True}),
                      ]
     elif choice == "cluster":
-        in_pars = {"num_data": 500, "means": [[2, 2], [8, 3], [3, 6]], "cov": [[1, 0], [0, 1]]}
+        from sklearn.preprocessing import StandardScaler
+        from sklearn.decomposition import PCA
+        root = os_package_root_path(__file__, 0)
+        in_pars = {"in_path": f"{root}/{data_path}/wine.data.csv"}
 
         out_path = f"{os.getcwd()}/ztest/pipeline_{choice}/"
         out_pars = {"out_path": out_path}
 
         ### Pipeline cluster
-        pipe_list = [("00_Load_data", generate_data, in_pars, {}),
+        pipe_list = [("00_Load_data", pipe_load, in_pars, {}),
+                     ("01_Drop_labels", drop_cols, {"cols": ["Class"]}, {"model_class": False}),
+                     ("02_Standarlize", StandardScaler, {}, {"model_class": True}),
+                     ("03_PCA", PCA, {"n_components": None}, {"model_class": True}),
                      ]
     else: raise Exception(f"Not support {choice} yet!")
     return pipe_list, in_pars, out_pars, compute_pars
