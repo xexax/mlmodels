@@ -211,6 +211,7 @@ def pipe_checkpoint(df, out_path, **kw):
     elif kw.get("type") == "model":
         pass
 
+
 def load_model(path):
     return pickle.load(open(path, mode='b'))
 
@@ -219,45 +220,64 @@ def save_model(model, path):
     pickle.save(model, open(path, mode='b'))
 
 
-###################################################################################################
-def test(data_path="/dataset/", pars_choice="json"):
-    ### Local test
-    root = os_package_root_path(__file__, 0)
-    out_path = f"{os.getcwd()}/ztest/pipeline_01/"
-    log("#### Loading params   ##############################################")
-    in_pars = {"in_path": f"{root}/{data_path}/movielens_sample.txt",
-               "colid": "user_id",
-               "col_group": {"colnum": ["rating", "movie_id", "age"],
-                             "colcat": ["genres", "gender"]}
-
-               }
-
-    out_pars = {"out_path": out_path}
-
+def get_params(choice="", data_path="dataset/", config_mode="test", **kw):
     compute_pars = {"cpu": True}
+    if choice == "colnum":
+        root = os_package_root_path(__file__, 0)
+        in_pars = {"in_path": f"{root}/{data_path}/movielens_sample.txt",
+                   "colid": "user_id",
+                   "col_group": {"colnum": ["rating", "movie_id", "age"],
+                                 "colcat": ["genres", "gender"]}
 
-    ### Split data
-    file_list = pipe_split(in_pars, out_pars, compute_pars)
+                   }
 
-    ### Pipeline colnum
-    in_pars['in_path'] = file_list['colnum']
-    pipe_list = [("00_Load_data", pipe_load, in_pars, {}),
-                 ("01_NA_values", pd_na_values, {"default": 0.0}, {"model_class": False}),
-                 ("02_SVD", TruncatedSVD, {"n_components": 1}, {"model_class": True}),
-                 ]
+        out_path = f"{os.getcwd()}/ztest/pipeline_{choice}/"
+        out_pars = {"out_path": out_path}
 
-    pipe_colnum = Pipe(pipe_list, in_pars, out_pars, compute_pars)
-    pipe_colnum.run()
+        ### Split data
+        file_list = pipe_split(in_pars, out_pars, compute_pars)
 
-    ### Pipeline colcat
-    in_pars['in_path'] = file_list['colcat']
-    pipe_list = [("00_Load_data", pipe_load, in_pars, {}),
-                 ("01_NA_values", pd_na_values, {"default": 0.0}, {"model_class": False}),
-                 ("02_onehot_encoder", OneHotEncoder, {}, {"model_class": True}),
-                 ("03_SVD", TruncatedSVD, {"n_components": 1}, {"model_class": True}),
-                 ]
-    pipe_colcat = Pipe(pipe_list, in_pars, out_pars, compute_pars)
-    pipe_colcat.run()
+        ### Pipeline colnum
+        in_pars['in_path'] = file_list['colnum']
+        pipe_list = [("00_Load_data", pipe_load, in_pars, {}),
+                     ("01_NA_values", pd_na_values, {"default": 0.0}, {"model_class": False}),
+                     ("02_SVD", TruncatedSVD, {"n_components": 1}, {"model_class": True}),
+                     ]
+    elif choice == "colcat":
+        root = os_package_root_path(__file__, 0)
+        in_pars = {"in_path": f"{root}/{data_path}/movielens_sample.txt",
+                   "colid": "user_id",
+                   "col_group": {"colnum": ["rating", "movie_id", "age"],
+                                 "colcat": ["genres", "gender"]}
+
+                   }
+
+        out_path = f"{os.getcwd()}/ztest/pipeline_{choice}/"
+        out_pars = {"out_path": out_path}
+
+        ### Split data
+        file_list = pipe_split(in_pars, out_pars, compute_pars)
+
+        ### Pipeline colnum
+        in_pars['in_path'] = file_list['colcat']
+        pipe_list = [("00_Load_data", pipe_load, in_pars, {}),
+                     ("01_NA_values", pd_na_values, {"default": 0.0}, {"model_class": False}),
+                     ("02_onehot_encoder", OneHotEncoder, {}, {"model_class": True}),
+                     ("03_SVD", TruncatedSVD, {"n_components": 1}, {"model_class": True}),
+                     ]
+    else: raise Exception(f"Not support {choice} yet!")
+    return pipe_list, in_pars, out_pars, compute_pars
+
+
+###################################################################################################
+def test(data_path="/dataset/", pars_choice="colnum"):
+    ### get params
+    log("#### Loading params   ##############################################")
+    pipe_list, in_pars, out_pars, compute_pars = get_params(pars_choice, data_path=data_path)
+
+    ## Pipeline
+    pipe = Pipe(pipe_list, in_pars, out_pars, compute_pars)
+    pipe.run()
 
     log("#### save the trained model  #######################################")
     # save(model, data_pars["modelpath"])
@@ -273,4 +293,5 @@ def test(data_path="/dataset/", pars_choice="json"):
 
 if __name__ == '__main__':
     VERBOSE = True
-    test(pars_choice="json")
+    test(pars_choice="colnum")
+    test(pars_choice="colcat")
