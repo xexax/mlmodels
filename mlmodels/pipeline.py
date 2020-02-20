@@ -34,6 +34,7 @@ import os
 
 import pandas as pd
 from sklearn.decomposition import TruncatedSVD
+from sklearn.preprocessing import OneHotEncoder
 
 
 ####################################################################################################
@@ -65,20 +66,26 @@ def pd_na_values(df, cols=None, default=0.0, **kw):
 
     return df
 
+def generate_data(df, num_data=0, means=[], cov=[[1, 0], [0, 1]]):
+    import numpy as np
+    means = means
+    cov = cov
+    N = num_data
+    for idx, m in enumerate(means):
+        x = np.random.multivariate_normal(m, cov, N)
+        if idx == 0:
+            X = x
+        else:
+            X = np.concatenate((X, x), axis=0)
 
-def TruncatedSVD_fun(df, n_components, **kw):
-    svd = TruncatedSVD(n_components=n_components, n_iter=7, random_state=42)
-    return svd.fit_transform(df.values)
+    label = np.asarray([0] * N + [1] * N + [2] * N).T
 
+    return X, label
 
-def onehot_encoder(df, cols=None, **kw):
-    from sklearn.preprocessing import LabelEncoder
-    le = LabelEncoder()
-    cols = cols if cols is not None else list(df.columns)
-    for idx, col in enumerate(cols):
-        df[col] = le.fit_transform(df[col])
+def drop_cols(df, cols=None, **kw):
+    for t in cols:
+        df.drop(t, axis=1)
     return df
-
 
 ###################################################################################################
 def pd_concat(df1, df2, colid1):
@@ -132,117 +139,62 @@ def pipe_load(df, **in_pars):
     return df
 
 
+class Pipe(object):
+    def __init__(self, pipe_list, in_pars, out_pars, compute_pars=None, **kw):
 
-class pipe(Object) :
+        self.pipe_list = pipe_list
+        self.in_pars = in_pars
+        self.out_pars = out_pars
+        self.compute_pars = compute_pars
+        self.kw = kw
 
-  def __init__(self, pipe_list, in_pars, out_pars, compute_pars=None, checkpoint=True, **kw):
+    def run(self):
+        if not self.pipe_list: raise Exception("Need init pipe list before running!")
+        log('Start execution')
+        dfin = None
+        for (pname, pexec, args_pexec, args) in self.pipe_list:
+            out_path = self.out_pars['out_path'] + f"/{pname}/"
+            out_file = out_path + f"/dfout.pkl"
 
-     self.pipe_list = pipe_list
-     self.in_pars = in_pars
+            log(pname, pexec, out_file)
+            os.makedirs(out_path, exist_ok=True)
 
-
-
-
-  def run(self) :
-    log('Start execution')
-    dfin = None
-    for (pname, pexec, args, args_pexec) in pipe_list:
-        out_path = out_pars['out_path'] + f"/{pname}/"
-        out_file = out_path + f"/dfout.pkl"
-
-        log(pname, pexec, out_file)
-        os.makedirs( out_path, exist_ok=True)
-
-        #######
-        if args.get("saved_model"):
-            pexec_ = load_model(args.get("saved_model"))
-
-
-        elif args.get("model_class"):
-            ##### Class approach
-            pexec_ = pexec(**args_pexec)
-        else:
-            #### Functional approach
-            # dfout = pexec(dfin, **args)
-            from sklearn.preprocessing import FunctionTransformer
-            pexec_ = FunctionTransformer(pexec, kw_args=args_pexec, validate=False)
-
-        pexec_.fit(dfin)
-        dfout = pexec_.transform(dfin)
-
-        dfin = dfout
-        if checkpoint:
-            pipe_checkpoint(dfout, {'out_path': out_path, 'type': 'pandas'})
-            pipe_checkpoint(pexec_, {'out_path': out_path, 'type': 'model'})
+            #######
+            if args.get("saved_model"):
+                pexec_ = load_model(args.get("saved_model"))
 
 
-  def get_output(self, key="") :
-     pass 
+            elif args.get("model_class"):
+                ##### Class approach
+                pexec_ = pexec(**args_pexec)
+            else:
+                #### Functional approach
+                # dfout = pexec(dfin, **args)
+                from sklearn.preprocessing import FunctionTransformer
+                pexec_ = FunctionTransformer(pexec, kw_args=args_pexec, validate=False)
+
+            pexec_.fit(dfin)
+            dfout = pexec_.transform(dfin)
+
+            dfin = dfout
+            if args.get("checkpoint", True):
+                pipe_checkpoint(dfout, **{'out_path': out_file, 'type': args.get('type', "pandas")})
+
+    def get_output(self, key=""):
+        pass
+
+    def get_checkpoint(self):
+        #### Get the path of checkpoint
+        """
+           checkpoint['data'] :
+           checkpoint['model_path'] :
 
 
+        """
 
-  def get_checkpoint(self) :
-     #### Get the path of checkpoint
-     """
-        checkpoint['data'] :
-        checkpoint['model_path'] :
+    def get_model_path(self):
 
-
-     """
-
-
-  def get_model_path(self) :
-
-     return self.model_path_list  
-
-
-
-
-
-
-def pipe_run_fit(pipe_list, in_pars, out_pars, compute_pars=None, checkpoint=True, **kw):
-    """
-      Save the processsor state
-    :return:
-
-     args: Meta arguments
-
-     args_pexec : process argument
-
-
-    """
-    log('Start execution')
-    dfin = None
-    for (pname, pexec, args, args_pexec) in pipe_list:
-        out_path = out_pars['out_path'] + f"/{pname}/"
-        out_file = out_path + f"/dfout.pkl"
-
-        log(pname, pexec, out_file)
-        os.makedirs( out_path, exist_ok=True)
-
-        #######
-        if args.get("saved_model"):
-            pexec_ = load_model(args.get("saved_model"))
-
-
-        elif args.get("model_class"):
-            ##### Class approach
-            pexec_ = pexec(**args_pexec)
-        else:
-            #### Functional approach
-            # dfout = pexec(dfin, **args)
-            from sklearn.preprocessing import FunctionTransformer
-            pexec_ = FunctionTransformer(pexec, kw_args=args_pexec, validate=False)
-
-        pexec_.fit(dfin)
-        dfout = pexec_.transform(dfin)
-
-        dfin = dfout
-        if checkpoint:
-            pipe_checkpoint(dfout, {'out_path': out_path, 'type': 'pandas'})
-            pipe_checkpoint(pexec_, {'out_path': out_path, 'type': 'model'})
-
-    return dfout
+        return self.model_path_list
 
 
 def pipe_run_inference(pipe_list, in_pars, out_pars, compute_pars=None, checkpoint=True, **kw):
@@ -252,7 +204,7 @@ def pipe_run_inference(pipe_list, in_pars, out_pars, compute_pars=None, checkpoi
     """
     log('Start execution')
     dfin = None
-    for (pname, pexec, args, args_pexec ) in pipe_list:
+    for (pname, pexec, args, args_pexec) in pipe_list:
         out_file = out_pars['out_path'] + f"/{pname}/dfout.pkl"
         log(pname, pexec, out_file)
         os.makedirs(out_pars['out_path'] + f"/{pname}/", exist_ok=True)
@@ -266,13 +218,18 @@ def pipe_run_inference(pipe_list, in_pars, out_pars, compute_pars=None, checkpoi
 
         dfin = dfout
         if checkpoint:
-            pipe_checkpoint(dfout, {'out_path': out_file, 'type': 'pandas'})
+            pipe_checkpoint(dfout, **{'out_path': out_file, 'type': 'pandas'})
 
     return dfout
 
 
-def pipe_checkpoint(df, out_path, **kw):
-    if kw.get("saved_model"):   df.to_pickle(out_path)
+def pipe_checkpoint(df, **kw):
+    if kw.get("type") == "pandas":
+        import pickle
+        with open(kw["out_path"], 'wb') as f:
+            pickle.dump(df, f)
+    elif kw.get("type") == "model":
+        pass
 
 
 def load_model(path):
@@ -283,51 +240,79 @@ def save_model(model, path):
     pickle.save(model, open(path, mode='b'))
 
 
-###################################################################################################
-def test(data_path="/dataset/", pars_choice="json"):
-    ### Local test
-    root = os_package_root_path(__file__, 0)
-    out_path = f"{os.getcwd()}/ztest/pipeline_01/"
-    log("#### Loading params   ##############################################")
-    in_pars = {"in_path": f"{root}/{data_path}/movielens_sample.txt",
-               "colid": "user_id",
-               "col_group": {"colnum": ["rating", "movie_id", "age"],
-                             "colcat": ["genres", "gender"]}
-
-               }
-
-    out_pars = {"out_path": out_path
-                }
-
+def get_params(choice="", data_path="dataset/", config_mode="test", **kw):
     compute_pars = {"cpu": True}
+    if choice == "colnum":
+        root = os_package_root_path(__file__, 0)
+        in_pars = {"in_path": f"{root}/{data_path}/movielens_sample.txt",
+                   "colid": "user_id",
+                   "col_group": {"colnum": ["rating", "movie_id", "age"],
+                                 "colcat": ["genres", "gender"]}
 
-    ### Split data
-    file_list = pipe_split(in_pars, out_pars, compute_pars)
-    print("=== ", file_list)
-    
-    ### Pipeline colnum
-    in_pars['in_path'] = file_list['colnum']
-    pipe_list = [ ("00_Load_data", pipe_load, in_pars,  {} ),
-                  ("01_NA_values", pd_na_values,    {"default": 0.0},      {"model_class": None }  ),
-                  ("02_SVD",       TruncatedSVD,    {"n_components": 1},   {"model_class": True }  ),
-                  ("03_save",      pipe_checkpoint, {"out_path": out_path}, {}   ),
-                ]
+                   }
 
-    pipe_run_fit(pipe_list, in_pars, out_pars, compute_pars)
+        out_path = f"{os.getcwd()}/ztest/pipeline_{choice}/"
+        out_pars = {"out_path": out_path}
+
+        ### Split data
+        file_list = pipe_split(in_pars, out_pars, compute_pars)
+
+        ### Pipeline colnum
+        in_pars['in_path'] = file_list['colnum']
+        pipe_list = [("00_Load_data", pipe_load, in_pars, {}),
+                     ("01_NA_values", pd_na_values, {"default": 0.0}, {"model_class": False}),
+                     ("02_SVD", TruncatedSVD, {"n_components": 1}, {"model_class": True}),
+                     ]
+    elif choice == "colcat":
+        root = os_package_root_path(__file__, 0)
+        in_pars = {"in_path": f"{root}/{data_path}/movielens_sample.txt",
+                   "colid": "user_id",
+                   "col_group": {"colnum": ["rating", "movie_id", "age"],
+                                 "colcat": ["genres", "gender"]}
+
+                   }
+
+        out_path = f"{os.getcwd()}/ztest/pipeline_{choice}/"
+        out_pars = {"out_path": out_path}
+
+        ### Split data
+        file_list = pipe_split(in_pars, out_pars, compute_pars)
+
+        ### Pipeline colnum
+        in_pars['in_path'] = file_list['colcat']
+        pipe_list = [("00_Load_data", pipe_load, in_pars, {}),
+                     ("01_NA_values", pd_na_values, {"default": 0.0}, {"model_class": False}),
+                     ("02_onehot_encoder", OneHotEncoder, {}, {"model_class": True}),
+                     ("03_SVD", TruncatedSVD, {"n_components": 1}, {"model_class": True}),
+                     ]
+    elif choice == "cluster":
+        from sklearn.preprocessing import StandardScaler
+        from sklearn.decomposition import PCA
+        root = os_package_root_path(__file__, 0)
+        in_pars = {"in_path": f"{root}/{data_path}/wine.data.csv"}
+
+        out_path = f"{os.getcwd()}/ztest/pipeline_{choice}/"
+        out_pars = {"out_path": out_path}
+
+        ### Pipeline cluster
+        pipe_list = [("00_Load_data", pipe_load, in_pars, {}),
+                     ("01_Drop_labels", drop_cols, {"cols": ["Class"]}, {"model_class": False}),
+                     ("02_Standarlize", StandardScaler, {}, {"model_class": True}),
+                     ("03_PCA", PCA, {"n_components": None}, {"model_class": True}),
+                     ]
+    else: raise Exception(f"Not support {choice} yet!")
+    return pipe_list, in_pars, out_pars, compute_pars
 
 
+###################################################################################################
+def test(data_path="/dataset/", pars_choice="colnum"):
+    ### get params
+    log("#### Loading params   ##############################################")
+    pipe_list, in_pars, out_pars, compute_pars = get_params(pars_choice, data_path=data_path)
 
-
-    ### Pipeline colcat
-    in_pars['in_path'] = file_list['colcat']
-    pipe_list = [("00_Load_data",      pipe_load, in_pars, {} ),
-                 ("01_NA_values",      pd_na_values,       {"default": 0.0},      {"model_class": None }  ),
-                 ("02_onehot_encoder", onehot_encoder,     {"cols": in_pars["col_group"]["colcat"]}, {"model_class": True }   ),
-                 ("02_SVD",            TruncatedSVD,       {"n_components": 1},   {"model_class": True }  ),
-                 ]
-    pipe_run_fit(pipe_list, in_pars, out_pars, compute_pars)
-
-
+    ## Pipeline
+    pipe = Pipe(pipe_list, in_pars, out_pars, compute_pars)
+    pipe.run()
 
     log("#### save the trained model  #######################################")
     # save(model, data_pars["modelpath"])
@@ -343,8 +328,6 @@ def test(data_path="/dataset/", pars_choice="json"):
 
 if __name__ == '__main__':
     VERBOSE = True
-    test(pars_choice="json")
-
-
-
-
+    test(pars_choice="colnum")
+    test(pars_choice="colcat")
+    test(pars_choice="cluster")
