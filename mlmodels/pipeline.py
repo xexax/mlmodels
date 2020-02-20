@@ -31,6 +31,7 @@ ColumnTransformer(transformers=[('city_category', OneHotEncoder(dtype='int'),
 """
 
 import os
+import pickle
 
 import pandas as pd
 from sklearn.decomposition import TruncatedSVD
@@ -66,6 +67,7 @@ def pd_na_values(df, cols=None, default=0.0, **kw):
 
     return df
 
+
 def generate_data(df, num_data=0, means=[], cov=[[1, 0], [0, 1]]):
     import numpy as np
     means = means
@@ -82,10 +84,12 @@ def generate_data(df, num_data=0, means=[], cov=[[1, 0], [0, 1]]):
 
     return X, label
 
+
 def drop_cols(df, cols=None, **kw):
     for t in cols:
         df.drop(t, axis=1)
     return df
+
 
 ###################################################################################################
 def pd_concat(df1, df2, colid1):
@@ -147,7 +151,7 @@ class Pipe(object):
         self.out_pars = out_pars
         self.compute_pars = compute_pars
         self.kw = kw
-        
+
         ### Track
         self.fitted_pipe_list = []
 
@@ -180,14 +184,16 @@ class Pipe(object):
 
             dfin = dfout
             # if args.get("checkpoint", True):              
-            pipe_checkpoint(dfout,  **{'out_path': out_file, 'type': args.get('type', "pandas")})
-            pipe_checkpoint(pexec_, **{'out_path': out_path + "/model.pkl", 'type': args.get('type', "model")})
-            self.fitted_pipe_list.append( ( pname, { 'model_path' : out_path + "/model.pkl", 'train_data' : out_file                                                       
-                                                   }, args_pexec) )
-                
+            pipe_checkpoint(dfout, **{'out_path': out_file, 'type': args.get('type', "pandas")})
+            pipe_checkpoint(pexec_, **{'out_path': out_path + "/model.pkl",
+                                       'type': args.get('type', "model")})
+            self.fitted_pipe_list.append(
+                (pname, {'model_path': out_path + "/model.pkl", 'train_data': out_file
+                         }, args_pexec))
+
     def get_fitted_pipe_list(self, key=""):
-        return self.fitted_pipe_list           
-   
+        return self.fitted_pipe_list
+
     def get_checkpoint(self):
         #### Get the path of checkpoint
         """
@@ -210,9 +216,9 @@ def pipe_run_inference(pipe_list, in_pars, out_pars, compute_pars=None, checkpoi
         out_file = out_pars['out_path'] + f"/{pname}/dfout.pkl"
         os.makedirs(out_pars['out_path'] + f"/{pname}/", exist_ok=True)
         log(pname, pdict, out_file)
-        
+
         pexec_ = load_model(pdict.get("model_path"))
-        dfout = pexec_.transform(dfin)   ##### pexec_.fit(dfin)   ### No fit during inference
+        dfout = pexec_.transform(dfin)  ##### pexec_.fit(dfin)   ### No fit during inference
 
         dfin = dfout
         if checkpoint:
@@ -222,20 +228,19 @@ def pipe_run_inference(pipe_list, in_pars, out_pars, compute_pars=None, checkpoi
 
 
 def pipe_checkpoint(df, **kw):
-    import pickle
-    if kw.get("type") == "pandas":        
-        pickle.dump(df, open(kw["out_path"], 'wb') )
-    
+    if kw.get("type") == "pandas":
+        pickle.dump(df, open(kw["out_path"], 'wb'))
+
     elif kw.get("type") == "model":
-        pickle.dump(df, open(kw["out_path"], 'wb') )
+        pickle.dump(df, open(kw["out_path"], 'wb'))
 
 
 def load_model(path):
-    return pickle.load(open(path, mode='b'))
+    return pickle.load(open(path, mode='rb'))
 
 
 def save_model(model, path):
-    pickle.save(model, open(path, mode='b'))
+    pickle.save(model, open(path, mode='wb'))
 
 
 def get_params(choice="", data_path="dataset/", config_mode="test", **kw):
@@ -281,7 +286,7 @@ def get_params(choice="", data_path="dataset/", config_mode="test", **kw):
                      ("02_onehot_encoder", OneHotEncoder, {}, {"model_class": True}),
                      ("03_SVD", TruncatedSVD, {"n_components": 1}, {"model_class": True}),
                      ]
-    
+
     elif choice == "cluster":
         from sklearn.preprocessing import StandardScaler
         from sklearn.decomposition import PCA
@@ -297,7 +302,8 @@ def get_params(choice="", data_path="dataset/", config_mode="test", **kw):
                      ("02_Standarlize", StandardScaler, {}, {"model_class": True}),
                      ("03_PCA", PCA, {"n_components": None}, {"model_class": True}),
                      ]
-    else: raise Exception(f"Not support {choice} yet!")
+    else:
+        raise Exception(f"Not support {choice} yet!")
     return pipe_list, in_pars, out_pars, compute_pars
 
 
@@ -310,11 +316,10 @@ def test(data_path="/dataset/", pars_choice="colnum"):
     ### Simulate training at train time.
     pipe = Pipe(pipe_list, in_pars, out_pars, compute_pars)
     pipe.run()
-    
+
     ### Simulate Inference at test time
     pipe_list2 = pipe.get_fitted_pipe_list()
-    pipe_run_inference(pipe_list2,  in_pars, out_pars, compute_pars )
-    
+    pipe_run_inference(pipe_list2, in_pars, out_pars, compute_pars)
 
     log("#### save the trained model  #######################################")
     # save(model, data_pars["modelpath"])
@@ -333,5 +338,3 @@ if __name__ == '__main__':
     test(pars_choice="colnum")
     test(pars_choice="colcat")
     test(pars_choice="cluster")
-
-    
