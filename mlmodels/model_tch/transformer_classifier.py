@@ -23,10 +23,10 @@ from scipy.stats import pearsonr
 import numpy as np
 import torch
 from torch.utils.data import (DataLoader, RandomSampler, SequentialSampler,
-                              TensorDataset)
+                              SubsetRandomSampler,TensorDataset)
 
 from torch.utils.data.distributed import DistributedSampler
-from tqdm import tqdm_notebook, trange
+from tqdm import tqdm_notebook, trange, tqdm
 from tensorboardX import SummaryWriter
 
 
@@ -144,7 +144,10 @@ def get_dataset(task, tokenizer, evaluate=False):
 
 def fit(train_dataset, model, tokenizer):
     tb_writer        = SummaryWriter()
-    train_sampler    = RandomSampler(train_dataset)
+    torch.manual_seed(1)
+    random_indices = torch.randperm(len(train_dataset))[:args['num_samples']]
+    # train_sampler    = RandomSampler(train_dataset)
+    train_sampler    = SubsetRandomSampler(random_indices)
     train_dataloader = DataLoader(train_dataset, sampler=train_sampler, batch_size=args['train_batch_size'])
     
     t_total = len(train_dataloader) // args['gradient_accumulation_steps'] * args['num_train_epochs']
@@ -181,7 +184,7 @@ def fit(train_dataset, model, tokenizer):
     train_iterator = trange(int(args['num_train_epochs']), desc="Epoch")
     
     for _ in train_iterator:
-        epoch_iterator = tqdm_notebook(train_dataloader, desc="Iteration")
+        epoch_iterator = tqdm(train_dataloader, desc="Iteration")
         for step, batch in enumerate(epoch_iterator):
             model.train()
             batch  = tuple(t.to(device) for t in batch)
@@ -232,6 +235,8 @@ def fit(train_dataset, model, tokenizer):
                     model_to_save = model.module if hasattr(model, 'module') else model  # Take care of distributed/parallel training
                     model_to_save.save_pretrained(output_dir)
                     log("Saving model checkpoint to %s", output_dir)
+                    
+                
 
 
     return global_step, tr_loss / global_step
@@ -437,7 +442,7 @@ def test(data_path="dataset/", pars_choice=0):
     log("#### Loading dataset   #############################################")
     if args['do_train']:
         train_dataset = get_dataset(task, model.tokenizer)
-        global_step, tr_loss = fit(train_dataset, model, model.tokenizer)
+        global_step, tr_loss = fit(train_dataset, model.model, model.tokenizer)
         log(" global_step = %s, average loss = %s", global_step, tr_loss)
        
 
@@ -449,9 +454,9 @@ def test(data_path="dataset/", pars_choice=0):
                 os.makedirs(args['output_dir'])
         log("Saving model checkpoint to %s", args['output_dir'])
         
-        model_to_save = model.module if hasattr(model, 'module') else model  # Take care of distributed/parallel training
+        model_to_save = model.model.module if hasattr(model.model, 'module') else model.model  # Take care of distributed/parallel training
         model_to_save.save_pretrained(args['output_dir'])
-        tokenizer.save_pretrained(args['output_dir'])
+        model.tokenizer.save_pretrained(args['output_dir'])
         torch.save(args, os.path.join(args['output_dir'], 'training_args.bin')) 
 
 
@@ -490,7 +495,7 @@ if __name__ == '__main__':
     if os.path.exists(args['output_dir']) and os.listdir(args['output_dir']) and args['do_train'] and not args['overwrite_output_dir']:
       raise ValueError("Output directory ({}) already exists and is not empty. Use --overwrite_output_dir to overcome.".format(args['output_dir']))
 
-
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     test(pars_choice=0)
 
    
