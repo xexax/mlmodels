@@ -147,6 +147,9 @@ class Pipe(object):
         self.out_pars = out_pars
         self.compute_pars = compute_pars
         self.kw = kw
+        
+        ### Track
+        self.fitted_pipe_list = []
 
     def run(self):
         if not self.pipe_list: raise Exception("Need init pipe list before running!")
@@ -163,7 +166,6 @@ class Pipe(object):
             if args.get("saved_model"):
                 pexec_ = load_model(args.get("saved_model"))
 
-
             elif args.get("model_class"):
                 ##### Class approach
                 pexec_ = pexec(**args_pexec)
@@ -177,23 +179,23 @@ class Pipe(object):
             dfout = pexec_.transform(dfin)
 
             dfin = dfout
-            if args.get("checkpoint", True):
-                pipe_checkpoint(dfout, **{'out_path': out_file, 'type': args.get('type', "pandas")})
-
-    def get_output(self, key=""):
-        pass
-
+            # if args.get("checkpoint", True):              
+            pipe_checkpoint(dfout,  **{'out_path': out_file, 'type': args.get('type', "pandas")})
+            pipe_checkpoint(pexec_, **{'out_path': out_path + "/model.pkl", 'type': args.get('type', "model")})
+            self.fitted_pipe_list.append( ( pname, { 'model_path' : out_path + "/model.pkl", 'train_data' : out_file                                                       
+                                                   }, args_pexec) )
+                
+    def get_fitted_pipe_list(self, key=""):
+        return self.fitted_pipe_list           
+   
     def get_checkpoint(self):
         #### Get the path of checkpoint
         """
            checkpoint['data'] :
            checkpoint['model_path'] :
-
-
         """
 
     def get_model_path(self):
-
         return self.model_path_list
 
 
@@ -204,17 +206,13 @@ def pipe_run_inference(pipe_list, in_pars, out_pars, compute_pars=None, checkpoi
     """
     log('Start execution')
     dfin = None
-    for (pname, pexec, args, args_pexec) in pipe_list:
+    for (pname, pdict, args_pexec) in pipe_list:
         out_file = out_pars['out_path'] + f"/{pname}/dfout.pkl"
-        log(pname, pexec, out_file)
         os.makedirs(out_pars['out_path'] + f"/{pname}/", exist_ok=True)
-
-        #######
-        if args.get("saved_model"):
-            pexec_ = load_model(args.get("saved_model"))
-
-        pexec_.fit(dfin)
-        dfout = pexec_.transform(dfin)
+        log(pname, pdict, out_file)
+        
+        pexec_ = load_model(pdict.get("model_path"))
+        dfout = pexec_.transform(dfin)   ##### pexec_.fit(dfin)   ### No fit during inference
 
         dfin = dfout
         if checkpoint:
@@ -224,12 +222,12 @@ def pipe_run_inference(pipe_list, in_pars, out_pars, compute_pars=None, checkpoi
 
 
 def pipe_checkpoint(df, **kw):
-    if kw.get("type") == "pandas":
-        import pickle
-        with open(kw["out_path"], 'wb') as f:
-            pickle.dump(df, f)
+    import pickle
+    if kw.get("type") == "pandas":        
+        pickle.dump(df, open(kw["out_path"], 'wb') )
+    
     elif kw.get("type") == "model":
-        pass
+        pickle.dump(df, open(kw["out_path"], 'wb') )
 
 
 def load_model(path):
@@ -248,9 +246,7 @@ def get_params(choice="", data_path="dataset/", config_mode="test", **kw):
                    "colid": "user_id",
                    "col_group": {"colnum": ["rating", "movie_id", "age"],
                                  "colcat": ["genres", "gender"]}
-
                    }
-
         out_path = f"{os.getcwd()}/ztest/pipeline_{choice}/"
         out_pars = {"out_path": out_path}
 
@@ -285,6 +281,7 @@ def get_params(choice="", data_path="dataset/", config_mode="test", **kw):
                      ("02_onehot_encoder", OneHotEncoder, {}, {"model_class": True}),
                      ("03_SVD", TruncatedSVD, {"n_components": 1}, {"model_class": True}),
                      ]
+    
     elif choice == "cluster":
         from sklearn.preprocessing import StandardScaler
         from sklearn.decomposition import PCA
@@ -313,6 +310,9 @@ def test(data_path="/dataset/", pars_choice="colnum"):
     ## Pipeline
     pipe = Pipe(pipe_list, in_pars, out_pars, compute_pars)
     pipe.run()
+    
+    
+    
 
     log("#### save the trained model  #######################################")
     # save(model, data_pars["modelpath"])
@@ -331,3 +331,5 @@ if __name__ == '__main__':
     test(pars_choice="colnum")
     test(pars_choice="colcat")
     test(pars_choice="cluster")
+
+    
