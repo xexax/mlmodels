@@ -307,11 +307,13 @@ def test(data_path="/dataset/", pars_choice="colnum"):
     log("#### Loading params   ##############################################")
     pipe_list, in_pars, out_pars, compute_pars = get_params(pars_choice, data_path=data_path)
 
-    ## Pipeline
+    ### Simulate training at train time.
     pipe = Pipe(pipe_list, in_pars, out_pars, compute_pars)
     pipe.run()
     
-    
+    ### Simulate Inference at test time
+    pipe_list2 = pipe.get_fitted_pipe_list()
+    pipe_run_inference(pipe_list2,  in_pars, out_pars, compute_pars )
     
 
     log("#### save the trained model  #######################################")
