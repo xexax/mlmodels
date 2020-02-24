@@ -40,44 +40,56 @@ Install as editable package (ONLY dev branch)
 ## ② How to add a new model
 ### Source code structure as below
 - `docs`: documentation
-- `mlmodels`: contain interface wrapper with multiple platforms such as keras, gluon, tf and so on for hyper-parameters searching and also train and infer.
-    + `model_xxx`: separated folders for each platform with same interface defined in template folder
-    + `dataset`: store dataset files
+- `mlmodels`: interface wrapper for pytorch, keras, gluon, tf, transformer NLP for train, hyper-params searchi.
+    + `model_xxx`: folders for each platform with same interface defined in template folder
+    + `dataset`: store dataset files for test runs.
     + `template`: template interface wrapper which define common interfaces for whole platforms
     + `ztest`: testing output for each sample testing in `model_xxx`
 - `ztest`: testing output for each sample testing in `model_xxx`
 
 ###  How to define a custom model
-1. Create a folder inside `mlmodels` folder (should be named model_xxx as template)
-2. Create a file `mymodel.py` inside the created folder in step 1
+1. Create a file `mlmodels\model_XXXX\mymodel.py` , XXX: tch: pytorch, tf:tensorflow, keras:keras, ....
 - Declare below classes/functions in the created file:
 
       Class Model()                                                 :   Model definition
-            __init__(model_param)                                   :   
+            __init__(model_pars)                                    :   
                                   
       def fit(model, data_pars, model_pars, compute_pars, )         : Train the model
       def predict(model, sess, data_pars, compute_pars, out_pars )  : Predict the results
-      def metric(ypred, data_pars, compute_pars, out_pars )         : Measure the results
+      def metric(ytrue, ypred, yproba, data_pars, compute_pars, out_pars )         : Measure the results
 
-      def get_params()                                              : example of parameters of the model
+      def get_params()                                              : returnparameters of the model
       def get_dataset(data_pars)                                    : load dataset
       def test()                                                    : example running the model     
       def test2()                                                   : example running the model in global settings  
 
-      def save()                                                    : save the model
-      def load()                                                    : load the trained model
+      def save(model, path)                                         : save the model
+      def load(path)                                                : load the trained model
 
 
-- *Note* `Template` is available in mlmodels/template/model_XXXX.py
+- *Infos* 
+     model :         Model(model_pars), instance of Model() object
+     sess  :         Session for TF model.
+     model_pars :    dict containing info on model definition.
+     data_pars :     dict containing info on input data.
+     compute_pars :  dict containing info on model compute.
+     out_pars :      dict containing info on output folder.
 
 
+2. Write your code and create test() to test your code.
 
-3. Create JSON config file inside created folder in step 1
+- *Example* 
+    https://github.com/arita37/mlmodels/tree/dev/mlmodels/template
+    https://github.com/arita37/mlmodels/blob/dev/mlmodels/model_gluon/gluon_deepar.py
+    https://github.com/arita37/mlmodels/blob/dev/mlmodels/model_gluon/gluon_deepar.json
 
-4. Create test results folder to store result of testing functions
+
+3. Create JSON config file inside  /model_XXX/
+     mymodel.json
+
+
 
  
-
 #################################################################################################
 ## ③ CLI tools: package provide below tools
 - ml_models
@@ -247,9 +259,7 @@ source activate py36_tf13
 
 pip install tensorflow=1.13.1
 pip install  ipykernel spyder-kernels=0.* -y
-conda install  -c anaconda  tensorflow=1.13.1
-conda install -c anaconda scikit-learn pandas matplotlib seaborn -y
-conda install -c anaconda  ipykernel spyder-kernels=0.* -y
+
 ```
 
 
