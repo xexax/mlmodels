@@ -21,7 +21,7 @@
 
 
 #########################################################################################
-As u cannot create readthedocs for private repos, here are the steps to view the docs after merging the pull request
+cannot create readthedocs for private repos,view the docs after merging the pull request
 cd <clonedir>
 git clone git@github.com:arita37/da.git
 cd da
