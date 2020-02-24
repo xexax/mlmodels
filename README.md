@@ -5,7 +5,7 @@
 
 * Logic follows sklearn API: fit, predict, transform, metrics, save, load
 
-* Goal is re-usability of Jupyter code into Semi-Prod code with a minimal amount of code change ... 
+* Goal is to transform Jupyter code into Semi-Prod code with minimal code change ... 
 
 * Model list is available here : 
   https://github.com/arita37/mlmodels/blob/dev/README_model_list.md
