@@ -2,11 +2,11 @@
 
 
 * Lightweight Functional interface to wrap access to Deep Learning, ML models
-and Hyper-Parameter Search, cross platforms such as tensorflow, pytorch, gluon, keras,...
+and Hyper-Parameter Search, cross platforms such as Tensorflow, Pytorch, Gluon, Keras,...
 
 * Logic follows Scikit Learn API: fit, predict, transform, metrics, save, load
 
-* Goal is to facilitate POC script code to Semi-Prod code with a minimal amount of code refactoring ... *
+* Goal is to facilitate Jupyter script code to Semi-Prod code with a minimal amount of code refactoring ... *
 
 
 ```
