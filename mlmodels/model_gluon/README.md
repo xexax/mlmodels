@@ -1,6 +1,17 @@
 # Gluon models 
 
 
+requirements.txt
+  
+autogluon
+gluonts
+pandas
+matplotlib
+mxnet
+
+
+
+
 autogluon :
   automatic ML using Gluon : RForest, ...
 
