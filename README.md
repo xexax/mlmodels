@@ -13,7 +13,7 @@ and Hyper-Parameter Search, cross platforms such as tensorflow, pytorch, gluon, 
 #### Docs here:   https://mlmodels.readthedocs.io/en/latest/  (incomplete docs)
 ```
 
-#################################################################################################
+######################################################################################
 ## ① Installation
 Install as editable package (ONLY dev branch)
 
@@ -36,7 +36,7 @@ Install as editable package (ONLY dev branch)
     numexpr>=2.6.8 
     scikit-learn>=0.21.2
 
-#################################################################################################### 
+#######################################################################################
 ## ② How to add a new model
 ### Source code structure as below
 - `docs`: documentation
