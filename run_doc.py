@@ -90,7 +90,9 @@ folder = os_package_root_path() if folder is None else folder
 module_names = get_recursive_files(folder, r'/*model*//*model*/*.py' )                       
 
 
-des2 = """```Model list 
+des2 = """
+```
+Model list 
 
 
 """
@@ -100,7 +102,7 @@ for t in module_names :
     if "__init__.py" in t  :
       des2 = des2  + "\n\n"
     else  :    
-      if  not 'util' in  t :
+      if  not 'util' in  t and not 'preprocess' in t :
         des2 = des2 + str(t) + "\n" 
 
 des2 = des2 + """
