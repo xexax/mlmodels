@@ -23,7 +23,7 @@ try :
 except : pass
 
 ##### Version  #######################################################################
-version ='0.21.1'
+version ='0.22.1'
 print("version", version)
 """"
 with io.open(os.path.join(root, 'nlp_architect', 'version.py'), encoding='utf8') as f:
