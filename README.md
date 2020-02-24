@@ -1,12 +1,17 @@
 # mlmodels
 
 
-* Lightweight Functional interface to wrap access to Deep Learning, ML models
-and Hyper-Parameter Search, cross platforms such as Tensorflow, Pytorch, Gluon, Keras,...
+* Lightweight Functional interface to wrap access to Recent and State o Art Deep Learning, ML models and Hyper-Parameter Search, cross platforms such as Tensorflow, Pytorch, Gluon, Keras,...
 
-* Logic follows Scikit Learn API: fit, predict, transform, metrics, save, load
+* Logic follows sklearn API: fit, predict, transform, metrics, save, load
 
-* Goal is to facilitate Jupyter script code to Semi-Prod code with a minimal amount of code refactoring ... *
+* Goal is re-usability of Jupyter code into Semi-Prod code with a minimal amount of code change ... 
+
+* Model list is available here : 
+  https://github.com/arita37/mlmodels/blob/dev/README_model_list.md
+
+
+
 
 
 ```
