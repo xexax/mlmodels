@@ -68,13 +68,14 @@ Install as editable package (ONLY dev branch)
 
 
 - *Infos* 
+     ```
      model :         Model(model_pars), instance of Model() object
      sess  :         Session for TF model.
      model_pars :    dict containing info on model definition.
      data_pars :     dict containing info on input data.
      compute_pars :  dict containing info on model compute.
      out_pars :      dict containing info on output folder.
-
+     ```
 
 2. Write your code and create test() to test your code.
 
