@@ -19,6 +19,7 @@
 ```
 
 ######################################################################################
+
 ## ① Installation
 Install as editable package (ONLY dev branch)
 
@@ -42,6 +43,7 @@ Install as editable package (ONLY dev branch)
     scikit-learn>=0.21.2
 
 #######################################################################################
+
 ## ② How to add a new model
 ### Source code structure as below
 - `docs`: documentation
@@ -83,20 +85,87 @@ Install as editable package (ONLY dev branch)
      ```
 
 2. Write your code and create test() to test your code.
+- Declare model definition in Class Model()
+```python
+    self.model = DeepFM(linear_cols, dnn_cols, task=compute_pars['task']) # mlmodels/model_kera/01_deectr.py
+    # Model Parameters such as `linear_cols, dnn_cols` is obtained from function `get_params` which return `model_pars, data_pars, compute_pars, out_pars`
+```        
+- Implement pre-process data in function `get_dataset` which return data for both training and testing dataset
+Depend on type of dataset, we could separate function with datatype as below example
+```python    
+    if data_type == "criteo":
+        df, linear_cols, dnn_cols, train, test, target = _preprocess_criteo(df, **kw)
 
+    elif data_type == "movie_len":
+        df, linear_cols, dnn_cols, train, test, target = _preprocess_movielens(df, **kw)
+```
+- Call fit/predict with initialized model and dataset
+```python
+    # get dataset using function get_dataset
+    data, linear_cols, dnn_cols, train, test, target = get_dataset(**data_pars)
+    # fit data
+     model.model.fit(train_model_input, train[target].values,
+                        batch_size=m['batch_size'], epochs=m['epochs'], verbose=2,
+                        validation_split=m['validation_split'], )
+    # predict data
+    pred_ans = model.model.predict(test_model_input, batch_size= compute_pars['batch_size'])
+```
+- Calculate metric with predict output
+```python
+    # input of metrics is predicted output and ground truth data
+    def metrics(ypred, ytrue, data_pars, compute_pars=None, out_pars=None, **kwargs):
+```
 - *Example* 
     https://github.com/arita37/mlmodels/tree/dev/mlmodels/template
     https://github.com/arita37/mlmodels/blob/dev/mlmodels/model_gluon/gluon_deepar.py
     https://github.com/arita37/mlmodels/blob/dev/mlmodels/model_gluon/gluon_deepar.json
 
 
-3. Create JSON config file inside  /model_XXX/
-     mymodel.json
-
+3. Create JSON config file inside  /model_XXX/mymodel.json
+- Separate configure for staging development environment such as testing and production phase
+then for each staging, declare some specific parameters for model, dataset and also output
+- *Example*
+```json
+    {
+        "test": {
+            "model_pars": {
+                "learning_rate": 0.001,
+                "num_layers": 1,
+                "size": 6,
+                "size_layer": 128,
+                "output_size": 6,
+                "timestep": 4,
+                "epoch": 2
+            },
+            "data_pars": {
+                "data_path": "dataset/GOOG-year.csv",
+                "data_type": "pandas",
+                "size": [0, 0, 6],
+                "output_size": [0, 6]
+            },
+            "compute_pars": {
+                "distributed": "mpi",
+                "epoch": 10
+            },
+            "out_pars": {
+                "out_path": "dataset/",
+                "data_type": "pandas",
+                "size": [0, 0, 6],
+                "output_size": [0, 6]
+            }
+        },
+    
+        "prod": {
+            "model_pars": {},
+            "data_pars": {}
+        }
+    }
+```
 
 
  
 #######################################################################################
+
 ## ③ CLI tools: package provide below tools
 - ml_models
 - ml_optim    
@@ -163,7 +232,8 @@ ml_test
 
 
 
-###########################################################################################
+#######################################################################################
+
 ##④ Interface
 
 models.py 
@@ -197,7 +267,8 @@ optim.py
    Sometimes, data_pars is required to setup the model (ie CNN with image size...)
    
 
-#########################################################################################
+#######################################################################################
+
 ##⑤ Code sample
 ```python
 from mlmodels.models import module_load, data_loader, create_model, fit, predict, stats
@@ -223,8 +294,9 @@ model = load(folder)    #Create Model instance
 ypred = module.predict(model, module, data_pars, compute_pars)     # predict pipeline
 ```
 
-###############################################################################
-## ⑥ Naming convention
+#######################################################################################
+#
+# ⑥ Naming convention
 
 ### Function naming
 ```
@@ -257,6 +329,7 @@ coldate : for date columns
 coltext : for raw text columns
 ```
 
+#######################################################################################
 
 ##⑦ Conda install
 ```
