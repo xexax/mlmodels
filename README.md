@@ -184,12 +184,16 @@ ml_models --do
     predict     :  predict  using a pre-trained model and some data
     generate_config  :  generate config file from code source
     
+  ## --do fit  
   --model_uri     model_tf.1_lstm
   --save_folder   myfolder/
   --config_file   myfile.json
   --config_mode   "test"
-    
+
+
+  ## --do predict  
   --load_folder   mymodel_folder/
+
 
 ```
    
