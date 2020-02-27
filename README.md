@@ -183,6 +183,14 @@ ml_models --do
     fit         :  wrap fit generic m    ethod
     predict     :  predict  using a pre-trained model and some data
     generate_config  :  generate config file from code source
+    
+  --model_uri     model_tf.1_lstm
+  --save_folder   myfolder/
+  --config_file   myfile.json
+  --config_mode   "test"
+    
+  --load_folder   mymodel_folder/
+
 ```
    
 - Lightweight Functional interface to wrap Hyper-parameter Optimization `ml_optim`   :  mlmodels/optim.py
