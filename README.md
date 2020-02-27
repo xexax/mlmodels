@@ -56,7 +56,7 @@ Install as editable package (ONLY dev branch)
 - `ztest`: testing output for each sample testing in `model_xxx`
 
 ###  How to define a custom model
-####1. Create a file `mlmodels\model_XXXX\mymodel.py` , XXX: tch: pytorch, tf:tensorflow, keras:keras, .... 
+#### 1. Create a file `mlmodels\model_XXXX\mymodel.py` , XXX: tch: pytorch, tf:tensorflow, keras:keras, .... 
 - Declare below classes/functions in the created file:
 
       Class Model()                                                 :   Model definition
