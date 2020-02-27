@@ -85,7 +85,7 @@ Install as editable package (ONLY dev branch)
      out_pars :      dict containing info on output folder.
      ```
 
-** 2. Write your code and create test() to test your code.  **
+#### 2. Write your code and create test() to test your code.  **
 - Declare model definition in Class Model()
 ```python
     self.model = DeepFM(linear_cols, dnn_cols, task=compute_pars['task']) # mlmodels/model_kera/01_deectr.py
@@ -122,7 +122,7 @@ Depend on type of dataset, we could separate function with datatype as below exa
     https://github.com/arita37/mlmodels/blob/dev/mlmodels/model_gluon/gluon_deepar.json
 
 
-** 3. Create JSON config file inside  /model_XXX/mymodel.json  **
+#### 3. Create JSON config file inside  /model_XXX/mymodel.json  **
 - Separate configure for staging development environment such as testing and production phase
 then for each staging, declare some specific parameters for model, dataset and also output
 - *Example*
