@@ -2,6 +2,8 @@
 
 ###  Write use cases of mlmodels
 
+    USECASE.md
+
 
 ### Renormalize signature
 
