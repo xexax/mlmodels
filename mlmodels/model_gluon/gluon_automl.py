@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-AutGluon
+AutoGluon : Automatic ML using gluon platform.
 # First install package from terminal:  pip install mxnet autogluon
 https://autogluon.mxnet.io/tutorials/tabular_prediction/tabular-quickstart.html
 
@@ -146,57 +146,5 @@ if __name__ == '__main__':
     test(pars_choice="json")
     test(pars_choice="test01")
 
-"""
-
-
-
-from autogluon import TabularPrediction as task
-train_data = task.Dataset(file_path='https://autogluon.s3.amazonaws.com/datasets/Inc/train.csv')
-test_data = task.Dataset(file_path='https://autogluon.s3.amazonaws.com/datasets/Inc/test.csv')
-predictor = task.fit(train_data=train_data, label='class')
-performance = predictor.evaluate(test_data)
-
-
-
-
-
-
-import autogluon as ag
-from autogluon import TabularPrediction as task
-
-
-
-train_data = task.Dataset(file_path='https://autogluon.s3.amazonaws.com/datasets/Inc/train.csv')
-train_data = train_data.head(500) # subsample 500 data points for faster demo
-print(train_data.head())
-
-
-label_column = 'class'
-print("Summary of class variable: \n", train_data[label_column].describe())
-
-
-
-dir = 'agModels-predictClass' # specifies folder where to store trained models
-predictor = task.fit(train_data=train_data, label=label_column, output_directory=dir)
-
-
-test_data = task.Dataset(file_path='https://autogluon.s3.amazonaws.com/datasets/Inc/test.csv')
-y_test = test_data[label_column]  # values to predict
-test_data_nolab = test_data.drop(labels=[label_column],axis=1) # delete label column to prove we're not cheating
-print(test_data_nolab.head())
-
-
-from autogluon import TabularPrediction as task
-predictor = task.fit(train_data=task.Dataset(file_path=<file-name>), label_column=<variable-name>)
-
-results = predictor.fit_summary()
-
-print("AutoGluon infers problem type is: ", predictor.problem_type)
-print("AutoGluon categorized the features as: ", predictor.feature_types)
-
-
-
-
-
-
-"""
+    
+    
