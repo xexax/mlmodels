@@ -233,6 +233,10 @@ ml_test
 
 
 
+#### Distributed Pytorch on CPU (using Horovod and MPI on Linux
+mlmodels/distri_torch_mpirun.sh  4    model_tch.mlp    mymodel.json
+
+
 
 #### Model param search test
     ml_optim --do test
