@@ -233,8 +233,10 @@ ml_test
 
 
 
-#### Distributed Pytorch on CPU (using Horovod and MPI on Linux
-mlmodels/distri_torch_mpirun.sh  4    model_tch.mlp    mymodel.json
+#### Distributed Pytorch on CPU (using Horovod and MPI on Linux, 4 processes)  in model_tch/mlp.py
+    mlmodels/distri_torch_mpirun.sh   4    model_tch.mlp    mymodel.json
+
+
 
 
 
