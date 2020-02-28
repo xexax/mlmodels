@@ -211,23 +211,23 @@ ml_optim --do
 ml_test
 ```
 
-
 ### Command line tool sample
 
 #### generate config file
     ml_models  --do generate_config  --model_uri model_tf.1_lstm.py  --save_folder "c:\myconfig\"
 
-
-#### TF LSTM model
+#### TensorFlow LSTM model
     ml_models  --model_uri model_tf/1_lstm.py  --do test
 
-
+#### PyTorch models
+    ml_models  --model_uri model_tch/mlp.py  --do test
+    
+    
 #### Custom  Models
     ml_models --do test  --model_uri "D:\_devs\Python01\gitdev\mlmodels\mlmodels\model_tf\1_lstm.py"
 
 
-#### PyTorch models
-    ml_models  --model_uri model_tch/mlp.py  --do test
+
 
 
 #### Model param search test
@@ -246,8 +246,7 @@ ml_test
 
 
 #######################################################################################
-
-##④ Interface
+### ④ Interface
 
 models.py 
 ```
@@ -280,9 +279,8 @@ optim.py
    Sometimes, data_pars is required to setup the model (ie CNN with image size...)
    
 
-#######################################################################################
-
-##⑤ Code sample
+####################################################################################
+### ⑤ Code sample
 ```python
 from mlmodels.models import module_load, data_loader, create_model, fit, predict, stats
 from mlmodels.models import load #Load model weights
@@ -308,8 +306,7 @@ ypred = module.predict(model, module, data_pars, compute_pars)     # predict pip
 ```
 
 #######################################################################################
-#
-# ⑥ Naming convention
+### ⑥ Naming convention
 
 ### Function naming
 ```
@@ -342,9 +339,9 @@ coldate : for date columns
 coltext : for raw text columns
 ```
 
-#######################################################################################
+###############################################################################
 
-##⑦ Conda install
+## ⑦ Conda install
 ```
 conda create -n py36_tf13 python=3.6.5  -y
 source activate py36_tf13
