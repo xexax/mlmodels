@@ -1,9 +1,6 @@
-
-
+## TODO
 
 ### Renormalize signature
-
-
 
  fit(model, data_pars, model_pars, compute_pars, )         : model, session
 
@@ -23,13 +20,11 @@
  load(path:str)           : load the trained model
 
 
-## TODO
+
 ###  data pre-process and data visualization utils such as 
 https://course.fast.ai/datasets
 
-### docker version => no need install
 
-### deployment model after training
 
 
 
