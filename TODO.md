@@ -5,16 +5,24 @@
 
 
 
-
-
  fit(model, data_pars, model_pars, compute_pars, )         : model, session
+
  predict(model, sess, data_pars, compute_pars, out_pars )  : ypred : numpy
- metric(ytrue, ypred, yproba, data_pars, compute_pars, out_pars )  : ddict 
 
- get_params(choice="", dataset="", mode)   : 
- get_dataset(data_pars)                                    : load dataset
- test()                                                    : example running the model     
- test2()                                                   : example running the model in global settings  
+ metric(ytrue, ypred, yproba, model=None data_pars, compute_pars, out_pars )  : ddict 
 
- save(model, path)                                         : save the model
- load(path)                                                : load the trained model
+ get_params(choice:str, dataset:str, mode:str)   : 
+
+ get_dataset(data_pars:str)  : 
+
+ test(choice:str)    :      
+
+ test2(choice:str)   :   
+
+ save(model, path:str)    : save the model
+ load(path:str)           : load the trained model
+
+
+
+
+
