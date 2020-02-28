@@ -1,5 +1,8 @@
 ## TODO
 
+###  Write use cases of mlmodels
+
+
 ### Renormalize signature
 
  fit(model, data_pars, model_pars, compute_pars, )         : model, session
@@ -18,6 +21,9 @@
 
  save(model, path:str)    : save the model
  load(path:str)           : load the trained model
+
+
+
 
 
 
