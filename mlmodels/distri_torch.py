@@ -4,7 +4,7 @@ Pytorch distributed
 ./distri_run.sh  2    model_tch.mlp
 
 
-python   distri_model_tch.py   --model model_tch.mlp
+python   distri_model_tch.py   --model model_tch.mlp    mymodel_config.json
 
 
 """
@@ -12,10 +12,12 @@ from __future__ import print_function
 
 import argparse
 import os
-
-import toml
+import json
+# import toml
 
 import horovod.torch as hvd
+
+
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
@@ -57,8 +59,9 @@ def load_arguments():
     p.add_argument("--log-interval", type=int, default=10, metavar="N", help="log intervl")
     p.add_argument("--fp16-allreduce", action="store_true", default=False, help="fp16 in allreduce")
 
-    ### Should be store in toml file
-    p.add_argument("--model_pars_name",  default='test', help="model dict_pars as Dict")
+    
+    ### Should be store in json file
+    p.add_argument("--model_pars_name",  default='mymodel_config.json', help="model dict_pars as Dict")
 
 
     args = p.parse_args()
@@ -86,9 +89,10 @@ if args.cuda:
 train_dataset = import_data(name=args.data, mode="train", node_id=hvd.rank())
 test_dataset =  import_data(name=args.data, mode="test", node_id=hvd.rank())
 
+#params_dict = args.get( args.get("model_pars_name")  )
+#params_dict = params_dict if params_dict is not None else {} 
+params_dict = json.load( open( args["model_pars_name"] , mode='rb' )   )
 
-params_dict = args.get( args.get("model_pars_name")  )
-params_dict = params_dict if params_dict is not None else {} 
 model = create_instance(args.model, params=params_dict)  # Net()
 
 
@@ -207,3 +211,6 @@ def test():
 for epoch in range(1, args.epochs + 1):
     train(epoch)
     test()
+
+    
+    
