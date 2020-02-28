@@ -12,7 +12,9 @@
   https://github.com/arita37/mlmodels/blob/dev/README_model_list.md
 
 
-
+* Why Functional interface instead of OOP ?
+    Just Functional reduces the amount of code needed, focus more on the computing part (vs design part), 
+    a bit easier maintenability for medium size project, good for scientific computing process.
 
 
 ```
