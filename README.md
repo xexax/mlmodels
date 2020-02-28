@@ -347,11 +347,10 @@ coltext : for raw text columns
 
 ## ⑦ Conda install
 ```
-conda create -n py36_tf13 python=3.6.5  -y
-source activate py36_tf13
-
-pip install tensorflow=1.13.1
+conda create -n py36 python=3.6.5  -y
+source activate py36
 pip install  ipykernel spyder-kernels=0.* -y
+
 
 ```
 
