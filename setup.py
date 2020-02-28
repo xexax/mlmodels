@@ -167,7 +167,12 @@ scripts = [ "mlmodels/models.py",
             "mlmodels/optim.py",
             "mlmodels/cli_mlmodels",     
             ]
+
+
 """
+scripts = [ "mlmodels/distri_torch_mpirun.sh",     
+            ]
+
 
 
 ### CLI Scripts  #################################################   
@@ -194,6 +199,10 @@ setup(
     
     packages=packages,
     
+    #### CLI
+    scripts = scripts,
+  
+    ### CLI pyton
     entry_points= entry_points,
     
     long_description=long_description,
