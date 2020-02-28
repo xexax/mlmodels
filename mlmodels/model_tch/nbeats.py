@@ -93,11 +93,11 @@ def data_generator(x_full, y_full, bs):
 ######################################################################################################
 # Model fit
 def fit(model, data_pars, compute_pars=None, out_pars=None, **kw):
-    device = torch.device('cpu')
+    device          = torch.device('cpu')
     forecast_length = data_pars["forecast_length"]
     backcast_length = data_pars["backcast_length"]
-    batch_size = compute_pars["batch_size"]  # greater than 4 for viz
-    disable_plot = compute_pars["disable_plot"]
+    batch_size      = compute_pars["batch_size"]  # greater than 4 for viz
+    disable_plot    = compute_pars["disable_plot"]
 
     ### Get Data
     x_train, y_train, x_test, y_test, _ = get_dataset(**data_pars)
@@ -134,6 +134,7 @@ def fit_simple(net, optimiser, data_generator, on_save_callback, device, data_pa
             print('Finished.')
             break
     return net, optimiser
+
 
 def predict(model, data_pars, compute_pars=None, out_pars=None, **kw):
     data_pars["train_split_ratio"] = 1
@@ -229,11 +230,19 @@ def load(model, optimiser, CHECKPOINT_NAME = 'nbeats-fiting-checkpoint.th'):
 
 
 #############################################################################################################
-def get_params(choice=0, data_path="dataset/", **kw):
-    if choice == 0:
+def get_params(choice="json", data_path="dataset/", config_mode="test", **kw):
+    if choice == "json":    
+      with open(data_path, encoding='utf-8') as config_f:
+         cfg = json.load(config_f)
+         cfg = config[config_mode]
+
+      return cfg["model_pars"], cfg["data_pars"], cfg["compute_pars"], cfg["out_pars"]
+
+
+    if choice == "test":
         log("#### Path params   ################################################")
         data_path = os_package_root_path(__file__, sublevel=1, path_add=data_path)
-        out_path = os.get_cwd() + "/nbeats_test/"
+        out_path  = os.get_cwd() + "/nbeats_test/"
         os.makedirs(out_path, exists_ok=True)
         log(data_path, out_path)
 
@@ -252,8 +261,6 @@ def get_params(choice=0, data_path="dataset/", **kw):
                         "model_path": "mycheckpoint"}
 
         out_pars = {"out_path": out_path + "/"}
-
-
 
     return model_pars, data_pars, compute_pars, out_pars
 

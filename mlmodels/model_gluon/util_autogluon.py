@@ -1,15 +1,15 @@
 import os
 
+
 from autogluon import TabularPrediction as tabular_task
 
-### Requieres to install mlmodels
-# print(data)
+#### Requieres to install mlmodels
+#### print(data)
 VERBOSE = False
 
 
-
-####################################################################################################
-# Helper functions
+###################################################################################################
+######## Helper functions
 def os_package_root_path(filepath, sublevel=0, path_add=""):
     """
        get the module package root folder
@@ -59,7 +59,6 @@ def get_dataset(**kw):
         data, label = _get_dataset_from_aws(**kw)
         return data, label
 
-
     ##check whether dataset is of kind train or test
     # data_path = kw['train_data_path'] if kw['train'] else kw['test_data_path']
     df = data.import_data_fromfile(**kw )
@@ -94,27 +93,26 @@ def fit(model, data_pars=None, model_pars=None, compute_pars=None, out_pars=None
 
     train_ds, label = data
     nn_options = {
-        'num_epochs': compute_pars['num_epochs'],
-        'learning_rate': model_pars['learning_rate'],
-        'activation': model_pars['activation'],
-        'layers': model_pars['layers'],
-        'dropout_prob': model_pars['dropout_prob'],
+        'num_epochs'    : compute_pars['num_epochs'],
+        'learning_rate' : model_pars['learning_rate'],
+        'activation'    : model_pars['activation'],
+        'layers'        : model_pars['layers'],
+        'dropout_prob'  : model_pars['dropout_prob'],
     }
     
     gbm_options = {
         'num_boost_round': model_pars['num_boost_round'],
-        'num_leaves': model_pars['num_leaves'],
+        'num_leaves':      model_pars['num_leaves'],
     }
   
     ## Attribut model has the model
     predictor = model.model.fit(train_data=train_ds, label=label,
-                                output_directory=out_pars['out_path'],
-                                time_limits=compute_pars['time_limits'],
-                                num_trials=compute_pars['num_trials'],
-                                hyperparameter_tune=compute_pars['hp_tune'],
-                                hyperparameters={'NN': nn_options,
-                                                 'GBM': gbm_options},
-                                search_strategy=compute_pars['search_strategy'])
+                                output_directory    = out_pars['out_path'],
+                                time_limits         = compute_pars['time_limits'],
+                                num_trials          = compute_pars['num_trials'],
+                                hyperparameter_tune = compute_pars['hp_tune'],
+                                hyperparameters     = {'NN': nn_options, 'GBM': gbm_options},
+                                search_strategy     = compute_pars['search_strategy'])
     model.model = predictor
     return model
 
@@ -137,14 +135,14 @@ def predict(model, data_pars, compute_pars=None, out_pars=None, **kwargs):
     return y_pred
 
 
-def metrics(model, ypred, data_pars, compute_pars=None, out_pars=None, **kwargs):
+def metrics(model, ypred, ytrue, data_pars, compute_pars=None, out_pars=None, **kwargs):
     ## load test dataset
-    data_pars['train'] = False
-    test_ds, label = get_dataset(**data_pars)
-    y_test = test_ds[label]
+    #data_pars['train'] = False
+    #test_ds, label = get_dataset(**data_pars)
+    #y_test = test_ds[label]
 
     ## evaluate
-    acc = model.model.evaluate_predictions(y_true=y_test, y_pred=ypred, auxiliary_metrics=False)
+    acc = model.model.evaluate_predictions(y_true=ytrue, y_pred=ypred, auxiliary_metrics=False)
     metrics_dict = {"ACC": acc}
     return metrics_dict
 
