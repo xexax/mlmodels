@@ -29,28 +29,25 @@ mlmodels/model_flow/mlflow_run.py
 
 
 mlmodels/model_keras/02_cnn.py
-
-
 mlmodels/model_keras/00_template_keras.py
 mlmodels/model_keras/01_deepctr.py
 
 
 mlmodels/model_rank/metrics.py
 mlmodels/model_rank/LambdaRank.py
-
-
 mlmodels/model_rank/RankNet.py
 mlmodels/model_rank/load_mslr.py
+
+
 mlmodels/model_gluon/gluon_ffn.py
 mlmodels/model_gluon/gluon_deepar.py
-
-
 mlmodels/model_gluon/gluon_automl.py
 mlmodels/model_gluon/gluon_prophet.py
+
 mlmodels/model_dev/ml_mosaic.py
-
-
 mlmodels/model_dev/mytest.py
+
+
 mlmodels/model_tf/13_lstm_seq2seq.py
 mlmodels/model_tf/29_fairseq.py
 mlmodels/model_tf/10_encoder_vanilla.py
@@ -67,8 +64,6 @@ mlmodels/model_tf/19_lstm_dilated.py
 mlmodels/model_tf/3_bidirectional_lstm.py
 mlmodels/model_tf/20_only_attention.py
 mlmodels/model_tf/access.py
-
-
 mlmodels/model_tf/8_gru_2path.py
 mlmodels/model_tf/17_lstm_seq2seq_bidirectional_attention.py
 mlmodels/model_tf/6_encoder_gru.py
@@ -90,14 +85,15 @@ mlmodels/model_tf/2_encoder_lstm.py
 
 
 mlmodels/model_sklearn/model.py
+
+
 mlmodels/model_tch/cnn_classifier.py
 mlmodels/model_tch/sentence_transformer.py
-
-
 mlmodels/model_tch/mlp.py
 mlmodels/model_tch/transformer_classifier.py
 mlmodels/model_tch/data_prep.py
 mlmodels/model_tch/nbeats.py
+
 
 ```
 
