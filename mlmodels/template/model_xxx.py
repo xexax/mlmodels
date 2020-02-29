@@ -22,6 +22,7 @@ import pandas as pd
 
 
 VERBOSE = False
+
 ####################################################################################################
 def os_module_path():
   current_dir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
@@ -103,8 +104,7 @@ def fit(model, data_pars={}, compute_pars={}, out_pars={}, out_pars={},  **kw:
 
   sess = None # Session type for compute
   Xtrain, Xtest, ytrain, ytest = None, None, None, None  # data for training.
-  
-  
+  o = 0
   
 
   return model, sess
@@ -187,18 +187,15 @@ def get_params(choice="", data_path="dataset/", config_mode="test", **kw):
 
 
     if choice == "test01":
-        log("#### Path params   #################################################")
+        log("#### Path params   ##########################################")
         data_path, out_path, model_path = path_setup(out_folder="", sublevel=1,
                                                      data_path="dataset/")
-        data_pars = {}
-        model_pars = {}
+        data_pars    = {}
+        model_pars   = {}
         compute_pars = {}
-        out_pars = {}
+        out_pars     = {}
 
     return model_pars, data_pars, compute_pars, out_pars
-
-
-
 
 
 
@@ -277,7 +274,7 @@ def test_global2(data_path="dataset/", model_uri="model_tf/1_lstm.py", pars_choi
     log("#### Predict   ####################################################")
     ypred = predict_batch(model, module, session,  compute_pars, data_pars, out_pars)
     print(ypred)
-t
+
 
     log("#### Mtrics   ################################################")
     from mlmodels.models import  metrics as metrics_batch 
