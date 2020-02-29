@@ -203,37 +203,96 @@ def get_params(choice="", data_path="dataset/", config_mode="test", **kw):
 
 
 ################################################################################################
-def test_global(data_path="dataset/", out_path="GLUON/gluon.png", pars_choice="json", reset=True):
+def test_global(data_path="dataset/", model_uri="model_tf/1_lstm.py", pars_choice="json", reset=True):
     ###loading the command line arguments
+    #model_uri = "model_xxxx/yyyy.py"
+
+    log("#### Module init   ############################################")
+    from mlmodels.models import module_load
+    module = module_load(model_uri)
+    log(module)
+
+
     log("#### Loading params   ##############################################")
-    model_pars, data_pars, compute_pars, out_pars = get_params(choice=pars_choice,
-                                                               data_path=data_path)
-    model_uri = "model_gluon/gluon_deepar.py"
-
-    log("#### Loading dataset   ############################################")
-    gluont_ds = get_dataset(**data_pars)
+    model_pars, data_pars, compute_pars, out_pars = module.get_params(choice=pars_choice,
+                                                                      data_path=data_path)
 
 
-    log("#### Model init, fit   ############################################")
-    from mlmodels.models import module_load_full, fit, predict
-    module, model = module_load_full(model_uri, model_pars)
-    print(module, model)
+    log("#### Model init   ############################################")
+    from mlmodels.models import model_create 
+    model = model_create(module, model_pars)
+    log(model)
 
-    model=fit(model, None, data_pars, model_pars, compute_pars)
 
-    log("#### save the trained model  ######################################")
-    save(model, data_pars["modelpath"])
+    log("#### Fit   ########################################################")
+    model, session = module.fit(model, data_pars, model_pars, compute_pars, out_pars )
 
-    log("#### Predict   ###################################################")
-    ypred = predict(model, data_pars, compute_pars, out_pars)
+
+    log("#### Predict   ####################################################")
+    ypred = module.predict(model, session, data_pars, compute_pars, out_pars)
     print(ypred)
 
 
-    log("###Get  metrics   ################################################")
-    metrics_val = metrics(model, data_pars, compute_pars, out_pars)
+    log("#### Get  metrics   ################################################")
+    metrics_val = module.metrics(model, data_pars, compute_pars, out_pars)
 
 
-    log("#### Plot   ######################################################")
+    log("#### Save/Load   ###################################################")
+    module.save(model, out_pars['modelpath'])
+    model2 = module.load(out_pars['modelpath'])
+    #     ypred = predict(model2, data_pars, compute_pars, out_pars)
+    #     metrics_val = metrics(model2, ypred, data_pars, compute_pars, out_pars)
+    print(model2)
+
+
+
+
+def test_global2(data_path="dataset/", model_uri="model_tf/1_lstm.py", pars_choice="json", reset=True):
+    ###loading the command line arguments
+    model_uri = "model_xxxx/yyyy.py"
+
+
+    log("#### Module init   #################################################")
+    from mlmodels.models import module_load
+    module = module_load(model_uri)
+    log(module)
+
+
+    log("#### Loading params   ##############################################")
+    from mlmodels.models import get_params as get_params_batch
+    model_pars, data_pars, compute_pars, out_pars = get_params_batch(module, choice=pars_choice,
+                                                                    data_path=data_path)
+
+    log("#### Model init, fit   ############################################")
+    from mlmodels.models import module_load_full 
+    module, model = module_load_full(model_uri, model_pars)
+    log(module, model)
+
+
+    log("#### Fit   ########################################################")
+    from mlmodels.models import fit as fit_batch
+    model, session = fit_batch(model, module, compute_pars, data_pars, out_pars)
+
+
+    log("#### Predict   ####################################################")
+    ypred = predict_batch(model, module, session,  compute_pars, data_pars, out_pars)
+    print(ypred)
+t
+
+    log("#### Mtrics   ################################################")
+    from mlmodels.models import  metrics as metrics_batch 
+    metrics_val = metrics_batch(model, module, session, compute_pars, data_pars,  out_pars)
+
+
+    log("#### Save/Load   ###################################################")
+    from mlmodels.models import load_batch, save_batch
+    save_batch(model, module, session, out_pars['modelpath'])
+    model2 = load_batch(out_pars['modelpath'])
+    #     ypred = predict(model2, data_pars, compute_pars, out_pars)
+    #     metrics_val = metrics(model2, ypred, data_pars, compute_pars, out_pars)
+    print(model2)
+
+
 
 
 
@@ -258,25 +317,24 @@ def test(data_path="dataset/", pars_choice="json"):
     save(model, out_pars["modelpath"])
 
 
-    log("#### Predict   ####################################################")
+    log("#### Predict   #####################################################")
     ypred = predict(model, data_pars, compute_pars, out_pars)
 
 
-    log("#### metrics   ####################################################")
+    log("#### metrics   #####################################################")
     metrics_val = metrics(model, ypred, data_pars, compute_pars, out_pars)
     print(metrics_val)
 
 
-    log("#### Plot   #######################################################")
+    log("#### Plot   ########################################################")
 
 
-    log("#### Save/Load   ##################################################")
-    save(model, out_pars)
+    log("#### Save/Load   ###################################################")
+    save(model, out_pars['modelpath'])
     model2 = load(out_pars['modelpath'])
     #     ypred = predict(model2, data_pars, compute_pars, out_pars)
     #     metrics_val = metrics(model2, ypred, data_pars, compute_pars, out_pars)
     print(model2)
-
 
 
 
