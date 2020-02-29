@@ -108,7 +108,7 @@ def metrics(ytrue, ypred, yproba=None, model=None, sess=None, data_pars={}, out_
   
   
 
-def predict(model, sess=None, data_pars=None, out_pars=None, compute_pars=None, **kw):
+def predict(model, sess=None, data_pars={}, out_pars={}, compute_pars={}, **kw):
   ##### Get Data ###############################################
   Xpred, ypred = None, None
 
