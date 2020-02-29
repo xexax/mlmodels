@@ -1,4 +1,4 @@
-# mlmodels : Model ZOO
+# mlmodels : Model ZOO for Pytorch, Tensorflow, Keras, Gluon models...
 
  [![Gitter](https://badges.gitter.im/arita37/mlmodels.svg)](https://gitter.im/arita37/mlmodels?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
  
