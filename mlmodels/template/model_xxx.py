@@ -13,13 +13,15 @@ Check parameters template in models_config.json
 """
 import os, sys, inspect
 from datetime import datetime, timedelta
+from pathlib import Path
+
 
 import numpy as np
 import pandas as pd
 
 
 
-
+VERBOSE = False
 ####################################################################################################
 def os_module_path():
   current_dir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
@@ -61,6 +63,17 @@ class to_namespace(object):
 
   def get(self, key):
     return self.__dict__.get(key)
+
+
+def path_setup(out_folder="", sublevel=1, data_path="dataset/"):
+    data_path = os_package_root_path(__file__, sublevel=sublevel, path_add=data_path)
+    out_path = os.getcwd() + "/" + out_folder
+    os.makedirs(out_path, exist_ok=True)
+    model_path = out_path + "/model_gluon_automl/"
+    os.makedirs(model_path, exist_ok=True)
+
+    log(data_path, out_path, model_path)
+    return data_path, out_path, model_path
 
 
 
@@ -131,48 +144,99 @@ def reset_model():
 
 
 ####################################################################################################
-def get_dataset(choice="", data_pars=None, **kw):
+def get_dataset(data_pars=None, **kw):
   """
     JSON data_pars to get dataset
     "data_pars":    { "data_path": "dataset/GOOG-year.csv", "data_type": "pandas",
     "size": [0, 0, 6], "output_size": [0, 6] },
   """
-  d = to_namespace(data_pars)
-  print(d)
-  df = None
 
-  if d.data_type == "pandas" :
-    df = pd.DataFrame(d.data_path)
-  
-  #######################################
-  return df
+  if data_pars['train'] :
+    Xtrain, Xtest, ytrain, ytest = None, None, None, None  # data for training.
+    return Xtrain, Xtest, ytrain, ytest 
 
+  else :
+    Xtest, ytest = None, None  # data for training.
+    return Xtest, ytest 
 
 
-def get_params(choice="test", data_path="", config_mode="test",  **kwargs):
-  # Get sample parameters of the model
 
-  if choice == "json":
-     return {}
-  
-  if choice == "test":
-    p = {"learning_rate": 0.001, "num_layers": 1, "size": None, "size_layer": 128,
-         "output_size": None, "timestep": 4, "epoch": 2,}
+def get_params(choice="", data_path="dataset/", config_mode="test", **kw):
+    if choice == "json":
+        with open(data_path, encoding='utf-8') as config_f:
+            config = json.load(config_f)
+            c = config[config_mode]
+
+        model_pars, data_pars = c[ "model_pars" ], c[ "data_pars" ]
+        compute_pars, out_pars = c[ "compute_pars" ], c[ "out_pars" ]
+        return model_pars, data_pars, compute_pars, out_pars
+
+
+    if choice == "test01":
+        log("#### Path params   #################################################")
+        data_path, out_path, model_path = path_setup(out_folder="", sublevel=1,
+                                                     data_path="dataset/")
+        data_pars = {}
+        model_pars = {}
+        compute_pars = {}
+        out_pars = {}
+
+    return model_pars, data_pars, compute_pars, out_pars
+
+
+
+
+
+
+################################################################################################
+def test(data_path="dataset/", pars_choice="json"):
+    ### Local test
+
+    log("#### Loading params   ##############################################")
+    model_pars, data_pars, compute_pars, out_pars = get_params(choice=pars_choice,
+                                                               data_path=data_path)
+
+    log("#### Loading dataset   #############################################")
+    Xtuple = get_dataset(**data_pars)
+
+
+    log("#### Model init, fit   #############################################")
+    model = Model(model_pars, compute_pars)
+    model = fit(model, data_pars, model_pars, compute_pars, out_pars)
+
+
+    log("#### save the trained model  #######################################")
+    save(model, out_pars["modelpath"])
+
+
+    log("#### Predict   ####################################################")
+    ypred = predict(model, data_pars, compute_pars, out_pars)
+
+
+    log("#### metrics   ####################################################")
+    metrics_val = metrics(model, ypred, data_pars, compute_pars, out_pars)
+    print(metrics_val)
+
+
+    log("#### Plot   #######################################################")
+
+
+    log("#### Save/Load   ##################################################")
+    save(model, out_pars)
+    model2 = load(out_pars['modelpath'])
+    #     ypred = predict(model2, data_pars, compute_pars, out_pars)
+    #     metrics_val = metrics(model2, ypred, data_pars, compute_pars, out_pars)
+    print(model2)
+
+
+
+
+if __name__ == '__main__':
+    VERBOSE = True
+    test(pars_choice="json")
+    test(pars_choice="test01")
+
     
-
-
-
-
-
-
-
-
-
-if __name__ == "__main__":
-  test()
-  
-  
-  
   
   
   
