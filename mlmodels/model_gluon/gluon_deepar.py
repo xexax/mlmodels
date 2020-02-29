@@ -95,6 +95,8 @@ def get_params(choice="", data_path="dataset/", config_mode="test", **kw):
 
 
 
+
+
 ########################################################################################################################
 def test2(data_path="dataset/", out_path="GLUON/gluon.png", reset=True):
     ###loading the command line arguments
