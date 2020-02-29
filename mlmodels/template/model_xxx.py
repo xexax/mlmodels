@@ -69,7 +69,7 @@ def path_setup(out_folder="", sublevel=1, data_path="dataset/"):
     data_path = os_package_root_path(__file__, sublevel=sublevel, path_add=data_path)
     out_path = os.getcwd() + "/" + out_folder
     os.makedirs(out_path, exist_ok=True)
-    model_path = out_path + "/model_gluon_automl/"
+    model_path = out_path + "/model/"
     os.makedirs(model_path, exist_ok=True)
 
     log(data_path, out_path, model_path)
@@ -82,7 +82,7 @@ class Model:
   def __init__(self, model_pars=None, data_pars=None
                ):
     ### Model Structure        ################################
-    self.model = None
+    self.model = None   #ex Keras model
     
     
 
@@ -90,7 +90,7 @@ class Model:
 
 
 
-def fit(model, data_pars={}, compute_pars={}, out_pars={}, out_pars={},  **kwargs):
+def fit(model, data_pars={}, compute_pars={}, out_pars={}, out_pars={},  **kw:
   """
 
   :param model:    Class model
@@ -108,6 +108,8 @@ def fit(model, data_pars={}, compute_pars={}, out_pars={}, out_pars={},  **kwarg
   
 
   return model, sess
+
+
 
 
 def metrics(ytrue, ypred, yproba=None, model=None, sess=None, data_pars={}, out_pars={}, **kw):
@@ -140,6 +142,18 @@ def predict(model, sess=None, data_pars={}, out_pars={}, compute_pars={}, **kw):
   
 def reset_model():
   pass
+
+
+
+def save(model, path) :
+  pass
+
+
+
+def load(path)
+  model = Model()
+  model.model = None
+  return model   
 
 
 
@@ -189,6 +203,41 @@ def get_params(choice="", data_path="dataset/", config_mode="test", **kw):
 
 
 ################################################################################################
+def test_global(data_path="dataset/", out_path="GLUON/gluon.png", pars_choice="json", reset=True):
+    ###loading the command line arguments
+    log("#### Loading params   ##############################################")
+    model_pars, data_pars, compute_pars, out_pars = get_params(choice=pars_choice,
+                                                               data_path=data_path)
+    model_uri = "model_gluon/gluon_deepar.py"
+
+    log("#### Loading dataset   ############################################")
+    gluont_ds = get_dataset(**data_pars)
+
+
+    log("#### Model init, fit   ############################################")
+    from mlmodels.models import module_load_full, fit, predict
+    module, model = module_load_full(model_uri, model_pars)
+    print(module, model)
+
+    model=fit(model, None, data_pars, model_pars, compute_pars)
+
+    log("#### save the trained model  ######################################")
+    save(model, data_pars["modelpath"])
+
+    log("#### Predict   ###################################################")
+    ypred = predict(model, data_pars, compute_pars, out_pars)
+    print(ypred)
+
+
+    log("###Get  metrics   ################################################")
+    metrics_val = metrics(model, data_pars, compute_pars, out_pars)
+
+
+    log("#### Plot   ######################################################")
+
+
+
+
 def test(data_path="dataset/", pars_choice="json"):
     ### Local test
 
@@ -233,11 +282,14 @@ def test(data_path="dataset/", pars_choice="json"):
 
 if __name__ == '__main__':
     VERBOSE = True
+    test_path = os.getcwd() + "/mytest/"
+    
+    ### Local
     test(pars_choice="json")
     test(pars_choice="test01")
 
-    
-  
+    ### Global mlmodels
+    test_global(pars_choice="json", out_path= test_path,  reset=True)
   
   
   
