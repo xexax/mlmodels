@@ -1,7 +1,7 @@
-# mlmodels
+# mlmodels : Model ZOO
 
 ```
-Lightweight Functional interface to wrap access to Deep Learning, ML models
+Model ZOO with Lightweight Functional interface to wrap access to Deep Learning, ML models
 and Hyper Params Search, cross platforms ; tensorflow, pytorch, gluon, keras,...
 
 Logic follows Scikit Learn API: fit, predict, transform, metrics, save, load
