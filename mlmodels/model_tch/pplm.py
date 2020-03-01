@@ -4,13 +4,12 @@ from pplm.run_pplm import run_pplm_example
 
 ####################################################################################################
 class Model:
-    def __init__(self):
+   def __init__(self, model_pars=None, data_pars=None  ):
         # 4.Define Model    
+        mname = model_pars["model_id"] #
         # This downloads GPT-2 Medium, it takes a little while
-        self.model = GPT2LMHeadModel.from_pretrained("gpt2-medium")
+        self.model = GPT2LMHeadModel.from_pretrained( mname)
         
- 
-
 
 
 def predict(cond_text,bag_of_words,discrim=None,class_label=-1):
