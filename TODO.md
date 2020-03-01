@@ -1,15 +1,15 @@
 ## TODO
 
-###  Write use cases of mlmodels
+###  Add use cases of mlmodels
     USECASE.md
 
 ### Renormalize signature
 
-     fit(model, data_pars, model_pars, compute_pars, )         : model, session
+     fit(model, data_pars, compute_pars, out_pars )         : model, session
     
      predict(model, sess, data_pars, compute_pars, out_pars )  : ypred : numpy
     
-     metric(ytrue, ypred, yproba, model=None data_pars, compute_pars, out_pars )  : ddict 
+     metric(ytrue, ypred, yproba, model=None, data_pars=None, compute_pars=None, out_pars=None )  : ddict 
     
      get_params(choice:str, dataset:str, mode:str)   : 
     
