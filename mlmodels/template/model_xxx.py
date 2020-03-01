@@ -183,9 +183,9 @@ def get_params(choice="", data_path="dataset/", config_mode="test", **kw):
     if choice == "json":
         with open(data_path, encoding='utf-8') as config_f:
             config = json.load(config_f)
-            c = config[config_mode]
+            c      = config[config_mode]
 
-        model_pars, data_pars = c[ "model_pars" ], c[ "data_pars" ]
+        model_pars, data_pars  = c[ "model_pars" ], c[ "data_pars" ]
         compute_pars, out_pars = c[ "compute_pars" ], c[ "out_pars" ]
         return model_pars, data_pars, compute_pars, out_pars
 
