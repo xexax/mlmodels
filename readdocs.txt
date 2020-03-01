@@ -34,10 +34,10 @@ open file in the browser as file:///<clonedir>/da/docs/build/html/index.html
 
 
 
-This is for your question about the branch.
+About the branch.
+Actually dev is the default branch for the repo, 
 https://docs.readthedocs.io/en/stable/versions.html
 
-Actually dev is the default branch for the repo, so it will build fro this, but as it is a private repo, so will not work.
 
 
 
