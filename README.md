@@ -291,22 +291,26 @@ optim.py
 
 ####################################################################################
 ### ⑤ Code sample
+#### Training
 ```python
 from mlmodels.models import module_load, data_loader, create_model, fit, predict, stats
 from mlmodels.models import load #Load model weights
 
-#### Training
+
+model_uri    = "model_tf.1_lstm.py"
 model_pars   =  {  "num_layers": 1,
                   "size": ncol_input, "size_layer": 128, "output_size": ncol_output, "timestep": 4,
                 }
 data_pars    =  {}
 compute_pars =  { "learning_rate": 0.001, }
 
-module        =  module_load( model_uri="model_tf.1_lstm.py" )  #Load file definition
+
+module        =  module_load( model_uri= model_uri )  #Load file definition
 model         =  model_create(module, model_pars)    # Create Model instance
 model, sess   =  fit(model, module, data_pars)       # fit the model
 metrics_val   =  metrics( model, sess, ["loss"])     # get stats
 model.save( "myfolder/", model, module, sess,)
+
 ```
 
 #### Inference
@@ -329,7 +333,6 @@ _col_  :  name for colums
 _colcat_  :  name for category columns
 _colnum_  :  name for numerical columns (folat)
 _coltext_  : name for text data
-_colid_  : for unique ID columns\
 
 _stat_ : show statistics
 _df_  : dataframe
