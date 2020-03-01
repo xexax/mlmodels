@@ -301,19 +301,20 @@ model_uri    = "model_tf.1_lstm.py"
 model_pars   =  {  "num_layers": 1,
                   "size": ncol_input, "size_layer": 128, "output_size": ncol_output, "timestep": 4,
                 }
-data_pars    =  {}
+data_pars    =  {"data_path": "/folder/myfile.csv"  , "data_type": "pandas" }
 compute_pars =  { "learning_rate": 0.001, }
+out_pars     =  { "path": "ztest_1lstm/", "model_path" : "ztest_1lstm/model/"}
 
 
 module        =  module_load( model_uri= model_uri )  #Load file definition
 model         =  model_create(module, model_pars)    # Create Model instance
 model, sess   =  fit(model, module, data_pars)       # fit the model
 metrics_val   =  metrics( model, sess, ["loss"])     # get stats
-model.save( "myfolder/", model, module, sess,)
+model.save( out_pars['path'], model, module, sess,)
 
 ```
 
-#### Inference
+#### Inferencmodel/e
 ```python
 model = load(folder)    #Create Model instance
 ypred = module.predict(model, module, data_pars, compute_pars)     # predict pipeline
