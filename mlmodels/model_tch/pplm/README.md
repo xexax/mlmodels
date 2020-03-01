@@ -1,23 +1,34 @@
-# Plug and Play Language Models: a Simple Approach to Controlled Text Generation
+# PPLM
 
+This repository contains code to run the Plug and Play Language Model (PPLM), as described in this **[blog post](https://eng.uber.com/pplm)** and **[arXiv paper](https://arxiv.org/abs/1912.02164)**. A **[demo](https://transformer.huggingface.co/model/pplm)** and **[Colab notebook](https://colab.research.google.com/drive/1Ux0Z4-ruiVtJ6jUk98uk6FqfvGHCOYL3)** are also available.
+
+PPLM is also integrated into the **[🤗/Transformers](https://github.com/huggingface/transformers/tree/master/examples/pplm)** repository.
+
+![header image](./imgs/headfigure.png)
+
+## Plug and Play Language Models: a Simple Approach to Controlled Text Generation
 Authors: [Sumanth Dathathri](https://dathath.github.io/), [Andrea Madotto](https://andreamad8.github.io/), Janice Lan, Jane Hung, Eric Frank, [Piero Molino](https://w4nderlu.st/), [Jason Yosinski](http://yosinski.com/), and [Rosanne Liu](http://www.rosanneliu.com/)
 
-This folder contains the original code used to run the Plug and Play Language Model (PPLM).
+PPLM allows a user to flexibly plug in one or more tiny attribute models representing the desired steering objective into a large, unconditional language model (LM). The method has the key property that it uses the LM _as is_—no training or fine-tuning is required—which enables researchers to leverage best-in-class LMs even if they do not have the extensive hardware required to train them.
 
-Paper link: https://arxiv.org/abs/1912.02164
-
-Blog link: https://eng.uber.com/pplm
-
-Please check out the repo under uber-research for more information: https://github.com/uber-research/PPLM
-
+See also our [arXiv paper](https://arxiv.org/abs/1912.02164), [blog post](https://eng.uber.com/pplm), and try it out for yourself with no setup using the [Colab notebook](https://colab.research.google.com/drive/1Ux0Z4-ruiVtJ6jUk98uk6FqfvGHCOYL3).
 
 ## Setup
 
 ```bash
-git clone https://github.com/huggingface/transformers && cd transformers
-pip install .
-pip install nltk torchtext # additional requirements.
-cd examples/pplm
+pip install -r requirements.txt
+```
+
+## Citation
+```
+@inproceedings{
+Dathathri2020Plug,
+title={Plug and Play Language Models: A Simple Approach to Controlled Text Generation},
+author={Sumanth Dathathri and Andrea Madotto and Janice Lan and Jane Hung and Eric Frank and Piero Molino and Jason Yosinski and Rosanne Liu},
+booktitle={International Conference on Learning Representations},
+year={2020},
+url={https://openreview.net/forum?id=H1edEyBKDS}
+}
 ```
 
 ## PPLM-BoW 
@@ -52,3 +63,5 @@ python run_pplm.py -D sentiment --class_label 2 --cond_text "My dog died" --leng
 
 2. Use `--class_label 3` for negative, and `--class_label 2` for positive
 
+
+The discriminator and the GPT-2 model in the root directory are different from those used for the analysis in the paper. Code and models corresponding to the paper can be found [here](https://github.com/uber-research/PPLM/tree/master/paper_code).
