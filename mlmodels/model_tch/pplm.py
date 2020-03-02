@@ -143,7 +143,7 @@ def cached_collate_fn(data):
     return x_batch, y_batch
 
 
-def train_epoch(data_loader, discriminator, optimizer,
+def fit(data_loader, discriminator, optimizer,
                 epoch=0, log_interval=10, device='cpu'):
     samples_so_far = 0
     discriminator.train_custom()
@@ -169,7 +169,7 @@ def train_epoch(data_loader, discriminator, optimizer,
             )
 
 
-def evaluate_performance(data_loader, discriminator, device='cpu'):
+def metrics(data_loader, discriminator, device='cpu'):
     discriminator.eval()
     test_loss = 0
     correct = 0
@@ -233,7 +233,7 @@ def get_cached_data_loader(dataset, batch_size, discriminator,
     return data_loader
 
 
-def fit(
+def test_case_1(
         dataset, dataset_fp=None, pretrained_model="gpt2-medium",
         epochs=10, batch_size=64, log_interval=10,
         save_model=False, cached=False, no_cuda=False):
@@ -514,6 +514,7 @@ def fit(
         with open("{}_classifier_head_meta.json".format(dataset),
                   "w") as meta_file:
             json.dump(discriminator_meta, meta_file)
+        
 
     optimizer = optim.Adam(discriminator.parameters(), lr=0.0001)
 
@@ -521,7 +522,7 @@ def fit(
         start = time.time()
         print("\nEpoch", epoch + 1)
 
-        train_epoch(
+        fit(
             discriminator=discriminator,
             data_loader=train_loader,
             optimizer=optimizer,
@@ -529,7 +530,7 @@ def fit(
             log_interval=log_interval,
             device=device
         )
-        evaluate_performance(
+        metrics(
             data_loader=test_loader,
             discriminator=discriminator,
             device=device
@@ -688,141 +689,6 @@ def get_params(choice="", data_path="dataset/", config_mode="test", **kw):
 
 
 
-################################################################################################
-def test_global(data_path="dataset/", model_uri="model_tf/1_lstm.py", pars_choice="json", reset=True):
-    ###loading the command line arguments
-    #model_uri = "model_xxxx/yyyy.py"
-
-    log("#### Module init   ############################################")
-    from mlmodels.models import module_load
-    module = module_load(model_uri)
-    log(module)
-
-
-    log("#### Loading params   ##############################################")
-    model_pars, data_pars, compute_pars, out_pars = module.get_params(choice=pars_choice,
-                                                                      data_path=data_path)
-
-
-    log("#### Model init   ############################################")
-    from mlmodels.models import model_create 
-    model = model_create(module, model_pars)
-    log(model)
-
-
-    log("#### Fit   ########################################################")
-    model, session = module.fit(model, data_pars, model_pars, compute_pars, out_pars )
-
-
-    log("#### Predict   ####################################################")
-    ypred = module.predict(model, session, data_pars, compute_pars, out_pars)
-    print(ypred)
-
-
-    log("#### Get  metrics   ################################################")
-    metrics_val = module.metrics(model, data_pars, compute_pars, out_pars)
-
-
-    log("#### Save/Load   ###################################################")
-    module.save(model, out_pars['modelpath'])
-    model2 = module.load(out_pars['modelpath'])
-    #     ypred = predict(model2, data_pars, compute_pars, out_pars)
-    #     metrics_val = metrics(model2, ypred, data_pars, compute_pars, out_pars)
-    print(model2)
-
-
-
-
-def test_global2(data_path="dataset/", model_uri="model_tf/1_lstm.py", pars_choice="json", reset=True):
-    ###loading the command line arguments
-    model_uri = "model_xxxx/yyyy.py"
-
-
-    log("#### Module init   #################################################")
-    from mlmodels.models import module_load
-    module = module_load(model_uri)
-    log(module)
-
-
-    log("#### Loading params   ##############################################")
-    from mlmodels.models import get_params as get_params_batch
-    model_pars, data_pars, compute_pars, out_pars = get_params_batch(module, choice=pars_choice,
-                                                                    data_path=data_path)
-
-    log("#### Model init, fit   ############################################")
-    from mlmodels.models import module_load_full 
-    module, model = module_load_full(model_uri, model_pars)
-    log(module, model)
-
-
-    log("#### Fit   ########################################################")
-    from mlmodels.models import fit as fit_batch
-    model, session = fit_batch(model, module, compute_pars, data_pars, out_pars)
-
-
-    log("#### Predict   ####################################################")
-    ypred = predict_batch(model, module, session,  compute_pars, data_pars, out_pars)
-    print(ypred)
-
-
-    log("#### Mtrics   ################################################")
-    from mlmodels.models import  metrics as metrics_batch 
-    metrics_val = metrics_batch(model, module, session, compute_pars, data_pars,  out_pars)
-
-
-    log("#### Save/Load   ###################################################")
-    from mlmodels.models import load_batch, save_batch
-    save_batch(model, module, session, out_pars['modelpath'])
-    model2 = load_batch(out_pars['modelpath'])
-    #     ypred = predict(model2, data_pars, compute_pars, out_pars)
-    #     metrics_val = metrics(model2, ypred, data_pars, compute_pars, out_pars)
-    print(model2)
-
-
-
-
-
-
-def test(data_path="dataset/", pars_choice="json"):
-    ### Local test
-
-    log("#### Loading params   ##############################################")
-    model_pars, data_pars, compute_pars, out_pars = get_params(choice=pars_choice,
-                                                               data_path=data_path)
-
-    log("#### Loading dataset   #############################################")
-    Xtuple = get_dataset(**data_pars)
-
-
-    log("#### Model init, fit   #############################################")
-    model = Model(model_pars, compute_pars)
-    model = fit(model, data_pars, model_pars, compute_pars, out_pars)
-
-
-    log("#### save the trained model  #######################################")
-    save(model, out_pars["modelpath"])
-
-
-    log("#### Predict   #####################################################")
-    ypred = predict(model, data_pars, compute_pars, out_pars)
-
-
-    log("#### metrics   #####################################################")
-    metrics_val = metrics(model, ypred, data_pars, compute_pars, out_pars)
-    print(metrics_val)
-
-
-    log("#### Plot   ########################################################")
-
-
-    log("#### Save/Load   ###################################################")
-    save(model, out_pars['modelpath'])
-    model2 = load(out_pars['modelpath'])
-    #     ypred = predict(model2, data_pars, compute_pars, out_pars)
-    #     metrics_val = metrics(model2, ypred, data_pars, compute_pars, out_pars)
-    print(model2)
-
-
         
 #################################################################################        
 #################################################################################
@@ -832,7 +698,7 @@ if __name__ == '__main__':
     # generating teh text
     generate(cond_text="The potato",bag_of_words='military')
     # for training classification model give the datset and datset path
-    #fit(dataset, dataset_fp=None)
+    #test_case_1(dataset, dataset_fp=None)
 
         
     """    
