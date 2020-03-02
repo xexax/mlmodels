@@ -1,4 +1,7 @@
-# mlmodels : Model ZOO for Pytorch, Tensorflow, Keras, Gluon 
+# mlmodels : Model ZOO for Pytorch, Tensorflow, Keras, Gluon models...
+
+ [![Gitter](https://badges.gitter.im/arita37/mlmodels.svg)](https://gitter.im/arita37/mlmodels?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+ 
 
 * Model ZOO with Lightweight Functional interface to wrap access to Recent and State o Art Deep Learning, ML models and Hyper-Parameter Search, cross platforms such as Tensorflow, Pytorch, Gluon, Keras,...
 
@@ -25,24 +28,38 @@
 ## ① Installation
 Install as editable package (ONLY dev branch)
 
+    conda create -n py36 python=3.6.5  -y
+    source activate py36
+
     cd yourfolder
     git clone https://github.com/arita37/mlmodels.git mlmodels
     cd mlmodels
     git checkout dev     
     pip install -e .  --no-deps  
 
+
 ####  Dependencies
-    optuna
-    tensorflow>=1.14.0
-    pytorch>=0.4.0
-    keras>=2.0
-    gluon
-    autogluon
-    gluonts
-    pandas>=0.24.2
-    scipy>=1.3.0
-    numexpr>=2.6.8 
-    scikit-learn>=0.21.2
+tensorflow<2.0
+keras<2.4.0
+torch<1.0.0
+numpy
+transformers
+gluonts
+autogluon
+optuna
+mlflow
+torchtext
+nltk
+deepctr
+pandas<1.0
+scipy>=1.3.0
+scikit-learn==0.21.2
+numexpr>=2.6.8 
+sqlalchemy>=1.3.8
+boto3==1.9.187
+toml
+horovod==0.16.2
+
 
 #######################################################################################
 
@@ -306,8 +323,10 @@ out_pars     =  { "path": "ztest_1lstm/", "model_path" : "ztest_1lstm/model/"}
 module        =  module_load( model_uri= model_uri )  #Load file definition
 model         =  model_create(module, model_pars)    # Create Model instance
 model, sess   =  fit(model, module, data_pars)       # fit the model
+
 metrics_val   =  metrics( model, sess, ["loss"])     # get stats
 model.save( out_pars['path'], model, module, sess,)
+
 
 ```
 
