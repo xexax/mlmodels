@@ -1,7 +1,4 @@
-# mlmodels : Model ZOO for Pytorch, Tensorflow, Keras, Gluon models...
-
- [![Gitter](https://badges.gitter.im/arita37/mlmodels.svg)](https://gitter.im/arita37/mlmodels?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
- 
+# mlmodels : Model ZOO for Pytorch, Tensorflow, Keras, Gluon 
 
 * Model ZOO with Lightweight Functional interface to wrap access to Recent and State o Art Deep Learning, ML models and Hyper-Parameter Search, cross platforms such as Tensorflow, Pytorch, Gluon, Keras,...
 
