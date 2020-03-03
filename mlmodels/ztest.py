@@ -31,6 +31,7 @@ def main():
   print(tf, tf.__version__)
   print(torch, torch.__version__)
 
+
   path = mlmodels.__path__[0]
   
 
@@ -38,6 +39,7 @@ def main():
    f"python {path}/model_gluon/gluon_automl.py",
    f"python {path}/model_gluon/gluon_deepar.py",
    f"python {path}/model_glufon/gluon_ffn.py",
+
 
   ###
   f"python {path}/model_keras/01_deepctr.py",
@@ -59,6 +61,7 @@ def main():
   for cmd in test_list :
     print(cmd)
     os.system( cmd )
+
 
 
 
