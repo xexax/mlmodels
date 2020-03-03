@@ -48,21 +48,23 @@ def _config_process(config):
     data_pars = config["data_pars"]
 
     log("#### Model params   ################################################")
-    model_pars_cf = config["model_pars"]
-    model_pars = {"model_type": model_pars_cf["model_type"],
-                  "learning_rate": ag.space.Real(model_pars_cf["learning_rate_min"],
-                                                 model_pars_cf["learning_rate_max"],
-                                                 default=model_pars_cf["learning_rate_default"],
+    m = config["model_pars"]
+    model_pars = {"model_type": m["model_type"],
+                  "learning_rate": ag.space.Real(m["learning_rate_min"],
+                                                 m["learning_rate_max"],
+                                                 default=m["learning_rate_default"],
                                                  log=True),
-                  "activation": ag.space.Categorical(*tuple(model_pars_cf["activation"])),
-                  "layers": ag.space.Categorical(*tuple(model_pars_cf["layers"])),
-                  "dropout_prob": ag.space.Real(model_pars_cf["dropout_prob_min"],
-                                                model_pars_cf["dropout_prob_max"],
-                                                default=model_pars_cf["dropout_prob_default"]),
-                  "num_boost_round": 100,
-                  "num_leaves": ag.space.Int(lower=model_pars_cf["num_leaves_lower"],
-                                             upper=model_pars_cf["num_leaves_upper"],
-                                             default=model_pars_cf["num_leaves_default"])
+                  
+                  "activation": ag.space.Categorical(*tuple(m["activation"])),
+                  "layers": ag.space.Categorical(*tuple(m["layers"])),
+                  "dropout_prob": ag.space.Real(m["dropout_prob_min"],
+                                                m["dropout_prob_max"],
+                                                default=m["dropout_prob_default"]),
+                  
+                  "num_boost_round": m["num_boost_round"],
+                  "num_leaves": ag.space.Int(lower=m["num_leaves_lower"],
+                                             upper=m["num_leaves_upper"],
+                                             default=m["num_leaves_default"])
                   }
 
     compute_pars = config["compute_pars"]
