@@ -57,8 +57,8 @@ def main():
 
 
   for cmd in test_list :
-    print("\n\n\n")
-    print(cmd)
+    print("\n\n\n", flush=True)
+    print(cmd, flush=True)
     os.system( cmd )
 
 
