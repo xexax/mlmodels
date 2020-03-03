@@ -26,7 +26,7 @@
 ######################################################################################
 
 ## ① Installation
-Install as editable package (ONLY dev branch)
+Install as editable package (ONLY dev branch), in Linux
 
     ONLY on Linux
     conda create -n py36 python=3.6.5  -y
@@ -39,6 +39,14 @@ Install as editable package (ONLY dev branch)
     pip install -e .  
     # pip install -e .  --no-deps    ## No-depdencies
 
+    ##### To test, type
+    ml_optim
+
+    ##### To test model fitting, type
+    ml_models
+    
+    
+    
 
 ####  Dependencies
 ```
