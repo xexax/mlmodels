@@ -24,12 +24,10 @@ def main():
   print(tf, tf.__version__)
 
 
-
-
-test_list =[
-  "python model_gluon/gluon_automl.py",
-  "python model_gluon/gluon_deepar.py",
-  "python model_gluon/gluon_ffn.py",
+  test_list =[
+   "python model_gl uon/gluon_automl.py",
+   "python model_gluon/gluon_deepar.py",
+   "python model_gluon/gluon_ffn.py",
 
   ###
   "python model_keras/01_deepctr.py",
@@ -46,12 +44,9 @@ test_list =[
   ###
   "python model_tch/nbeats.py",
 
+  ]
 
-
-]
-
-
-for cmd in test_list :
+  for cmd in test_list :
     print(cmd)
     os.system( cmd , flush=True)
 
