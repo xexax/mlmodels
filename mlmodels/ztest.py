@@ -21,6 +21,8 @@ import autogluon
 import gluonts
 
 
+import mlmodels
+
 
 
 def main():
@@ -29,26 +31,28 @@ def main():
   print(tf, tf.__version__)
   print(torch, torch.__version__)
 
+  path = mlmodels.__path__[0]
+  
 
   test_list =[
-   "python model_gluon/gluon_automl.py",
-   "python model_gluon/gluon_deepar.py",
-   "python model_gluon/gluon_ffn.py",
+   f"python {path}/model_gluon/gluon_automl.py",
+   f"python {path}/model_gluon/gluon_deepar.py",
+   f"python {path}/model_glufon/gluon_ffn.py",
 
   ###
-  "python model_keras/01_deepctr.py",
-
-
-  ###
-  "python model_keras/01_deepctr.py",
+  f"python {path}/model_keras/01_deepctr.py",
 
 
   ###
-  "python model_tf/1_lstm.py",
+  f"python {path}/model_keras/01_deepctr.py",
 
 
   ###
-  "python model_tch/nbeats.py",
+  f"python {path}/model_tf/1_lstm.py",
+
+
+  ###
+  f"python {path}/model_tch/nbeats.py",
 
   ]
 
