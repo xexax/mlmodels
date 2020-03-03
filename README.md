@@ -72,6 +72,12 @@ toml
 horovod==0.16.2
 ```
 
+#### Actual test runs
+![cli_code](https://github.com/arita37/mlmodels/workflows/cli_code/badge.svg?branch=dev)
+https://github.com/arita37/mlmodels/actions
+
+
+
 #######################################################################################
 
 ## ② How to add a new model
