@@ -208,7 +208,6 @@ def optim_optuna(modelname="model_tf.1_lstm.py",
 
 
 ####################################################################################################
-
 def test_all():
 
     pars =  {
@@ -322,7 +321,6 @@ def cli_load_arguments(config_file= None):
 
 
 def config_get_pars(arg) :
-
    js = json.load(open(arg.config_file, 'r'))  #Config     
    js = js[arg.config_mode]  #test /uat /prod
    model_pars = js.get("model_pars")
