@@ -31,13 +31,16 @@ jobs:
     #    - name: Pyflakes Syntax Checker
     #      uses: lgeiger/pyflakes-action@v1.0.1
     
-    - uses: actions/cache@v1
-    with:
-      path: ~/.cache/pip
-      key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
-      restore-keys: | 
-         ${{ runner.os }}-pip-
-    
+    # - uses: actions/cache@v1
+    # with:
+    #  path: ~/.cache/pip
+    #  key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+    #  restore-keys: | 
+    #     ${{ runner.os }}-pip-
+
+    - name: Install numpy
+      run: pip install numpy
+      
     - name: Install repo
       run: pip install -e .
     
