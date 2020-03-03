@@ -3,7 +3,7 @@ keras<2.4.0
 torch<1.0.0
 mxnet
 numpy
-transformers
+transformers==2.4.1
 gluonts
 autogluon
 optuna
@@ -14,7 +14,7 @@ deepctr
 pandas<1.0
 scipy>=1.3.0
 scikit-learn==0.21.2
-numexpr>=2.6.8 
+numexpr>=2.6.8
 sqlalchemy>=1.3.8
 boto3==1.9.187
 toml
