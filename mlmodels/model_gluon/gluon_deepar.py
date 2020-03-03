@@ -83,7 +83,7 @@ def get_params(choice="", data_path="dataset/", config_mode="test", **kw):
 
         compute_pars = {"batch_size": 32, "clip_gradient": 100, "ctx": None, "epochs": 1, "init": "xavier",
                         "learning_rate": 1e-3,
-                        "learning_rate_decay_factor": 0.5, "hybridize": False, "num_batches_per_epoch": 100,
+                        "learning_rate_decay_factor": 0.5, "hybridize": False, "num_batches_per_epoch": 10,
                         'num_samples': 100,
                         "minimum_learning_rate": 5e-05, "patience": 10, "weight_decay": 1e-08}
 

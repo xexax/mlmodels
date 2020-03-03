@@ -12,8 +12,13 @@ import sklearn as sk
 from sklearn import preprocessing
 from sklearn.feature_extraction.text import TfidfVectorizer
 
+
+
+####################################################################################################
 import tensorflow as tf
 import torch as torch
+import autogluon
+import gluonts
 
 
 
@@ -22,10 +27,11 @@ def main():
   print("os.getcwd", os.getcwd())
   print(np, np.__version__) 
   print(tf, tf.__version__)
+  print(torch, torch.__version__)
 
 
   test_list =[
-   "python model_gl uon/gluon_automl.py",
+   "python model_gluon/gluon_automl.py",
    "python model_gluon/gluon_deepar.py",
    "python model_gluon/gluon_ffn.py",
 
@@ -48,7 +54,7 @@ def main():
 
   for cmd in test_list :
     print(cmd)
-    os.system( cmd , flush=True)
+    os.system( cmd )
 
 
 

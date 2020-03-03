@@ -7,7 +7,7 @@ https://autogluon.mxnet.io/tutorials/tabular_prediction/tabular-quickstart.html
 
 
 """
-
+import os
 import json
 from pathlib import Path
 
@@ -95,10 +95,10 @@ def get_params(choice="", data_path="dataset/", config_mode="test", **kw):
                       "layers": ag.space.Categorical(
                           *tuple([[100], [1000], [200, 100], [300, 200, 100]])),
                       'dropout_prob': ag.space.Real(0.0, 0.5, default=0.1),
-                      'num_boost_round': 100,
-                      'num_leaves': ag.space.Int(lower=26, upper=66, default=36)}
+                      'num_boost_round': 10,
+                      'num_leaves': ag.space.Int(lower=26, upper=30, default=36)}
 
-        compute_pars = {"hp_tune": True, "num_epochs": 10, "time_limits": 120, "num_trials": 5,
+        compute_pars = {"hp_tune": True, "num_epochs": 1, "time_limits": 100, "num_trials": 2,
                         "search_strategy": "skopt"}
         out_pars = {"out_path": out_path}
 
