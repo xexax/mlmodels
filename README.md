@@ -41,6 +41,7 @@ Install as editable package (ONLY dev branch)
 
 
 ####  Dependencies
+```
 tensorflow<2.0
 keras<2.4.0
 torch<1.0.0
@@ -61,7 +62,7 @@ sqlalchemy>=1.3.8
 boto3==1.9.187
 toml
 horovod==0.16.2
-
+```
 
 #######################################################################################
 
