@@ -37,7 +37,7 @@ Install as editable package (ONLY dev branch)
     cd mlmodels
     git checkout dev     
     pip install -e .  
-    # pip install -e .  --no-deps  
+    # pip install -e .  --no-deps    ## No-depdencies
 
 
 ####  Dependencies
