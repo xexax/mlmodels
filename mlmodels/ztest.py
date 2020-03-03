@@ -47,18 +47,17 @@ def main():
 
 
    ###
-
    f"python {path}/model_gluon/gluon_deepar.py",
    f"python {path}/model_glufon/gluon_ffn.py",
-
-
 
 
    f"python {path}/model_gluon/gluon_automl.py",
 
   ]
 
+
   for cmd in test_list :
+    print("\n\n\n")
     print(cmd)
     os.system( cmd )
 
