@@ -43,6 +43,10 @@ jobs:
       run: ml_optim
 
 
+    - name: ml_models
+      run: ml_models
+
+
     - name: ml_test
       run: ml_test
       

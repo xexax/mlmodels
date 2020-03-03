@@ -40,8 +40,13 @@ jobs:
       run: pip install -e .
 
 
+    ########  Test running 
     - name: ml_optim
       run: ml_optim
+
+
+    - name: ml_models
+      run: ml_models
 
 
     - name: ml_test
