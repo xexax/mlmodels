@@ -287,7 +287,7 @@ def cli_load_arguments(config_file= None):
 
     p = argparse.ArgumentParser()
     def add(*k, **kw) :
-      add(*k, **kw) 
+      p.add_argument(*k, **kw) 
 
     add("--config_file"  , default=config_file                   , help="Params File")
     add("--config_mode"  , default="test"                        , help="test/ prod /uat")
