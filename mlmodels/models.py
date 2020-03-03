@@ -154,13 +154,13 @@ def module_load(model_uri="", verbose=0):
 
 
 
-def module_load_full(model_uri="", model_pars=None, choice=None):
+def module_load_full(model_uri="", model_pars=None, choice=None,  **kwarg):
   """
     Create Instance of the model, module
     model_uri:  model_tf.1_lstm.py
   """
   module = module_load(model_uri=model_uri)
-  model = module.Model(**model_pars)
+  model = module.Model(**model_pars, **kwarg)
   return module, model
 
 
@@ -177,12 +177,12 @@ def model_create(module, model_pars=None):
 
 
 
-def fit(model, module, compute_pars=None, data_pars=None, out_pars=None,  **kwarg):
+def fit(model, module, sess=None, compute_pars=None, data_pars=None, out_pars=None,  **kwarg):
     """
     Wrap fit generic method
     :type model: object
     """
-    return module.fit(model, data_pars, **kwarg)
+    return module.fit(model, sess, compute_pars, data_pars, **kwarg)
 
 
 def predict(model, module, sess=None, compute_pars=None, data_pars=None, out_pars=None,  **kwarg):
@@ -196,7 +196,7 @@ def predict(model, module, sess=None, compute_pars=None, data_pars=None, out_par
     :param kwarg:
     :return:
     """
-    return module.predict(model, sess, data_pars, **kwarg)
+    return module.predict(model, sess, compute_pars, data_pars, out_pars, **kwarg)
 
 
 def metrics(model, module, sess=None, compute_pars=None, data_pars=None, out_pars=None, **kwarg):
