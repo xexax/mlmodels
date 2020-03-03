@@ -306,7 +306,7 @@ def test(data_path="dataset/", pars_choice="json"):
                                                                data_path=data_path)
 
     log("#### Loading dataset   #############################################")
-    Xtuple = get_dataset(**data_pars)
+    Xtuple = get_dataset(data_pars)
 
 
     log("#### Model init, fit   #############################################")
