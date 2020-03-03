@@ -42,15 +42,19 @@ def main():
    ###
    f"python {path}/model_keras/01_deepctr.py",
 
+   ###
+   f"python {path}/model_tch/nbeats.py",
+
 
    ###
-   f"python {path}/model_gluon/gluon_automl.py",
+
    f"python {path}/model_gluon/gluon_deepar.py",
    f"python {path}/model_glufon/gluon_ffn.py",
 
 
-   ###
-   f"python {path}/model_tch/nbeats.py",
+
+
+   f"python {path}/model_gluon/gluon_automl.py",
 
   ]
 
