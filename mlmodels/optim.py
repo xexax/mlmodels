@@ -126,7 +126,9 @@ def optim_optuna(modelname="model_tf.1_lstm.py",
     
     def objective(trial):
         print("check", module)
-        param_dict =  module.get_params(choice="test",)
+        #param_dict =  module.get_params(choice="test",)
+        model_pars2, data_pars2, compute_pars2, out_pars2 = module.get_params(choice="test",)
+        param_dict = model_pars2
         # print([param_dict])
 
         for t,p  in model_pars.items():
