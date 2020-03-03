@@ -43,7 +43,17 @@ jobs:
       
     - name: Install repo
       run: pip install -e .
-    
+
+
+    - name: ml_optim
+      run: ml_optim
+
+
+    - name: ml_test
+      run: ml_test
+      
+      
+
     - name: Install flake8
       run: pip install flake8
     
