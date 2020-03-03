@@ -19,24 +19,43 @@ jobs:
       with:
         python-version: 3.6.*
       
-    - name: Install pipenv
-      uses: dschep/install-pipenv-action@v1
+    # - name: Install pipenv
+    #  uses: dschep/install-pipenv-action@v1
       
       
-    - uses: actions/cache@v1
-      id: cache
+    #- uses: actions/cache@v1
+    #  id: cache-pip
+    #  with:
+    #    path: ~/.cache/pip
+    #    key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+    #    restore-keys: |
+    #      ${{ runner.os }}-pip-
+
+
+
+
+    - name: Cache pipenv virtualenv
+      id: cache-pipenv
+      uses: actions/cache@v1
       with:
-        path: ~/.cache/pip
-        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
-        restore-keys: |
-          ${{ runner.os }}-pip-
+        path: ~/.local/share/virtualenvs
+        key: ${{ runner.os }}-pipenv-${{ hashFiles('**/Pipfile.lock') }} 
+
           
-          
+
     - name: Install numpy
+      if: steps.cache-pipenv.outputs.cache-hit != 'true'
       run: pip install numpy
+
+
+    - name: Install dependencies
+      if: steps.cache-pipenv.outputs.cache-hit != 'true'
+      run: pipenv install -e .
+ 
+
       
-    - name: Install repo
-      run: pip install -e .
+    #- name: Install repo
+    #  run: pip install -e .
 
 
     - name: ml_optim
@@ -47,7 +66,7 @@ jobs:
       run: ml_models
 
 
-    - name: ml_test
-      run: ml_test
+    #- name: ml_test
+    #  run: ml_test
       
       
