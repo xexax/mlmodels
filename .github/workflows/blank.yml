@@ -1,4 +1,4 @@
-name: cli_code
+name: mlmodels_CI
 
 on:
   push:
