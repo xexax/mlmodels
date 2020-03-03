@@ -22,14 +22,14 @@ jobs:
       uses: dschep/install-pipenv-action@v1
       
       
-    - name: Black Code Formatter
-      uses: lgeiger/black-action@master
-      with:
-        # args: ". --check  -l 100   --verbose "
-        args: ".   -l 100   --verbose "
+    #- name: Black Code Formatter
+    #  uses: lgeiger/black-action@master
+    #  with:
+    #    # args: ". --check  -l 100   --verbose "
+    #    args: ".   -l 100   --verbose "
      
-#    - name: Pyflakes Syntax Checker
-#      uses: lgeiger/pyflakes-action@v1.0.1
+    #    - name: Pyflakes Syntax Checker
+    #      uses: lgeiger/pyflakes-action@v1.0.1
     
     
     - name: Install repo
