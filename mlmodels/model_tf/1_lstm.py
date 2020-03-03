@@ -228,7 +228,9 @@ def test(data_path="dataset/GOOG-year.csv", pars_choice="test"):
        Using mlmodels package method
        data_path : mlmodels/mlmodels/dataset/
        pars_choice: test
-      
+       :param data_path:
+       :param pars_choice:
+
     """
     log("#### Loading params   ##############################################")
     model_pars, data_pars, compute_pars, out_pars = get_params(choice=pars_choice,
