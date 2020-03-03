@@ -210,6 +210,7 @@ def optim_optuna(modelname="model_tf.1_lstm.py",
 ####################################################################################################
 
 def test_all():
+
     pars =  {
         "learning_rate": {"type": "log_uniform", "init": 0.01,  "range" : [0.001, 0.1] },
         "num_layers":    {"type": "int", "init": 2,  "range" :[2, 4] },
@@ -234,6 +235,7 @@ def test_all():
 
 
 def test_fast(ntrials=2):
+    path_curr = os.getcwd()
 
     modelname = 'model_tf.1_lstm'
 
@@ -250,15 +252,13 @@ def test_fast(ntrials=2):
     log( "model details" , modelname, model_pars ) 
 
 
-    data_path = os_package_root_path('dataset/GOOG-year_small.csv')
+    data_path = os_package_root_path(__file__, sublevel=0, path_add='dataset/GOOG-year_small.csv')
     log( "data_path" , data_path )
 
 
-    path_curr = os.getcwd()
     path_save = f"{path_curr}/ztest/optuna_1lstm/" 
     os.makedirs(path_save, exist_ok=True)
     log("path_save", path_save)
-
 
 
     res = optim(modelname    = modelname,
@@ -287,29 +287,32 @@ def cli_load_arguments(config_file= None):
     # print(config_file)
 
     p = argparse.ArgumentParser()
-    p.add_argument("--config_file", default=config_file, help="Params File")
-    p.add_argument("--config_mode", default="test", help="test/ prod /uat")
-    p.add_argument("--log_file", help="File to save the logging")
+    def add(*k, **kw) :
+      add(*k, **kw) 
 
-    p.add_argument("--do", default="test", help="what to do test or search")
+    add("--config_file"  , default=config_file                   , help="Params File")
+    add("--config_mode"  , default="test"                        , help="test/ prod /uat")
+    add("--log_file"     , help="File to save the logging")
+
+    add("--do"           , default="test"                        , help="what to do test or search")
 
 
     ###### model_pars
-    p.add_argument("--modelname", default="model_tf.1_lstm.py",  help="name of the model to be tuned this name will be used to save the model")
+    add("--modelname"    , default="model_tf.1_lstm.py"          , help="name of the model to be tuned this name will be used to save the model")
 
 
     ###### data_pars
-    p.add_argument("--data_path", default="dataset/GOOG-year_small.csv",  help="path of the training file")
+    add("--data_path"    , default="dataset/GOOG-year_small.csv" , help="path of the training file")
 
 
     ###### compute params
-    p.add_argument("--ntrials", default=100, help='number of trials during the hyperparameters tuning')
-    p.add_argument('--optim_engine', default='optuna',help='Optimization engine')
-    p.add_argument('--optim_method', default='normal/prune',help='Optimization method')
+    add("--ntrials"      , default=100                           , help='number of trials during the hyperparameters tuning')
+    add('--optim_engine' , default='optuna'                      , help='Optimization engine')
+    add('--optim_method' , default='normal/prune'                , help='Optimization method')
 
 
     ###### out params
-    p.add_argument('--save_path', default='ztest/search_save/',help='folder that will contain saved version of best model')
+    add('--save_path'    , default='ztest/search_save/'          , help='folder that will contain saved version of best model')
 
 
     args = p.parse_args()
