@@ -12,14 +12,12 @@ jobs:
 
     steps:
     - uses: actions/checkout@v1
-    
-    
+   
     - name: Set up Python 3.6.*
       uses: actions/setup-python@v1
       with:
         python-version: 3.6.*
-    
-    
+      
     - name: Install pipenv
       uses: dschep/install-pipenv-action@v1
       
@@ -33,6 +31,9 @@ jobs:
 #    - name: Pyflakes Syntax Checker
 #      uses: lgeiger/pyflakes-action@v1.0.1
     
+    
+    - name: Install repo
+      run: pip install -e .
     
     - name: Install flake8
       run: pip install flake8
