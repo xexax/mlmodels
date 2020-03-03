@@ -69,7 +69,6 @@ numexpr>=2.6.8
 sqlalchemy>=1.3.8
 boto3==1.9.187
 toml
-horovod==0.16.2
 ```
 
 #### Actual test runs
