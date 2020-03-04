@@ -32,8 +32,19 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-pip-
           
+
+
+    - name: Cache pipenv virtualenv
+      id: cache-pipenv
+      uses: actions/cache@v1
+      with:
+        path: ~/.local/share/virtualenvs
+        key: ${{ runner.os }}-pipenv-${{ hashFiles('**/requirements.txt') }}
+
+
           
     - name: Install numpy
+      if: steps.cache-pipenv.outputs.cache-hit != 'true'
       run:  |
         pip install  numpy<1.17.0
         pip install torch==0.4.1 -f https://download.pytorch.org/whl/torch_stable.html
@@ -41,6 +52,7 @@ jobs:
 
 
     - name: Install repo
+      if: steps.cache-pipenv.outputs.cache-hit != 'true'
       run: pip install -e .  -r requirements_wi.txt
 
 
