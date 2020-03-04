@@ -36,7 +36,7 @@ jobs:
     - name: Install numpy
       run:  |
         pip install  numpy<1.17.0
-        pip install  pip install torch==0.4.1 -f https://download.pytorch.org/whl/torch_stable.html
+        pip install torch==0.4.1 -f https://download.pytorch.org/whl/torch_stable.html
 
 
 
