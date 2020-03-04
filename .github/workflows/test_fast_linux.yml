@@ -42,7 +42,7 @@ jobs:
         key: ${{ runner.os }}-pipenv-${{ hashFiles('**/requirements.txt') }}
 
           
-          
+
     - name: Install numpy
       if: steps.cache-pipenv.outputs.cache-hit != 'true'
       run: pip install numpy
@@ -61,8 +61,8 @@ jobs:
       run: ml_models
 
 
-    - name: ml_test
-      run: ml_test
+    #- name: ml_test
+    #  run: ml_test
       
          
       
