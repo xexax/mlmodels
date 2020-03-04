@@ -9,10 +9,8 @@
 
 * Goal is to transform Jupyter code into Semi-Prod code with minimal code change ... 
 
-
 * Model list is available here : 
   https://github.com/arita37/mlmodels/blob/dev/README_model_list.md
-
 
 * Why Functional interface instead of OOP ?
     Just Functional reduces the amount of code needed, focus more on the computing part (vs design part), 
@@ -27,22 +25,35 @@
 
 ## ① Installation
 Install as editable package (ONLY dev branch), in Linux
-
-    ONLY on Linux
     conda create -n py36 python=3.6.5  -y
     source activate py36
 
     cd yourfolder
     git clone https://github.com/arita37/mlmodels.git mlmodels
     cd mlmodels
-    git checkout dev     
-    pip install -e .  
-    # pip install -e .  --no-deps    ## No-depdencies
+    git checkout dev 
 
-    ##### To test, type
+
+    ### On Linux/MacOS    
+    pip install numpy<1.17.0
+    pip install -e .  -r requirements.txt
+
+
+    ### On Windows 
+    pip install  numpy<1.17.0
+    pip install torch==0.4.1 -f https://download.pytorch.org/whl/torch_stable.html   
+    pip install -e .  -r requirements_wi.txt  
+
+
+    ### No Deps
+    # pip install -e .  --no-deps    
+
+
+
+    ##### To test :
     ml_optim
 
-    ##### To test model fitting, type
+    ##### To test model fitting
     ml_models
     
     
@@ -50,30 +61,23 @@ Install as editable package (ONLY dev branch), in Linux
 
 ####  Dependencies
 ```
-tensorflow<2.0
-keras<2.4.0
-torch<1.0.0
-numpy
-transformers
-gluonts
-autogluon
-optuna
-mlflow
-torchtext
-nltk
-deepctr
-pandas<1.0
-scipy>=1.3.0
-scikit-learn==0.21.2
-numexpr>=2.6.8 
-sqlalchemy>=1.3.8
-boto3==1.9.187
-toml
+requirements.txt
+
 ```
 
 #### Actual test runs
-![cli_code](https://github.com/arita37/mlmodels/workflows/cli_code/badge.svg?branch=dev)
+```
 https://github.com/arita37/mlmodels/actions
+
+```
+
+![test_fast_linux](https://github.com/arita37/mlmodels/workflows/test_fast_linux/badge.svg)
+
+![test_fast_windows](https://github.com/arita37/mlmodels/workflows/test_fast_windows/badge.svg?branch=dev)
+
+
+
+
 
 
 
