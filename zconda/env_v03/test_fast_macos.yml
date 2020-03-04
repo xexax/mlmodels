@@ -1,15 +1,15 @@
-name: test_fast_windows
+name: test_fast_macos
 
 
 on:
   push:
     branches: 
-      - dev
+      - dev__
  
 jobs:
   build:
 
-    runs-on: windows-latest 
+    runs-on: macos-latest 
 
     steps:
     - uses: actions/checkout@v1
@@ -34,15 +34,10 @@ jobs:
           
           
     - name: Install numpy
-      run:  |
-        pip install  numpy<1.17.0
-        pip install torch==0.4.1 -f https://download.pytorch.org/whl/torch_stable.html
-
-
-
+      run: pip install numpy
+      
     - name: Install repo
-      run: pip install -e .  -r requirements_wi.txt
-
+      run: pip install -e .
 
 
     ########  Test running 
@@ -54,7 +49,7 @@ jobs:
       run: ml_models
 
 
-    #- name: ml_test
-    #  run: ml_test
+    - name: ml_test
+      run: ml_test
       
       
