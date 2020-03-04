@@ -185,8 +185,8 @@ def get_dataset(data_pars=None):
     return df_log
 
 
-def get_params(choice=0, data_path="dataset/", config_mode="test", **kw):
-    if choice == 0:
+def get_params(choice="test", data_path="dataset/", config_mode="test", **kw):
+    if choice == "test":
         model_pars = {"learning_rate": 0.001,
                       "num_layers": 1,
                       "size": None,
@@ -210,7 +210,7 @@ def get_params(choice=0, data_path="dataset/", config_mode="test", **kw):
 
 
 ####################################################################################################
-def test(data_path="dataset/GOOG-year.csv", pars_choice=0):
+def test(data_path="dataset/GOOG-year.csv", pars_choice="test"):
     """
        Using mlmodels package method
        :param data_path:

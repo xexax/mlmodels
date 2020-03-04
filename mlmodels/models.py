@@ -164,7 +164,7 @@ def module_load_full(model_uri="", model_pars=None, data_pars=None, compute_pars
   return module, model
 
 
-def model_create(module, model_pars=None):
+def model_create(module, model_pars=None, data_pars=None, compute_pars=None, **kwarg):
     """
       Create Instance of the model from loaded module
       model_pars : dict params
@@ -172,7 +172,7 @@ def model_create(module, model_pars=None):
     if model_pars is None :
       model_pars = module.get_pars()
 
-    model = module.Model(**model_pars)
+    model = module.Model(model_pars=model_pars, data_pars=data_pars, compute_pars=compute_pars, **kwarg)
     return model
 
 
