@@ -1,28 +1,15 @@
 # -*- coding: utf-8 -*-
 """
 Lightweight Functional interface to wrap Hyper-parameter Optimization
-
-
 ###### Model param search test
 python optim.py --do test
-
-
 ##### #for normal optimization search method
 python optim.py --do search --ntrials 1  --config_file optim_config.json --optim_method normal
-
-
 ###### for pruning method
 python optim.py --do search --ntrials 1  --config_file optim_config.json --optim_method prune
-
-
-
 ###### HyperParam standalone run
 python optim.py --modelname model_tf.1_lstm.py  --do test
-
 python optim.py --modelname model_tf.1_lstm.py  --do search
-
-
-
 ### Distributed
 https://optuna.readthedocs.io/en/latest/tutorial/distributed.html
 { 'distributed' : 1,
@@ -30,15 +17,10 @@ https://optuna.readthedocs.io/en/latest/tutorial/distributed.html
   'storage' : 'sqlite'
 }                                       
                                        
-
-
 ###### 1st engine is optuna
 https://optuna.readthedocs.io/en/stable/installation.html
 https://github.com/pfnet/optuna/blob/master/examples/tensorflow_estimator_simple.py
 https://github.com/pfnet/optuna/tree/master/examples
-
-
-
 """
 import argparse
 import os
@@ -84,7 +66,6 @@ def optim(modelname="model_tf.1_lstm.py",
     log_path : TYPE, optional. The default is "".
     ntrials : TYPE, optional. The default is 2.
     Returns : None
-
     """
     log("model_pars", model_pars)
     if compute_pars["engine"] == "optuna" :
@@ -103,15 +84,11 @@ def optim_optuna(modelname="model_tf.1_lstm.py",
     """
        Interface layer to Optuna  for hyperparameter optimization
        return Best Parameters
-
     optuna create-study --study-name "distributed-example" --storage "sqlite:///example.db"
-
     https://optuna.readthedocs.io/en/latest/tutorial/distributed.html
      if __name__ == '__main__':
     study = optuna.load_study(study_name='distributed-example', storage='sqlite:///example.db')
     study.optimize(objective, n_trials=100)
-
-
     weight_decay = trial.suggest_loguniform('weight_decay', 1e-10, 1e-3)
     optimizer = trial.suggest_categorical('optimizer', ['MomentumSGD', 'Adam']) # Categorical parameter
     num_layers = trial.suggest_int('num_layers', 1, 3)      # Int parameter
@@ -119,16 +96,13 @@ def optim_optuna(modelname="model_tf.1_lstm.py",
     learning_rate = trial.suggest_loguniform('learning_rate', 1e-5, 1e-2)      # Loguniform parameter
     drop_path_rate = trial.suggest_discrete_uniform('drop_path_rate', 0.0, 1.0, 0.1) # Discrete-uniform parameter
     
-
     """
     module = module_load(modelname)
     log(module)
     
     def objective(trial):
         print("check", module)
-        #param_dict =  module.get_params(choice="test",)
-        model_pars2, data_pars2, compute_pars2, out_pars2 = module.get_params(choice="test",)
-        param_dict = model_pars2
+        param_dict =  module.get_pars(choice="test",)
         # print([param_dict])
 
         for t,p  in model_pars.items():
@@ -367,36 +341,6 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
-
-
-
-
-
-
-
-
-####################################################################################################
-####################################################################################################
-
-
-"""
-import tensorflow as tf
-
-from sklearn.preprocessing import MinMaxScaler
-
-def data_loader(data_pars):
-    if data_pars["data_type"] == "pandas" :
-      df = pd.read_csv(data_pars["data_path"])
-
-    date_ori = pd.to_datetime(df.iloc[:, 0]).tolist()
-
-    minmax = MinMaxScaler().fit(df.iloc[:, 1:].astype('float32'))
-    df_log = minmax.transform(df.iloc[:, 1:].astype('float32'))
-    df_log = pd.DataFrame(df_log)
-    return df_log
-"""
 
 
 
