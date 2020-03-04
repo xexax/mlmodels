@@ -49,7 +49,7 @@ jobs:
       run: ml_models
 
 
-    - name: ml_test
-      run: ml_test
+    #- name: ml_test
+    #  run: ml_test
       
       
