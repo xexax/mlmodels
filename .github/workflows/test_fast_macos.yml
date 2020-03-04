@@ -4,7 +4,7 @@ name: test_fast_macos
 on:
   push:
     branches: 
-      - dev
+      - dev__
  
 jobs:
   build:
