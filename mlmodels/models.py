@@ -182,7 +182,7 @@ def fit(model, module, sess=None, compute_pars=None, data_pars=None, out_pars=No
     Wrap fit generic method
     :type model: object
     """
-    return module.fit(model, sess, compute_pars, data_pars, **kwarg)
+    return module.fit(model, sess, compute_pars, data_pars, out_pars, **kwarg)
 
 
 def predict(model, module, sess=None, compute_pars=None, data_pars=None, out_pars=None,  **kwarg):
