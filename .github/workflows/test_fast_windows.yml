@@ -41,7 +41,7 @@ jobs:
 
 
     - name: Install repo
-      run: pip install -e .  -r requirements_wi​‌​n.txt
+      run: pip install -e .  -r requirements_wi.txt
 
 
 
