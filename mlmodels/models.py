@@ -154,13 +154,13 @@ def module_load(model_uri="", verbose=0):
 
 
 
-def module_load_full(model_uri="", model_pars=None, choice=None,  **kwarg):
+def module_load_full(model_uri="", model_pars=None, data_pars=None, compute_pars=None, choice=None,  **kwarg):
   """
     Create Instance of the model, module
     model_uri:  model_tf.1_lstm.py
   """
   module = module_load(model_uri=model_uri)
-  model = module.Model(**model_pars, **kwarg)
+  model = module.Model(model_pars, data_pars, compute_pars, **kwarg)
   return module, model
 
 

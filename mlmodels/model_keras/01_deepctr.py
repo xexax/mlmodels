@@ -48,8 +48,6 @@ from sklearn.metrics import log_loss, roc_auc_score, mean_squared_error
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder, MinMaxScaler
 
-from mlmodels.model_keras.util import load, save
-
 
 # from preprocess import _preprocess_criteo, _preprocess_movielens
 
@@ -77,12 +75,12 @@ def log(*s, n=0, m=1):
 
 ####################################################################################################
 class Model:
-    def __init__(self, task='binary', cost=None, optimization=None, **kwargs):
+    def __init__(self, model_pars=None, data_pars=None, compute_pars=None, **kwargs):
         # 4.Define Model
-        _, linear_cols, dnn_cols, _, _, _ = kwargs.get('dataset')
-        self.model = DeepFM(linear_cols, dnn_cols, task)
+        linear_cols, dnn_cols = kwargs.get('dataset')[1:3]
+        self.model = DeepFM(linear_cols, dnn_cols, model_pars['task'])
 
-        self.model.compile(optimization, cost, metrics=['binary_crossentropy'], )
+        self.model.compile(model_pars['optimization'], model_pars['cost'], metrics=['binary_crossentropy'], )
 
 
 ##################################################################################################
@@ -119,7 +117,7 @@ def _preprocess_criteo(df, **kw):
     dnn_cols = fixlen_cols
     train, test = train_test_split(df, test_size=kw['test_size'])
 
-    return df, linear_cols, dnn_cols, train, test, target
+    return df, linear_cols, dnn_cols, train, test, target, test[target].values
 
 
 def _preprocess_movielens(df, **kw):
@@ -131,14 +129,16 @@ def _preprocess_movielens(df, **kw):
     for feat in sparse_col:
         lbe = LabelEncoder()
         df[feat] = lbe.fit_transform(df[feat])
+
     if not multiple_value:
         # 2.count #unique features for each sparse field
         fixlen_cols = [SparseFeat(feat, df[feat].nunique(), embedding_dim=4) for feat in sparse_col]
         linear_cols = fixlen_cols
         dnn_cols = fixlen_cols
         train, test = train_test_split(df, test_size=0.2)
-
+        ytrue = test[target].values
     else:
+        ytrue = df[target].values
         hash_feature = kw.get('hash_feature', False)
         if not hash_feature:
             def split(x):
@@ -206,7 +206,9 @@ def _preprocess_movielens(df, **kw):
             model_input = {name: df[name] for name in feature_names}
             model_input['genres'] = genres_list
 
-    return df, linear_cols, dnn_cols, train, test, target
+        train, test = model_input, model_input
+
+    return df, linear_cols, dnn_cols, train, test, target, ytrue
 
 
 def get_dataset(data_pars=None, **kw):
@@ -222,18 +224,17 @@ def get_dataset(data_pars=None, **kw):
         df = pd.read_csv(data_path)
 
     if data_type == "criteo":
-        df, linear_cols, dnn_cols, train, test, target = _preprocess_criteo(df, **data_pars)
-
+        df, linear_cols, dnn_cols, train, test, target, ytrue = _preprocess_criteo(df, **data_pars)
     elif data_type == "movie_len":
-        df, linear_cols, dnn_cols, train, test, target = _preprocess_movielens(df, **data_pars)
-
+        df, linear_cols, dnn_cols, train, test, target, ytrue = _preprocess_movielens(df, **data_pars)
     else:  ## Already define
         linear_cols = data_pars['linear_cols']
         dnn_cols = data_pars['dnn_cols']
         train, test = train_test_split(df, test_size=data_pars['test_size'])
         target = data_pars['target_col']
+        ytrue = data_pars['target_col']
 
-    return df, linear_cols, dnn_cols, train, test, target
+    return df, linear_cols, dnn_cols, train, test, target, ytrue
 
 
 def fit(model, session=None, compute_pars=None, data_pars=None, out_pars=None,
@@ -242,7 +243,7 @@ def fit(model, session=None, compute_pars=None, data_pars=None, out_pars=None,
     """
           Classe Model --> model,   model.model contains thte sub-model
     """
-    data, linear_cols, dnn_cols, train, test, target = get_dataset(data_pars)
+    data, linear_cols, dnn_cols, train, test, target, ytrue = get_dataset(data_pars)
     multiple_value = data_pars.get('multiple_value', None)
 
     m = compute_pars
@@ -264,15 +265,13 @@ def fit(model, session=None, compute_pars=None, data_pars=None, out_pars=None,
 
 # Model p redict
 def predict(model, session=None, compute_pars=None, data_pars=None, out_pars=None, **kwargs):
-    #  Model is class
     # load test dataset
-    print("==== ", compute_pars, data_pars)
-    data, linear_cols, dnn_cols, train, test, target = get_dataset(data_pars)
+    data, linear_cols, dnn_cols, train, test, target, ytrue = get_dataset(data_pars)
     feature_names = get_feature_names(linear_cols + dnn_cols, )
     test_model_input = {name: test[name] for name in feature_names}
 
     multiple_value = data_pars.get('multiple_value', None)
-    ## predict
+    # predict
     if multiple_value is None:
         pred_ans = model.model.predict(test_model_input, batch_size=compute_pars['batch_size'])
 
@@ -282,11 +281,7 @@ def predict(model, session=None, compute_pars=None, data_pars=None, out_pars=Non
     return pred_ans
 
 
-def metrics(ypred, ytrue, session=None, compute_pars=None, data_pars=None, out_pars=None, **kwargs):
-    # load test dataset
-    #  _, linear_cols, dnn_cols, _, test, target = get_dataset(data_pars)
-
-    print("===> ", ytrue, kwargs)
+def metrics(ypred, ytrue=None, session=None, compute_pars=None, data_pars=None, out_pars=None, **kwargs):
     if kwargs.get("task") == "binary":
         metrics_dict = {"LogLoss": log_loss(ytrue, ypred),
                         "AUC": roc_auc_score(ytrue, ypred)}
@@ -294,6 +289,7 @@ def metrics(ypred, ytrue, session=None, compute_pars=None, data_pars=None, out_p
     elif kwargs.get("task") == "regression":
         multiple_value = data_pars.get('multiple_value', None)
         if multiple_value is None:
+            print("==>ytrue: ", ytrue, ypred)
             metrics_dict = {"MSE": mean_squared_error(ytrue, ypred)}
         else:
             metrics_dict = {}
@@ -432,15 +428,14 @@ def test(data_path="dataset/", pars_choice=0):
 
     log("#### Model init, fit   #############################################")
     from mlmodels.models import module_load_full, fit, predict
-    module, model = module_load_full("model_keras.01_deepctr", model_pars, dataset=dataset)
+    module, model = module_load_full("model_keras.01_deepctr", model_pars, data_pars, compute_pars, dataset=dataset)
     model = fit(model, module, compute_pars=compute_pars, data_pars=data_pars, out_pars=out_pars)
 
     log("#### Predict   ####################################################")
     ypred = predict(model, module, compute_pars=compute_pars, data_pars=data_pars, out_pars=out_pars)
 
     log("#### metrics   ####################################################")
-    df, linear_cols, dnn_cols, train, test, target = dataset
-    metrics_val = metrics(ypred, test[target].values, compute_pars=compute_pars, data_pars=data_pars, out_pars=out_pars,
+    metrics_val = metrics(ypred, dataset[-1], compute_pars=compute_pars, data_pars=data_pars, out_pars=out_pars,
                           task=model_pars['task'])
     print(metrics_val)
 
