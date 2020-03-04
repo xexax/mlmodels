@@ -87,7 +87,6 @@ def fit(model, sess=None, data_pars=None, model_pars=None, compute_pars=None, ou
 
 # Model p redict
 def predict(model, sess=None, data_pars=None, compute_pars=None, out_pars=None, **kwargs):
-    print("??? ", data_pars, compute_pars)
     ##  Model is class
     ## load test dataset
     data_pars['train'] = False
