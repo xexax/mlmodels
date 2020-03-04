@@ -160,7 +160,7 @@ def module_load_full(model_uri="", model_pars=None, data_pars=None, compute_pars
     model_uri:  model_tf.1_lstm.py
   """
   module = module_load(model_uri=model_uri)
-  model = module.Model(model_pars, data_pars, compute_pars, **kwarg)
+  model = module.Model(model_pars=model_pars, data_pars=data_pars, compute_pars=compute_pars, **kwarg)
   return module, model
 
 
@@ -182,7 +182,7 @@ def fit(model, module, sess=None, compute_pars=None, data_pars=None, out_pars=No
     Wrap fit generic method
     :type model: object
     """
-    return module.fit(model, sess, compute_pars, data_pars, out_pars, **kwarg)
+    return module.fit(model, sess, compute_pars=compute_pars, data_pars=data_pars, out_pars=out_pars, **kwarg)
 
 
 def predict(model, module, sess=None, compute_pars=None, data_pars=None, out_pars=None,  **kwarg):
@@ -196,7 +196,7 @@ def predict(model, module, sess=None, compute_pars=None, data_pars=None, out_par
     :param kwarg:
     :return:
     """
-    return module.predict(model, sess, compute_pars, data_pars, out_pars, **kwarg)
+    return module.predict(model, sess, data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars, **kwarg)
 
 
 def metrics(model, module, sess=None, compute_pars=None, data_pars=None, out_pars=None, **kwarg):
