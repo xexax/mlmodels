@@ -95,7 +95,7 @@ def code_check(sign_list=None, mode_list) :
       lines = f.writelines()
       for s in sign_list :
         flag = find_in_list(s, lines)
-        if flag not True :
+        if not flag  True :
            print("Error", s)
            return False  
 
