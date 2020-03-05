@@ -78,8 +78,7 @@ def model_get_list(folder=None, block_list=[]):
        list_select.append( t )
 
  
-
- def find_in_list(x, llist) :
+def find_in_list(x, llist) :
    flag = False
    for l in llist :
      if x in l : return True
