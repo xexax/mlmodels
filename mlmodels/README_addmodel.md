@@ -8,6 +8,8 @@ https://github.com/ShawnyXiao/TextClassification-Keras/tree/master/model/TextCNN
 
 
 
+
+
 0) Read the readme.md
 
 
