@@ -91,7 +91,7 @@ class Model:
 
 
 
-def fit(model, data_pars={}, compute_pars={}, out_pars={}, out_pars={},  **kw:
+def fit(model, data_pars={}, compute_pars={}, out_pars={}, out_pars={},  **kw):
   """
 
   :param model:    Class model
@@ -161,7 +161,7 @@ def save(model, path) :
 
 
 
-def load(path)
+def load(path) :
   model = Model()
   model.model = None
   return model   

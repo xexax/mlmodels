@@ -9,16 +9,12 @@ import pandas as pd
 import scipy as sci
 import sklearn as sk
 
-####################################################################################################
-import tensorflow as tf
-import torch as torch
-import autogluon
-import gluonts
-
-
 
 ####################################################################################################
 import mlmodels
+
+
+
 
 
 ####################################################################################################
@@ -36,13 +32,6 @@ def log(*s, n=0, m=1):
 
 
 ####################################################################################################
-def os_package_root_path(add_path="",n=0):
-  from pathlib import Path
-  add_path = os.path.join(Path(__file__).parent.absolute(), add_path)
-  # print("os_package_root_path,check", add_path)
-  return add_path
-
-
 def os_package_root_path(filepath, sublevel=0, path_add=""):
     """
        get the module package root folder
@@ -55,14 +44,12 @@ def os_package_root_path(filepath, sublevel=0, path_add=""):
     path = os.path.join(path.absolute(), path_add)
     return path
 
-  
+
+
 def os_file_current_path():
   val = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
-  # return current_dir + "/"
-  # Path of current file
-  # from pathlib import Path
-
   # val = Path().absolute()
+
   val = str(os.path.join(val, ""))
   # print(val)
   return val
@@ -89,58 +76,56 @@ def model_get_list(folder=None, block_list=[]):
 
       if not flag  :
        list_select.append( t )
+
  
+
+ def find_in_list(x, llist) :
+   flag = False
+   for l in llist :
+     if x in l : return True
+   return False
+
+
+
+def code_check(sign_list=None, mode_list) :
+  """
+    Signatures check
+  """
+  for m in mode_list :
+    with open(m, mode="r") as f :
+      lines = f.writelines()
+      for s in sign_list :
+        flag = find_in_list(s, lines)
+        if flag not True :
+           print("Error", s)
+           return False  
+
+
 
 
 def main():
   print("os.getcwd", os.getcwd())
   print(np, np.__version__) 
-  print(tf, tf.__version__)
-  print(torch, torch.__version__)
   print(mlmodels) 
+
 
   path = mlmodels.__path__[0]
   
-
-  print("############Check structure ############################")
-  cmd = f"python {path}/ztest_structure.py"
-  os.system( cmd )
-
-
-
-  print("############Check model ################################")
   model_list = model_get_list(folder=None, block_list=[])
   print(model_list)
 
 
-  test_list =[    
-   ### Tflow
-
-   f"python {path}/model_tf/1_lstm.py",
- 
-    
-   ### Keras
-   f"python {path}/model_keras/01_deepctr.py",
-
-    
-   ### Torch
-   f"python {path}/model_tch/nbeats.py",
-
-
-   ###
-   f"python {path}/model_gluon/gluon_deepar.py",
-   f"python {path}/model_glufon/gluon_ffn.py",
-
-
-   #### Too slow
-   # f"python {path}/model_gluon/gluon_automl.py",
-
+  ##### Signature Check
+  sign_list = [
+     "def fit(model, data_pars={}, compute_pars={}, out_pars={}, out_pars={},",
+     "def predict(model, sess=None, data_pars={}, out_pars={}, compute_pars={}",
+     "def save(model, path)",
+     "def load(path)",
+     "def get_dataset(data_pars=None, **kw)",
+     "def get_params(choice=''",
+     "def test(data_path=",
   ]
-
-  
-  for cmd in test_list :
-    print(cmd, flush=True)
-    os.system( cmd )
+  code_check(mode_list)
 
 
 
