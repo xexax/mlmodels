@@ -111,7 +111,18 @@ def fit(model, data_pars={}, compute_pars={}, out_pars={}, out_pars={},  **kw:
 
 
 
+def metrics_model(model, **kw):
+    """
+       Return metrics of the model when fitted.
+    """
+    ddict = {}
+    
+    return ddict
 
+    
+        
+        
+        
 def metrics(ytrue, ypred, yproba=None, model=None, sess=None, data_pars={}, out_pars={}, **kw):
     """
        Return metrics 
