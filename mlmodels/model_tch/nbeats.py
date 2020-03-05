@@ -1,7 +1,8 @@
+import json
 import os
-import pandas as pd
-import numpy as np
 
+import numpy as np
+import pandas as pd
 import torch
 from torch import optim
 from torch.nn import functional as F
@@ -10,8 +11,6 @@ from torch.nn import functional as F
 from mlmodels.model_tch.nbeats.model import NBeatsNet
 
 VERBOSE = False
-
-
 
 
 ####################################################################################################
@@ -35,12 +34,9 @@ def log(*s, n=0, m=1):
     print(sjump, sspace, s, sspace, flush=True)
 
 
-
 ####################################################################################################
 # Model
 Model = NBeatsNet
-
-
 
 
 ####################################################################################################
@@ -92,12 +88,12 @@ def data_generator(x_full, y_full, bs):
 
 ######################################################################################################
 # Model fit
-def fit(model, data_pars, compute_pars=None, out_pars=None, **kw):
-    device          = torch.device('cpu')
+def fit(model, data_pars=None, compute_pars=None, out_pars=None, **kw):
+    device = torch.device('cpu')
     forecast_length = data_pars["forecast_length"]
     backcast_length = data_pars["backcast_length"]
-    batch_size      = compute_pars["batch_size"]  # greater than 4 for viz
-    disable_plot    = compute_pars["disable_plot"]
+    batch_size = compute_pars["batch_size"]  # greater than 4 for viz
+    disable_plot = compute_pars["disable_plot"]
 
     ### Get Data
     x_train, y_train, x_test, y_test, _ = get_dataset(**data_pars)
@@ -107,7 +103,7 @@ def fit(model, data_pars, compute_pars=None, out_pars=None, **kw):
     optimiser = optim.Adam(model.parameters())
 
     ### fit model
-    net, optimiser= fit_simple(model, optimiser, data_gen, plot_model, device, data_pars)
+    net, optimiser = fit_simple(model, optimiser, data_gen, plot_model, device, data_pars)
     return net, optimiser
 
 
@@ -136,7 +132,7 @@ def fit_simple(net, optimiser, data_generator, on_save_callback, device, data_pa
     return net, optimiser
 
 
-def predict(model, data_pars, compute_pars=None, out_pars=None, **kw):
+def predict(model, data_pars=None, compute_pars=None, out_pars=None, **kw):
     data_pars["train_split_ratio"] = 1
 
     x_test, y_test, _, _, _ = get_dataset(**data_pars)
@@ -209,7 +205,7 @@ def plot_predict(x_test, y_test, p, data_pars, compute_pars, out_pars):
 
 ###############################################################################################################
 # save and load model helper function
-def save(model, optimiser, grad_step,CHECKPOINT_NAME="mycheckpoint"):
+def save(model, optimiser, grad_step, CHECKPOINT_NAME="mycheckpoint"):
     torch.save({
         'grad_step': grad_step,
         'model_state_dict': model.state_dict(),
@@ -217,7 +213,7 @@ def save(model, optimiser, grad_step,CHECKPOINT_NAME="mycheckpoint"):
     }, CHECKPOINT_NAME)
 
 
-def load(model, optimiser, CHECKPOINT_NAME = 'nbeats-fiting-checkpoint.th'):
+def load(model, optimiser, CHECKPOINT_NAME='nbeats-fiting-checkpoint.th'):
     if os.path.exists(CHECKPOINT_NAME):
         checkpoint = torch.load(CHECKPOINT_NAME)
         model.load_state_dict(checkpoint['model_state_dict'])
@@ -228,22 +224,20 @@ def load(model, optimiser, CHECKPOINT_NAME = 'nbeats-fiting-checkpoint.th'):
     return 0
 
 
-
 #############################################################################################################
-def get_params(choice="json", data_path="dataset/", config_mode="test", **kw):
-    if choice == "json":    
-      with open(data_path, encoding='utf-8') as config_f:
-         cfg = json.load(config_f)
-         cfg = config[config_mode]
+def get_params(choice=0, data_path="dataset/", config_mode="test", **kw):
+    if choice == 0:
+        with open(data_path, encoding='utf-8') as config_f:
+            config = json.load(config_f)
+            cfg = config[config_mode]
 
-      return cfg["model_pars"], cfg["data_pars"], cfg["compute_pars"], cfg["out_pars"]
+        return cfg["model_pars"], cfg["data_pars"], cfg["compute_pars"], cfg["out_pars"]
 
-
-    if choice == "test":
+    if choice == 1:
         log("#### Path params   ################################################")
         data_path = os_package_root_path(__file__, sublevel=1, path_add=data_path)
-        out_path  = os.get_cwd() + "/nbeats_test/"
-        os.makedirs(out_path, exists_ok=True)
+        out_path = os.getcwd() + "/nbeats_test/"
+        os.makedirs(out_path, exist_ok=True)
         log(data_path, out_path)
 
         data_pars = {"data_path": data_path, "forecast_length": 5, "backcast_length": 10}
@@ -265,28 +259,22 @@ def get_params(choice="json", data_path="dataset/", config_mode="test", **kw):
     return model_pars, data_pars, compute_pars, out_pars
 
 
-
-
 def test2(data_path="dataset/milk.csv", out_path="n_beats_test{}.png", reset=True):
     ###loading the command line arguments
     # arg = load_arguments()
     model_uri = "model_tch/nbeats.py"
 
-
     log("#### Loading params   #######################################")
-    model_pars, data_pars, compute_pars, out_pars = get_params(choice=0, data_path=data_path)
-
+    model_pars, data_pars, compute_pars, out_pars = get_params(choice=1, data_path=data_path)
 
     log("############ Model preparation   #########################")
     from mlmodels.models import module_load_full, fit, predict
     module, model = module_load_full(model_uri, model_pars)
     print(module, model)
 
-
     log("############ Model fit   ##################################")
-    model, sess= fit(model, module, data_pars=data_pars, out_pars=out_pars, compute_pars={})
+    model, sess = fit(model, module, data_pars=data_pars, out_pars=out_pars, compute_pars={})
     print("fit success", sess)
-
 
     log("############ Prediction  ##################################")
     preds = predict(model, module, sess, data_pars=data_pars,
@@ -294,41 +282,29 @@ def test2(data_path="dataset/milk.csv", out_path="n_beats_test{}.png", reset=Tru
     print(preds)
 
 
-
 def test(data_path="dataset/milk.csv"):
     ###loading the command line arguments
 
     log("#### Loading params   #######################################")
-    model_pars, data_pars, compute_pars, out_pars = get_params(choice=0, data_path=data_path)
-
+    model_pars, data_pars, compute_pars, out_pars = get_params(choice=1, data_path=data_path)
 
     log("#### Loading dataset  #######################################")
     x_train, y_train, x_test, y_test, norm_const = get_dataset(**data_pars)
 
-
     log("#### Model setup   ##########################################")
     model = NBeatsNet(**model_pars)
 
-
     log("#### Model fit   ############################################")
     model, optimiser = fit(model, data_pars, compute_pars)
-
 
     log("#### Predict    #############################################")
     ypred = predict(model, data_pars, compute_pars, out_pars)
     print(ypred)
 
-
     log("#### Plot     ###############################################")
-    plot_predict(ypred, data_pars, compute_pars, out_pars)
-
-
+    plot_predict(x_test, y_test, ypred, data_pars, compute_pars, out_pars)
 
 
 if __name__ == '__main__':
     VERBOSE = True
     test()
-
-
-
-
