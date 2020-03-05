@@ -131,9 +131,9 @@ ml_optim --do
 
 ##########################################################################################
 des3 =  """
-
+#### Distributed training on Pytorch Horovod
 ```
-
+distri_torch_mpirun.sh
 
 ```
 

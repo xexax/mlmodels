@@ -18,17 +18,17 @@ https://github.com/arita37/mlmodels/blob/dev/mlmodels/model_tch/nbeats.py
 
 
 
-1) Select if model_tf, model_tch, model_keras
+1) Select if tensorflow, Kears, TOrch  model_tf, model_tch, model_keras
 
 
 2) Copy paste the original repo model in :
-   model_XXXX
+   /model_XXXX/repo_original_copy/
 
 
 3) Create  model_XXXX/yyyyy.py   
 
 
-4) Update model_XXXX.py to match 
+4) Update  yyyyyy.py to match 
      https://github.com/arita37/mlmodels/blob/dev/mlmodels/template/model_xxx.py
 
 
