@@ -21,6 +21,75 @@ import gluonts
 import mlmodels
 
 
+####################################################################################################
+def get_recursive_files(folderPath, ext='/*model*/*.py'):
+  import glob
+  files = glob.glob( folderPath + ext, recursive=True) 
+  return files
+
+
+def log(*s, n=0, m=1):
+    sspace = "#" * n
+    sjump = "\n" * m
+    print(sjump, sspace, s, sspace, flush=True)
+
+
+
+####################################################################################################
+def os_package_root_path(add_path="",n=0):
+  from pathlib import Path
+  add_path = os.path.join(Path(__file__).parent.absolute(), add_path)
+  # print("os_package_root_path,check", add_path)
+  return add_path
+
+
+def os_package_root_path(filepath, sublevel=0, path_add=""):
+    """
+       get the module package root folder
+    """
+    from pathlib import Path
+    path = Path(os.path.realpath(filepath)).parent
+    for i in range(1, sublevel + 1):
+        path = path.parent
+
+    path = os.path.join(path.absolute(), path_add)
+    return path
+
+  
+def os_file_current_path():
+  val = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+  # return current_dir + "/"
+  # Path of current file
+  # from pathlib import Path
+
+  # val = Path().absolute()
+  val = str(os.path.join(val, ""))
+  # print(val)
+  return val
+
+
+
+def model_get_list(folder=None, block_list=[]):
+  # Get all the model.py into folder  
+  folder = os_package_root_path() if folder is None else folder
+  # print(folder)
+  module_names = get_recursive_files(folder, r'/*model*//*model*/*.py' )                       
+
+
+  NO_LIST = [  "__init__.py", "util", "preprocess" ]
+  NO_LIST = NO_LIST + block_list
+
+
+  for t in module_names :
+      t = t.replace(folder, "").replace("\\", ".")
+
+      flag = False     
+      for x in NO_LIST :
+        if x in t: FLAG = True
+
+      if not flag  :
+       list_select.append( t )
+ 
 
 
 def main():
@@ -33,8 +102,8 @@ def main():
   path = mlmodels.__path__[0]
   
 
-  mode_list = model_get_list(folder=None, block_list=[])
-  print(mode_list)
+  model_list = model_get_list(folder=None, block_list=[])
+  print(model_list)
 
 
   test_list =[    
@@ -62,8 +131,9 @@ def main():
 
   ]
 
+  
   for cmd in test_list :
-    print(cmd)
+    print(cmd, flush=True)
     os.system( cmd )
 
 
