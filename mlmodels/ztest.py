@@ -35,6 +35,11 @@ def main():
   path = mlmodels.__path__[0]
   
 
+  mode_list = model_get_list(folder=None, block_list=[])
+  print(mode_list)
+
+
+
   test_list =[
    ###
    f"python {path}/model_tf/1_lstm.py",
@@ -47,18 +52,19 @@ def main():
 
 
    ###
+
    f"python {path}/model_gluon/gluon_deepar.py",
    f"python {path}/model_glufon/gluon_ffn.py",
+
+
 
 
    f"python {path}/model_gluon/gluon_automl.py",
 
   ]
 
-
   for cmd in test_list :
-    print("\n\n\n", flush=True)
-    print(cmd, flush=True)
+    print(cmd)
     os.system( cmd )
 
 

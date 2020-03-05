@@ -58,7 +58,7 @@ def get_params(choice="", data_path="dataset/", config_mode="test", **kw):
 
 
     if choice == "test01" :
-        log("#### Path params   ################################################")
+        log("#### Path params   ###################################################")
         data_path = os_package_root_path(__file__, sublevel=1, path_add=data_path)
         out_path = os.getcwd() + "/gluon_deepar/"
         os.makedirs(out_path, exist_ok=True)
