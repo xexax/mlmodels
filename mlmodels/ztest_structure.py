@@ -59,20 +59,21 @@ def os_file_current_path():
 def model_get_list(folder=None, block_list=[]):
   # Get all the model.py into folder  
   folder = os_package_root_path(__file__) if folder is None else folder
-  print(folder)
-  module_names = get_recursive_files(folder, r'/*model*//*model*/*.py' )                       
+  # print(folder)
+  module_names = get_recursive_files(folder, r'/*model*/*.py' )                       
   print(module_names)
 
-  NO_LIST = [  "__init__.py", "util", "preprocess" ]
+  NO_LIST = [  "init", "util", "preprocess" ]
   NO_LIST = NO_LIST + block_list
 
   list_select = []
   for t in module_names :
-      t = t.replace(folder, "").replace("\\", ".")
-
+      #t = t.replace(folder, "").replace("\\", ".")
       flag = False     
       for x in NO_LIST :
-        if x in t: FLAG = True
+        if x in t: 
+          flag = True
+          break
 
       if not flag  :
        list_select.append( t )
@@ -91,18 +92,19 @@ def code_check(sign_list=None, model_list=None) :
   """
     Signatures check
   """
+  flag0 = None
   for m in model_list :
-    print(m)
+    print( "\n", m )
     with open(m, mode="r") as f :
-      lines = f.writelines()
+      lines = f.readlines()
       flag = False
       for s in sign_list :
         flag = find_in_list(s, lines)
         if not flag :
            print("Error", s)
-           return False  
+           flag0= False  if flag0 is None else flag0
 
-
+  return flag0
 
 
 def main():
