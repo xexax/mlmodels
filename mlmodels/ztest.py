@@ -50,8 +50,9 @@ def main():
    f"python {path}/model_gluon/gluon_deepar.py",
    f"python {path}/model_glufon/gluon_ffn.py",
 
-
-   f"python {path}/model_gluon/gluon_automl.py",
+    
+   #### Too slow
+   # f"python {path}/model_gluon/gluon_automl.py",
 
   ]
 
