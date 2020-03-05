@@ -67,7 +67,6 @@ def optim(modelname="model_tf.1_lstm.py",
     ntrials : TYPE, optional. The default is 2.
     Returns : None
     """
-    log("model_pars", model_pars)
     if compute_pars["engine"] == "optuna" :
         return optim_optuna(modelname,  model_pars, data_pars, compute_pars,
                             save_path, log_path, ntrials)
@@ -102,9 +101,8 @@ def optim_optuna(modelname="model_tf.1_lstm.py",
     
     def objective(trial):
         print("check", module)
-        param_dict =  module.get_pars(choice="test",)
-        # print([param_dict])
-
+        param_dict, _, _, _ = module.get_params(choice="test",)
+        print([param_dict])
         for t,p  in model_pars.items():
             #p = model_pars[t]
             x = p['type']
@@ -123,10 +121,11 @@ def optim_optuna(modelname="model_tf.1_lstm.py",
         model = model_create(module, param_dict)   # module.Model(**param_dict)
         print(model)
         # df = data_loader(data_pars)
-        
+
+        print("data_pars: ", data_pars)
         sess = module.fit(model, data_pars=data_pars, compute_pars= compute_pars)
         #return 1
-        metrics = module.metrics(model, sess, data_pars=data_pars)  #Dictionnary
+        metrics = module.metrics(model, sess, data_pars=data_pars, compute_pars= compute_pars)  #Dictionnary
         # stats = model.stats["loss"]
         del sess
         del model
