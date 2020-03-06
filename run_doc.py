@@ -32,6 +32,7 @@ des1 = """
 In Jupyter 
 #### Training
 ```python
+import mlmodels
 from mlmodels.models import module_load, data_loader, create_model, fit, predict, stats
 from mlmodels.models import load #Load model weights
 
@@ -54,7 +55,7 @@ model.save( out_pars['path'], model, module, sess,)
 
 ```
 
-#### Inferencmodel/e
+#### Inference
 ```python
 model = load(folder)    #Create Model instance
 ypred = module.predict(model, module, data_pars, compute_pars)     # predict pipeline
@@ -65,8 +66,8 @@ ypred = module.predict(model, module, data_pars, compute_pars)     # predict pip
 
 ###############################################################################################
 des2= """
-#### 
-``` CLI examples
+####  CLI examples 
+```bash
 
 ml_models --do                    
     "testall"     :  test all modules inside model_tf
@@ -172,8 +173,11 @@ module_names = get_recursive_files(folder, r'/*model*//*model*/*.py' )
 
 
 des = """
+#### Model list 
+
 ```
-Model list 
+--model_uri
+
 
 """
 for t in module_names :

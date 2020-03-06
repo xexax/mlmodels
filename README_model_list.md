@@ -2,6 +2,7 @@
 In Jupyter 
 #### Training
 ```python
+import mlmodels
 from mlmodels.models import module_load, data_loader, create_model, fit, predict, stats
 from mlmodels.models import load #Load model weights
 
@@ -24,15 +25,15 @@ model.save( out_pars['path'], model, module, sess,)
 
 ```
 
-#### Inferencmodel/e
+#### Inference
 ```python
 model = load(folder)    #Create Model instance
 ypred = module.predict(model, module, data_pars, compute_pars)     # predict pipeline
 ```
 
 
-#### 
-``` CLI examples
+####  CLI examples 
+```bash
 
 ml_models --do                    
     "testall"     :  test all modules inside model_tf
@@ -90,16 +91,19 @@ ml_optim --do
 ```
 
 
+#### Distributed training on Pytorch Horovod
+```
+distri_torch_mpirun.sh
 
 ```
 
 
+
+#### Model list 
+
 ```
+--model_uri
 
-
-
-```
-Model list 
 
 
 
@@ -135,8 +139,8 @@ mlmodels.model_tch.data_prep.py
 mlmodels.model_tch.mlp.py
 mlmodels.model_tch.nbeats.py
 mlmodels.model_tch.pplm.py
-mlmodels.model_tch.sentence_transformer.py
 mlmodels.model_tch.transformer_classifier.py
+mlmodels.model_tch.transformer_sentence.py
 
 
 mlmodels.model_tf.10_encoder_vanilla.py
