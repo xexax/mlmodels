@@ -99,6 +99,10 @@ from mlmodels.util import (get_recursive_files, load_config, load_pkl,
                            load_tch, load_tf, log, os_package_root_path,
                            save_tch, save_tf)
 
+
+from mlmodels.util import (env_build, env_conda_build, env_pip_requirement)
+
+
 simplefilter(action='ignore', category=FutureWarning)
 simplefilter(action='ignore', category=DeprecationWarning)
 
@@ -106,7 +110,7 @@ simplefilter(action='ignore', category=DeprecationWarning)
 
 
 ####################################################################################################
-def module_load(model_uri="", verbose=0):
+def module_load(model_uri="", verbose=0, env_build=0):
     """
       Load the file which contains the model description
       model_uri:  model_tf.1_lstm.py  or ABSOLUTE PATH
@@ -114,7 +118,16 @@ def module_load(model_uri="", verbose=0):
     # print(os_file_current_path())
     model_uri = model_uri.replace("/", ".")
     module = None
-    if verbose : print(model_uri)
+    if verbose : 
+      print(model_uri)
+
+
+    #### Dynamic ENV Build based on requirements.txt
+    if env_build :
+      env_pars = {"python_version" : '3.6.5'}
+      env_build(model_uri, env_pars)
+
+
 
     try :
       #### Import from package mlmodels sub-folder
