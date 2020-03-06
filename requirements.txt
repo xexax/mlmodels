@@ -20,3 +20,4 @@ boto3==1.9.187
 toml
 setuptools==45.2.0
 # horovod==0.16.2   #### Issues with OPEN MPI
+spacy

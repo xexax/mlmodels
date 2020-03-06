@@ -102,6 +102,7 @@ mlmodels/model_tch/mlp.py
 mlmodels/model_tch/transformer_classifier.py
 mlmodels/model_tch/data_prep.py
 mlmodels/model_tch/nbeats.py
+mlmodels/model_tch/textcnn.py
 
 
 ```
