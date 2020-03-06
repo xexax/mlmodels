@@ -102,7 +102,7 @@ def optim_optuna(modelname="model_tf.1_lstm.py",
     
     def objective(trial):
         print("check", module)
-        # param_dict, _, _, _ = module.get_params(choice="test",)
+        param_dict, _, _, _ = module.get_params(choice="test",)
         # model_pars, data_pars, compute_pars, out_pars
 
         print([param_dict])
