@@ -106,7 +106,16 @@ def fit(model, sess=None, compute_pars=None, data_pars=None, out_pars=None, **kw
 
         if (i + 1) % nlog_freq == 0:
             print("epoch:", i + 1, "avg loss:", total_loss)
-    return sess
+    return model,sess
+
+
+def fit_metrics(model, sess=None, data_pars=None, compute_pars=None, out_pars=None):
+    """
+       Return metrics of the model stored
+    """
+
+    return model.stats
+
 
 
 def metrics(model, sess=None, data_pars=None, compute_pars=None, out_pars=None):

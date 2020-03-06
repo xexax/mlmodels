@@ -124,8 +124,8 @@ def optim_optuna(modelname="model_tf.1_lstm.py",
         # df = data_loader(data_pars)
 
         print("data_pars: ", data_pars)
-        sess    = module.fit(model, data_pars=data_pars, compute_pars= compute_pars)
-        metrics = module.metrics(model, sess, data_pars=data_pars, compute_pars= compute_pars)  #Dictionnary
+        model, sess    = module.fit(model, data_pars=data_pars, compute_pars= compute_pars)
+        metrics        = module.fit_metrics(model, sess, data_pars=data_pars, compute_pars= compute_pars) 
 
         del sess
         del model
