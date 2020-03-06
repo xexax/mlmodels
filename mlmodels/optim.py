@@ -124,10 +124,9 @@ def optim_optuna(modelname="model_tf.1_lstm.py",
         # df = data_loader(data_pars)
 
         print("data_pars: ", data_pars)
-        sess = module.fit(model, data_pars=data_pars, compute_pars= compute_pars)
-        #return 1
+        sess    = module.fit(model, data_pars=data_pars, compute_pars= compute_pars)
         metrics = module.metrics(model, sess, data_pars=data_pars, compute_pars= compute_pars)  #Dictionnary
-        # stats = model.stats["loss"]
+
         del sess
         del model
         try :
@@ -137,7 +136,8 @@ def optim_optuna(modelname="model_tf.1_lstm.py",
 
         return metrics["loss"]
 
-    log("###### Hyper-optimization through study   ####################################")
+
+    log("###### Hyper-optimization through study   ##################################")
     pruner = optuna.pruners.MedianPruner() if compute_pars["method"] =='prune' else None
           
     if compute_pars.get("distributed") is not None :
@@ -159,9 +159,10 @@ def optim_optuna(modelname="model_tf.1_lstm.py",
     ###############################################################################
 
 
-    log("### Run Model with best   ################################################")
+    log("### Run Model with best   #################################################")
     model = model_create( module, model_pars=param_dict_best)
-    sess = module.fit(model,  data_pars=data_pars, compute_pars=compute_pars)
+    sess  = module.fit(model,  data_pars=data_pars, compute_pars=compute_pars)
+
 
     log("#### Saving     ###########################################################")
     modelname = modelname.replace(".", "-") # this is the module name which contains .
@@ -328,12 +329,12 @@ def main():
         log(model_pars, data_pars, compute_pars)
         log("############# OPTIMIZATION Start  ###############")
         res = optim(arg.modelname,
-                    model_pars = model_pars,
-                    ntrials = int(arg.ntrials),
+                    model_pars   = model_pars,
+                    ntrials      = int(arg.ntrials),
                     compute_pars = compute_pars,
-                    data_pars  = data_pars,
-                    save_path  = arg.save_path,
-                    log_path   = arg.log_file)  # '1_lstm'
+                    data_pars    = data_pars,
+                    save_path    = arg.save_path,
+                    log_path     = arg.log_file)  # '1_lstm'
 
         log("#############  OPTIMIZATION End ###############")
         log(res)
@@ -341,3 +342,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
