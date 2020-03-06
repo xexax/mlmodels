@@ -23,17 +23,18 @@ https://github.com/pfnet/optuna/blob/master/examples/tensorflow_estimator_simple
 https://github.com/pfnet/optuna/tree/master/examples
 """
 import argparse
+import json
 import os
 import re
-import json
-
 
 import pandas as pd
+
 import optuna
 ####################################################################################################
 # from mlmodels import models
 from mlmodels.models import model_create, module_load, save
-from mlmodels.util import os_package_root_path, log
+from mlmodels.util import log, os_package_root_path
+
 #print(os_package_root_path())
 
 ####################################################################################################
@@ -75,6 +76,8 @@ def optim(modelname="model_tf.1_lstm.py",
 
 
 
+
+
 def optim_optuna(modelname="model_tf.1_lstm.py",
                  model_pars= {},
                  data_pars = {},
@@ -102,7 +105,10 @@ def optim_optuna(modelname="model_tf.1_lstm.py",
     def objective(trial):
         print("check", module)
         param_dict, _, _, _ = module.get_params(choice="test",)
+        # model_pars, data_pars, compute_pars, out_pars
+
         print([param_dict])
+
         for t,p  in model_pars.items():
             #p = model_pars[t]
             x = p['type']
@@ -123,10 +129,9 @@ def optim_optuna(modelname="model_tf.1_lstm.py",
         # df = data_loader(data_pars)
 
         print("data_pars: ", data_pars)
-        sess = module.fit(model, data_pars=data_pars, compute_pars= compute_pars)
-        #return 1
-        metrics = module.metrics(model, sess, data_pars=data_pars, compute_pars= compute_pars)  #Dictionnary
-        # stats = model.stats["loss"]
+        model, sess    = module.fit(model, data_pars=data_pars, compute_pars= compute_pars)
+        metrics        = module.fit_metrics(model, sess, data_pars=data_pars, compute_pars= compute_pars) 
+
         del sess
         del model
         try :
@@ -136,7 +141,8 @@ def optim_optuna(modelname="model_tf.1_lstm.py",
 
         return metrics["loss"]
 
-    log("###### Hyper-optimization through study   ####################################")
+
+    log("###### Hyper-optimization through study   ##################################")
     pruner = optuna.pruners.MedianPruner() if compute_pars["method"] =='prune' else None
           
     if compute_pars.get("distributed") is not None :
@@ -158,9 +164,10 @@ def optim_optuna(modelname="model_tf.1_lstm.py",
     ###############################################################################
 
 
-    log("### Run Model with best   ################################################")
+    log("### Run Model with best   #################################################")
     model = model_create( module, model_pars=param_dict_best)
-    sess = module.fit(model,  data_pars=data_pars, compute_pars=compute_pars)
+    sess  = module.fit(model,  data_pars=data_pars, compute_pars=compute_pars)
+
 
     log("#### Saving     ###########################################################")
     modelname = modelname.replace(".", "-") # this is the module name which contains .
@@ -327,12 +334,12 @@ def main():
         log(model_pars, data_pars, compute_pars)
         log("############# OPTIMIZATION Start  ###############")
         res = optim(arg.modelname,
-                    model_pars = model_pars,
-                    ntrials = int(arg.ntrials),
+                    model_pars   = model_pars,
+                    ntrials      = int(arg.ntrials),
                     compute_pars = compute_pars,
-                    data_pars  = data_pars,
-                    save_path  = arg.save_path,
-                    log_path   = arg.log_file)  # '1_lstm'
+                    data_pars    = data_pars,
+                    save_path    = arg.save_path,
+                    log_path     = arg.log_file)  # '1_lstm'
 
         log("#############  OPTIMIZATION End ###############")
         log(res)
@@ -340,7 +347,5 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
 
 

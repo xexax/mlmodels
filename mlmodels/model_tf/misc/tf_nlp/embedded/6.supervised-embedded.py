@@ -10,13 +10,13 @@ import time
 
 import matplotlib.pyplot as plt
 import numpy as np
-import seaborn as sns
 import sklearn.datasets
 import tensorflow as tf
 from sklearn import metrics
 from sklearn.cross_validation import train_test_split
 from sklearn.decomposition import *
 
+import seaborn as sns
 from MulticoreTSNE import MulticoreTSNE as TSNE
 
 # In[2]:

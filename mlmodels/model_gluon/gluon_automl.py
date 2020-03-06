@@ -7,16 +7,14 @@ https://autogluon.mxnet.io/tutorials/tabular_prediction/tabular-quickstart.html
 
 
 """
-import os
 import json
+import os
 from pathlib import Path
 
 import autogluon as ag
 from autogluon import TabularPrediction as tabular_task
-
-
-from mlmodels.model_gluon.util_autogluon import fit, predict, save, load, get_dataset
-from mlmodels.model_gluon.util_autogluon import log, os_package_root_path
+from mlmodels.model_gluon.util_autogluon import (
+    fit, get_dataset, load, log, os_package_root_path, predict, save)
 
 
 ########################################################################################################################
@@ -147,6 +145,3 @@ if __name__ == '__main__':
     VERBOSE = True
     test(pars_choice="json")
     test(pars_choice="test01")
-
-    
-    

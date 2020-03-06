@@ -7,17 +7,17 @@ https://autogluon.mxnet.io/tutorials/tabular_prediction/tabular-quickstart.html
 
 
 """
-import os
 import json
+import os
 from pathlib import Path
+
 import pandas as pd
 
 from gluonts.model.simple_feedforward import SimpleFeedForwardEstimator
 from gluonts.trainer import Trainer
-
-from mlmodels.model_gluon.util import log, os_package_root_path
-from mlmodels.model_gluon.util import get_dataset, fit, predict, save, load, metrics, _config_process
-from mlmodels.model_gluon.util import plot_predict, plot_prob_forecasts
+from mlmodels.model_gluon.util import (
+    _config_process, fit, get_dataset, load, log, metrics,
+    os_package_root_path, plot_predict, plot_prob_forecasts, predict, save)
 
 VERBOSE = False
 
@@ -175,9 +175,3 @@ if __name__ == '__main__':
     VERBOSE=True
     test(data_path="dataset/", choice="test01")
     # test(data_path="dataset/", choice="json")
-    
-    
-    
-    
-    
- 

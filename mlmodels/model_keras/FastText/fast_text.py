@@ -1,7 +1,7 @@
 # coding=utf-8
 
 from keras import Input, Model
-from keras.layers import Embedding, GlobalAveragePooling1D, Dense
+from keras.layers import Dense, Embedding, GlobalAveragePooling1D
 
 
 class FastText(object):

@@ -1,7 +1,8 @@
 # coding=utf-8
 
 from keras import Input, Model
-from keras.layers import Embedding, Dense, Bidirectional, CuDNNLSTM, TimeDistributed
+from keras.layers import (Bidirectional, CuDNNLSTM, Dense, Embedding,
+                          TimeDistributed)
 
 from attention import Attention
 

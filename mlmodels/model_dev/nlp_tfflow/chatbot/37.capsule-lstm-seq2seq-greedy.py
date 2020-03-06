@@ -4,14 +4,14 @@
 # In[ ]:
 
 
+import collections
+import os
+import re
+import time
+
 import numpy as np
 import tensorflow as tf
 from sklearn.utils import shuffle
-import re
-import time
-import collections
-import os
-
 
 # In[ ]:
 
@@ -404,4 +404,3 @@ for i in range(len(batch_x)):
     print('QUESTION:',' '.join([rev_dictionary_from[n] for n in batch_x[i] if n not in [0,1,2,3]]))
     print('REAL ANSWER:',' '.join([rev_dictionary_to[n] for n in batch_y[i] if n not in[0,1,2,3]]))
     print('PREDICTED ANSWER:',' '.join([rev_dictionary_to[n] for n in predicted[i] if n not in[0,1,2,3]]),'\n')
-

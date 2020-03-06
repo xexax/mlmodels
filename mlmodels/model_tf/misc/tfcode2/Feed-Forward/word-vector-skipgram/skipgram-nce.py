@@ -13,11 +13,12 @@ from urllib.request import urlretrieve
 
 import matplotlib.pyplot as plt
 import numpy as np
-import seaborn as sns
 import tensorflow as tf
 from sklearn.manifold import TSNE
 from sklearn.neighbors import NearestNeighbors
 from tqdm import tqdm
+
+import seaborn as sns
 
 dataset_folder_path = "data"
 dataset_filename = "text8.zip"

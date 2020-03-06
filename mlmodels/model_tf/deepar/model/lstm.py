@@ -1,12 +1,13 @@
+import logging
+
+import numpy as np
+from keras import backend as K
+from keras.layers import LSTM, Dense, Input
+from keras.models import Model
+
 from deepar.model import NNModel
 from deepar.model.layers import GaussianLayer
-from keras.layers import Input, Dense, Input
-from keras.models import Model
-from keras.layers import LSTM
-from keras import backend as K
-import logging
 from deepar.model.loss import gaussian_likelihood
-import numpy as np
 
 logger = logging.getLogger('deepar')
 

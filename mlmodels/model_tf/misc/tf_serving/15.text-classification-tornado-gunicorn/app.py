@@ -2,6 +2,7 @@ import json
 
 import numpy as np
 import tensorflow as tf
+
 from tornado.web import Application, RequestHandler, asynchronous
 
 

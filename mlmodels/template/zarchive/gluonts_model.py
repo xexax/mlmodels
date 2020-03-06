@@ -1,9 +1,5 @@
-from gluonts.trainer import Trainer
-
 from gluonts.model.deepar import DeepAREstimator
-
-
-
+from gluonts.trainer import Trainer
 from mlmodels.model_gluon.util import *
 
 

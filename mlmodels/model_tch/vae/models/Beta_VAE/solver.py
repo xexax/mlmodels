@@ -1,21 +1,24 @@
 """solver.py"""
 
-import warnings
-warnings.filterwarnings("ignore")
-
 import os
-from tqdm import tqdm
-import visdom
+import warnings
 
 import torch
-import torch.optim as optim
 import torch.nn.functional as F
+import torch.optim as optim
 from torch.autograd import Variable
-from torchvision.utils import make_grid, save_image
+from tqdm import tqdm
 
-from utils import cuda, grid2gif
-from model import BetaVAE_H, BetaVAE_B, BetaVAE_H_4_nn
+import visdom
 from dataset import return_data
+from model import BetaVAE_B, BetaVAE_H, BetaVAE_H_4_nn
+from torchvision.utils import make_grid, save_image
+from utils import cuda, grid2gif
+
+warnings.filterwarnings("ignore")
+
+
+
 
 
 

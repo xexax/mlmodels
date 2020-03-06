@@ -10,9 +10,10 @@ import time
 
 import numpy as np
 import tensorflow as tf
-from bs4 import BeautifulSoup
 from sklearn.cross_validation import train_test_split
 from tqdm import tqdm
+
+from bs4 import BeautifulSoup
 
 # In[2]:
 

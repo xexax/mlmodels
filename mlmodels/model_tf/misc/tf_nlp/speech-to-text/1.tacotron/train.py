@@ -10,7 +10,8 @@ import tensorflow as tf
 from tqdm import tqdm
 
 from model import Model
-from setting import batch_size, get_cached, idx2char, n_mels, reduction_factor, text2idx
+from setting import (batch_size, get_cached, idx2char, n_mels,
+                     reduction_factor, text2idx)
 
 # In[2]:
 

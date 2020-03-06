@@ -1,5 +1,6 @@
-from util import *
 import time
+
+from util import *
 
 folder = "./adata/sinus/"
 
@@ -30,5 +31,3 @@ print("img generation with opencv takes "+str(elapsed_cv_img)+"s")
 print("npz generation with opencv takes "+str(elapsed_cv_npz)+"s")
 
 print("loaded")
-
-

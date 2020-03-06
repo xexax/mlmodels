@@ -6,7 +6,6 @@
 import argparse
 import csv
 
-
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="Train a discriminator on top of GPT-2 representations")

@@ -5,13 +5,13 @@ from os.path import abspath, dirname
 from queue import Queue
 
 import numpy as np
-from flask import Flask, Response
-from PIL import Image
 from scipy.misc import imsave
 
 import cv2
+from flask import Flask, Response
 from flask_socketio import SocketIO, emit, send
 from object_inception import detect_object
+from PIL import Image
 
 app = Flask(__name__)
 app.queue = Queue()

@@ -1,7 +1,8 @@
 import numpy as np
 
+from deepctr.inputs import (DenseFeat, SparseFeat, VarLenSparseFeat,
+                            get_feature_names)
 from deepctr.models import DIN
-from deepctr.inputs import SparseFeat,VarLenSparseFeat,DenseFeat,get_feature_names
 
 
 def get_xy_fd():

@@ -1,6 +1,6 @@
-from keras import backend as K
-import tensorflow as tf
 import numpy as np
+import tensorflow as tf
+from keras import backend as K
 
 
 def set_seed_and_reset_graph(seed=42):

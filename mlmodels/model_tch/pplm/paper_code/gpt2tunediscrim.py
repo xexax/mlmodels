@@ -3,31 +3,31 @@
 
 # This code is licensed under a non-commercial license.
 
-import os
-import sys
 import argparse
-from tqdm import trange
-from torchtext import data as torchtext_data
-from torchtext import datasets
-
-import torch
-import torch.utils.data as data
-
-from torchtext.vocab import Vectors, GloVe, CharNGram, FastText
-from nltk.tokenize.treebank import TreebankWordDetokenizer
-import torch
-import torch.optim
-import torch.nn.functional as F
-import numpy as np
-from IPython import embed
-from operator import add
-from run_gpt2 import top_k_logits
-from style_utils import to_var
 import copy
+import os
 import pickle
+import sys
+from operator import add
+
+import numpy as np
+import torch
+import torch.nn.functional as F
+import torch.optim as optim
+import torch.utils.data as data
+from torch.autograd import Variable
 from torch.utils.data import DataLoader
 from torch.utils.data.dataset import random_split
-import torch.optim as optim
+from tqdm import trange
+
+from IPython import embed
+from nltk.tokenize.treebank import TreebankWordDetokenizer
+from pytorch_pretrained_bert import GPT2LMHeadModel, GPT2Tokenizer
+from run_gpt2 import top_k_logits
+from style_utils import to_var
+from torchtext import data as torchtext_data
+from torchtext import datasets
+from torchtext.vocab import CharNGram, FastText, GloVe, Vectors
 
 torch.manual_seed(0)
 np.random.seed(0)
@@ -35,8 +35,6 @@ np.random.seed(0)
 lab_root = os.path.join(os.path.abspath(os.path.dirname(__file__)), '..', '..')
 sys.path.insert(1, lab_root)
 
-from pytorch_pretrained_bert import GPT2LMHeadModel, GPT2Tokenizer
-from torch.autograd import Variable
 
 tokenizer = GPT2Tokenizer.from_pretrained('gpt-2_pt_models/345M/')
 
@@ -355,4 +353,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-

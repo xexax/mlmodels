@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
-import toml
-import os, sys
+import os
 import re
+import sys
+
+import toml
 
 
 ####################################################################################################
@@ -41,8 +43,6 @@ def os_package_root_path(filepath, sublevel=0, path_add=""):
 
     path = os.path.join(path.absolute(), path_add)
     return path
-
-
 
 
 
@@ -118,6 +118,49 @@ def get_recursive_files(folderPath, ext='/*model*/*.py'):
   import glob
   files = glob.glob( folderPath + ext, recursive=True) 
   return files
+
+
+####################################################################################################
+####################################################################################################
+def env_conda_build(env_pars=None) :
+   if env_pars is None :
+     env_pars = { 'name' : "test" , 'python_version': '3.6.5'  }
+
+   cmd = f"conda create -n {p['name']}  python={p['python_version']}  -y"
+   print(cmd)
+   os.system(cmd)
+
+
+def env_pip_requirement(env_pars=None) :
+   if env_pars is None :
+     env_pars = { 'name' : "test" , 'file_requirement': 'requirements.txt'  }
+
+   cmd = f"source activate {p['name']} "
+   cmd = cmd + f"  && pip install -r  {p['file_requirement']}"
+
+   print(cmd)
+   os.system(cmd)
+   sleep(200)  
+
+
+def env_build(model_uri, env_pars):
+  from time import sleep
+
+  model_uri2 = model_uri.replace("/", ".") 
+  root       = os_package_root_path() 
+  model_path = os.path.join(root, env_pars[ "model_path" ] )
+
+
+  env_pars['name']             = model_uri2
+  env_pars['python_version']   = "3.6.5"
+  env_pars['file_requirement'] = model_path + "/requirements.txt"
+
+
+  env_conda_build(env_pars=env_pars) 
+  sleep(30)  
+
+  env_pip_requirement(env_pars=env_pars) 
+
 
 
 

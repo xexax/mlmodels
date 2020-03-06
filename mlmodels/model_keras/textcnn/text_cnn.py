@@ -1,7 +1,8 @@
 # coding=utf-8
 
 from keras import Input, Model
-from keras.layers import Embedding, Dense, Conv1D, GlobalMaxPooling1D, Concatenate, Dropout
+from keras.layers import (Concatenate, Conv1D, Dense, Dropout, Embedding,
+                          GlobalMaxPooling1D)
 
 
 class TextCNN(object):

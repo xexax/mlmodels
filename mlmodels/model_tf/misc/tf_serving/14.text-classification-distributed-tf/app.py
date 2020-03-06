@@ -3,6 +3,7 @@ import os
 
 import numpy as np
 import tensorflow as tf
+
 from flask import Flask, request
 
 with open("dictionary-test.json", "r") as fopen:

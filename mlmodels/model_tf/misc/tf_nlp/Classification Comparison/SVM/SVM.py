@@ -14,7 +14,9 @@ import numpy as np
 import sklearn.datasets
 from sklearn import metrics
 from sklearn.cross_validation import train_test_split
-from sklearn.feature_extraction.text import CountVectorizer, HashingVectorizer, TfidfTransformer
+from sklearn.feature_extraction.text import (CountVectorizer,
+                                             HashingVectorizer,
+                                             TfidfTransformer)
 from sklearn.linear_model import SGDClassifier
 
 # Define some functions to help us on preprocessing

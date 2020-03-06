@@ -11,23 +11,26 @@ python   distri_model_tch.py   --model model_tch.mlp    mymodel_config.json
 from __future__ import print_function
 
 import argparse
-import os
 import json
-# import toml
-
-import horovod.torch as hvd
-
+import os
 
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 import torch.utils.data.distributed
-from torchvision import datasets, transforms
 
-
-from util import load_config, val
+import horovod.torch as hvd
 from data import import_data_tch as import_data
-from models  import create_instance_tch as create_instance
+from models import create_instance_tch as create_instance
+from torchvision import datasets, transforms
+from util import load_config, val
+
+# import toml
+
+
+
+
+
 # from models  import create
 
 
@@ -211,6 +214,3 @@ def test():
 for epoch in range(1, args.epochs + 1):
     train(epoch)
     test()
-
-    
-    

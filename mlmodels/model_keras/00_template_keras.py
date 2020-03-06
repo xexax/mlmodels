@@ -1,9 +1,9 @@
 
 import os
+
 import numpy as np
 import pandas as pd
-
-from keras.models import save_model, load_model
+from keras.models import load_model, save_model
 
 
 ####################################################################################################
@@ -205,8 +205,3 @@ def test(data_path="dataset/", pars_choice=0):
 if __name__ == '__main__':
     VERBOSE = True
     test(pars_choice=0)
-
-   
-
-
-

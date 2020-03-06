@@ -16,9 +16,12 @@
 
 from __future__ import absolute_import, division, print_function
 
+import inspect
+import os
+import sys
+
 import numpy as np
 import tensorflow as tf
-import os, sys, inspect
 
 
 def os_module_path():
@@ -82,5 +85,3 @@ def set_root_dir():
     parent_dir = os.path.dirname(current_dir)
     sys.path.insert(0, parent_dir)
     return parent_dir
-
-

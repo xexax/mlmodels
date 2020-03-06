@@ -8,7 +8,8 @@ from google.protobuf import descriptor_pb2
 from google.protobuf import message as _message
 from google.protobuf import reflection as _reflection
 from google.protobuf import symbol_database as _symbol_database
-from google.protobuf import wrappers_pb2 as google_dot_protobuf_dot_wrappers__pb2
+from google.protobuf import \
+    wrappers_pb2 as google_dot_protobuf_dot_wrappers__pb2
 
 _b = sys.version_info[0] < 3 and (lambda x: x) or (lambda x: x.encode("latin1"))
 

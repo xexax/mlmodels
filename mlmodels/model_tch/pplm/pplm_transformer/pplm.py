@@ -19,11 +19,9 @@ import torch
 import torch.nn.functional as F
 from torch.autograd import Variable
 from tqdm import trange
-
 from transformers import GPT2Tokenizer
 from transformers.file_utils import cached_path
 from transformers.modeling_gpt2 import GPT2LMHeadModel
-
 
 ####################################################################################################
 PPLM_BOW = 1
@@ -767,6 +765,3 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
     run_pplm_example(**vars(args))
-
-
-

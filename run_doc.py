@@ -18,14 +18,7 @@ root = os.path.abspath(os.path.dirname(__file__))
 
 ##### Version  #######################################################################
 # from setup import version, entry_points
-
-
 print("start Doc")
-
-
-
-
-
 
 
 
@@ -34,9 +27,47 @@ print("start Doc")
 #    long_description = fh.read()
 
 
-des =  """
+#################################################################################################
+des1 = """
+In Jupyter 
+#### Training
+```python
+import mlmodels
+from mlmodels.models import module_load, data_loader, create_model, fit, predict, stats
+from mlmodels.models import load #Load model weights
+
+
+model_uri    = "model_tf.1_lstm.py"
+model_pars   =  {  "num_layers": 1,
+                  "size": ncol_input, "size_layer": 128, "output_size": ncol_output, "timestep": 4,
+                }
+data_pars    =  {"data_path": "/folder/myfile.csv"  , "data_type": "pandas" }
+compute_pars =  { "learning_rate": 0.001, }
+out_pars     =  { "path": "ztest_1lstm/", "model_path" : "ztest_1lstm/model/"}
+
+
+module        =  module_load( model_uri= model_uri )  #Load file definition
+model         =  model_create(module, model_pars)    # Create Model instance
+model, sess   =  fit(model, module, data_pars)       # fit the model
+
+metrics_val   =  metrics( model, sess, ["loss"])     # get stats
+model.save( out_pars['path'], model, module, sess,)
 
 ```
+
+#### Inference
+```python
+model = load(folder)    #Create Model instance
+ypred = module.predict(model, module, data_pars, compute_pars)     # predict pipeline
+```
+
+"""
+
+
+###############################################################################################
+des2= """
+####  CLI examples 
+```bash
 
 ml_models --do                    
     "testall"     :  test all modules inside model_tf
@@ -54,20 +85,71 @@ ml_optim --do
   "test_all"  :  TODO, Test all
   "search"    :  search for the best hyperparameters of a specific model
 
+
+
+### Command line tool sample
+
+#### generate config file
+    ml_models  --do generate_config  --model_uri model_tf.1_lstm.py  --save_folder "c:\myconfig\"
+
+#### TensorFlow LSTM model
+    ml_models  --model_uri model_tf/1_lstm.py  --do test
+
+#### PyTorch models
+    ml_models  --model_uri model_tch/mlp.py  --do test
+    
+    
+#### Custom  Models
+    ml_models --do test  --model_uri "D:\_devs\Python01\gitdev\mlmodels\mlmodels\model_tf\1_lstm.py"
+
+
+
+
+#### Distributed Pytorch on CPU (using Horovod and MPI on Linux, 4 processes)  in model_tch/mlp.py
+    mlmodels/distri_torch_mpirun.sh   4    model_tch.mlp    mymodel.json
+
+
+
+#### Model param search test
+    ml_optim --do test
+
+
+#### For normal optimization search method
+    ml_optim --do search --ntrials 1  --config_file optim_config.json --optim_method normal
+    ml_optim --do search --ntrials 1  --config_file optim_config.json --optim_method prune  ###### for pruning method
+
+
+#### HyperParam standalone run
+    ml_optim --modelname model_tf.1_lstm.py  --do test
+    ml_optim --modelname model_tf.1_lstm.py  --do search
+```
+
+"""
+
+
+
+
+
+##########################################################################################
+des3 =  """
+#### Distributed training on Pytorch Horovod
+```
+distri_torch_mpirun.sh
+
 ```
 
 
 """
 
 
-
+##########################################################################################
 ### Packages  ####################################################
 packages = ["mlmodels"] + ["mlmodels." + p for p in find_packages("mlmodels")]
 
 
 
 
-####################################################################################################
+#########################################################################################
 def os_package_root_path(add_path="",n=0):
   from pathlib import Path
   add_path = os.path.join(Path(__file__).parent.absolute(), add_path)
@@ -81,8 +163,6 @@ def get_recursive_files(folderPath, ext='/*model*/*.py'):
   return files
 
 
-
-
 # Get all the model.py into folder  
 folder = None
 folder = os_package_root_path() if folder is None else folder
@@ -90,9 +170,13 @@ folder = os_package_root_path() if folder is None else folder
 module_names = get_recursive_files(folder, r'/*model*//*model*/*.py' )                       
 
 
-des2 = """
+
+
+des = """
+#### Model list 
+
 ```
-Model list 
+--model_uri
 
 
 """
@@ -100,12 +184,12 @@ for t in module_names :
     t = t.replace(folder, "").replace("\\", ".")
 
     if "__init__.py" in t  :
-      des2 = des2  + "\n\n"
+      des = des  + "\n\n"
     else  :    
       if  not 'util' in  t and not 'preprocess' in t :
-        des2 = des2 + str(t) + "\n" 
+        des = des + str(t) + "\n" 
 
-des2 = des2 + """
+des = des + """
 ```
 
 """
@@ -116,9 +200,10 @@ des2 = des2 + """
 
 
 
-
+#########################################################################################
 ################ Print on file
 with open("README_model_list.md", mode="w") as f :
-  f.writelines(des)
+  f.writelines(des1)
   f.writelines(des2)
-
+  f.writelines(des3)
+  f.writelines(des)

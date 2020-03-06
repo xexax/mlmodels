@@ -1,7 +1,9 @@
 # coding=utf-8
 
 from keras import Input, Model
-from keras.layers import Embedding, Dense, Concatenate, Conv1D, Bidirectional, CuDNNLSTM, GlobalAveragePooling1D, GlobalMaxPooling1D
+from keras.layers import (Bidirectional, Concatenate, Conv1D, CuDNNLSTM, Dense,
+                          Embedding, GlobalAveragePooling1D,
+                          GlobalMaxPooling1D)
 
 
 class RCNNVariant(object):

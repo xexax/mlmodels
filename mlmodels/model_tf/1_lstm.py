@@ -3,24 +3,26 @@
 LSTM Time series predictions
 python  model_tf/1_lstm.py
 """
+import os
 from warnings import simplefilter
+
+import numpy as np
+import pandas as pd
+import tensorflow as tf
+from sklearn.preprocessing import MinMaxScaler
+
+####################################################################################################
+from mlmodels.model_tf.util import os_package_root_path
 
 simplefilter(action='ignore', category=FutureWarning)
 simplefilter(action='ignore', category=DeprecationWarning)
 
-import os
 
-import numpy as np
-import pandas as pd
-from sklearn.preprocessing import MinMaxScaler
 
-import tensorflow as tf
 
 tf.get_logger().setLevel('ERROR')
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '1'  # **** change the warning level ****
 
-####################################################################################################
-from mlmodels.model_tf.util import os_package_root_path
 
 
 ####################################################################################################
@@ -104,7 +106,16 @@ def fit(model, sess=None, compute_pars=None, data_pars=None, out_pars=None, **kw
 
         if (i + 1) % nlog_freq == 0:
             print("epoch:", i + 1, "avg loss:", total_loss)
-    return sess
+    return model,sess
+
+
+def fit_metrics(model, sess=None, data_pars=None, compute_pars=None, out_pars=None):
+    """
+       Return metrics of the model stored
+    """
+
+    return model.stats
+
 
 
 def metrics(model, sess=None, data_pars=None, compute_pars=None, out_pars=None):

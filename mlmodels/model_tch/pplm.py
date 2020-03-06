@@ -1,33 +1,28 @@
-import os, sys, inspect
+import csv
+import inspect
+import json
+import math
+import os
+import sys
+import time
 from datetime import datetime, timedelta
 from pathlib import Path
 
-
 import numpy as np
 import pandas as pd
-
-
-from transformers.modeling_gpt2 import GPT2LMHeadModel
-from pplm.run_pplm import run_pplm_example
-import csv 
-
-import json
-import math
-import time
-
-import numpy as np
 import torch
 import torch.nn.functional as F
-import torch.optim
 import torch.optim as optim
 import torch.utils.data as data
+from tqdm import tqdm, trange
+from transformers import GPT2LMHeadModel, GPT2Tokenizer
+from transformers.modeling_gpt2 import GPT2LMHeadModel
+
 from nltk.tokenize.treebank import TreebankWordDetokenizer
+from pplm.run_pplm import run_pplm_example
+from pplm_classification_head import ClassificationHead
 from torchtext import data as torchtext_data
 from torchtext import datasets
-from tqdm import tqdm, trange
-
-from transformers import GPT2Tokenizer, GPT2LMHeadModel
-from pplm_classification_head import ClassificationHead
 
 torch.manual_seed(0)
 np.random.seed(0)
@@ -712,8 +707,3 @@ if __name__ == '__main__':
     ### Global mlmodels
     test_global(pars_choice="json", out_path= test_path,  reset=True)
     """
-
-  
-  
-  
-

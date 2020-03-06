@@ -11,15 +11,14 @@ Check parameters template in models_config.json
 
 
 """
-import os, sys, inspect
+import inspect
+import os
+import sys
 from datetime import datetime, timedelta
 from pathlib import Path
 
-
 import numpy as np
 import pandas as pd
-
-
 
 VERBOSE = False
 
@@ -360,7 +359,3 @@ if __name__ == '__main__':
 
     ### Global mlmodels
     test_global(pars_choice="json", out_path= test_path,  reset=True)
-  
-  
-  
-  

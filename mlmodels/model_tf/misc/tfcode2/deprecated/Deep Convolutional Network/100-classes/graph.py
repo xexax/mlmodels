@@ -4,8 +4,9 @@ import matplotlib.gridspec as gridspec
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import seaborn as sns
 from scipy import misc
+
+import seaborn as sns
 
 sns.set(style = "whitegrid", palette = "muted")
 

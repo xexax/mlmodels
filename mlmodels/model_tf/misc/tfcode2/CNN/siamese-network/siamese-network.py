@@ -6,10 +6,11 @@
 
 import matplotlib.pyplot as plt
 import numpy as np
-import seaborn as sns
 import tensorflow as tf
 from matplotlib import offsetbox
 from tensorflow.examples.tutorials.mnist import input_data
+
+import seaborn as sns
 
 # In[2]:
 

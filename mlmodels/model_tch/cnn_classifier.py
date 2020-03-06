@@ -12,20 +12,21 @@
 """
 
 from __future__ import print_function
+
 import argparse
 import os
 import tempfile
 
-
-import mlflow
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
-from torchvision import datasets, transforms
 from torch.autograd import Variable
 
+import mlflow
 from tensorboardX import SummaryWriter
+from torchvision import datasets, transforms
+
 ####################################################################################################
 
 
@@ -273,13 +274,3 @@ if __name__ == "main" :
 
     if arg.do =="test" :
         test()
-
-
-
-
-
-
-
-
-
-
