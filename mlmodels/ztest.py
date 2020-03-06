@@ -68,9 +68,9 @@ def os_file_current_path():
 
 def model_get_list(folder=None, block_list=[]):
   # Get all the model.py into folder  
-  folder = os_package_root_path() if folder is None else folder
+  folder = os_package_root_path(__file__) if folder is None else folder
   # print(folder)
-  module_names = get_recursive_files(folder, r'/*model*//*model*/*.py' )                       
+  module_names = get_recursive_files(folder, r'/*model*/*.py' )                       
 
 
   NO_LIST = [  "__init__.py", "util", "preprocess" ]
