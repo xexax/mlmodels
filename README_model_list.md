@@ -17,11 +17,15 @@ out_pars     =  { "path": "ztest_1lstm/", "model_path" : "ztest_1lstm/model/"}
 
 
 module        =  module_load( model_uri= model_uri )  #Load file definition
-model         =  model_create(module, model_pars)    # Create Model instance
-model, sess   =  fit(model, module, data_pars)       # fit the model
+model         =  model_create(module, model_pars, data_pars, computer_pars)    # Create Model instance
+model, sess   =  fit(model, module, data_pars, compute_pars, out_pars)         # fit the model
 
-metrics_val   =  metrics( model, sess, ["loss"])     # get stats
-model.save( out_pars['path'], model, module, sess,)
+
+metrics_val   =  fit_metrics( model, sess, ["loss"])     # get stats
+save( model, sess,  out_pars['path'])
+model = load( out_pars['path'])
+
+
 
 ```
 
