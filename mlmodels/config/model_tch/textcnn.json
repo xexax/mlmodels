@@ -9,8 +9,8 @@
 		},
 
 		"data_pars": {
-			"data_path": "dataset/IMDB_Dataset.txt",
-            "split_if_exists": false,
+			"data_path": "dataset/IMDB_sample.txt",
+            "split_if_exists": true,
 			"frac": 0.7,
             "lang": "en",
             "pretrained_emb": "glove.6B.300d",

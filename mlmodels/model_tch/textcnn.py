@@ -196,11 +196,11 @@ def create_data_iterator(tr_batch_size, val_batch_size, tabular_train,
 class TextCNN(nn.Module):
 
     def __init__(self, vocab_built, dim_channel, kernel_height, dropout_rate, num_class):
-        kernel_wins = [int(x) for x in kernel_height.split(',')]
+        kernel_wins = [int(x) for x in kernel_height]
         super(TextCNN, self).__init__()
         # load pretrained embedding in embedding layer.
         emb_dim = vocab_built.vectors.size()[1]
-        self.embed = nn.Embedding(len(vocab_built), emb_dim)
+        self.embed = nn.Embedding(*vocab_built.vectors.shape)
         self.embed.weight.data.copy_(vocab_built.vectors)
 
         # Convolutional Layers with different window size kernels
@@ -249,15 +249,12 @@ def get_params(path=None, test=False):
     return model_pars, data_pars, compute_pars, out_pars
 
 
-def metric(model, data_pars, *args, **kwargs):
-    data_pars['frac'] = 1
-    data_iter, _, _ = get_dataset(**data_pars)
+def metric(model, test_iter, vocab, *args, **kwargs):
     device = _get_device()
-    return _valid(model, device, data_iter)
+    return _valid(model, device, test_iter)
 
-def fit(model, data_pars, compute_pars, out_pars):
+def fit(model, train_iter, valid_iter, vocab, compute_pars, out_pars):
     lr = compute_pars['learning_rate']
-    train_iter, valid_iter, vocab = get_dataset(**data_pars)
     epochs = compute_pars["epochs"]
     device = _get_device()
     train_loss = []
@@ -301,7 +298,7 @@ def get_dataset(data_pars, out_pars):
             path, out_pars['train_path'], out_pars['valid_path'], frac
         )
     trainset, validset, vocab = create_tabular_dataset(
-        './train.csv', './valid.csv', lang, pretrained_emb)
+        out_pars['train_path'], out_pars['valid_path'], lang, pretrained_emb)
     train_iter, valid_iter = create_data_iterator(
         data_pars['batch_size'], data_pars['val_batch_size'],
         trainset, validset, device
@@ -309,14 +306,20 @@ def get_dataset(data_pars, out_pars):
     return train_iter, valid_iter, vocab
 
 def test():
-    model_pars, data_pars, compute_pars, out_pars = get_params()
-    train_iter, valid_iter, vocab = get_dataset(**data_pars)
-    model = Model(vocab=vocab, **model_pars)
-    print("Fitting model...")
-    fit(model, data_pars, compute_pars, out_pars)
-    print("Computing model metrics...")
-    test_loss, accuracy, = metric(model, data_pars)
-    print(f"Test loss: {test loss}, accuracy: {accuracy}")
+    model_pars, data_pars, compute_pars, out_pars = get_params(test=True)
+    print("\n####### Preprocessing dataset... #############\n")
+    train_iter, valid_iter, vocab = get_dataset(data_pars, out_pars)
+    print("\n####### Creating model... ####################\n")
+    model = Model(vocab_built=vocab, **model_pars)
+    print("\n####### Fitting model... ####################\n")
+    fit(model, train_iter, valid_iter, vocab, compute_pars, out_pars)
+    print("\n####### Computing model metrics... ##########")
+    data_pars['frac'] = 1
+    test_iter, _, vocab = get_dataset(data_pars, out_pars)
+    model = Model(vocab_built=vocab, **model_pars)
+    test_loss, accuracy, = metric(model, test_iter, vocab,
+                                  data_pars, out_pars)
+    print(f"\nTest loss: {test_loss}, accuracy: {accuracy}")
 
 def test2():
     pass
