@@ -76,6 +76,8 @@ def optim(modelname="model_tf.1_lstm.py",
 
 
 
+
+
 def optim_optuna(modelname="model_tf.1_lstm.py",
                  model_pars= {},
                  data_pars = {},

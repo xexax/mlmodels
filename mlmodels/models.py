@@ -110,7 +110,7 @@ simplefilter(action='ignore', category=DeprecationWarning)
 
 
 ####################################################################################################
-def module_load(model_uri="", verbose=0, env_build=0):
+def module_env_build(model_uri="", verbose=0, env_build=0):
     """
       Load the file which contains the model description
       model_uri:  model_tf.1_lstm.py  or ABSOLUTE PATH
@@ -121,13 +121,23 @@ def module_load(model_uri="", verbose=0, env_build=0):
     if verbose : 
       print(model_uri)
 
-
     #### Dynamic ENV Build based on requirements.txt
     if env_build :
       env_pars = {"python_version" : '3.6.5'}
       env_build(model_uri, env_pars)
 
 
+
+def module_load(model_uri="", verbose=0, env_build=0):
+    """
+      Load the file which contains the model description
+      model_uri:  model_tf.1_lstm.py  or ABSOLUTE PATH
+    """
+    # print(os_file_current_path())
+    model_uri = model_uri.replace("/", ".")
+    module = None
+    if verbose : 
+      print(model_uri)
 
     try :
       #### Import from package mlmodels sub-folder
