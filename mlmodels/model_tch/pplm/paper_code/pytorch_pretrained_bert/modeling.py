@@ -15,7 +15,8 @@
 # limitations under the License.
 """PyTorch BERT model."""
 
-from __future__ import absolute_import, division, print_function, unicode_literals
+from __future__ import (absolute_import, division, print_function,
+                        unicode_literals)
 
 import copy
 import json
@@ -23,16 +24,16 @@ import logging
 import math
 import os
 import shutil
+import sys
 import tarfile
 import tempfile
-import sys
 from io import open
 
 import torch
 from torch import nn
 from torch.nn import CrossEntropyLoss
 
-from .file_utils import cached_path, WEIGHTS_NAME, CONFIG_NAME
+from .file_utils import CONFIG_NAME, WEIGHTS_NAME, cached_path
 
 logger = logging.getLogger(__name__)
 

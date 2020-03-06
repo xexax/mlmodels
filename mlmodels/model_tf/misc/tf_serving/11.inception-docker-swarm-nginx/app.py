@@ -6,11 +6,11 @@ import urllib.request
 import numpy as np
 import tensorflow as tf
 import tensorflow.contrib.slim as slim
-from flask import Flask, request
-from PIL import Image
 from werkzeug import secure_filename
 
 import inception_v1
+from flask import Flask, request
+from PIL import Image
 
 app = Flask(__name__)
 with open("real-label.json", "r") as fopen:

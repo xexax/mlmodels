@@ -1,15 +1,13 @@
 import collections
 
 import tensorflow as tf
-
-import decoder
 from tensorflow.contrib.seq2seq.python.ops import helper as helper_py
-from tensorflow.python.framework import dtypes
-from tensorflow.python.framework import ops
-from tensorflow.python.framework import tensor_shape
+from tensorflow.python.framework import dtypes, ops, tensor_shape
 from tensorflow.python.layers import base as layers_base
 from tensorflow.python.ops import rnn_cell_impl
 from tensorflow.python.util import nest
+
+import decoder
 
 __all__ = [
     "BasicDecoderOutput",

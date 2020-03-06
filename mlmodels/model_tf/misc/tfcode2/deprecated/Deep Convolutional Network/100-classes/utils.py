@@ -2,9 +2,10 @@ import os
 
 import matplotlib.pyplot as plt
 import numpy as np
-import seaborn as sns
 from scipy import misc
 from sklearn.preprocessing import LabelEncoder
+
+import seaborn as sns
 
 sns.set(style = "whitegrid", palette = "muted")
 

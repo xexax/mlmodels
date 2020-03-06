@@ -9,14 +9,14 @@ import tempfile
 import time
 from queue import Empty
 
+import matplotlib.pyplot as plt
+
 import dask.array as da
 import dask.dataframe as dd
-import matplotlib.pyplot as plt
 from dask import delayed
+from dask_tensorflow import start_tensorflow
 from distributed import Client, progress
 from distributed.worker_client import get_worker
-
-from dask_tensorflow import start_tensorflow
 
 # In[2]:
 

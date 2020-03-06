@@ -20,8 +20,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import pkg_resources
-import seaborn as sns
 
+import seaborn as sns
 from bayes_opt import BayesianOptimization
 
 sns.set()

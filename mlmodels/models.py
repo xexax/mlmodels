@@ -83,24 +83,27 @@ python  models.py  --model_uri model_tch.mlp.py  --do test
 
 
 """
+import argparse
+import glob
+import inspect
+import json
+import os
+import re
+import sys
+from importlib import import_module
+from pathlib import Path
 from warnings import simplefilter
+
+####################################################################################################
+from mlmodels.util import (get_recursive_files, load_config, load_pkl,
+                           load_tch, load_tf, log, os_package_root_path,
+                           save_tch, save_tf)
+
 simplefilter(action='ignore', category=FutureWarning)
 simplefilter(action='ignore', category=DeprecationWarning)
 
 
-import sys
-import argparse
-import glob
-import os
-import re
-import inspect
-from importlib import import_module
-import json
-from pathlib import Path
 
-####################################################################################################
-from mlmodels.util import load_config, get_recursive_files, load_pkl
-from mlmodels.util import load_tf, load_tch,  save_tf, save_tch,  os_package_root_path, log
 
 
 
@@ -468,7 +471,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
-
-

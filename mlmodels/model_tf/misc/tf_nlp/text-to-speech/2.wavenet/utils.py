@@ -5,11 +5,11 @@ import unicodedata
 
 import matplotlib.pyplot as plt
 import numpy as np
-import seaborn as sns
 from scipy import signal
 from scipy.io import wavfile
 
 import librosa
+import seaborn as sns
 
 # P: Padding
 # E: End of Sentence

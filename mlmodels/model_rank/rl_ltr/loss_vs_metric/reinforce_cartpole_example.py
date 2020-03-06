@@ -8,14 +8,14 @@ import argparse
 from itertools import count
 
 import numpy as np
-
-import gym
 import torch
 import torch.autograd as autograd
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 from torch.autograd import Variable
+
+import gym
 
 parser = argparse.ArgumentParser(description='PyTorch REINFORCE example')
 parser.add_argument('--gamma', type=float, default=0.99, metavar='G',

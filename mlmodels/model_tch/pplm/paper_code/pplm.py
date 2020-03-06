@@ -3,26 +3,26 @@
 
 # This code is licensed under a non-commercial license.
 
-import os
-import sys
 import argparse
-from tqdm import trange
+import csv
+import os
+import pickle
+import sys
+from operator import add
 
+import numpy as np
 import torch
 import torch.nn.functional as F
-import numpy as np
-from IPython import embed
-from operator import add
-from style_utils import to_var, top_k_logits
-import pickle
-import csv
+from tqdm import trange
 
 from gpt2tunediscrim import ClassificationHead
+from IPython import embed
+from pytorch_pretrained_bert import GPT2LMHeadModel, GPT2Tokenizer
+from style_utils import to_var, top_k_logits
 
 #lab_root = os.path.join(os.path.abspath(os.path.dirname(__file__)), '..', '..')
 #sys.path.insert(1, lab_root)
 
-from pytorch_pretrained_bert import GPT2LMHeadModel, GPT2Tokenizer
 
 SmallConst = 1e-15
 enc = GPT2Tokenizer.from_pretrained('gpt-2_pt_models/345M/')

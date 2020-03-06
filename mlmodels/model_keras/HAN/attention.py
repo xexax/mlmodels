@@ -1,7 +1,7 @@
 # coding=utf-8
 
 from keras import backend as K
-from keras import initializers, regularizers, constraints
+from keras import constraints, initializers, regularizers
 from keras.engine.topology import Layer
 
 

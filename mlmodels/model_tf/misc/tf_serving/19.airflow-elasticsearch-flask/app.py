@@ -1,7 +1,6 @@
-from flask import Flask, jsonify, render_template, request
-
 from elasticsearch import Elasticsearch
 from elasticsearch_dsl import Search
+from flask import Flask, jsonify, render_template, request
 
 app = Flask(__name__)
 

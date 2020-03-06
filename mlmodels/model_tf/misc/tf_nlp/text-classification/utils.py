@@ -4,8 +4,9 @@ import re
 
 import numpy as np
 import sklearn.datasets
-from nltk.corpus import stopwords
 from sklearn import metrics
+
+from nltk.corpus import stopwords
 
 english_stopwords = stopwords.words("english")
 

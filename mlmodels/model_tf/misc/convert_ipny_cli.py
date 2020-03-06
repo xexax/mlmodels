@@ -5,11 +5,12 @@ import shutil
 import subprocess
 import sys
 
+from tqdm import tqdm
+
 # from IPython.nbformat import current as nbformat
 # from IPython.nbconvert import PythonExporter
 import nbformat
 from nbconvert import PythonExporter
-from tqdm import tqdm
 
 
 def scan(data_file):

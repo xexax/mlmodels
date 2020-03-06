@@ -19,7 +19,9 @@ import sklearn.datasets
 # to get f1 score
 from sklearn import metrics
 from sklearn.cross_validation import train_test_split
-from sklearn.feature_extraction.text import CountVectorizer, HashingVectorizer, TfidfTransformer
+from sklearn.feature_extraction.text import (CountVectorizer,
+                                             HashingVectorizer,
+                                             TfidfTransformer)
 from sklearn.naive_bayes import MultinomialNB
 
 # Define some function to help us for preprocessing

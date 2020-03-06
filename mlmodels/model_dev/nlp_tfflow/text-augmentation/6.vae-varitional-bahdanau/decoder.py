@@ -15,20 +15,13 @@
 """Seq2seq layer operations for use in neural networks."""
 
 import abc
-import six
 
+import six
 import tensorflow as tf
-from tensorflow.python.framework import constant_op
-from tensorflow.python.framework import dtypes
-from tensorflow.python.framework import ops
-from tensorflow.python.framework import tensor_shape
-from tensorflow.python.framework import tensor_util
-from tensorflow.python.ops import array_ops
-from tensorflow.python.ops import control_flow_ops
-from tensorflow.python.ops import math_ops
-from tensorflow.python.ops import rnn
-from tensorflow.python.ops import tensor_array_ops
-from tensorflow.python.ops import variable_scope
+from tensorflow.python.framework import (constant_op, dtypes, ops,
+                                         tensor_shape, tensor_util)
+from tensorflow.python.ops import (array_ops, control_flow_ops, math_ops, rnn,
+                                   tensor_array_ops, variable_scope)
 from tensorflow.python.util import nest
 
 __all__ = ["Decoder", "dynamic_decode"]
@@ -325,4 +318,3 @@ def dynamic_decode(decoder,
             final_outputs = nest.map_structure(_transpose_batch_time, final_outputs)
 
     return final_outputs, final_state, final_sequence_lengths, final_context_kl_loss
-

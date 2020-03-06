@@ -1,7 +1,9 @@
-from deepar.dataset import Dataset
+import logging
+
 import numpy as np
 import pandas as pd
-import logging
+
+from deepar.dataset import Dataset
 
 logger = logging.getLogger('deepar')
 
@@ -162,5 +164,3 @@ class TimeSeries(Dataset):
 
         return rnn_output.drop(target_var, 1).as_matrix().reshape(batch_size, n_steps, -1), \
                rnn_output[target_var].as_matrix().reshape(batch_size, n_steps, 1)
-
-

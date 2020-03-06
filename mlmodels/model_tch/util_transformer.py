@@ -22,11 +22,10 @@ import logging
 import os
 import sys
 from io import open
+from multiprocessing import Pool, cpu_count
 
 from scipy.stats import pearsonr, spearmanr
-from sklearn.metrics import matthews_corrcoef, f1_score
-
-from multiprocessing import Pool, cpu_count
+from sklearn.metrics import f1_score, matthews_corrcoef
 from tqdm import tqdm
 
 logger = logging.getLogger(__name__)

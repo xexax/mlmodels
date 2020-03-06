@@ -54,8 +54,3 @@ def load_argument()
 
 if __name__ == "__main__":
     arg = load_argument()
-
-
-
-
-

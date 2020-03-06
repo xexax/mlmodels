@@ -23,17 +23,18 @@ https://github.com/pfnet/optuna/blob/master/examples/tensorflow_estimator_simple
 https://github.com/pfnet/optuna/tree/master/examples
 """
 import argparse
+import json
 import os
 import re
-import json
-
 
 import pandas as pd
+
 import optuna
 ####################################################################################################
 # from mlmodels import models
 from mlmodels.models import model_create, module_load, save
-from mlmodels.util import os_package_root_path, log
+from mlmodels.util import log, os_package_root_path
+
 #print(os_package_root_path())
 
 ####################################################################################################
@@ -340,7 +341,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
-
-

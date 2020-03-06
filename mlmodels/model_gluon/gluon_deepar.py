@@ -6,12 +6,13 @@ Gluon
 import os
 
 import pandas as pd
+
 from gluonts.model.deepar import DeepAREstimator
 from gluonts.trainer import Trainer
-
-from mlmodels.model_gluon.util import get_dataset, fit, predict, save, metrics, _config_process
-from mlmodels.model_gluon.util import log, os_package_root_path
-from mlmodels.model_gluon.util import plot_predict, plot_prob_forecasts
+from mlmodels.model_gluon.util import (_config_process, fit, get_dataset, log,
+                                       metrics, os_package_root_path,
+                                       plot_predict, plot_prob_forecasts,
+                                       predict, save)
 
 
 ########################################################################################################################

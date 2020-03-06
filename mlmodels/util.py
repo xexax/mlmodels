@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
-import toml
-import os, sys
+import os
 import re
+import sys
+
+import toml
 
 
 ####################################################################################################

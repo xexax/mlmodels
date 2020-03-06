@@ -8,9 +8,8 @@ import time
 
 import numpy as np
 import tensorflow as tf
-from tqdm import tqdm
-
 from keras.preprocessing.sequence import pad_sequences
+from tqdm import tqdm
 
 # In[ ]:
 

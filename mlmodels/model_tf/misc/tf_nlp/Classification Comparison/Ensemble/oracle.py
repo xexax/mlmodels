@@ -9,19 +9,20 @@ import pickle
 import re
 
 import matplotlib.pyplot as plt
-import nltk
 import numpy as np
 import pandas as pd
-import seaborn as sns
 import sklearn.datasets
-from nltk.corpus import stopwords
-from nltk.stem.porter import PorterStemmer
-from nltk.util import skipgrams
 from scipy.sparse import hstack
 from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
 from sklearn.metrics import accuracy_score, confusion_matrix
 from sklearn.model_selection import StratifiedKFold
 from sklearn.svm import LinearSVC
+
+import nltk
+import seaborn as sns
+from nltk.corpus import stopwords
+from nltk.stem.porter import PorterStemmer
+from nltk.util import skipgrams
 
 # In[2]:
 

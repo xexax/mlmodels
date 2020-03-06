@@ -2,7 +2,8 @@
 
 from keras import Input, Model
 from keras import backend as K
-from keras.layers import Embedding, Dense, SimpleRNN, Lambda, Concatenate, Conv1D, GlobalMaxPooling1D
+from keras.layers import (Concatenate, Conv1D, Dense, Embedding,
+                          GlobalMaxPooling1D, Lambda, SimpleRNN)
 
 
 class RCNN(object):

@@ -1,7 +1,7 @@
 # coding=utf-8
 
 from keras import Input, Model
-from keras.layers import Embedding, Dense, Dropout, Bidirectional, CuDNNLSTM
+from keras.layers import Bidirectional, CuDNNLSTM, Dense, Dropout, Embedding
 
 
 class TextBiRNN(object):

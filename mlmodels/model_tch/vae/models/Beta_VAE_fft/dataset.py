@@ -1,12 +1,14 @@
 """dataset.py"""
 
 import os
-import numpy as np
 
+import numpy as np
 import torch
-from torch.utils.data import Dataset, DataLoader
-from torchvision.datasets import ImageFolder
+from torch.utils.data import DataLoader, Dataset
+
 from torchvision import transforms
+from torchvision.datasets import ImageFolder
+
 
 def is_power_of_2(num):
     return ((num & (num - 1)) == 0) and num != 0

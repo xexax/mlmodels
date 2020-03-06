@@ -3,23 +3,24 @@ LSTM Attention
 
 """
 
-import numpy as np
-import tensorflow as tf
 import os
 
+import matplotlib.pyplot as plt
+import numpy as np
+import pylab
+import tensorflow as tf
 from tensorflow import keras
+from tensorflow.python.keras import regularizers
+from tensorflow.python.keras.layers import (LSTM, Activation, Concatenate,
+                                            Dense, Dot, Input, RepeatVector,
+                                            Reshape)
+from tensorflow.python.keras.models import Model
+from tensorflow.python.keras.models import load_model as keras_load_model
 
 K = keras.backend
 
-from tensorflow.python.keras.models import Model
-from tensorflow.python.keras.layers import RepeatVector, Concatenate, Activation
-from tensorflow.python.keras.layers import Reshape, Input, Dense, Dot, LSTM
-from tensorflow.python.keras import regularizers
 
-from tensorflow.python.keras.models import load_model as keras_load_model
 
-import matplotlib.pyplot as plt
-import pylab
 
 
 # Sometimes helpful to implement own softmax activation function to
@@ -332,10 +333,3 @@ class AttentionModel(object):
         mng = plt.get_current_fig_manager()
         mng.window.showMaximized()
         pylab.show()
-        
-        
-        
-        
-
-
-

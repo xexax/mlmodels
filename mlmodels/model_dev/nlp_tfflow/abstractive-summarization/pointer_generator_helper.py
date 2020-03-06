@@ -1,12 +1,11 @@
 import tensorflow as tf
-from tensorflow.python.framework import ops, tensor_shape
 from tensorflow.contrib.rnn.python.ops.core_rnn_cell import _linear
+from tensorflow.contrib.seq2seq.python.ops.attention_wrapper import \
+    _compute_attention
+from tensorflow.python.framework import ops, tensor_shape
+from tensorflow.python.ops import init_ops
 from tensorflow.python.ops.rnn_cell_impl import _zero_state_tensors
 from tensorflow.python.util import nest
-from tensorflow.python.ops import init_ops
-from tensorflow.contrib.seq2seq.python.ops.attention_wrapper import (
-    _compute_attention,
-)
 
 UNK_ID = 3
 

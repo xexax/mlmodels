@@ -10,19 +10,19 @@ import re
 import string
 
 import matplotlib.pyplot as plt
-import nltk
 import numpy as np
 import pandas as pd
-import psutil
-import seaborn as sns
 import sklearn.datasets
-from nltk.corpus import stopwords
 from sklearn import ensemble, metrics, model_selection, naive_bayes
 from sklearn.decomposition import TruncatedSVD
 from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
 
+import nltk
+import psutil
+import seaborn as sns
 import spacy
 import xgboost as xgb
+from nltk.corpus import stopwords
 
 color = sns.color_palette()
 

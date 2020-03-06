@@ -15,27 +15,21 @@
 """
 
 from __future__ import print_function
+
 import argparse
 import os
-
-
-import mlflow
 import tempfile
+
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
-from torchvision import datasets, transforms
 from torch.autograd import Variable
-from tensorboardX import SummaryWriter
 
-
-####################################################################################################
+import mlflow
 from model_tch import *
-
-
-
-
+from tensorboardX import SummaryWriter
+from torchvision import datasets, transforms
 
 
 ####################################################################################################
@@ -143,14 +137,3 @@ if __name__ == "main" :
         mlflow.log_artifacts(output_dir, artifact_path="events")
         print("\nLaunch TensorBoard with:\n\ntensorboard --logdir=%s" %
             os.path.join(mlflow.get_artifact_uri(), "events"))
-    
-
-
-
-
-
-
-
-
-
-

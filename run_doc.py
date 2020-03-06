@@ -203,7 +203,3 @@ with open("README_model_list.md", mode="w") as f :
   f.writelines(des2)
   f.writelines(des3)
   f.writelines(des)
-
-
-
-

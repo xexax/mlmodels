@@ -5,19 +5,22 @@ python  model_tf/1_lstm.py
 
 
 """
+import inspect
+import os
+import sys
+from datetime import datetime, timedelta
 from warnings import simplefilter
+
+import numpy as np
+import pandas as pd
+import tensorflow as tf
+from sklearn.preprocessing import MinMaxScaler
 
 simplefilter(action='ignore', category=FutureWarning)
 simplefilter(action='ignore', category=DeprecationWarning)
 
-import os, sys, inspect
-from datetime import datetime, timedelta
 
-import numpy as np
-import pandas as pd
-from sklearn.preprocessing import MinMaxScaler
 
-import tensorflow as tf
 
 tf.get_logger().setLevel('ERROR')
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '1'  # **** change the warning level ****
@@ -310,11 +313,3 @@ def test2(data_path="dataset/GOOG-year.csv"):
 
 if __name__ == "__main__":
   test2()
-  
-  
-  
-  
-  
-  
-  
-  

@@ -41,13 +41,14 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
-from deepctr.inputs import SparseFeat, VarLenSparseFeat, DenseFeat, get_feature_names
-from deepctr.models import DeepFM
 from keras.preprocessing.sequence import pad_sequences
-from sklearn.metrics import log_loss, roc_auc_score, mean_squared_error
+from sklearn.metrics import log_loss, mean_squared_error, roc_auc_score
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder, MinMaxScaler
 
+from deepctr.inputs import (DenseFeat, SparseFeat, VarLenSparseFeat,
+                            get_feature_names)
+from deepctr.models import DeepFM
 
 # from preprocess import _preprocess_criteo, _preprocess_movielens
 

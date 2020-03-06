@@ -11,11 +11,12 @@ import matplotlib.pyplot as plt
 import matplotlib.ticker as mticker
 import numpy as np
 import pandas as pd
-import statsmodels.api as sm
-import statsmodels.formula.api as smf
 from matplotlib.dates import date2num
 from matplotlib.finance import candlestick_ohlc
 from sklearn import linear_model
+
+import statsmodels.api as sm
+import statsmodels.formula.api as smf
 from statsmodels.tsa.seasonal import seasonal_decompose
 from statsmodels.tsa.stattools import acf, adfuller, pacf
 

@@ -9,11 +9,12 @@ from datetime import datetime, timedelta
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import seaborn as sns
 import tensorflow as tf
-from IPython.display import HTML
 from matplotlib import animation
 from sklearn.preprocessing import MinMaxScaler
+
+import seaborn as sns
+from IPython.display import HTML
 
 sns.set()
 

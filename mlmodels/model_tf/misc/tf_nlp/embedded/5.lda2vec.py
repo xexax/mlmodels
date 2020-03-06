@@ -8,7 +8,6 @@ import random
 from collections import Counter
 
 import matplotlib.pyplot as plt
-import seaborn as sns
 import tensorflow as tf
 from scipy.spatial.distance import cdist
 from sklearn.feature_extraction.text import CountVectorizer
@@ -16,6 +15,7 @@ from sklearn.neighbors import NearestNeighbors
 from sklearn.preprocessing import LabelEncoder
 from sklearn.utils import shuffle
 
+import seaborn as sns
 from MulticoreTSNE import MulticoreTSNE as TSNE
 from utils import *
 

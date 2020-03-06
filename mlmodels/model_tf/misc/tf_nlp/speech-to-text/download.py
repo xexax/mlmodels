@@ -8,8 +8,9 @@ import os
 import re
 from urllib.request import urlopen, urlretrieve
 
-from bs4 import BeautifulSoup
 from tqdm import tqdm
+
+from bs4 import BeautifulSoup
 
 # In[2]:
 

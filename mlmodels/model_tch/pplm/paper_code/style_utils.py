@@ -3,6 +3,7 @@
 import torch
 from torch.autograd import Variable
 
+
 def to_var(x, requires_grad=False, volatile=False):
     if torch.cuda.is_available():
         x = x.cuda()
