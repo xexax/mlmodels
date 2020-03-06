@@ -97,26 +97,26 @@ https://github.com/arita37/mlmodels/actions
 #### 1. Create a file `mlmodels\model_XXXX\mymodel.py` , XXX: tch: pytorch, tf:tensorflow, keras:keras, .... 
 - Declare below classes/functions in the created file:
 
-      Class Model()                                                 :   Model definition
-            __init__(model_pars)                                    :   
+      Class Model()                                                  :   Model definition
+            __init__(model_pars, data_pars, compute_pars)            :   
                                   
-      def fit(model, data_pars, model_pars, compute_pars, )         : Train the model
-      def predict(model, sess, data_pars, compute_pars, out_pars )  : Predict the results
+      def fit(model, data_pars, model_pars, compute_pars, out_pars ) : Train the model
+      def predict(model, sess, data_pars, compute_pars, out_pars )   : Predict the results
       def metric(ytrue, ypred, yproba, data_pars, compute_pars, out_pars )         : Measure the results
 
-      def get_params()                                              : returnparameters of the model
-      def get_dataset(data_pars)                                    : load dataset
-      def test()                                                    : example running the model     
-      def test2()                                                   : example running the model in global settings  
+      def get_params()                                               : returnparameters of the model
+      def get_dataset(data_pars)                                     : load dataset
+      def test()                                                     : example running the model     
+      def test2()                                                    : example running the model in global settings  
 
-      def save(model, path)                                         : save the model
-      def load(path)                                                : load the trained model
+      def save(model, path)                                          : save the model
+      def load(path)                                                 : load the trained model
 
 
 - *Infos* 
      ```
      model :         Model(model_pars), instance of Model() object
-     sess  :         Session for TF model.
+     sess  :         Session for TF model  or optimizer in PyTorch
      model_pars :    dict containing info on model definition.
      data_pars :     dict containing info on input data.
      compute_pars :  dict containing info on model compute.
