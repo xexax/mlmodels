@@ -262,7 +262,7 @@ def save(model, session, save_pars , **kwarg):
     d = save_pars
     folder_name = d['path']
     model_type  = d['model_type']
-    modename    = d['modelname']
+    modelname   = d['model_uri'].replace(".", "_")
 
 
     if model_type == "model_tf" :
