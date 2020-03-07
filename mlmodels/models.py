@@ -253,26 +253,29 @@ def save( save_pars , **kwarg):
     :param kwarg:
     :return:
     """
-    path = save_pars['path']
-    model_type = save_pars['model_type']
+    d = save_pars
+    folder_name = d['path']
+    model_type  = d['model_type']
+    modename    = d['modelname']
+
 
     if model_type == "tf" :
       os.makedirs(folder_name, exist_ok = True)
       file_path = f"{folder_name}/{modelname}.ckpt"
-      save_tf(model_session, file_path)
+      save_tf(session, file_path)
       print(file_path)
       return 1      
 
 
-    if  "model_tch" in modelname :
+    if  model_type == "model_tch"  :
         return 1
 
 
-    if  "model_keras" in modelname :
+    if  model_type == "model_keras"  :
         return 1
 
 
-    if  "model_" in modelname :
+    else :
         return 1
 
 
