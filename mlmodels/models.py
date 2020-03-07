@@ -274,19 +274,19 @@ def save(model, session, save_pars , **kwarg):
 
 
     if  model_type == "model_tch"  :
-        return 1
+       save_tch(model, session, file_path)
 
 
     if  model_type == "model_keras"  :
-        return 1
+       save_keras(model,  file_path)
 
 
     if  model_type == "model_gluon"  :
-        return 1
+       save_gluon(model,  file_path)
 
 
     else :
-        return 1
+       save_pkl(model,  file_path)
 
 
 
@@ -409,7 +409,7 @@ def model_list(folder=None) :
   return mlist  
     
 
-    
+  
 ####################################################################################################
 ############CLI Command ############################################################################
 def cli_load_arguments(config_file= None):
