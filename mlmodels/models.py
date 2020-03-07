@@ -211,8 +211,14 @@ def predict(model, module, sess=None, data_pars=None, compute_pars=None,  out_pa
     return module.predict(model, sess, data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars, **kwarg)
 
 
+def fit_metrics(model, module, sess=None, data_pars=None, compute_pars=None,  out_pars=None, **kwarg):
+  val = module.fit_metrics(model, sess, data_pars, compute_pars, out_pars, **kwarg)
+  return val
+
+
+
 def metrics(model, module, sess=None, data_pars=None, compute_pars=None,  out_pars=None, **kwarg):
-  val = module.metrics(model, sess, data_pars, **kwarg)
+  val = module.metrics(model, sess, data_pars, compute_pars, out_pars, **kwarg)
   return val
 
 
@@ -250,7 +256,6 @@ def save( save_pars  , ** kwarg):
     """
     path = save_pars['path']
     model_type = save_pars['model_type']
-
 
     if model_type == "tf" :
       os.makedirs(folder_name, exist_ok = True)
