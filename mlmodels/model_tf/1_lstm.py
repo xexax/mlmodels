@@ -196,7 +196,13 @@ def get_dataset(data_pars=None):
     return df_log
 
 
-def get_params(choice="test", data_path="dataset/", config_mode="test", **kw):
+def get_params(param_pars={}, **kw):
+    pp = param_pars
+    choice = pp['choice']
+    config_mode = pp['config_mode']
+    data_path = pp['data_path']
+
+
     if choice == "test":
         model_pars = {"learning_rate": 0.001,
                       "num_layers": 1,

@@ -79,10 +79,12 @@ def optim(modelname="model_tf.1_lstm.py",
 
 
 def optim_optuna(modelname="model_tf.1_lstm.py",
-                 model_pars= {},
+                 hypermodel_pars = {},
+
+                 model_pars ={},
                  data_pars = {},
-                 compute_pars={"method" : "normal/prune"},
-                 save_path="/mymodel/", log_path="", ntrials=2) :
+                 compute_pars = {"method" : "normal/prune", 'ntrials': 2, "metric_target": "loss" },
+                 out_pars = {} ) :
     """
        Interface layer to Optuna  for hyperparameter optimization
        return Best Parameters
@@ -99,17 +101,21 @@ def optim_optuna(modelname="model_tf.1_lstm.py",
     drop_path_rate = trial.suggest_discrete_uniform('drop_path_rate', 0.0, 1.0, 0.1) # Discrete-uniform parameter
     
     """
+    save_path = out_pars['save_path']
+    log_path  = out_pars['log_path']
+    ntrials = compute_pars['ntrials']
+    metric_target = compute_pars["metric_target"]
+
     module = module_load(modelname)
     log(module)
+    log([model_pars])
     
     def objective(trial):
-        print("check", module)
-        param_dict, _, _, _ = module.get_params(choice="test",)
-        # model_pars, data_pars, compute_pars, out_pars
+        log("check", module)
+        # model_pars, data_pars, compute_pars, out_pars = module.get_params(param_pars=param_pars)
+        # log([model_pars])
 
-        print([param_dict])
-
-        for t,p  in model_pars.items():
+        for t,p  in hypermodel_pars.items():
             #p = model_pars[t]
             x = p['type']
   
@@ -122,24 +128,24 @@ def optim_optuna(modelname="model_tf.1_lstm.py",
                 raise Exception( f'Not supported type {x}')
                 pres = None
 
-            param_dict[t] = pres
+            model_pars[t] = pres
 
-        model = model_create(module, param_dict)   # module.Model(**param_dict)
+        model = model_create(module, model_pars, data_pars, compute_pars)   # module.Model(**param_dict)
         print(model)
         # df = data_loader(data_pars)
 
         print("data_pars: ", data_pars)
-        model, sess    = module.fit(model, data_pars=data_pars, compute_pars= compute_pars)
-        metrics        = module.fit_metrics(model, sess, data_pars=data_pars, compute_pars= compute_pars) 
+        model, sess    = module.fit(model, data_pars=data_pars, compute_pars= compute_pars, out_pars=out_pars)
+        metrics        = module.fit_metrics(model, sess, data_pars=data_pars, compute_pars= compute_pars, out_pars=out_pars)
 
         del sess
         del model
         try :
            module.reset_model()  # Reset Graph for TF
         except Exception as e :
-           print(e)
+           log(e)
 
-        return metrics["loss"]
+        return metrics[ metric_target ]
 
 
     log("###### Hyper-optimization through study   ##################################")
@@ -191,9 +197,28 @@ def optim_optuna(modelname="model_tf.1_lstm.py",
 
 
 ####################################################################################################
+def test_json(path_json="", config_mode="test"):
+    with open(path_json, encoding='utf-8') as config_f:
+                cfg = json.load(config_f)
+                cfg = cfg[config_mode]
+
+
+    model_uri = cfg['model_pars']['model_uri']  # 'model_tf.1_lstm'
+    res = optim( model_uri,
+                hypermodel_pars = cfg['hypermodel_pars'],
+                model_pars      = cfg['model_pars'],
+                data_pars       = cfg['data_pars'],
+                compute_pars    = cfg['compute_pars'],
+                out_pars        = cfg['out_pars']
+                )
+
+    return res
+
+
+
 def test_all():
 
-    pars =  {
+    hypermodel_pars =  {
         "learning_rate": {"type": "log_uniform", "init": 0.01,  "range" : [0.001, 0.1] },
         "num_layers":    {"type": "int", "init": 2,  "range" :[2, 4] },
         "size":    {"type": "int", "init": 6,  "range" :[6, 6] },
@@ -206,12 +231,22 @@ def test_all():
 
     data_path = os_package_root_path('dataset/GOOG-year_small.csv')
 
-    res = optim('model_tf.1_lstm', model_pars=pars,
-                data_pars={"data_path": data_path, "data_type": "pandas"},
-                ntrials=2,
-                save_path="ztest/optuna_1lstm/",
-                log_path="ztest/optuna_1lstm/",
-                compute_pars={"engine": "optuna" ,  "method" : "prune"} )
+    model_pars = {"learning_rate": 0.001,
+                  "num_layers": 1,
+                  "size": None,
+                  "size_layer": 128,
+                  "output_size": None,
+                  "timestep": 4,
+                  "epoch": 2,
+                  }
+
+    res = optim('model_tf.1_lstm',
+                hypermodel_pars = hypermodel_pars,
+                model_pars      = model_pars,
+                data_pars       = {"data_path": data_path, "data_type": "pandas"},
+                compute_pars    = {"method": "normal/prune", 'ntrials': 2, "metric_target": "loss", "ntrials" :2 },
+                out_pars        = {"save_path": "ztest/optuna_1lstm/",   "log_path": "ztest/optuna_1lstm/"},
+                )
 
     return res
 
@@ -221,7 +256,7 @@ def test_fast(ntrials=2):
 
     modelname = 'model_tf.1_lstm'
 
-    model_pars = {
+    hypermodel_pars =  {
         "learning_rate": {"type": "log_uniform", "init": 0.01,  "range" : [0.001, 0.1] },
         "num_layers":    {"type": "int", "init": 2,  "range" :[2, 4] },
         "size":    {"type": "int", "init": 6,  "range" :[6, 6] },
@@ -231,9 +266,16 @@ def test_fast(ntrials=2):
         "timestep":      {"type" : "categorical", "value": [5] },
         "epoch":         {"type" : "categorical", "value": [2] }
     }
-    log( "model details" , modelname, model_pars ) 
+    log( "model details" , modelname, hypermodel_pars )
 
-
+    model_pars = {"learning_rate": 0.001,
+                  "num_layers": 1,
+                  "size": None,
+                  "size_layer": 128,
+                  "output_size": None,
+                  "timestep": 4,
+                  "epoch": 2,
+                  }
     data_path = os_package_root_path(__file__, sublevel=0, path_add='dataset/GOOG-year_small.csv')
     log( "data_path" , data_path )
 
@@ -243,13 +285,13 @@ def test_fast(ntrials=2):
     log("path_save", path_save)
 
 
-    res = optim(modelname    = modelname,
-                model_pars   = model_pars,
-                data_pars    = {"data_path": data_path, "data_type": "pandas"},
-                ntrials      = ntrials,
-                save_path    = path_save,
-                log_path     = path_save,
-                compute_pars = {"engine": "optuna" ,  "method" : "prune"} )
+    res = optim('model_tf.1_lstm',
+                hypermodel_pars = hypermodel_pars,
+                model_pars      = model_pars,
+                data_pars       = {"data_path": data_path, "data_type": "pandas"},
+                compute_pars    = {"method": "normal/prune", 'ntrials': 2, "metric_target": "loss", "ntrials" :2 },
+                out_pars        = {"save_path": "ztest/optuna_1lstm/",   "log_path": "ztest/optuna_1lstm/"},
+                )
 
     log("Finished OPTIMIZATION",n =30)
     print(res)
