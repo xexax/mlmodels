@@ -104,15 +104,18 @@ ypred       = predict(model, module, sess,  data_pars, compute_pars, out_pars)
 
 ###############################################################################################
 des2= """
-## ③ CLI tools: package provide below tools 
+## CLI tools: package provide below tools 
 ```bash
 - ml_models
 - ml_optim    
 - ml_test
 
 
-### How to use tools
 ```
+
+
+### How to use tools
+```bash
 ml_models --do  
     model_list  :  list all models in the repo                            
     testall     :  test all modules inside model_tf
