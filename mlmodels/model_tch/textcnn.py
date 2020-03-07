@@ -243,20 +243,18 @@ Model = TextCNN
 # functions #
 #############
 
-def get_params(path=None, test=True):
-    if path is None:
-        path = get_config_file()
-    with open(path, 'r') as f:
-        config = json.load(f)
-    if test:
-        config = config.get('test')
-    else:
-        config = config.get('prod')
-    model_pars = config.get('model_pars', dict())
-    data_pars = config.get('data_pars', dict())
-    compute_pars = config.get('compute_pars', dict())
-    out_pars = config.get('out_pars', dict())
-    return model_pars, data_pars, compute_pars, out_pars
+def get_params(choice="json", data_path=None, config_mode="test", **kw):
+    if choice == "json":
+        if data_path is None:
+            path = get_config_file()
+        with open(path, 'r') as f:
+            config = json.load(f)
+        config = config.get(config_mode)
+        model_pars = config.get('model_pars', dict())
+        data_pars = config.get('data_pars', dict())
+        compute_pars = config.get('compute_pars', dict())
+        out_pars = config.get('out_pars', dict())
+        return model_pars, data_pars, compute_pars, out_pars
 
 
 def metric(model, data_pars=None, out_pars=None, **kwargs):
