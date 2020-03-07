@@ -18,9 +18,12 @@ from tqdm import tqdm, trange
 from transformers import GPT2LMHeadModel, GPT2Tokenizer
 from transformers.modeling_gpt2 import GPT2LMHeadModel
 
+
+from transformers import GPT2Tokenizer, GPT2LMHeadModel
+from pplm.pplm_classification_head import ClassificationHead
+
 from nltk.tokenize.treebank import TreebankWordDetokenizer
 from pplm.run_pplm import run_pplm_example
-from pplm_classification_head import ClassificationHead
 from torchtext import data as torchtext_data
 from torchtext import datasets
 
@@ -29,9 +32,6 @@ np.random.seed(0)
 EPSILON = 1e-10
 example_sentence = "This is incredible! I love it, this is the best chicken I have ever had."
 max_length_seq = 100
-
-
-
 
 class Model(torch.nn.Module):
     """Transformer encoder followed by a Classification Head"""
@@ -689,7 +689,7 @@ def get_params(choice="", data_path="dataset/", config_mode="test", **kw):
 #################################################################################
 if __name__ == '__main__':
     # initializing the model
-    model = Model()
+    # model = Model()
     # generating teh text
     generate(cond_text="The potato",bag_of_words='military')
     # for training classification model give the datset and datset path

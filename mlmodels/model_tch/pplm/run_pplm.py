@@ -36,6 +36,10 @@ from transformers import GPT2Tokenizer
 from transformers.file_utils import cached_path
 from transformers.modeling_gpt2 import GPT2LMHeadModel
 
+<<<<<<< HEAD
+from .pplm_classification_head import ClassificationHead
+
+=======
 from pplm_classification_head import ClassificationHead
 
 from .pplm_classification_head import ClassificationHead
@@ -43,6 +47,7 @@ from .pplm_classification_head import ClassificationHead
 <<<<<<< HEAD
 =======
 >>>>>>> ab3789334a47ab327690a26b053abef75c91bce4
+>>>>>>> 4cedf48622a5955e714d3daa064e75eebe73f3db
 
 PPLM_BOW = 1
 PPLM_DISCRIM = 2
@@ -801,15 +806,11 @@ def run_pplm_example(
 
     if verbosity_level >= REGULAR:
         print("=" * 80)
-<<<<<<< HEAD
+
     # print("= Unperturbed generated text =")
     # print(unpert_gen_text)
     # print()
-=======
-    print("= Unperturbed generated text =")
-    print(unpert_gen_text)
-    print()
->>>>>>> ab3789334a47ab327690a26b053abef75c91bce4
+
 
     generated_texts = []
 
@@ -843,15 +844,11 @@ def run_pplm_example(
             else:
                 pert_gen_text = tokenizer.decode(pert_gen_tok_text.tolist()[0])
 
-<<<<<<< HEAD
+
             # print("= Perturbed generated text {} =".format(i + 1))
             # print(pert_gen_text)
             # print()
-=======
-            print("= Perturbed generated text {} =".format(i + 1))
-            print(pert_gen_text)
-            print()
->>>>>>> ab3789334a47ab327690a26b053abef75c91bce4
+
         except:
             pass
 
@@ -860,11 +857,9 @@ def run_pplm_example(
             (tokenized_cond_text, pert_gen_tok_text, unpert_gen_tok_text)
         )
 
-<<<<<<< HEAD
+
     return unpert_gen_text, pert_gen_text
-=======
-    return
->>>>>>> ab3789334a47ab327690a26b053abef75c91bce4
+
 
 
 if __name__ == '__main__':
@@ -955,8 +950,6 @@ if __name__ == '__main__':
                         help="verbosiry level")
 
     args = parser.parse_args()
-<<<<<<< HEAD
+
     run_pplm_example(**vars(args))
-=======
-    run_pplm_example(**vars(args))
->>>>>>> ab3789334a47ab327690a26b053abef75c91bce4
+
