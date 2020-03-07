@@ -3,6 +3,8 @@ import torch.optim as optim
 import torch.nn as nn
 import torch.nn.functional as F
 
+import mlmodels.models as M
+
 import re
 
 import pandas as pd
@@ -195,21 +197,29 @@ def create_data_iterator(tr_batch_size, val_batch_size, tabular_train,
 
 class TextCNN(nn.Module):
 
-    def __init__(self, vocab_built, dim_channel, kernel_height, dropout_rate, num_class):
-        kernel_wins = [int(x) for x in kernel_height]
+    def __init__(self, model_pars=None, **kwargs):
+        kernel_wins = [int(x) for x in model_pars["kernel_height"]]
         super(TextCNN, self).__init__()
         # load pretrained embedding in embedding layer.
-        emb_dim = vocab_built.vectors.size()[1]
-        self.embed = nn.Embedding(*vocab_built.vectors.shape)
-        self.embed.weight.data.copy_(vocab_built.vectors)
+        emb_dim = 300
+        self.embed = nn.Embedding(20000, emb_dim)
+        # self.embed.weight.data.copy_(vocab_built.vectors)
 
         # Convolutional Layers with different window size kernels
-        self.convs = nn.ModuleList([nn.Conv2d(1, dim_channel, (w, emb_dim)) for w in kernel_wins])
+        self.convs = nn.ModuleList(
+            [nn.Conv2d(1, model_pars["dim_channel"], (w, emb_dim))
+             for w in kernel_wins])
         # Dropout layer
-        self.dropout = nn.Dropout(dropout_rate)
+        self.dropout = nn.Dropout(model_pars["dropout_rate"])
 
         # FC layer
-        self.fc = nn.Linear(len(kernel_wins) * dim_channel, num_class)
+        self.fc = nn.Linear(
+            len(kernel_wins) * model_pars["dim_channel"],
+            model_pars["num_class"])
+
+    def rebuild_embed(self, vocab_built):
+        self.embed = nn.Embedding(*vocab_built.vectors.shape)
+        self.embed.weight.data.copy_(vocab_built.vectors)
 
     def forward(self, x):
         emb_x = self.embed(x)
@@ -218,9 +228,9 @@ class TextCNN(nn.Module):
         con_x = [conv(emb_x) for conv in self.convs]
 
         pool_x = [F.max_pool1d(x.squeeze(-1), x.size()[2]) for x in con_x]
-        
+
         fc_x = torch.cat(pool_x, dim=1)
-        
+
         fc_x = fc_x.squeeze(-1)
 
         fc_x = self.dropout(fc_x)
@@ -233,7 +243,7 @@ Model = TextCNN
 # functions #
 #############
 
-def get_params(path=None, test=False):
+def get_params(path=None, test=True):
     if path is None:
         path = get_config_file()
     with open(path, 'r') as f:
@@ -249,11 +259,17 @@ def get_params(path=None, test=False):
     return model_pars, data_pars, compute_pars, out_pars
 
 
-def metric(model, test_iter, vocab, *args, **kwargs):
+def metric(model, data_pars=None, out_pars=None, **kwargs):
+    # return metrics on full dataset
     device = _get_device()
+    data_pars = data_pars.copy()
+    data_pars.update(frac=1)
+    test_iter, _, vocab = get_dataset(data_pars, out_pars)
+    model.rebuild_embed(vocab)
     return _valid(model, device, test_iter)
 
-def fit(model, train_iter, valid_iter, vocab, compute_pars, out_pars):
+def fit(model, sess=None, data_pars=None, compute_pars=None,
+        out_pars=None, **kwargs):
     lr = compute_pars['learning_rate']
     epochs = compute_pars["epochs"]
     device = _get_device()
@@ -263,14 +279,17 @@ def fit(model, train_iter, valid_iter, vocab, compute_pars, out_pars):
     test_acc = []
     best_test_acc = -1
     optimizer = optim.Adam(model.parameters(), lr=lr)
+    train_iter, valid_iter, vocab = get_dataset(data_pars, out_pars)
+    # load word embeddings to model
+    model.rebuild_embed(vocab)
     for epoch in range(1, epochs + 1):
         #train loss
         tr_loss, tr_acc = _train(model, device, train_iter, optimizer, epoch, epochs)
         print('Train Epoch: {} \t Loss: {} \t Accuracy: {}%'.format(epoch, tr_loss, tr_acc))
-        
+
         ts_loss, ts_acc = _valid(model, device, valid_iter)
         print('Valid Epoch: {} \t Loss: {} \t Accuracy: {}%'.format(epoch, ts_loss, ts_acc))
-        
+
         if ts_acc > best_test_acc:
             best_test_acc = ts_acc
             #save paras(snapshot)
@@ -278,13 +297,14 @@ def fit(model, train_iter, valid_iter, vocab, compute_pars, out_pars):
             torch.save(model.state_dict(),
                        os.path.join(out_pars["checkpointdir"],
                                     "best_accuracy"))
-            
+
         train_loss.append(tr_loss)
         train_acc.append(tr_acc)
         test_loss.append(ts_loss)
         test_acc.append(ts_acc)
+    return model, None
 
-def get_dataset(data_pars, out_pars):
+def get_dataset(data_pars=None, out_pars=None, **kwargs):
     device = _get_device()
     path = os.path.join(
         os_package_root_path(__file__, 1), data_pars['data_path'])
@@ -305,28 +325,29 @@ def get_dataset(data_pars, out_pars):
     )
     return train_iter, valid_iter, vocab
 
+def predict(model, data_pars=None, compute_pars=None, out_pars=None):
+    data_pars = data_pars.copy()
+    data_pars.update(frac=1)
+    print(data_pars)
+    test_iter, _, vocab = get_dataset(data_pars, out_pars)
+    # get a batch of data
+    x_test = next(iter(test_iter)).text
+    return model(x_test).detach().numpy()
 
 def test():
+    print("\n####### Getting params... ####################\n")
     model_pars, data_pars, compute_pars, out_pars = get_params(test=True)
-    print("\n####### Preprocessing dataset... #############\n")
-    train_iter, valid_iter, vocab = get_dataset(data_pars, out_pars)
-
     print("\n####### Creating model... ####################\n")
-    model = Model(vocab_built=vocab, **model_pars)
-
+    module, model = M.module_load_full(
+        "model_tch.textcnn.py", model_pars=model_pars, data_pars=data_pars,
+        compute_pars=compute_pars, out_pars=out_pars)
     print("\n####### Fitting model... ####################\n")
-    fit(model, train_iter, valid_iter, vocab, compute_pars, out_pars)
-
+    M.fit(module, model, None, data_pars, compute_pars, out_pars)
     print("\n####### Computing model metrics... ##########")
-    data_pars['frac'] = 1
-    test_iter, _, vocab = get_dataset(data_pars, out_pars)
-    model = Model(vocab_built=vocab, **model_pars)
-    test_loss, accuracy, = metric(model, test_iter, vocab,
-                                  data_pars, out_pars)
-
-
+    test_loss, accuracy = metric(model, data_pars, out_pars)
     print(f"\nTest loss: {test_loss}, accuracy: {accuracy}")
-
+    print("\n####### Test predict... #####################")
+    print(predict(model, data_pars, compute_pars, out_pars))
 
 def test2():
     pass
