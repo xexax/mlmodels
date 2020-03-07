@@ -21,7 +21,7 @@ from torchtext import datasets
 from tqdm import tqdm, trange
 
 from transformers import GPT2Tokenizer, GPT2LMHeadModel
-from pplm_classification_head import ClassificationHead
+from .pplm_classification_head import ClassificationHead
 
 torch.manual_seed(0)
 np.random.seed(0)

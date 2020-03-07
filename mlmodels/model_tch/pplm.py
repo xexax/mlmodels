@@ -5,7 +5,7 @@ from pplm.pplm_classification_head import ClassificationHead
 
 from nltk.tokenize.treebank import TreebankWordDetokenizer
 from pplm.run_pplm import run_pplm_example
-from pplm.pplm_classification_head import train_discriminator as test_case_1
+from pplm.run_pplm_discrim_train import train_discriminator as test_case_1
 
 
 VERBOSE = False
