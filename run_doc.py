@@ -31,7 +31,7 @@ print("start Doc")
 des1 = """
 ## In Jupyter 
 
-###### Model, data, ... definition
+#### Model, data, ... definition
 ```python
 model_uri    = "model_tf.1_lstm.py"
 model_pars   =  {  "num_layers": 1,
@@ -47,7 +47,7 @@ load_pars = { "path" : "ztest_1lstm/model/" }
 ```
 
 
-###### Using local module (which contain the model)
+#### Using local module (which contain the model)
 ```python
 from mlmodels.models import module_load
 
@@ -104,10 +104,32 @@ ypred       = predict(model, module, sess,  data_pars, compute_pars, out_pars)
 
 ###############################################################################################
 des2= """
-####  CLI examples 
+## ③ CLI tools: package provide below tools 
 ```bash
+- ml_models
+- ml_optim    
+- ml_test
 
-ml_models --do                    
+
+### How to use tools
+```
+ml_models --do  
+    model_list  :  list all models in the repo                            
+    testall     :  test all modules inside model_tf
+    test        :  test a certain module inside model_tf
+    fit         :  wrap fit generic m    ethod
+    predict     :  predict  using a pre-trained model and some data
+    generate_config  :  generate config file from code source
+    
+  ## --do fit  
+  --model_uri     model_tf.1_lstm
+  --save_folder   myfolder/
+  --config_file   myfile.json
+  --config_mode   "test"
+
+
+  ## --do predict  
+  --load_folder   mymodel_folder/
     "testall"     :  test all modules inside model_tf
     "test"        :  test a certain module inside model_tf
 
@@ -119,9 +141,14 @@ ml_models --do
 
 
 ml_optim --do
-  "test"      :  Test the hyperparameter optimization for a specific model
-  "test_all"  :  TODO, Test all
+    test      :  Test the hyperparameter optimization for a specific model
+    test_all  :  TODO, Test all
+    search    :  search for the best hyperparameters of a specific model
+
+
+ml_test
   "search"    :  search for the best hyperparameters of a specific model
+
 
 
 
@@ -139,10 +166,6 @@ ml_optim --do
     
 #### Custom  Models
     ml_models --do test  --model_uri "D:\_devs\Python01\gitdev\mlmodels\mlmodels\model_tf\1_lstm.py"
-
-
-
-
 
 
 
@@ -175,7 +198,6 @@ des3 =  """
 
 
 ```
-
 
 """
 

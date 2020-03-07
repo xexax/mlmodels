@@ -206,31 +206,8 @@ then for each staging, declare some specific parameters for model, dataset and a
 #######################################################################################
 
 ## ③ CLI tools: package provide below tools
-- ml_models
-- ml_optim    
-### How to use tools
-
-- Lightweight Functional interface to execute models
-`ml_models`  :  mlmodels/models.py
-
 ```
-ml_models --do  
-    model_list  :  list all models in the repo                            
-    testall     :  test all modules inside model_tf
-    test        :  test a certain module inside model_tf
-    fit         :  wrap fit generic m    ethod
-    predict     :  predict  using a pre-trained model and some data
-    generate_config  :  generate config file from code source
-    
-  ## --do fit  
-  --model_uri     model_tf.1_lstm
-  --save_folder   myfolder/
-  --config_file   myfile.json
-  --config_mode   "test"
 
-
-  ## --do predict  
-  --load_folder   mymodel_folder/
 
 
 ```
@@ -289,6 +266,8 @@ ml_test
 
 
 
+
+
 #######################################################################################
 ### ④ Interface
 
@@ -323,38 +302,24 @@ optim.py
    Sometimes, data_pars is required to setup the model (ie CNN with image size...)
    
 
+
+
+
+
 ####################################################################################
 ### ⑤ Code sample
-#### Training
+
 ```python
-from mlmodels.models import module_load, data_loader, create_model, fit, predict, stats
-from mlmodels.models import load #Load model weights
-
-
-model_uri    = "model_tf.1_lstm.py"
-model_pars   =  {  "num_layers": 1,
-                  "size": ncol_input, "size_layer": 128, "output_size": ncol_output, "timestep": 4,
-                }
-data_pars    =  {"data_path": "/folder/myfile.csv"  , "data_type": "pandas" }
-compute_pars =  { "learning_rate": 0.001, }
-out_pars     =  { "path": "ztest_1lstm/", "model_path" : "ztest_1lstm/model/"}
-
-
-module        =  module_load( model_uri= model_uri )  #Load file definition
-model         =  model_create(module, model_pars)    # Create Model instance
-model, sess   =  fit(model, module, data_pars)       # fit the model
-
-metrics_val   =  metrics( model, sess, ["loss"])     # get stats
-model.save( out_pars['path'], model, module, sess,)
+https://github.com/arita37/mlmodels/blob/dev/README_model_list.md
 
 
 ```
 
-#### Inferencmodel/e
-```python
-model = load(folder)    #Create Model instance
-ypred = module.predict(model, module, data_pars, compute_pars)     # predict pipeline
-```
+
+
+
+
+
 
 #######################################################################################
 ### ⑥ Naming convention
@@ -391,14 +356,6 @@ coltext : for raw text columns
 
 ###############################################################################
 
-## ⑦ Conda install
-```
-conda create -n py36 python=3.6.5  -y
-source activate py36
-pip install  ipykernel spyder-kernels=0.* -y
-
-
-```
 
 
 
