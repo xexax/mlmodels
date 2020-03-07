@@ -182,14 +182,14 @@ def model_create(module, model_pars=None, data_pars=None, compute_pars=None, **k
       model_pars : dict params
     """
     if model_pars is None :
-      model_pars = module.get_pars()
+      model_pars = module.get_params()
 
     model = module.Model(model_pars=model_pars, data_pars=data_pars, compute_pars=compute_pars, **kwarg)
     return model
 
 
 
-def fit(model, module, sess=None, data_pars=None, compute_pars=None, out_pars=None,  **kwarg):
+def fit(module, model, sess=None, data_pars=None, compute_pars=None, out_pars=None,  **kwarg):
     """
     Wrap fit generic method
     :type model: object
@@ -197,7 +197,7 @@ def fit(model, module, sess=None, data_pars=None, compute_pars=None, out_pars=No
     return module.fit(model, sess,  data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars, **kwarg)
 
 
-def predict(model, module, sess=None, data_pars=None, compute_pars=None,  out_pars=None,  **kwarg):
+def predict(module, model, sess=None, data_pars=None, compute_pars=None,  out_pars=None,  **kwarg):
     """
        predict  using a pre-trained model and some data
     :param model:
@@ -211,13 +211,13 @@ def predict(model, module, sess=None, data_pars=None, compute_pars=None,  out_pa
     return module.predict(model, sess, data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars, **kwarg)
 
 
-def fit_metrics(model, module, sess=None, data_pars=None, compute_pars=None,  out_pars=None, **kwarg):
+def fit_metrics(module, model, sess=None, data_pars=None, compute_pars=None,  out_pars=None, **kwarg):
   val = module.fit_metrics(model, sess, data_pars, compute_pars, out_pars, **kwarg)
   return val
 
 
 
-def metrics(model, module, sess=None, data_pars=None, compute_pars=None,  out_pars=None, **kwarg):
+def metrics(module, model, sess=None, data_pars=None, compute_pars=None,  out_pars=None, **kwarg):
   val = module.metrics(model, sess, data_pars, compute_pars, out_pars, **kwarg)
   return val
 
@@ -244,7 +244,7 @@ def load(load_pars, **kwarg):
         return load_pkl(folder_name)
 
 
-def save( save_pars  , ** kwarg):
+def save( save_pars , **kwarg):
     """
        Save model/session on disk
     (path, modelname="model_default", model_type="tf",  model_session=None, ** kwarg)
