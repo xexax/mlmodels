@@ -50,11 +50,11 @@ except : pass
 
 ####################################################################################################
 def optim(model_uri="model_tf.1_lstm.py",
-          hypermodel_pars= {},
-          model_pars= {},
-          data_pars = {},
-          compute_pars={"method": "normal/prune"},
-          out_pars={}) :
+          hypermodel_pars = {},
+          model_pars      = {},
+          data_pars       = {},
+          compute_pars    = {"method": "normal/prune"},
+          out_pars        = {}) :
     """
     Generic optimizer for hyperparamters
     Parameters
@@ -78,19 +78,19 @@ def optim(model_uri="model_tf.1_lstm.py",
 
 def optim_optuna(model_uri="model_tf.1_lstm.py",
                  hypermodel_pars = {},
-                 model_pars ={},
-                 data_pars = {},
-                 compute_pars = {"method" : "normal/prune", 'ntrials': 2, "metric_target": "loss" },
-                 out_pars = {} ) :
+                 model_pars      = {},
+                 data_pars       = {},
+                 compute_pars    = {"method" : "normal/prune", 'ntrials': 2, "metric_target": "loss" },
+                 out_pars        = {} ) :
     """
-       Interface layer to Optuna  for hyperparameter optimization
-       return Best Parameters
+    Interface layer to Optuna  for hyperparameter optimization
     optuna create-study --study-name "distributed-example" --storage "sqlite:///example.db"
     https://optuna.readthedocs.io/en/latest/tutorial/distributed.html
-     if __name__ == '__main__':
+
     study = optuna.load_study(study_name='distributed-example', storage='sqlite:///example.db')
     study.optimize(objective, n_trials=100)
     weight_decay = trial.suggest_loguniform('weight_decay', 1e-10, 1e-3)
+
     optimizer = trial.suggest_categorical('optimizer', ['MomentumSGD', 'Adam']) # Categorical parameter
     num_layers = trial.suggest_int('num_layers', 1, 3)      # Int parameter
     dropout_rate = trial.suggest_uniform('dropout_rate', 0.0, 1.0)      # Uniform parameter
@@ -98,9 +98,9 @@ def optim_optuna(model_uri="model_tf.1_lstm.py",
     drop_path_rate = trial.suggest_discrete_uniform('drop_path_rate', 0.0, 1.0, 0.1) # Discrete-uniform parameter
     
     """
-    save_path = out_pars['save_path']
-    log_path  = out_pars['log_path']
-    ntrials = compute_pars['ntrials']
+    save_path     = out_pars['save_path']
+    log_path      = out_pars['log_path']
+    ntrials       = compute_pars['ntrials']
     metric_target = compute_pars["metric_target"]
 
     module = module_load(model_uri)
@@ -109,8 +109,6 @@ def optim_optuna(model_uri="model_tf.1_lstm.py",
     
     def objective(trial):
         log("check", module)
-        # model_pars, data_pars, compute_pars, out_pars = module.get_params(param_pars=param_pars)
-        # log([model_pars])
 
         for t,p  in hypermodel_pars.items():
             #p = model_pars[t]
@@ -193,12 +191,6 @@ def optim_optuna(model_uri="model_tf.1_lstm.py",
 
 
 
-
-
-
-
-
-
 ####################################################################################################
 def test_json(path_json="", config_mode="test"):
     with open(path_json, encoding='utf-8') as config_f:
@@ -227,6 +219,12 @@ def test_all():
 def test_fast(ntrials=2):
     path_curr = os.getcwd()
 
+    data_path = os_package_root_path(__file__, sublevel=0, path_add='dataset/GOOG-year_small.csv')
+    path_save = f"{path_curr}/ztest/optuna_1lstm/" 
+    os.makedirs(path_save, exist_ok=True)
+    log("path_save", path_save, data_path)
+    
+
     model_uri = 'model_tf.1_lstm'
 
     hypermodel_pars =  {
@@ -242,23 +240,20 @@ def test_fast(ntrials=2):
     log( "model details" , model_uri, hypermodel_pars )
 
 
-    model_pars = {"model_uri" :"model_tf.1_lstm", "learning_rate": 0.001, "num_layers": 1, "size": None, 
+    model_pars   = {"model_uri" :"model_tf.1_lstm", "learning_rate": 0.001, "num_layers": 1, "size": None,
                   "size_layer": 128, "output_size": None, "timestep": 4, "epoch": 2, }
-    data_path = os_package_root_path(__file__, sublevel=0, path_add='dataset/GOOG-year_small.csv')
-    log( "data_path" , data_path )
-
-
-    path_save = f"{path_curr}/ztest/optuna_1lstm/" 
-    os.makedirs(path_save, exist_ok=True)
-    log("path_save", path_save)
+    
+    data_pars    = {"data_path": data_path, "data_type": "pandas"}
+    compute_pars = {"engine":"optuna", "method": "normal", 'ntrials': 2, "metric_target": "loss" }
+    out_pars     = {"save_path": "ztest/optuna_1lstm/",   "log_path": "ztest/optuna_1lstm/"}
 
 
     res = optim(model_uri,
                 hypermodel_pars = hypermodel_pars,
                 model_pars      = model_pars,
-                data_pars       = {"data_path": data_path, "data_type": "pandas"},
-                compute_pars    = {"engine":"optuna", "method": "normal", 'ntrials': 2, "metric_target": "loss" },
-                out_pars        = {"save_path": "ztest/optuna_1lstm/",   "log_path": "ztest/optuna_1lstm/"},
+                data_pars       = data_pars,
+                compute_pars    = compute_pars,
+                out_pars        = out_pars
                 )
 
     log("Finished OPTIMIZATION",n =30)
