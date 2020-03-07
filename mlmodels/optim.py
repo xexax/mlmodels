@@ -50,28 +50,25 @@ except : pass
 
 ####################################################################################################
 def optim(modelname="model_tf.1_lstm.py",
+          hypermodel_pars= {},
           model_pars= {},
           data_pars = {},
           compute_pars={"method": "normal/prune"},
-          save_path="/mymodel/", log_path="", ntrials=2) :
+          out_pars={}) :
     """
     Generic optimizer for hyperparamters
     Parameters
     ----------
-    modelname : The default is "model_tf.1_lstm.py".
-    model_pars : TYPE, optional
-    data_pars : TYPE, optional
-    compute_pars : TYPE, optional
-    DESCRIPTION. The default is {"method": "normal/prune"}.
-    save_path : TYPE, optional The default is "/mymodel/".
-    log_path : TYPE, optional. The default is "".
-    ntrials : TYPE, optional. The default is 2.
     Returns : None
     """
     if compute_pars["engine"] == "optuna" :
-        return optim_optuna(modelname,  model_pars, data_pars, compute_pars,
-                            save_path, log_path, ntrials)
+        return optim_optuna(modelname,  hypermodel_pars, 
+                            model_pars, data_pars, compute_pars,
+                            out_pars)
     return None
+
+
+
 
 
 
@@ -377,12 +374,12 @@ def main():
         log(model_pars, data_pars, compute_pars)
         log("############# OPTIMIZATION Start  ###############")
         res = optim(arg.modelname,
+                    hypermodel_pars   = hypermodel_pars,
+
                     model_pars   = model_pars,
-                    ntrials      = int(arg.ntrials),
                     compute_pars = compute_pars,
                     data_pars    = data_pars,
-                    save_path    = arg.save_path,
-                    log_path     = arg.log_file)  # '1_lstm'
+                    out_pars    = out_pars )
 
         log("#############  OPTIMIZATION End ###############")
         log(res)
