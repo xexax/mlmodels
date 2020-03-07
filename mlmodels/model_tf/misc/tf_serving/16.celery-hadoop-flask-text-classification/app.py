@@ -9,10 +9,10 @@ import sys
 import time
 
 import numpy as np
-from flask import Flask, request
 from werkzeug import secure_filename
 
 from celery import Celery
+from flask import Flask, request
 
 logging.basicConfig(level=logging.DEBUG)
 

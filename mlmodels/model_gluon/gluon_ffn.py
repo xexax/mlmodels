@@ -7,17 +7,17 @@ https://autogluon.mxnet.io/tutorials/tabular_prediction/tabular-quickstart.html
 
 
 """
-import os
 import json
+import os
 from pathlib import Path
+
 import pandas as pd
 
 from gluonts.model.simple_feedforward import SimpleFeedForwardEstimator
 from gluonts.trainer import Trainer
-
-from mlmodels.model_gluon.util import log, os_package_root_path
-from mlmodels.model_gluon.util import get_dataset, fit, predict, save, load, metrics, _config_process
-from mlmodels.model_gluon.util import plot_predict, plot_prob_forecasts
+from mlmodels.model_gluon.util import (
+    _config_process, fit, get_dataset, load, log, metrics,
+    os_package_root_path, plot_predict, plot_prob_forecasts, predict, save)
 
 VERBOSE = False
 
@@ -28,7 +28,7 @@ VERBOSE = False
 ########################################################################################################################
 #### Model defintion
 class Model(object) :
-    def __init__(self, model_pars=None, compute_pars=None) :
+    def __init__(self, model_pars=None, data_pars=None, compute_pars=None, **kwargs) :
         ## Empty model for Seaialization
         if model_pars is None and compute_pars is None :
            self.model = None
@@ -138,23 +138,25 @@ def test(data_path="dataset/", choice="test01"):
 
     log("#### Loading params   ##############################################")
     model_pars, data_pars, compute_pars, out_pars = get_params(choice=choice, data_path=data_path)
-
+    print(model_pars, data_pars, compute_pars, out_pars)
 
     log("#### Loading dataset   #############################################")
-    gluont_ds = get_dataset(**data_pars)
+    gluont_ds = get_dataset(data_pars)
 
 
     log("#### Model init, fit   ###########################################")
-    model = Model(model_pars, compute_pars)
+    from mlmodels.models import module_load_full, fit, predict
+    module, model = module_load_full("model_gluon.gluon_ffn", model_pars, data_pars, compute_pars)
+    print(module, model)
     #model=m.model    ### WE WORK WITH THE CLASS (not the attribute GLUON )
-    model=fit(model, data_pars, model_pars, compute_pars)
+    model=fit(model, module, data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)
 
     log("#### save the trained model  ######################################")
     save(model, data_pars["modelpath"])
 
 
     log("#### Predict   ###################################################")
-    ypred = predict(model, data_pars, compute_pars, out_pars)
+    ypred = predict(model, module, data_pars=data_pars, out_pars=out_pars, compute_pars=compute_pars)
     print(ypred)
 
 
@@ -172,10 +174,4 @@ def test(data_path="dataset/", choice="test01"):
 if __name__ == '__main__':
     VERBOSE=True
     test(data_path="dataset/", choice="test01")
-    test(data_path="dataset/", choice="json")
-    
-    
-    
-    
-    
- 
+    # test(data_path="dataset/", choice="json")

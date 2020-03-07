@@ -10,8 +10,6 @@ from itertools import product
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import seaborn as sns
-import statsmodels.api as sm
 import tensorflow as tf
 from scipy import stats
 from sklearn.metrics import mean_squared_error
@@ -20,6 +18,8 @@ from sklearn.preprocessing import MinMaxScaler
 
 import autoencoder
 import model
+import seaborn as sns
+import statsmodels.api as sm
 import xgboost as xgb
 from xgboost import plot_importance
 

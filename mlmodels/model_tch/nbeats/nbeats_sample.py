@@ -9,14 +9,12 @@
 
 
 get_ipython().run_line_magic('matplotlib', 'inline')
-import numpy as np
-import pandas as pd
 import os
 
+import numpy as np
+import pandas as pd
 
-
-
-from trainer import * # some import from the trainer script e.g. load/save functions.
+from trainer import *  # some import from the trainer script e.g. load/save functions.
 
 # https://datamarket.com/data/set/22ox/monthly-milk-production-pounds-per-cow-jan-62-dec-75#!ds=22ox&display=line
 # It's a toy example to show how to do time series forecasting using N-Beats.
@@ -168,4 +166,3 @@ def fit() :
     for i in range(30):
         eval_test(backcast_length, forecast_length, net, norm_constant, test_losses, x_test, y_test)
         train_100_grad_steps(data, device, net, optimiser, test_losses)
-

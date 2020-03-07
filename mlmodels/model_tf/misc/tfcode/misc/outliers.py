@@ -7,7 +7,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import seaborn as sns
 from mpl_toolkits.mplot3d import Axes3D
 from sklearn.cluster import KMeans
 from sklearn.covariance import EllipticEnvelope
@@ -15,6 +14,8 @@ from sklearn.decomposition import PCA
 from sklearn.ensemble import IsolationForest
 from sklearn.preprocessing import StandardScaler
 from sklearn.svm import OneClassSVM
+
+import seaborn as sns
 
 sns.set()
 

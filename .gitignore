@@ -122,3 +122,6 @@ venv.bak/
 /zarchive/mlmodels-0.7.1.tar.gz
 /.tgitconfig
 /zzzarchive
+
+# torchtext cache
+.vector_cache

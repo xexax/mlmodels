@@ -1,8 +1,10 @@
-from torchsummary import summary
 import torch
 import torch.nn as nn
 import torch.nn.init as init
 from torch.autograd import Variable
+
+from torchsummary import summary
+
 
 def reparametrize(mu, logvar):
     std = logvar.div(2).exp()

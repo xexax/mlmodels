@@ -4,9 +4,9 @@ import time
 from threading import Thread, ThreadError
 
 import numpy as np
-from PIL import Image
 
 import cv2
+from PIL import Image
 from socketIO_client import BaseNamespace, SocketIO
 
 socketIO = SocketIO("localhost", 5000)

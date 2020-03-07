@@ -1,9 +1,11 @@
-import sklearn.datasets
-import numpy as np
-import re
 import collections
 import random
+import re
+
+import numpy as np
+import sklearn.datasets
 from sklearn import metrics
+
 from nltk.corpus import stopwords
 
 english_stopwords = stopwords.words('english')

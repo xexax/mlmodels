@@ -10,7 +10,6 @@ import re
 
 import matplotlib.pyplot as plt
 import numpy as np
-import seaborn as sns
 import sklearn.datasets
 import tensorflow as tf
 from sklearn import metrics
@@ -19,6 +18,7 @@ from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.manifold import TSNE
 
 import lightgbm as lgb
+import seaborn as sns
 
 
 class Model_vec:

@@ -18,18 +18,19 @@
     In particular https://github.com/kimiyoung/transformer-xl/blob/master/pytorch/mem_transformer.py
 """
 
-from __future__ import absolute_import, division, print_function, unicode_literals
+from __future__ import (absolute_import, division, print_function,
+                        unicode_literals)
 
-import os
+import collections
 import copy
 import json
-import math
 import logging
+import math
+import os
+import shutil
+import sys
 import tarfile
 import tempfile
-import shutil
-import collections
-import sys
 from io import open
 
 import torch
@@ -38,9 +39,11 @@ import torch.nn.functional as F
 from torch.nn import CrossEntropyLoss
 from torch.nn.parameter import Parameter
 
+from .file_utils import CONFIG_NAME, WEIGHTS_NAME, cached_path
 from .modeling import BertLayerNorm as LayerNorm
-from .modeling_transfo_xl_utilities import ProjectedAdaptiveLogSoftmax, sample_logits
-from .file_utils import cached_path, CONFIG_NAME, WEIGHTS_NAME
+from .modeling_transfo_xl_utilities import (ProjectedAdaptiveLogSoftmax,
+                                            sample_logits)
+
 #from IPython import embed
 
 logger = logging.getLogger(__name__)

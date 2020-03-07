@@ -5,12 +5,12 @@ from os.path import abspath, dirname
 from queue import Queue
 
 import numpy as np
-from flask import Flask, Response
-from PIL import Image
 
 import cv2
+from flask import Flask, Response
 from flask_socketio import SocketIO, emit, send
 from object_detection import detect_object
+from PIL import Image
 
 d = dirname(dirname(abspath(__file__)))
 

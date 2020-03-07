@@ -8,14 +8,14 @@ Ouput: Exeution of Script and save model storage
 This is generic mapper between JSON and Python code script.
 Execution is Asynchornous
 """
-import os, sys
+import os
+import sys
 
 import keras
-from keras.datasets import mnist
-from keras.models import Sequential
-from keras.layers import Dense, Dropout, Flatten
-from keras.layers import Conv2D, MaxPooling2D
 from keras import backend as K
+from keras.datasets import mnist
+from keras.layers import Conv2D, Dense, Dropout, Flatten, MaxPooling2D
+from keras.models import Sequential
 
 # Less Keras warnings
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
@@ -252,4 +252,3 @@ def test(data_path="dataset/"):
 if __name__ == '__main__':
     VERBOSE = True
     test()
-

@@ -1,5 +1,7 @@
-import pandas as pd
 import unittest
+
+import pandas as pd
+
 from deepar.dataset.time_series import TimeSeries
 
 

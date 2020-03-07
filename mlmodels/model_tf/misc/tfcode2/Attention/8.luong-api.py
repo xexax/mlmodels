@@ -7,10 +7,10 @@
 import time
 
 import matplotlib.pyplot as plt
-import seaborn as sns
 import tensorflow as tf
 from sklearn.cross_validation import train_test_split
 
+import seaborn as sns
 from utils import *
 
 # In[2]:

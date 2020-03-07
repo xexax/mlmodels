@@ -22,15 +22,11 @@ try :
   gpu_available = len(out) > 0
 except : pass
 
+
 ##### Version  #######################################################################
 version ='0.24.1'
 print("version", version)
-""""
-with io.open(os.path.join(root, 'nlp_architect', 'version.py'), encoding='utf8') as f:
-    version_f = {}
-    exec(f.read(), version_f)
-    version = version_f['NLP_ARCHITECT_VERSION']
-"""
+
 
 
 
@@ -70,9 +66,7 @@ ml_optim --do
  
 
 
-
-Include models :
-
+##### Include models :
 
 mlmodels.model_dev.ml_mosaic.py
 mlmodels.model_dev.mytest.py

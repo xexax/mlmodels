@@ -7,41 +7,32 @@
 
 from __future__ import absolute_import, division, print_function
 
-import random
 import glob
+import json
 import logging
+import math
 import os
 import random
-import json
-import math
-
-
-
-from sklearn.metrics import mean_squared_error, matthews_corrcoef, confusion_matrix
-from scipy.stats import pearsonr
 
 import numpy as np
 import torch
+from scipy.stats import pearsonr
+from sklearn.metrics import (confusion_matrix, matthews_corrcoef,
+                             mean_squared_error)
 from torch.utils.data import (DataLoader, RandomSampler, SequentialSampler,
-                              SubsetRandomSampler,TensorDataset)
-
+                              SubsetRandomSampler, TensorDataset)
 from torch.utils.data.distributed import DistributedSampler
-from tqdm import tqdm_notebook, trange, tqdm
+from tqdm import tqdm, tqdm_notebook, trange
+
+from pytorch_transformers import (
+    WEIGHTS_NAME, AdamW, BertConfig, BertForSequenceClassification,
+    BertTokenizer, RobertaConfig, RobertaForSequenceClassification,
+    RobertaTokenizer, WarmupLinearSchedule, XLMConfig,
+    XLMForSequenceClassification, XLMTokenizer, XLNetConfig,
+    XLNetForSequenceClassification, XLNetTokenizer)
 from tensorboardX import SummaryWriter
-
-
-from pytorch_transformers import (WEIGHTS_NAME, BertConfig, BertForSequenceClassification, BertTokenizer,
-                                  XLMConfig, XLMForSequenceClassification, XLMTokenizer, 
-                                  XLNetConfig, XLNetForSequenceClassification, XLNetTokenizer,
-                                  RobertaConfig, RobertaForSequenceClassification, RobertaTokenizer)
-
-from pytorch_transformers import AdamW, WarmupLinearSchedule
-
-from util_transformer import (convert_examples_to_features,
-                        output_modes, processors)
-
-
-
+from util_transformer import (convert_examples_to_features, output_modes,
+                              processors)
 
 ###################################################################################################
 MODEL_CLASSES = {
@@ -501,8 +492,3 @@ if __name__ == '__main__':
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     test(pars_choice=0)
-
-   
-
-
-

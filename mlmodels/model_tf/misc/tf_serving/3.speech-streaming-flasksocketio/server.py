@@ -6,9 +6,9 @@ from os.path import abspath, dirname
 from queue import Queue
 
 import numpy as np
-from flask import Flask, Response
 
 import speech_recognition as sr
+from flask import Flask, Response
 from flask_socketio import SocketIO, emit, send
 
 d = dirname(dirname(abspath(__file__)))

@@ -26,13 +26,13 @@ import functools
 import matplotlib
 import matplotlib.pyplot as plt  # pylint: disable=g-import-not-at-top
 import numpy as np
+import six
+import tensorflow as tf
+
 import PIL.Image as Image
 import PIL.ImageColor as ImageColor
 import PIL.ImageDraw as ImageDraw
 import PIL.ImageFont as ImageFont
-import six
-import tensorflow as tf
-
 import standard_fields as fields
 
 matplotlib.use("Agg")  # pylint: disable=multiple-statements

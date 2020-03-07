@@ -4,13 +4,15 @@
 # In[ ]:
 
 
-from utils import *
+import os
+import random
+import time
+
 import tensorflow as tf
 from sklearn.cross_validation import train_test_split
-import time
-import random
-import os
+from tqdm import tqdm
 
+from utils import *
 
 # In[ ]:
 
@@ -153,8 +155,6 @@ train_X, test_X, train_Y, test_Y = train_test_split(vectors, trainset.target,tes
 # In[ ]:
 
 
-from tqdm import tqdm
-import time
 
 EARLY_STOPPING, CURRENT_CHECKPOINT, CURRENT_ACC, EPOCH = 3, 0, 0, 0
 
@@ -247,4 +247,3 @@ for i in pbar:
 
 
 print(metrics.classification_report(real_Y, predict_Y, target_names = trainset.target_names))
-

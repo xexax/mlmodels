@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
-import toml
-import os, sys
+import os
 import re
+import sys
+
+import toml
 
 
 ####################################################################################################
@@ -41,8 +43,6 @@ def os_package_root_path(filepath, sublevel=0, path_add=""):
 
     path = os.path.join(path.absolute(), path_add)
     return path
-
-
 
 
 
@@ -120,7 +120,74 @@ def get_recursive_files(folderPath, ext='/*model*/*.py'):
   return files
 
 
+####################################################################################################
+####################################################################################################
+def env_conda_build(env_pars=None) :
+   if env_pars is None :
+     env_pars = { 'name' : "test" , 'python_version': '3.6.5'  }
 
+   cmd = f"conda create -n {p['name']}  python={p['python_version']}  -y"
+   print(cmd)
+   os.system(cmd)
+
+
+def env_pip_requirement(env_pars=None) :
+   if env_pars is None :
+     env_pars = { 'name' : "test" , 'file_requirement': 'requirements.txt'  }
+
+   cmd = f"source activate {p['name']} "
+   cmd = cmd + f"  && pip install -r  {p['file_requirement']}"
+
+   print(cmd)
+   os.system(cmd)
+   sleep(200)  
+
+
+def env_build(model_uri, env_pars):
+  from time import sleep
+
+  model_uri2 = model_uri.replace("/", ".") 
+  root       = os_package_root_path() 
+  model_path = os.path.join(root, env_pars[ "model_path" ] )
+
+
+  env_pars['name']             = model_uri2
+  env_pars['python_version']   = "3.6.5"
+  env_pars['file_requirement'] = model_path + "/requirements.txt"
+
+
+  env_conda_build(env_pars=env_pars) 
+  sleep(30)  
+
+  env_pip_requirement(env_pars=env_pars) 
+
+
+
+
+
+####################################################################################################
+####################################################################################################
+def model_get_list(folder=None, block_list=[]):
+  # Get all the model.py into folder  
+  folder = os_package_root_path() if folder is None else folder
+  # print(folder)
+  module_names = get_recursive_files(folder, r'/*model*//*model*/*.py' )                       
+
+
+  NO_LIST = [  "__init__.py", "util", "preprocess" ]
+  NO_LIST = NO_LIST + block_list
+
+
+  for t in module_names :
+      t = t.replace(folder, "").replace("\\", ".")
+
+      flag = False     
+      for x in NO_LIST :
+        if x in t: FLAG = True
+
+      if not flag  :
+       list_select.append( t )
+  
 
 
 
@@ -130,7 +197,7 @@ def get_recursive_files(folderPath, ext='/*model*/*.py'):
 
 ####################################################################################################
 ########## TF specific #############################################################################
-def load_tf(foldername, filename):
+def load_tf(path, filename):
   """
   https://www.mlflow.org/docs/latest/python_api/mlflow.tensorflow.html#
 
@@ -138,7 +205,7 @@ def load_tf(foldername, filename):
   import mlflow.tensorflow
   import tensorflow as tf
   
-  model_uri = foldername + "/" + filename
+  model_uri = path + "/" + filename
   tf_graph = tf.Graph()
   tf_sess = tf.Session(graph=tf_graph)
   with tf_graph.as_default():
@@ -162,25 +229,50 @@ def save_tf(sess, file_path):
 
 ####################################################################################################
 ########## pyTorch specific ########################################################################
-def load_tch(foldername, filename):
+def load_tch(path, filename="model"):
   return 1
 
 
-def save_tch(foldername, filename):
+def save_tch(path, filename="model"):
   return 1
 
 
 
-def load_pkl(foldername, filename):
+def load_pkl(path, filename="model"):
   return 1
+
+
+def save_pkl(path, filename="model"):
+  return 1
+
+
+
+
+def load_gluon(path, filename="model"):
+  return 1
+
+
+
+def save_gluon(path, filename="model"):
+  return 1
+
+
+
+
+def load_keras(path, filename="model"):
+  return 1
+
+
+def save_keras(path, filename="model"):
+  return 1
+
+
+
 
 
 
 ####################################################################################################
 ########## Other model specific ####################################################################
-def load_pkl(folder_name, filename=None):
-  pass
-
 
 
 

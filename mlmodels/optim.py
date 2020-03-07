@@ -1,28 +1,15 @@
 # -*- coding: utf-8 -*-
 """
 Lightweight Functional interface to wrap Hyper-parameter Optimization
-
-
 ###### Model param search test
 python optim.py --do test
-
-
 ##### #for normal optimization search method
 python optim.py --do search --ntrials 1  --config_file optim_config.json --optim_method normal
-
-
 ###### for pruning method
 python optim.py --do search --ntrials 1  --config_file optim_config.json --optim_method prune
-
-
-
 ###### HyperParam standalone run
 python optim.py --modelname model_tf.1_lstm.py  --do test
-
 python optim.py --modelname model_tf.1_lstm.py  --do search
-
-
-
 ### Distributed
 https://optuna.readthedocs.io/en/latest/tutorial/distributed.html
 { 'distributed' : 1,
@@ -30,28 +17,24 @@ https://optuna.readthedocs.io/en/latest/tutorial/distributed.html
   'storage' : 'sqlite'
 }                                       
                                        
-
-
 ###### 1st engine is optuna
 https://optuna.readthedocs.io/en/stable/installation.html
 https://github.com/pfnet/optuna/blob/master/examples/tensorflow_estimator_simple.py
 https://github.com/pfnet/optuna/tree/master/examples
-
-
-
 """
 import argparse
+import json
 import os
 import re
-import json
-
 
 import pandas as pd
+
 import optuna
 ####################################################################################################
 # from mlmodels import models
 from mlmodels.models import model_create, module_load, save
-from mlmodels.util import os_package_root_path, log
+from mlmodels.util import log, os_package_root_path
+
 #print(os_package_root_path())
 
 ####################################################################################################
@@ -84,9 +67,7 @@ def optim(modelname="model_tf.1_lstm.py",
     log_path : TYPE, optional. The default is "".
     ntrials : TYPE, optional. The default is 2.
     Returns : None
-
     """
-    log("model_pars", model_pars)
     if compute_pars["engine"] == "optuna" :
         return optim_optuna(modelname,  model_pars, data_pars, compute_pars,
                             save_path, log_path, ntrials)
@@ -95,23 +76,23 @@ def optim(modelname="model_tf.1_lstm.py",
 
 
 
+
+
 def optim_optuna(modelname="model_tf.1_lstm.py",
-                 model_pars= {},
+                 hypermodel_pars = {},
+
+                 model_pars ={},
                  data_pars = {},
-                 compute_pars={"method" : "normal/prune"},
-                 save_path="/mymodel/", log_path="", ntrials=2) :
+                 compute_pars = {"method" : "normal/prune", 'ntrials': 2, "metric_target": "loss" },
+                 out_pars = {} ) :
     """
        Interface layer to Optuna  for hyperparameter optimization
        return Best Parameters
-
     optuna create-study --study-name "distributed-example" --storage "sqlite:///example.db"
-
     https://optuna.readthedocs.io/en/latest/tutorial/distributed.html
      if __name__ == '__main__':
     study = optuna.load_study(study_name='distributed-example', storage='sqlite:///example.db')
     study.optimize(objective, n_trials=100)
-
-
     weight_decay = trial.suggest_loguniform('weight_decay', 1e-10, 1e-3)
     optimizer = trial.suggest_categorical('optimizer', ['MomentumSGD', 'Adam']) # Categorical parameter
     num_layers = trial.suggest_int('num_layers', 1, 3)      # Int parameter
@@ -119,17 +100,22 @@ def optim_optuna(modelname="model_tf.1_lstm.py",
     learning_rate = trial.suggest_loguniform('learning_rate', 1e-5, 1e-2)      # Loguniform parameter
     drop_path_rate = trial.suggest_discrete_uniform('drop_path_rate', 0.0, 1.0, 0.1) # Discrete-uniform parameter
     
-
     """
+    save_path = out_pars['save_path']
+    log_path  = out_pars['log_path']
+    ntrials = compute_pars['ntrials']
+    metric_target = compute_pars["metric_target"]
+
     module = module_load(modelname)
     log(module)
+    log([model_pars])
     
     def objective(trial):
-        print("check", module)
-        param_dict =  module.get_pars(choice="test",)
-        # print([param_dict])
+        log("check", module)
+        # model_pars, data_pars, compute_pars, out_pars = module.get_params(param_pars=param_pars)
+        # log([model_pars])
 
-        for t,p  in model_pars.items():
+        for t,p  in hypermodel_pars.items():
             #p = model_pars[t]
             x = p['type']
   
@@ -142,26 +128,27 @@ def optim_optuna(modelname="model_tf.1_lstm.py",
                 raise Exception( f'Not supported type {x}')
                 pres = None
 
-            param_dict[t] = pres
+            model_pars[t] = pres
 
-        model = model_create(module, param_dict)   # module.Model(**param_dict)
+        model = model_create(module, model_pars, data_pars, compute_pars)   # module.Model(**param_dict)
         print(model)
         # df = data_loader(data_pars)
-        
-        sess = module.fit(model, data_pars=data_pars, compute_pars= compute_pars)
-        #return 1
-        metrics = module.metrics(model, sess, data_pars=data_pars)  #Dictionnary
-        # stats = model.stats["loss"]
+
+        print("data_pars: ", data_pars)
+        model, sess    = module.fit(model, data_pars=data_pars, compute_pars= compute_pars, out_pars=out_pars)
+        metrics        = module.fit_metrics(model, sess, data_pars=data_pars, compute_pars= compute_pars, out_pars=out_pars)
+
         del sess
         del model
         try :
            module.reset_model()  # Reset Graph for TF
         except Exception as e :
-           print(e)
+           log(e)
 
-        return metrics["loss"]
+        return metrics[ metric_target ]
 
-    log("###### Hyper-optimization through study   ####################################")
+
+    log("###### Hyper-optimization through study   ##################################")
     pruner = optuna.pruners.MedianPruner() if compute_pars["method"] =='prune' else None
           
     if compute_pars.get("distributed") is not None :
@@ -183,13 +170,15 @@ def optim_optuna(modelname="model_tf.1_lstm.py",
     ###############################################################################
 
 
-    log("### Run Model with best   ################################################")
+    log("### Run Model with best   #################################################")
     model = model_create( module, model_pars=param_dict_best)
-    sess = module.fit(model,  data_pars=data_pars, compute_pars=compute_pars)
+    sess  = module.fit(model,  data_pars=data_pars, compute_pars=compute_pars)
+
 
     log("#### Saving     ###########################################################")
     modelname = modelname.replace(".", "-") # this is the module name which contains .
-    save( save_path, modelname, sess, model=model )
+    save( {'path': save_path, 'model_type': "model_tf", 'modelname': modelname}, 
+          model=model, session=sess )
 
 
     log("### Save Stats   ##########################################################")
@@ -208,9 +197,28 @@ def optim_optuna(modelname="model_tf.1_lstm.py",
 
 
 ####################################################################################################
+def test_json(path_json="", config_mode="test"):
+    with open(path_json, encoding='utf-8') as config_f:
+                cfg = json.load(config_f)
+                cfg = cfg[config_mode]
+
+
+    model_uri = cfg['model_pars']['model_uri']  # 'model_tf.1_lstm'
+    res = optim( model_uri,
+                hypermodel_pars = cfg['hypermodel_pars'],
+                model_pars      = cfg['model_pars'],
+                data_pars       = cfg['data_pars'],
+                compute_pars    = cfg['compute_pars'],
+                out_pars        = cfg['out_pars']
+                )
+
+    return res
+
+
+
 def test_all():
 
-    pars =  {
+    hypermodel_pars =  {
         "learning_rate": {"type": "log_uniform", "init": 0.01,  "range" : [0.001, 0.1] },
         "num_layers":    {"type": "int", "init": 2,  "range" :[2, 4] },
         "size":    {"type": "int", "init": 6,  "range" :[6, 6] },
@@ -223,12 +231,22 @@ def test_all():
 
     data_path = os_package_root_path('dataset/GOOG-year_small.csv')
 
-    res = optim('model_tf.1_lstm', model_pars=pars,
-                data_pars={"data_path": data_path, "data_type": "pandas"},
-                ntrials=2,
-                save_path="ztest/optuna_1lstm/",
-                log_path="ztest/optuna_1lstm/",
-                compute_pars={"engine": "optuna" ,  "method" : "prune"} )
+    model_pars = {"learning_rate": 0.001,
+                  "num_layers": 1,
+                  "size": None,
+                  "size_layer": 128,
+                  "output_size": None,
+                  "timestep": 4,
+                  "epoch": 2,
+                  }
+
+    res = optim('model_tf.1_lstm',
+                hypermodel_pars = hypermodel_pars,
+                model_pars      = model_pars,
+                data_pars       = {"data_path": data_path, "data_type": "pandas"},
+                compute_pars    = {"method": "normal/prune", 'ntrials': 2, "metric_target": "loss", "ntrials" :2 },
+                out_pars        = {"save_path": "ztest/optuna_1lstm/",   "log_path": "ztest/optuna_1lstm/"},
+                )
 
     return res
 
@@ -238,7 +256,7 @@ def test_fast(ntrials=2):
 
     modelname = 'model_tf.1_lstm'
 
-    model_pars = {
+    hypermodel_pars =  {
         "learning_rate": {"type": "log_uniform", "init": 0.01,  "range" : [0.001, 0.1] },
         "num_layers":    {"type": "int", "init": 2,  "range" :[2, 4] },
         "size":    {"type": "int", "init": 6,  "range" :[6, 6] },
@@ -248,9 +266,16 @@ def test_fast(ntrials=2):
         "timestep":      {"type" : "categorical", "value": [5] },
         "epoch":         {"type" : "categorical", "value": [2] }
     }
-    log( "model details" , modelname, model_pars ) 
+    log( "model details" , modelname, hypermodel_pars )
 
-
+    model_pars = {"learning_rate": 0.001,
+                  "num_layers": 1,
+                  "size": None,
+                  "size_layer": 128,
+                  "output_size": None,
+                  "timestep": 4,
+                  "epoch": 2,
+                  }
     data_path = os_package_root_path(__file__, sublevel=0, path_add='dataset/GOOG-year_small.csv')
     log( "data_path" , data_path )
 
@@ -260,13 +285,13 @@ def test_fast(ntrials=2):
     log("path_save", path_save)
 
 
-    res = optim(modelname    = modelname,
-                model_pars   = model_pars,
-                data_pars    = {"data_path": data_path, "data_type": "pandas"},
-                ntrials      = ntrials,
-                save_path    = path_save,
-                log_path     = path_save,
-                compute_pars = {"engine": "optuna" ,  "method" : "prune"} )
+    res = optim('model_tf.1_lstm',
+                hypermodel_pars = hypermodel_pars,
+                model_pars      = model_pars,
+                data_pars       = {"data_path": data_path, "data_type": "pandas"},
+                compute_pars    = {"method": "normal/prune", 'ntrials': 2, "metric_target": "loss", "ntrials" :2 },
+                out_pars        = {"save_path": "ztest/optuna_1lstm/",   "log_path": "ztest/optuna_1lstm/"},
+                )
 
     log("Finished OPTIMIZATION",n =30)
     print(res)
@@ -352,12 +377,12 @@ def main():
         log(model_pars, data_pars, compute_pars)
         log("############# OPTIMIZATION Start  ###############")
         res = optim(arg.modelname,
-                    model_pars = model_pars,
-                    ntrials = int(arg.ntrials),
+                    model_pars   = model_pars,
+                    ntrials      = int(arg.ntrials),
                     compute_pars = compute_pars,
-                    data_pars  = data_pars,
-                    save_path  = arg.save_path,
-                    log_path   = arg.log_file)  # '1_lstm'
+                    data_pars    = data_pars,
+                    save_path    = arg.save_path,
+                    log_path     = arg.log_file)  # '1_lstm'
 
         log("#############  OPTIMIZATION End ###############")
         log(res)
@@ -365,37 +390,5 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
-
-
-
-
-
-
-
-
-####################################################################################################
-####################################################################################################
-
-
-"""
-import tensorflow as tf
-
-from sklearn.preprocessing import MinMaxScaler
-
-def data_loader(data_pars):
-    if data_pars["data_type"] == "pandas" :
-      df = pd.read_csv(data_pars["data_path"])
-
-    date_ori = pd.to_datetime(df.iloc[:, 0]).tolist()
-
-    minmax = MinMaxScaler().fit(df.iloc[:, 1:].astype('float32'))
-    df_log = minmax.transform(df.iloc[:, 1:].astype('float32'))
-    df_log = pd.DataFrame(df_log)
-    return df_log
-"""
-
-
 
 

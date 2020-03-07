@@ -1,9 +1,12 @@
 
-import os, sys
-import numpy as np
-import scipy as sci
+import os
+import sys
+
 import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
+import scipy as sci
+
 import cv2
 
 """
@@ -229,4 +232,3 @@ def generate_train_img_cv(folder, N_type=1, amax=5, wmin=5, wmax=10, bmin=-2, bm
               plot_save_disk_cv(x,y, filename, xmax = data['resolution'], ymax = data['resolution'])
 
 print("loaded")
-

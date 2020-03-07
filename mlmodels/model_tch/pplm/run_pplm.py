@@ -36,8 +36,18 @@ from transformers import GPT2Tokenizer
 from transformers.file_utils import cached_path
 from transformers.modeling_gpt2 import GPT2LMHeadModel
 
+<<<<<<< HEAD
 from .pplm_classification_head import ClassificationHead
 
+=======
+from pplm_classification_head import ClassificationHead
+
+from .pplm_classification_head import ClassificationHead
+
+<<<<<<< HEAD
+=======
+>>>>>>> ab3789334a47ab327690a26b053abef75c91bce4
+>>>>>>> 4cedf48622a5955e714d3daa064e75eebe73f3db
 
 PPLM_BOW = 1
 PPLM_DISCRIM = 2

@@ -11,15 +11,14 @@ Check parameters template in models_config.json
 
 
 """
-import os, sys, inspect
+import inspect
+import os
+import sys
 from datetime import datetime, timedelta
 from pathlib import Path
 
-
 import numpy as np
 import pandas as pd
-
-
 
 VERBOSE = False
 
@@ -91,7 +90,7 @@ class Model:
 
 
 
-def fit(model, data_pars={}, compute_pars={}, out_pars={}, out_pars={},  **kw:
+def fit(model, data_pars={}, compute_pars={}, out_pars={}, out_pars={},  **kw):
   """
 
   :param model:    Class model
@@ -111,7 +110,18 @@ def fit(model, data_pars={}, compute_pars={}, out_pars={}, out_pars={},  **kw:
 
 
 
+def metrics_model(model, **kw):
+    """
+       Return metrics of the model when fitted.
+    """
+    ddict = {}
+    
+    return ddict
 
+    
+        
+        
+        
 def metrics(ytrue, ypred, yproba=None, model=None, sess=None, data_pars={}, out_pars={}, **kw):
     """
        Return metrics 
@@ -150,7 +160,7 @@ def save(model, path) :
 
 
 
-def load(path)
+def load(path) :
   model = Model()
   model.model = None
   return model   
@@ -306,7 +316,7 @@ def test(data_path="dataset/", pars_choice="json"):
                                                                data_path=data_path)
 
     log("#### Loading dataset   #############################################")
-    Xtuple = get_dataset(**data_pars)
+    Xtuple = get_dataset(data_pars)
 
 
     log("#### Model init, fit   #############################################")
@@ -349,7 +359,3 @@ if __name__ == '__main__':
 
     ### Global mlmodels
     test_global(pars_choice="json", out_path= test_path,  reset=True)
-  
-  
-  
-  

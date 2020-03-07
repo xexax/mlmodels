@@ -83,56 +83,68 @@ python  models.py  --model_uri model_tch.mlp.py  --do test
 
 
 """
+import argparse
+import glob
+import inspect
+import json
+import os
+import re
+import sys
+from importlib import import_module
+from pathlib import Path
 from warnings import simplefilter
+
+####################################################################################################
+from mlmodels.util import (get_recursive_files, load_config, load_pkl,
+                           log, os_package_root_path,
+                           load_tch, load_tf, save_tch, save_tf)
+
+
+from mlmodels.util import (env_build, env_conda_build, env_pip_requirement)
+
+
 simplefilter(action='ignore', category=FutureWarning)
 simplefilter(action='ignore', category=DeprecationWarning)
 
 
-import sys
-import argparse
-import glob
-import os
-import re
-import inspect
-from importlib import import_module
-import json
-from pathlib import Path
-
-####################################################################################################
-from mlmodels.util import load_config, get_recursive_files, load_pkl
-from mlmodels.util import load_tf, load_tch,  save_tf, save_tch,  os_package_root_path, log
-
 
 
 ####################################################################################################
-#module = import_module("mlmodels.model_tf.1_lstm")
-#print(module)
-#ys.exit(0)
-
-
-
-
-
-
-####################################################################################################
-def module_load(model_uri="", verbose=0):
+def module_env_build(model_uri="", verbose=0, env_build=0):
     """
       Load the file which contains the model description
       model_uri:  model_tf.1_lstm.py  or ABSOLUTE PATH
     """
-
     # print(os_file_current_path())
     model_uri = model_uri.replace("/", ".")
     module = None
-    if verbose : print(model_uri)
+    if verbose : 
+      print(model_uri)
+
+    #### Dynamic ENV Build based on requirements.txt
+    if env_build :
+      env_pars = {"python_version" : '3.6.5'}
+      env_build(model_uri, env_pars)
+
+
+
+def module_load(model_uri="", verbose=0, env_build=0):
+    """
+      Load the file which contains the model description
+      model_uri:  model_tf.1_lstm.py  or ABSOLUTE PATH
+    """
+    # print(os_file_current_path())
+    model_uri = model_uri.replace("/", ".")
+    module = None
+    if verbose : 
+      print(model_uri)
 
     try :
       #### Import from package mlmodels sub-folder
-      #module = import_module("mlmodels.model_tf.1_lstm")
       model_name = model_uri.replace(".py", "")
+      module     = import_module( f"mlmodels.{model_name}")
+      #module    = import_module("mlmodels.model_tf.1_lstm")
 
-      module = import_module( f"mlmodels.{model_name}")
-      
     except Exception as e1 :
       try :
         ### Add Folder to Path and Load absoluate path model
@@ -140,11 +152,11 @@ def module_load(model_uri="", verbose=0):
         sys.path.append( path_parent )
         # print(path_parent, sys.path)
         
-        #### import model_tf.1_lstm
+        #### import Absilute Path model_tf.1_lstm
         model_name = Path(model_uri).stem  # remove .py
-        model_name =   str(Path(model_uri).parts[-2]) +"."+ str(model_name )
+        model_name = str(Path(model_uri).parts[-2]) +"."+ str(model_name )
         #print(model_name)
-        module = import_module(model_name)
+        module     = import_module(model_name)
         
       except Exception as e2:
         raise NameError( f"Module {model_name} notfound, {e1}, {e2}")
@@ -154,38 +166,38 @@ def module_load(model_uri="", verbose=0):
 
 
 
-def module_load_full(model_uri="", model_pars=None, choice=None):
+def module_load_full(model_uri="", model_pars=None, data_pars=None, compute_pars=None, choice=None,  **kwarg):
   """
     Create Instance of the model, module
     model_uri:  model_tf.1_lstm.py
   """
   module = module_load(model_uri=model_uri)
-  model = module.Model(**model_pars)
+  model  = module.Model(model_pars=model_pars, data_pars=data_pars, compute_pars=compute_pars, **kwarg)
   return module, model
 
 
-def model_create(module, model_pars=None):
+def model_create(module, model_pars=None, data_pars=None, compute_pars=None, **kwarg):
     """
       Create Instance of the model from loaded module
       model_pars : dict params
     """
     if model_pars is None :
-      model_pars = module.get_pars()
+      model_pars = module.get_params()
 
-    model = module.Model(**model_pars)
+    model = module.Model(model_pars=model_pars, data_pars=data_pars, compute_pars=compute_pars, **kwarg)
     return model
 
 
 
-def fit(model, module, compute_pars=None, data_pars=None, out_pars=None,  **kwarg):
+def fit(module, model, sess=None, data_pars=None, compute_pars=None, out_pars=None,  **kwarg):
     """
     Wrap fit generic method
     :type model: object
     """
-    return module.fit(model, data_pars, **kwarg)
+    return module.fit(model, sess,  data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars, **kwarg)
 
 
-def predict(model, module, sess=None, compute_pars=None, data_pars=None, out_pars=None,  **kwarg):
+def predict(module, model, sess=None, data_pars=None, compute_pars=None,  out_pars=None,  **kwarg):
     """
        predict  using a pre-trained model and some data
     :param model:
@@ -196,15 +208,20 @@ def predict(model, module, sess=None, compute_pars=None, data_pars=None, out_par
     :param kwarg:
     :return:
     """
-    return module.predict(model, sess, data_pars, **kwarg)
+    return module.predict(model, sess, data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars, **kwarg)
 
 
-def metrics(model, module, sess=None, compute_pars=None, data_pars=None, out_pars=None, **kwarg):
-  val = module.metrics(model, sess, data_pars, **kwarg)
-  return val
+def fit_metrics(module, model, sess=None, data_pars=None, compute_pars=None,  out_pars=None, **kwarg):
+  return module.fit_metrics(model, sess, data_pars, compute_pars, out_pars, **kwarg)
 
 
-def load(folder_name, model_type="tf", filename="", **kwarg):
+
+def metrics(module, model, sess=None, data_pars=None, compute_pars=None,  out_pars=None, **kwarg):
+  return module.metrics(model, sess, data_pars, compute_pars, out_pars, **kwarg)
+
+
+
+def load(load_pars, **kwarg):
     """
        Load model/session from files
     :param folder_name:
@@ -213,43 +230,63 @@ def load(folder_name, model_type="tf", filename="", **kwarg):
     :param kwarg:
     :return:
     """
-    if model_type == "tf" :
-        return load_tf(folder_name, filename)
+    path = load_pars['path']
+    model_type = load_pars['model_type']
 
-    if model_type == "tch" :
-        return load_tch(folder_name)
+    if model_type == "model_tf" :
+        return load_tf(path, filename)
 
-    if model_type == "pkl" :
-        return load_pkl(folder_name)
+    if model_type == "model_tch" :
+        return load_tch(path)
+
+    if model_type == "model_gluon" :
+        return load_gluon(path)
+
+    if model_type == "model_keras" :
+        return load_keras(path)
+
+    else :
+        return load_pkl(path)
 
 
-def save(folder_name, modelname="model_default", model_type="tf",  model_session=None, ** kwarg):
+def save(model, session, save_pars , **kwarg):
     """
        Save model/session on disk
+    (path, modelname="model_default", model_type="tf",  model_session=None, ** kwarg)
     :param folder_name:
     :param modelname:
     :param model_session:
     :param kwarg:
     :return:
     """
-    if model_type == "tf" :
+    d = save_pars
+    folder_name = d['path']
+    model_type  = d['model_type']
+    modename    = d['modelname']
+
+
+    if model_type == "model_tf" :
       os.makedirs(folder_name, exist_ok = True)
       file_path = f"{folder_name}/{modelname}.ckpt"
-      save_tf(model_session, file_path)
+      save_tf(session, file_path)
       print(file_path)
       return 1      
 
 
-    if  "model_tch" in modelname :
-        return 1
+    if  model_type == "model_tch"  :
+       save_tch(model, session, file_path)
 
 
-    if  "model_keras" in modelname :
-        return 1
+    if  model_type == "model_keras"  :
+       save_keras(model,  file_path)
 
 
-    if  "model_" in modelname :
-        return 1
+    if  model_type == "model_gluon"  :
+       save_gluon(model,  file_path)
+
+
+    else :
+       save_pkl(model,  file_path)
 
 
 
@@ -261,14 +298,11 @@ def test_all(folder=None):
     if folder is None :
        folder =  os_package_root_path() +  "/model_tf/"
             
-    module_names = get_recursive_files(folder, r"[0-9]+_.+\.py$")
+    # module_names = get_recursive_files(folder, r"[0-9]+_.+\.py$")
+    model_names  = model_list()
     module_names.sort()
     print(module_names)
-
     failed_scripts = []
-
-    if folder == "model_tf" :
-       import tensorflow as tf
 
     for module_name in module_names:
         print("#######################")
@@ -298,16 +332,16 @@ def test(modelname):
 
 ####################################################################################################
 ############ JSON template #########################################################################
-def config_get_pars(config_file, config_mode) :
+def config_get_pars(config_file, config_mode="test") :
    """ 
      load JSON and output the params
    """
-   js = json.load(open(config_file, 'r'))  #Config
-   js = js[config_mode]  #test /uat /prod
-   model_p = js.get("model_pars")
-   data_p = js.get("data_pars")
-   compute_p  = js.get("compute_pars")
-   out_p = js.get("out_pars")
+   js        = json.load(open(config_file, 'r'))  #Config
+   js        = js[config_mode]  #test /uat /prod
+   model_p   = js.get("model_pars")
+   data_p    = js.get("data_pars")
+   compute_p = js.get("compute_pars")
+   out_p     = js.get("out_pars")
 
    return model_p, data_p, compute_p, out_p
                                  
@@ -366,12 +400,16 @@ def model_list(folder=None) :
   # Get all the model.py into folder  
   folder = os_package_root_path() if folder is None else folder
   # print(folder)
-  module_names = get_recursive_files(folder, r'/*model*/*.py' )                       
+  module_names = get_recursive_files(folder, r'/*model*/*.py' )     
+  mlist = []                  
   for t in module_names :
-     print(t.replace(folder, "").replace("\\", "."))
+     mlist.append( t.replace(folder, "").replace("\\", ".") )
+     print(mlist[-1])
+
+  return mlist  
     
-    
-    
+
+  
 ####################################################################################################
 ############CLI Command ############################################################################
 def cli_load_arguments(config_file= None):
@@ -388,26 +426,26 @@ def cli_load_arguments(config_file= None):
     def add(*w, **kw) :
        p.add_argument(*w, **kw)
     
-    add("--config_file", default=config_file, help="Params File")
-    add("--config_mode", default="test", help="test/ prod /uat")
-    add("--log_file", help="log.log")
-    add("--do", default="test", help="test")
-    add("--folder", default=None, help="test")
+    add("--config_file" , default=config_file          , help="Params File")
+    add("--config_mode" , default="test"               , help="test/ prod /uat")
+    add("--log_file"    , default="mlmodels_log.log"   ,help="log.log")
+    add("--do"          , default="test"               , help="test")
+    add("--folder"      , default=None                 , help="test")
     
     ##### model pars
-    add("--model_uri", default="model_tf/1_lstm.py",  help=".")
-    add("--load_folder", default="ztest/",  help=".")
+    add("--model_uri"   , default="model_tf/1_lstm.py" , help=".")
+    add("--load_folder" , default="ztest/"             , help=".")
 
 
     ##### data pars
-    add("--dataname", default="dataset/google.csv",  help=".")
+    add("--dataname"    , default="dataset/google.csv" , help=".")
 
 
     ##### compute pars
 
 
     ##### out pars
-    add("--save_folder", default="ztest/",  help=".")
+    add("--save_folder" , default="ztest/"             , help=".")
     
     arg = p.parse_args()
     # arg = load_config(arg, arg.config_file, arg.config_mode, verbose=0)
@@ -422,7 +460,7 @@ def main():
     print(arg.do)
 
     if arg.do == "model_list"  :  #list all models in the repo
-       model_list( arg.folder )
+       l = model_list( arg.folder )
                     
                                  
     if arg.do == "testall"  :
@@ -438,7 +476,7 @@ def main():
         model_p, data_p, compute_p, out_p  = config_get_pars(arg.config_file, arg.config_mode)
         
         module = module_load(arg.model_uri)  # '1_lstm.py
-        model = model_create(module, model_p)   # Exact map JSON and paramters
+        model  = model_create(module, model_p)   # Exact map JSON and paramters
 
         log("Fit")
         sess = module.fit(model, data_pars=data_p, compute_pars= compute_p)
@@ -455,12 +493,12 @@ def main():
 
 
     if arg.do == "generate_config"  :
-        print( arg.save_folder)
+        log( arg.save_folder)
         config_generate_json(arg.model_uri, to_path= arg.save_folder)
 
 
     if arg.do == "generate_template"  :
-        print( arg.save_folder)
+        log( arg.save_folder)
         config_generate_template(arg.model_uri, to_path= arg.save_folder)
 
 
@@ -468,7 +506,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
-
-
