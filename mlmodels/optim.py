@@ -236,16 +236,8 @@ def test_fast(ntrials=2):
     log( "model details" , model_uri, hypermodel_pars )
 
 
-    model_pars = {"model_uri" :"model_tf.1_lstm",
-                  "learning_rate": 0.001,
-                  "num_layers": 1,
-                  "size": None,
-                  "size_layer": 128,
-                  "output_size": None,
-                  "timestep": 4,
-                  "epoch": 2,
-                  }
-
+    model_pars = {"model_uri" :"model_tf.1_lstm", "learning_rate": 0.001, "num_layers": 1, "size": None, 
+                  "size_layer": 128, "output_size": None, "timestep": 4, "epoch": 2, }
     data_path = os_package_root_path(__file__, sublevel=0, path_add='dataset/GOOG-year_small.csv')
     log( "data_path" , data_path )
 
@@ -259,7 +251,7 @@ def test_fast(ntrials=2):
                 hypermodel_pars = hypermodel_pars,
                 model_pars      = model_pars,
                 data_pars       = {"data_path": data_path, "data_type": "pandas"},
-                compute_pars    = {"method": "normal/prune", 'ntrials': 2, "metric_target": "loss", "ntrials" :2 },
+                compute_pars    = {"engine":"optuna", "method": "normal", 'ntrials': 2, "metric_target": "loss" },
                 out_pars        = {"save_path": "ztest/optuna_1lstm/",   "log_path": "ztest/optuna_1lstm/"},
                 )
 
