@@ -305,21 +305,28 @@ def get_dataset(data_pars, out_pars):
     )
     return train_iter, valid_iter, vocab
 
+
 def test():
     model_pars, data_pars, compute_pars, out_pars = get_params(test=True)
     print("\n####### Preprocessing dataset... #############\n")
     train_iter, valid_iter, vocab = get_dataset(data_pars, out_pars)
+
     print("\n####### Creating model... ####################\n")
     model = Model(vocab_built=vocab, **model_pars)
+
     print("\n####### Fitting model... ####################\n")
     fit(model, train_iter, valid_iter, vocab, compute_pars, out_pars)
+
     print("\n####### Computing model metrics... ##########")
     data_pars['frac'] = 1
     test_iter, _, vocab = get_dataset(data_pars, out_pars)
     model = Model(vocab_built=vocab, **model_pars)
     test_loss, accuracy, = metric(model, test_iter, vocab,
                                   data_pars, out_pars)
+
+
     print(f"\nTest loss: {test_loss}, accuracy: {accuracy}")
+
 
 def test2():
     pass

@@ -29,36 +29,74 @@ print("start Doc")
 
 #################################################################################################
 des1 = """
-In Jupyter 
-#### Training
+## In Jupyter 
+
+###### Model, data, ... definition
 ```python
-import mlmodels
-from mlmodels.models import module_load, data_loader, create_model, fit, predict, stats
-from mlmodels.models import load #Load model weights
-
-
 model_uri    = "model_tf.1_lstm.py"
 model_pars   =  {  "num_layers": 1,
                   "size": ncol_input, "size_layer": 128, "output_size": ncol_output, "timestep": 4,
                 }
 data_pars    =  {"data_path": "/folder/myfile.csv"  , "data_type": "pandas" }
 compute_pars =  { "learning_rate": 0.001, }
+
 out_pars     =  { "path": "ztest_1lstm/", "model_path" : "ztest_1lstm/model/"}
-
-
-module        =  module_load( model_uri= model_uri )  #Load file definition
-model         =  model_create(module, model_pars)    # Create Model instance
-model, sess   =  fit(model, module, data_pars)       # fit the model
-
-metrics_val   =  metrics( model, sess, ["loss"])     # get stats
-model.save( out_pars['path'], model, module, sess,)
+save_pars = { "path" : "ztest_1lstm/model/" }
+load_pars = { "path" : "ztest_1lstm/model/" }
 
 ```
 
-#### Inference
+
+###### Using local module (which contain the model)
 ```python
-model = load(folder)    #Create Model instance
-ypred = module.predict(model, module, data_pars, compute_pars)     # predict pipeline
+from mlmodels.models import module_load
+
+module        =  module_load( model_uri= model_uri )                           # Load file definition
+model         =  module.Model(model_pars, data_pars, compute_pars)             # Create Model instance
+model, sess   =  module.fit(model, data_pars, compute_pars, out_pars)          # fit the model
+metrics_val   =  module.fit_metrics( model, sess, data_pars, compute_pars, out_pars) # get stats
+module.save(model, sess, save_pars)
+
+
+
+#### Inference
+model = load(load_pars)    #Create Model instance
+ypred = module.predict(model, sess,  data_pars, compute_pars, out_pars)     # predict pipeline
+
+
+```
+
+
+
+
+###### Using Generic API : Common to all models
+```python
+
+from mlmodels.models import module_load, create_model, fit, predict, stats
+from mlmodels.models import load #Load model weights
+
+module        =  module_load( model_uri= model_uri )                           # Load file definition
+model         =  model_create(module, model_pars, data_pars, compute_pars)     # Create Model instance
+model, sess   =  fit(model, data_pars, compute_pars, out_pars)                 # fit the model
+metrics_val   =  fit_metrics( model, sess, data_pars, compute_pars, out_pars)  # get stats
+
+save(save_pars)
+
+
+
+#### Inference
+load_pars = { "path" : "ztest_1lstm/model/" }
+
+module      = module_load( model_uri= model_uri )     # Load file definition
+model,sess  = load(folder, model_type="model_tf")      # Create Model instance
+ypred       = predict(model, module, sess,  data_pars, compute_pars, out_pars)     
+
+
+
+
+
+
+
 ```
 
 """

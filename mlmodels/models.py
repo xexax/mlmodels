@@ -189,15 +189,15 @@ def model_create(module, model_pars=None, data_pars=None, compute_pars=None, **k
 
 
 
-def fit(model, module, sess=None, compute_pars=None, data_pars=None, out_pars=None,  **kwarg):
+def fit(model, module, sess=None, data_pars=None, compute_pars=None, out_pars=None,  **kwarg):
     """
     Wrap fit generic method
     :type model: object
     """
-    return module.fit(model, sess, compute_pars=compute_pars, data_pars=data_pars, out_pars=out_pars, **kwarg)
+    return module.fit(model, sess,  data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars, **kwarg)
 
 
-def predict(model, module, sess=None, compute_pars=None, data_pars=None, out_pars=None,  **kwarg):
+def predict(model, module, sess=None, data_pars=None, compute_pars=None,  out_pars=None,  **kwarg):
     """
        predict  using a pre-trained model and some data
     :param model:
@@ -211,12 +211,12 @@ def predict(model, module, sess=None, compute_pars=None, data_pars=None, out_par
     return module.predict(model, sess, data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars, **kwarg)
 
 
-def metrics(model, module, sess=None, compute_pars=None, data_pars=None, out_pars=None, **kwarg):
+def metrics(model, module, sess=None, data_pars=None, compute_pars=None,  out_pars=None, **kwarg):
   val = module.metrics(model, sess, data_pars, **kwarg)
   return val
 
 
-def load(folder_name, model_type="tf", filename="", **kwarg):
+def load(load_pars, **kwarg):
     """
        Load model/session from files
     :param folder_name:
@@ -225,8 +225,11 @@ def load(folder_name, model_type="tf", filename="", **kwarg):
     :param kwarg:
     :return:
     """
+    path = load_pars['path']
+    model_type = load_pars['model_type']
+
     if model_type == "tf" :
-        return load_tf(folder_name, filename)
+        return load_tf(path, filename)
 
     if model_type == "tch" :
         return load_tch(folder_name)
@@ -235,15 +238,20 @@ def load(folder_name, model_type="tf", filename="", **kwarg):
         return load_pkl(folder_name)
 
 
-def save(folder_name, modelname="model_default", model_type="tf",  model_session=None, ** kwarg):
+def save( save_pars  , ** kwarg):
     """
        Save model/session on disk
+    (path, modelname="model_default", model_type="tf",  model_session=None, ** kwarg)
     :param folder_name:
     :param modelname:
     :param model_session:
     :param kwarg:
     :return:
     """
+    path = save_pars['path']
+    model_type = save_pars['model_type']
+
+
     if model_type == "tf" :
       os.makedirs(folder_name, exist_ok = True)
       file_path = f"{folder_name}/{modelname}.ckpt"
