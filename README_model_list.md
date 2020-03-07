@@ -30,8 +30,8 @@ module.save(model, sess, save_pars)
 
 
 #### Inference
-model = load(load_pars)    #Create Model instance
-ypred = module.predict(model, sess,  data_pars, compute_pars, out_pars)     # predict pipeline
+model, sess = load(load_pars)    #Create Model instance
+ypred       = module.predict(model, sess,  data_pars, compute_pars, out_pars)     # predict pipeline
 
 
 ```
@@ -109,8 +109,6 @@ ml_optim --do
 
 
 
-#### Distributed Pytorch on CPU (using Horovod and MPI on Linux, 4 processes)  in model_tch/mlp.py
-    mlmodels/distri_torch_mpirun.sh   4    model_tch.mlp    mymodel.json
 
 
 
@@ -122,16 +120,18 @@ ml_optim --do
     ml_optim --do search --ntrials 1  --config_file optim_config.json --optim_method normal
     ml_optim --do search --ntrials 1  --config_file optim_config.json --optim_method prune  ###### for pruning method
 
-
-#### HyperParam standalone run
     ml_optim --modelname model_tf.1_lstm.py  --do test
     ml_optim --modelname model_tf.1_lstm.py  --do search
+
+
 ```
 
 
 #### Distributed training on Pytorch Horovod
 ```
-distri_torch_mpirun.sh
+#### Distributed Pytorch on CPU (using Horovod and MPI on Linux, 4 processes)  in model_tch/mlp.py
+    mlmodels/distri_torch_mpirun.sh   4    model_tch.mlp    mymodel.json
+
 
 ```
 
