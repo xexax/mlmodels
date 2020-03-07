@@ -174,8 +174,8 @@ def optim_optuna(model_uri="model_tf.1_lstm.py",
 
     log("#### Saving     ###########################################################")
     model_uri = model_uri.replace(".", "-") # this is the module name which contains .
-    save( {'path': save_path, 'model_type': "model_tf", 'model_uri': model_uri}, 
-          model=model, session=sess )
+    save( model=model, session=sess, 
+          {'path': save_path, 'model_type': "model_tf", 'model_uri': model_uri} )
 
 
     log("### Save Stats   ##########################################################")
