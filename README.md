@@ -104,7 +104,7 @@ https://github.com/arita37/mlmodels/actions
       def predict(model, sess, data_pars, compute_pars, out_pars )   : Predict the results
       def metric(ytrue, ypred, yproba, data_pars, compute_pars, out_pars )         : Measure the results
 
-      def get_params()                                               : returnparameters of the model
+      def get_params(choice, data_path, config_mode)                                               : returnparameters of the model
       def get_dataset(data_pars)                                     : load dataset
       def test()                                                     : example running the model     
       def test2()                                                    : example running the model in global settings  
