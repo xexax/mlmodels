@@ -96,8 +96,8 @@ from warnings import simplefilter
 
 ####################################################################################################
 from mlmodels.util import (get_recursive_files, load_config, load_pkl,
-                           load_tch, load_tf, log, os_package_root_path,
-                           save_tch, save_tf)
+                           log, os_package_root_path,
+                           load_tch, load_tf, save_tch, save_tf)
 
 
 from mlmodels.util import (env_build, env_conda_build, env_pip_requirement)
@@ -212,14 +212,13 @@ def predict(module, model, sess=None, data_pars=None, compute_pars=None,  out_pa
 
 
 def fit_metrics(module, model, sess=None, data_pars=None, compute_pars=None,  out_pars=None, **kwarg):
-  val = module.fit_metrics(model, sess, data_pars, compute_pars, out_pars, **kwarg)
-  return val
+  return module.fit_metrics(model, sess, data_pars, compute_pars, out_pars, **kwarg)
 
 
 
 def metrics(module, model, sess=None, data_pars=None, compute_pars=None,  out_pars=None, **kwarg):
-  val = module.metrics(model, sess, data_pars, compute_pars, out_pars, **kwarg)
-  return val
+  return module.metrics(model, sess, data_pars, compute_pars, out_pars, **kwarg)
+
 
 
 def load(load_pars, **kwarg):
@@ -320,7 +319,7 @@ def test(modelname):
 
 ####################################################################################################
 ############ JSON template #########################################################################
-def config_get_pars(config_file, config_mode) :
+def config_get_pars(config_file, config_mode="test") :
    """ 
      load JSON and output the params
    """
