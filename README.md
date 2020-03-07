@@ -207,62 +207,16 @@ then for each staging, declare some specific parameters for model, dataset and a
 
 ## ③ CLI tools: package provide below tools
 ```
+- ml_models    :  mlmodels/models.py
+- ml_optim     :  mlmodels/optim.py
+- ml_test      :  mlmodels/ztest.py
 
+
+https://github.com/arita37/mlmodels/blob/dev/README_model_list.md
 
 
 ```
    
-- Lightweight Functional interface to wrap Hyper-parameter Optimization `ml_optim`   :  mlmodels/optim.py
-
-```
-ml_optim --do
-    test      :  Test the hyperparameter optimization for a specific model
-    test_all  :  TODO, Test all
-    search    :  search for the best hyperparameters of a specific model
-```
-
-- Lightweight Functional interface to run test samples `ml_test`
-```
-ml_test
-```
-
-### Command line tool sample
-
-#### generate config file
-    ml_models  --do generate_config  --model_uri model_tf.1_lstm.py  --save_folder "c:\myconfig\"
-
-#### TensorFlow LSTM model
-    ml_models  --model_uri model_tf/1_lstm.py  --do test
-
-#### PyTorch models
-    ml_models  --model_uri model_tch/mlp.py  --do test
-    
-    
-#### Custom  Models
-    ml_models --do test  --model_uri "D:\_devs\Python01\gitdev\mlmodels\mlmodels\model_tf\1_lstm.py"
-
-
-
-
-#### Distributed Pytorch on CPU (using Horovod and MPI on Linux, 4 processes)  in model_tch/mlp.py
-    mlmodels/distri_torch_mpirun.sh   4    model_tch.mlp    mymodel.json
-
-
-
-
-
-#### Model param search test
-    ml_optim --do test
-
-
-#### For normal optimization search method
-    ml_optim --do search --ntrials 1  --config_file optim_config.json --optim_method normal
-    ml_optim --do search --ntrials 1  --config_file optim_config.json --optim_method prune  ###### for pruning method
-
-
-#### HyperParam standalone run
-    ml_optim --modelname model_tf.1_lstm.py  --do test
-    ml_optim --modelname model_tf.1_lstm.py  --do search
 
 
 
