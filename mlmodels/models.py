@@ -233,17 +233,23 @@ def load(load_pars, **kwarg):
     path = load_pars['path']
     model_type = load_pars['model_type']
 
-    if model_type == "tf" :
+    if model_type == "model_tf" :
         return load_tf(path, filename)
 
-    if model_type == "tch" :
-        return load_tch(folder_name)
+    if model_type == "model_tch" :
+        return load_tch(path)
 
-    if model_type == "pkl" :
-        return load_pkl(folder_name)
+    if model_type == "model_gluon" :
+        return load_gluon(path)
+
+    if model_type == "model_keras" :
+        return load_keras(path)
+
+    else :
+        return load_pkl(path)
 
 
-def save( save_pars , **kwarg):
+def save(model, session, save_pars , **kwarg):
     """
        Save model/session on disk
     (path, modelname="model_default", model_type="tf",  model_session=None, ** kwarg)
@@ -259,7 +265,7 @@ def save( save_pars , **kwarg):
     modename    = d['modelname']
 
 
-    if model_type == "tf" :
+    if model_type == "model_tf" :
       os.makedirs(folder_name, exist_ok = True)
       file_path = f"{folder_name}/{modelname}.ckpt"
       save_tf(session, file_path)
@@ -272,6 +278,10 @@ def save( save_pars , **kwarg):
 
 
     if  model_type == "model_keras"  :
+        return 1
+
+
+    if  model_type == "model_gluon"  :
         return 1
 
 

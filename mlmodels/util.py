@@ -197,7 +197,7 @@ def model_get_list(folder=None, block_list=[]):
 
 ####################################################################################################
 ########## TF specific #############################################################################
-def load_tf(foldername, filename):
+def load_tf(path, filename):
   """
   https://www.mlflow.org/docs/latest/python_api/mlflow.tensorflow.html#
 
@@ -205,7 +205,7 @@ def load_tf(foldername, filename):
   import mlflow.tensorflow
   import tensorflow as tf
   
-  model_uri = foldername + "/" + filename
+  model_uri = path + "/" + filename
   tf_graph = tf.Graph()
   tf_sess = tf.Session(graph=tf_graph)
   with tf_graph.as_default():
@@ -229,25 +229,50 @@ def save_tf(sess, file_path):
 
 ####################################################################################################
 ########## pyTorch specific ########################################################################
-def load_tch(foldername, filename):
+def load_tch(path, filename="model"):
   return 1
 
 
-def save_tch(foldername, filename):
+def save_tch(path, filename="model"):
   return 1
 
 
 
-def load_pkl(foldername, filename):
+def load_pkl(path, filename="model"):
   return 1
+
+
+def save_pkl(path, filename="model"):
+  return 1
+
+
+
+
+def load_gluon(path, filename="model"):
+  return 1
+
+
+
+def save_gluon(path, filename="model"):
+  return 1
+
+
+
+
+def load_keras(path, filename="model"):
+  return 1
+
+
+def save_keras(path, filename="model"):
+  return 1
+
+
+
 
 
 
 ####################################################################################################
 ########## Other model specific ####################################################################
-def load_pkl(folder_name, filename=None):
-  pass
-
 
 
 
