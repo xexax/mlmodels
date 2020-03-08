@@ -4,7 +4,7 @@ name:  code_structure_linux
 on:
   push:
     branches: 
-      - work
+      - dev
  
 jobs:
   build:
@@ -27,7 +27,7 @@ jobs:
       uses: actions/cache@v1
       with:
         path: /opt/hostedtoolcache/Python/
-        key: ${{ runner.os }}-venva1-${{ hashFiles('**/requirements.txt') }}
+        key: ${{ runner.os }}-venv-mlmodels-${{ hashFiles('**/requirements.txt') }}
 
     - name: Install numpy
       if: steps.cache-pipenv.outputs.cache-hit != 'true'
