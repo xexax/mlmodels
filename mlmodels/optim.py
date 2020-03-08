@@ -210,7 +210,7 @@ def test_fast(ntrials=2):
     path_curr = os.getcwd()
 
     data_path = 'dataset/GOOG-year_small.csv'
-    path_save = f"{path_curr}/ztest_optuna_1lstm/"
+    path_save = f"{path_curr}/ztest/optuna_1lstm/"
 
 
     data_path = os_package_root_path(__file__, sublevel=0, path_add= data_path)
