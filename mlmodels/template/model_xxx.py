@@ -65,10 +65,11 @@ class to_namespace(object):
     return self.__dict__.get(key)
 
 
-def path_setup(out_folder="", sublevel=1, data_path="dataset/"):
+def path_setup(out_folder="ztest", sublevel=1, data_path="dataset/"):
     data_path = os_package_root_path(__file__, sublevel=sublevel, path_add=data_path)
     out_path = os.getcwd() + "/" + out_folder
     os.makedirs(out_path, exist_ok=True)
+
     model_path = out_path + "/model/"
     os.makedirs(model_path, exist_ok=True)
 
@@ -115,17 +116,7 @@ def fit_metrics(model, data_pars={}, compute_pars={}, out_pars={},  **kw):
 
     
         
-        
-        
-def metrics(ytrue, ypred, yproba=None, model=None, sess=None, data_pars={}, out_pars={}, **kw):
-    """
-       Return metrics 
-    """
-    ddict = {}
-    
-    
-    return ddict
-  
+
   
 
 def predict(model, sess=None, data_pars={}, out_pars={}, compute_pars={}, **kw):
