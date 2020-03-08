@@ -172,8 +172,28 @@ def predict(model, sess=None, compute_pars=None, data_pars=None, out_pars=None,
     return output_predict
 
 
+
+
 def reset_model():
     tf.compat.v1.reset_default_graph()
+
+
+def save(model, session=None, save_pars={}):
+    from mlmodels.util import save_tf
+    print(save_pars)
+    save_tf(session, save_pars['path'])
+     
+
+
+def load(load_pars={}):
+    from mlmodels.util import load_tf
+    print(load_pars)
+    input_tensors, output_tensors =  load_tf(load_pars['path'], 
+                                            filename=load_pars['model_uri'])
+    return input_tensors, output_tensors
+
+
+
 
 
 ####################################################################################################

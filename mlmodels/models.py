@@ -16,11 +16,10 @@ models.py   #### Generic Interface
    fit(model, module, session, data_pars, out_pars   )
    metrics(model, module, session, data_pars, out_pars)
    predict(model, module, session, data_pars, out_pars)
-   save()
-   load()
+   save(save_pars)
+   load(load_pars)
  
 
-####################################################################################################
 ######### Code sample  #############################################################################
 https://github.com/arita37/mlmodels/blob/dev/README_model_list.md
 
@@ -179,74 +178,19 @@ def metrics(module, model, sess=None, data_pars=None, compute_pars=None,  out_pa
 
 
 
-def load(load_pars, **kwarg):
+def load(module, load_pars, **kwarg):
     """
        Load model/session from files
-    :param folder_name:
-    :return:
+       :param folder_name:
     """
-    from mlmodels.util import (load_pkl, load_gluon, load_keras,
-                               load_tch, load_tf)
-
-    path = load_pars['path']
-    model_type = load_pars['model_type']
-    filename = load_pars['filename']
+    return module.load(load_pars, **kwarg)
 
 
-    if model_type == "model_tf" :
-        return load_tf(path, filename)
-
-    if model_type == "model_tch" :
-        return load_tch(path)
-
-    if model_type == "model_gluon" :
-        return load_gluon(path)
-
-    if model_type == "model_keras" :
-        return load_keras(path)
-
-    else :
-        return load_pkl(path)
-
-
-def save(model, session, save_pars , **kwarg):
+def save(module, model, session, save_pars , **kwarg):
     """
        Save model/session on disk
-    (path, modelname="model_default", model_type="tf",  model_session=None, ** kwarg)
-    :return:
     """
-    from mlmodels.util import (save_pkl, save_gluon, save_keras,
-                               save_tch, save_tf)
-
-    d = save_pars
-    path = d['path']
-    model_type  = d['model_type']
-    model_uri   = d['model_uri'].replace(".", "_")
-
-
-    if model_type == "model_tf" :
-      os.makedirs(path, exist_ok = True)
-      file_path = f"{path}/{model_uri}.ckpt"
-      save_tf(session, file_path)
-      print(file_path)
-      return 1      
-
-
-    if  model_type == "model_tch"  :
-       save_tch(model, session, path)
-
-
-    if  model_type == "model_keras"  :
-       save_keras(model,  path)
-
-
-    if  model_type == "model_gluon"  :
-       save_gluon(model,  path)
-
-
-    else :
-       save_pkl(model,  path)
-
+    return module.save(model, session, save_pars, **kwarg)
 
 
 

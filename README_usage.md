@@ -25,7 +25,7 @@ module        =  module_load( model_uri= model_uri )                           #
 model         =  module.Model(model_pars, data_pars, compute_pars)             # Create Model instance
 model, sess   =  module.fit(model, data_pars, compute_pars, out_pars)          # fit the model
 metrics_val   =  module.fit_metrics( model, sess, data_pars, compute_pars, out_pars) # get stats
-module.save(save_pars, model, sess)
+module.save(model, sess, save_pars)
 
 
 

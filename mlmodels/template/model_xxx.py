@@ -132,19 +132,25 @@ def reset_model():
 
 
 
-def save(save_pars, model, session ) :
-  path = save_pars['path']
+
+def save(model=None, session=None, save_pars={}):
+    from mlmodels.util import save_tf
+    print(save_pars)
+    save_tf(session, save_pars['path'])
+     
 
 
-  return None
+def load(load_pars={}):
+    from mlmodels.util import load_tf
+    print(load_pars)
+    input_tensors, output_tensors =  load_tf(load_pars['path'], 
+                                            filename=load_pars['model_uri'])
 
 
-
-def load(save_pars) :
-  model = Model()
-  model.model = None
-  session = None
-  return model, session
+    model = Model()
+    model.model = None
+    session = None
+    return model, session
 
 
 
