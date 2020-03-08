@@ -174,7 +174,7 @@ def optim_optuna(model_uri="model_tf.1_lstm.py",
     log("#### Saving     ###########################################################")
     model_uri = model_uri.replace(".", "-")  
     save_pars = {'path': save_path, 'model_type': model_type, 'model_uri': model_uri}
-    save( model=model, session=sess, save_pars= save_pars )
+    save( module, model=model, session=sess, save_pars= save_pars )
 
 
     log("### Save Stats   ##########################################################")
@@ -186,6 +186,7 @@ def optim_optuna(model_uri="model_tf.1_lstm.py",
     json.dump( param_dict_best, open(f"{save_path}/{model_uri}_best-params.json", mode="w") )
 
     return param_dict_best
+
 
 
 
