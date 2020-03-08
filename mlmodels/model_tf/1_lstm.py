@@ -243,7 +243,7 @@ def test_global(data_path="dataset/GOOG-year.csv", pars_choice="test", config_mo
                                                                 })
     print(model_pars, data_pars, compute_pars, out_pars)
 
-    model_uri = "model_tf.1_lstm" if model_pars.get('model_uri') is None else model_pars['model_uri']
+    model_uri = "model_tf.1_lstm"
     print(model_uri)
 
     log("#### Loading dataset   #############################################")
@@ -266,7 +266,7 @@ def test_global(data_path="dataset/GOOG-year.csv", pars_choice="test", config_mo
     print("fit success", sess)
 
 
-    log("############ Prediction##########################")
+    log("############ Prediction####################################")
     preds = predict_global(module, model, sess, data_pars=data_pars,
                     out_pars=out_pars, compute_pars=compute_pars)
     print(preds)

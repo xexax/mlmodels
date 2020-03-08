@@ -378,9 +378,6 @@ def config_generate_template(template_type=None, to_path="ztest/new_model/"):
       Generate template from code source
       config_generate_template("model_tf.1_lstm", to_folder="ztest/")
 
-    """
-
-    """
     if template_type is None :
        os_root = os_package_root_path()
        lfiles = get_recursive_files(os_root, ext='/*template*/*.py')

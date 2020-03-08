@@ -100,11 +100,11 @@ def optim_optuna(model_uri="model_tf.1_lstm.py",
     ntrials       = compute_pars['ntrials']
     metric_target = compute_pars["metric_target"]
     model_type    = model_pars['model_type']
-
+    log(model_pars, data_pars, compute_pars)
 
     module = module_load(model_uri)
     log(module)
-    log([model_pars])
+
     
     def objective(trial):
         log("check", module)
@@ -210,7 +210,7 @@ def test_fast(ntrials=2):
     path_curr = os.getcwd()
 
     data_path = 'dataset/GOOG-year_small.csv'
-    path_save = f"{path_curr}/ztest/optuna_1lstm/" 
+    path_save = f"{path_curr}/ztest_optuna_1lstm/"
 
 
     data_path = os_package_root_path(__file__, sublevel=0, path_add= data_path)
@@ -316,8 +316,7 @@ def cli_load_arguments(config_file= None):
 ####################################################################################################
 def main():
     arg = cli_load_arguments()
-    # import logging
-    # logging.getLogger("tensorflow").setLevel(logging.ERROR)
+
 
     if arg.do == "test"  :
         test_fast()
