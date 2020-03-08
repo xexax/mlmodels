@@ -219,7 +219,7 @@ def load(load_pars, **kwarg):
     :param folder_name:
     :return:
     """
-    from mlmodels.util import (load_pkl, load_gluon, load_keras
+    from mlmodels.util import (load_pkl, load_gluon, load_keras,
                                load_tch, load_tf)
 
     path = load_pars['path']
@@ -247,7 +247,7 @@ def save(model, session, save_pars , **kwarg):
     (path, modelname="model_default", model_type="tf",  model_session=None, ** kwarg)
     :return:
     """
-    from mlmodels.util import (save_pkl, save_gluon, save_keras
+    from mlmodels.util import (save_pkl, save_gluon, save_keras,
                                save_tch, save_tf)
 
     d = save_pars

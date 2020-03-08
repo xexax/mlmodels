@@ -233,7 +233,7 @@ def load_tch(path, filename="model"):
   return 1
 
 
-def save_tch(path, filename="model"):
+def save_tch(model, path, filename="model"):
   return 1
 
 
@@ -242,7 +242,7 @@ def load_pkl(path, filename="model"):
   return 1
 
 
-def save_pkl(path, filename="model"):
+def save_pkl(model, path, filename="model"):
   return 1
 
 
@@ -253,7 +253,7 @@ def load_gluon(path, filename="model"):
 
 
 
-def save_gluon(path, filename="model"):
+def save_gluon(model, path, filename="model"):
   return 1
 
 
@@ -263,7 +263,7 @@ def load_keras(path, filename="model"):
   return 1
 
 
-def save_keras(path, filename="model"):
+def save_keras(model, path, filename="model"):
   return 1
 
 
