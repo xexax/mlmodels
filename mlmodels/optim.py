@@ -1,29 +1,23 @@
 # -*- coding: utf-8 -*-
 """
 Lightweight Functional interface to wrap Hyper-parameter Optimization
+
 ###### Model param search test
 python optim.py --do test
 
 ##### #for normal optimization search method
 python optim.py --do search --ntrials 1  --config_file optim_config.json --optim_method normal
+
+
 ###### for pruning method
 python optim.py --do search --ntrials 1  --config_file optim_config.json --optim_method prune
+
 
 ###### HyperParam standalone run
 python optim.py --model_uri model_tf.1_lstm.py  --do test
 python optim.py --model_uri model_tf.1_lstm.py  --do search
 
-### Distributed
-https://optuna.readthedocs.io/en/latest/tutorial/distributed.html
-{ 'distributed' : 1,
-  'study_name' : 'ok' , 
-  'storage' : 'sqlite'
-}                                       
-                                       
-###### 1st engine is optuna
-https://optuna.readthedocs.io/en/stable/installation.html
-https://github.com/pfnet/optuna/blob/master/examples/tensorflow_estimator_simple.py
-https://github.com/pfnet/optuna/tree/master/examples
+
 
 """
 import argparse
@@ -56,7 +50,7 @@ def optim(model_uri="model_tf.1_lstm.py",
           hypermodel_pars = {},
           model_pars      = {},
           data_pars       = {},
-          compute_pars    = {"method": "normal/prune"},
+          compute_pars    = {},
           out_pars        = {}) :
     """
     Generic optimizer for hyperparamters
@@ -80,6 +74,18 @@ def optim_optuna(model_uri="model_tf.1_lstm.py",
                  compute_pars    = {"method" : "normal/prune", 'ntrials': 2, "metric_target": "loss" },
                  out_pars        = {} ) :
     """
+    ### Distributed
+    https://optuna.readthedocs.io/en/latest/tutorial/distributed.html
+      { 'distributed' : 1,
+       'study_name' : 'ok' , 
+      'storage' : 'sqlite'
+     }                                       
+                                       
+     ###### 1st engine is optuna
+     https://optuna.readthedocs.io/en/stable/installation.html
+    https://github.com/pfnet/optuna/blob/master/examples/tensorflow_estimator_simple.py
+    https://github.com/pfnet/optuna/tree/master/examples 
+
     Interface layer to Optuna  for hyperparameter optimization
     optuna create-study --study-name "distributed-example" --storage "sqlite:///example.db"
     https://optuna.readthedocs.io/en/latest/tutorial/distributed.html
@@ -146,11 +152,10 @@ def optim_optuna(model_uri="model_tf.1_lstm.py",
     if compute_pars.get("distributed") is not None :
           # study = optuna.load_study(study_name='distributed-example', storage='sqlite:///example.db')
           try :
-             study = optuna.load_study(study_name= compute_pars['study_name'] ,
-                                       storage=compute_pars['storage'] )
+             study = optuna.load_study(study_name= compute_pars['study_name'] , storage=compute_pars['storage'] )
           except:
-             study = optuna.create_study(pruner=pruner, study_name= compute_pars['study_name'] ,
-                                         storage=compute_pars['storage'] )
+             study = optuna.create_study(study_name= compute_pars['study_name'], storage=compute_pars['storage'], 
+                                         pruner=pruner )
     else :           
          study = optuna.create_study(pruner=pruner)
 
@@ -159,7 +164,6 @@ def optim_optuna(model_uri="model_tf.1_lstm.py",
     log("Optim, finished", n=35)
     param_dict_best =  study.best_params
     # param_dict.update(module.config_get_pars(choice="test", )
-    ############################################################3#####################
 
 
     log("### Run Model with best   #################################################")
@@ -316,7 +320,6 @@ def cli_load_arguments(config_file= None):
 ####################################################################################################
 def main():
     arg = cli_load_arguments()
-
 
     if arg.do == "test"  :
         test_fast()

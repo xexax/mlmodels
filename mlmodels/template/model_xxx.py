@@ -92,25 +92,20 @@ class Model:
 
 def fit(model, data_pars={}, compute_pars={}, out_pars={}, out_pars={},  **kw):
   """
-
-  :param model:    Class model
-  :param data_pars:  dict of
-  :param out_pars:
-  :param compute_pars:
-  :param kwargs:
-  :return:
   """
 
   sess = None # Session type for compute
   Xtrain, Xtest, ytrain, ytest = None, None, None, None  # data for training.
-  o = 0
   
 
   return model, sess
 
 
 
-def metrics_model(model, **kw):
+
+
+
+def fit_metrics(model, data_pars={}, compute_pars={}, out_pars={}, out_pars={},  **kw):
     """
        Return metrics of the model when fitted.
     """
@@ -155,15 +150,20 @@ def reset_model():
 
 
 
-def save(model, path) :
-  pass
+
+def save(save_pars, model, session ) :
+  path = save_pars['path']
+
+
+  return None
 
 
 
-def load(path) :
+def load(save_pars) :
   model = Model()
   model.model = None
-  return model   
+  return model, session
+
 
 
 
@@ -179,25 +179,24 @@ def get_dataset(data_pars=None, **kw):
     Xtrain, Xtest, ytrain, ytest = None, None, None, None  # data for training.
     return Xtrain, Xtest, ytrain, ytest 
 
+
   else :
     Xtest, ytest = None, None  # data for training.
     return Xtest, ytest 
 
 
 
+def get_params(param_pars={}, **kw):
+    import json
+    pp          = param_pars
+    choice      = pp['choice']
+    config_mode = pp['config_mode']
+    data_path   = pp['data_path']
 
-
-
-
-def get_params(choice="", data_path="dataset/", config_mode="test", **kw):
     if choice == "json":
-        with open(data_path, encoding='utf-8') as config_f:
-            config = json.load(config_f)
-            c      = config[config_mode]
-
-        model_pars, data_pars  = c[ "model_pars" ], c[ "data_pars" ]
-        compute_pars, out_pars = c[ "compute_pars" ], c[ "out_pars" ]
-        return model_pars, data_pars, compute_pars, out_pars
+       cf = json.load(open(data_path, mode='r'))
+       cf = cf[config_mode]
+       return cf['model_pars'], cf['data_pars'], cf['compute_pars'], cf['out_pars']
 
 
     if choice == "test01":
@@ -208,17 +207,21 @@ def get_params(choice="", data_path="dataset/", config_mode="test", **kw):
         model_pars   = {}
         compute_pars = {}
         out_pars     = {}
+        return model_pars, data_pars, compute_pars, out_pars
 
-    return model_pars, data_pars, compute_pars, out_pars
+    else:
+        raise Exception(f"Not support choice {choice} yet")
+
 
 
 
 ################################################################################################
-def test_global(data_path="dataset/", model_uri="model_tf/1_lstm.py", pars_choice="json", reset=True):
+########## Tests are normalized Do not Change ##################################################
+def test_module(data_path="dataset/", model_uri="model_tf/1_lstm.py", pars_choice="json", reset=True):
     ###loading the command line arguments
     #model_uri = "model_xxxx/yyyy.py"
 
-    log("#### Module init   ############################################")
+    log("#### Module init   #################################################")
     from mlmodels.models import module_load
     module = module_load(model_uri)
     log(module)
@@ -228,82 +231,35 @@ def test_global(data_path="dataset/", model_uri="model_tf/1_lstm.py", pars_choic
     model_pars, data_pars, compute_pars, out_pars = module.get_params(choice=pars_choice,
                                                                       data_path=data_path)
 
-
-    log("#### Model init   ############################################")
-    from mlmodels.models import model_create 
-    model = model_create(module, model_pars)
-    log(model)
-
-
-    log("#### Fit   ########################################################")
-    model, session = module.fit(model, data_pars, model_pars, compute_pars, out_pars )
-
-
-    log("#### Predict   ####################################################")
-    ypred = module.predict(model, session, data_pars, compute_pars, out_pars)
-    print(ypred)
-
-
-    log("#### Get  metrics   ################################################")
-    metrics_val = module.metrics(model, data_pars, compute_pars, out_pars)
-
-
-    log("#### Save/Load   ###################################################")
-    module.save(model, out_pars['modelpath'])
-    model2 = module.load(out_pars['modelpath'])
-    #     ypred = predict(model2, data_pars, compute_pars, out_pars)
-    #     metrics_val = metrics(model2, ypred, data_pars, compute_pars, out_pars)
-    print(model2)
+    test_module(model_uri, model_pars, data_pars, compute_pars, out_pars) 
 
 
 
 
-def test_global2(data_path="dataset/", model_uri="model_tf/1_lstm.py", pars_choice="json", reset=True):
+def test_api_global(data_path="dataset/", model_uri="model_tf/1_lstm.py", pars_choice="json", reset=True):
     ###loading the command line arguments
     model_uri = "model_xxxx/yyyy.py"
 
-
-    log("#### Module init   #################################################")
-    from mlmodels.models import module_load
-    module = module_load(model_uri)
-    log(module)
-
-
     log("#### Loading params   ##############################################")
-    from mlmodels.models import get_params as get_params_batch
-    model_pars, data_pars, compute_pars, out_pars = get_params_batch(module, choice=pars_choice,
-                                                                    data_path=data_path)
+    model_pars, data_pars, compute_pars, out_pars = get_params({ "choice": pars_choice,
+                                                                 "data_path": data_path,
+                                                                 "config_mode": config_mode,
+                                                                })
+    print(model_uri, model_pars, data_pars, compute_pars, out_pars)
 
-    log("#### Model init, fit   ############################################")
-    from mlmodels.models import module_load_full 
-    module, model = module_load_full(model_uri, model_pars)
-    log(module, model)
+    # log("#### Loading params   ##############################################")
+    # from mlmodels.models import get_params as get_params_batch
+    # model_pars, data_pars, compute_pars, out_pars = get_params_batch(module, choice=pars_choice,
+    #                                                                data_path=data_path)
 
-
-    log("#### Fit   ########################################################")
-    from mlmodels.models import fit as fit_batch
-    model, session = fit_batch(model, module, compute_pars, data_pars, out_pars)
-
-
-    log("#### Predict   ####################################################")
-    ypred = predict_batch(model, module, session,  compute_pars, data_pars, out_pars)
-    print(ypred)
+    log("#### Loading dataset   #############################################")
+    dataset = get_dataset(data_pars)
 
 
-    log("#### Mtrics   ################################################")
-    from mlmodels.models import  metrics as metrics_batch 
-    metrics_val = metrics_batch(model, module, session, compute_pars, data_pars,  out_pars)
-
-
-    log("#### Save/Load   ###################################################")
-    from mlmodels.models import load_batch, save_batch
-    save_batch(model, module, session, out_pars['modelpath'])
-    model2 = load_batch(out_pars['modelpath'])
-    #     ypred = predict(model2, data_pars, compute_pars, out_pars)
-    #     metrics_val = metrics(model2, ypred, data_pars, compute_pars, out_pars)
-    print(model2)
-
-
+    log("############ Model test Global  ###########################################")
+    from mlmodels.models import test_api
+    save_pars ={}
+    test_api(model_uri, model_pars, data_pars, compute_pars, out_pars, save_pars)
 
 
 
@@ -358,4 +314,4 @@ if __name__ == '__main__':
     test(pars_choice="test01")
 
     ### Global mlmodels
-    test_global(pars_choice="json", out_path= test_path,  reset=True)
+    test_global_api(pars_choice="json", out_path= test_path,  reset=True)

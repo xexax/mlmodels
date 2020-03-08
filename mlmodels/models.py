@@ -358,6 +358,50 @@ def test_api(model_uri, model_pars, data_pars, compute_pars, out_pars, save_pars
     #load_global(save_pars)
 
 
+def test_module(model_uri, model_pars, data_pars, compute_pars, out_pars, save_pars=None) :
+    ###loading the command line arguments
+    #model_uri = "model_xxxx/yyyy.py"
+
+    log("#### Module init   ############################################")
+    from mlmodels.models import module_load
+    module = module_load(model_uri)
+    log(module)
+
+
+    log("#### Loading params   ##############################################")
+    model_pars, data_pars, compute_pars, out_pars = module.get_params(choice=pars_choice,
+                                                                      data_path=data_path)
+
+
+    log("#### Model init   ############################################")
+    from mlmodels.models import model_create 
+    model = model_create(module, model_pars)
+    log(model)
+
+
+    log("#### Fit   ########################################################")
+    model, sess = module.fit(model, data_pars, model_pars, compute_pars, out_pars )
+
+
+    log("#### Predict   ####################################################")
+    ypred = module.predict(model, session, data_pars, compute_pars, out_pars)
+    print(ypred)
+
+
+    log("#### Get  metrics   ################################################")
+    metrics_val = module.fit_metrics(model, data_pars, compute_pars, out_pars)
+
+
+    log("#### Save/Load   ###################################################")
+    # save_pars = {}
+    # load_pars = {}
+    # module.save( save_pars,  model, sess)
+    # model2, sess2 = module.load(load_pars)
+    #     ypred = predict(model2, data_pars, compute_pars, out_pars)
+    #     metrics_val = metrics(model2, ypred, data_pars, compute_pars, out_pars)
+    print(model2)
+
+
 
 ####################################################################################################
 ############ JSON template #########################################################################
