@@ -170,7 +170,7 @@ def optim_optuna(model_uri="model_tf.1_lstm.py",
     log("#### Saving     ###########################################################")
     model_uri = model_uri.replace(".", "-")  
     save_pars = {'path': save_path, 'model_type': model_type, 'model_uri': model_uri}
-    save( model=model, session=sess, save_pars= save())
+    save( model=model, session=sess, save_pars= save_pars )
 
 
     log("### Save Stats   ##########################################################")
@@ -190,7 +190,7 @@ def optim_optuna(model_uri="model_tf.1_lstm.py",
 ####################################################################################################
 def test_json(path_json="", config_mode="test"):
 
-    cf = json.load(copen(path_json, encoding='utf-8'))
+    cf = json.load(open(path_json, mode='r', encoding='utf-8'))
     cf = cf[config_mode]
 
     model_uri = cf['model_pars']['model_uri']  # 'model_tf.1_lstm'
@@ -234,8 +234,9 @@ def test_fast(ntrials=2):
     log( "model details" , model_uri, hypermodel_pars )
 
 
-    model_pars   = {"model_uri" :"model_tf.1_lstm", "learning_rate": 0.001, "num_layers": 1, "size": None,
-                  "size_layer": 128, "output_size": None, "timestep": 4, "epoch": 2, }
+    model_pars   = {"model_uri" :"model_tf.1_lstm",  "model_type": "model_tf",
+                    "learning_rate": 0.001, "num_layers": 1, "size": None,
+                    "size_layer": 128, "output_size": None, "timestep": 4, "epoch": 2, }
     
     data_pars    = {"data_path": data_path, "data_type": "pandas"}
     compute_pars = {"engine":"optuna", "method": "normal", 'ntrials': 2, "metric_target": "loss" }

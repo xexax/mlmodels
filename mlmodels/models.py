@@ -253,33 +253,33 @@ def save(model, session, save_pars , **kwarg):
                                save_tch, save_tf)
 
     d = save_pars
-    folder_name = d['path']
+    path = d['path']
     model_type  = d['model_type']
-    modelname   = d['model_uri'].replace(".", "_")
-    file_path   = d['file_path']
+    model_uri   = d['model_uri'].replace(".", "_")
+
 
     if model_type == "model_tf" :
-      os.makedirs(folder_name, exist_ok = True)
-      file_path = f"{folder_name}/{modelname}.ckpt"
+      os.makedirs(path, exist_ok = True)
+      file_path = f"{path}/{model_uri}.ckpt"
       save_tf(session, file_path)
       print(file_path)
       return 1      
 
 
     if  model_type == "model_tch"  :
-       save_tch(model, session, file_path)
+       save_tch(model, session, path)
 
 
     if  model_type == "model_keras"  :
-       save_keras(model,  file_path)
+       save_keras(model,  path)
 
 
     if  model_type == "model_gluon"  :
-       save_gluon(model,  file_path)
+       save_gluon(model,  path)
 
 
     else :
-       save_pkl(model,  file_path)
+       save_pkl(model,  path)
 
 
 
