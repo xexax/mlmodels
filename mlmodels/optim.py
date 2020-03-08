@@ -210,17 +210,12 @@ def test_json(path_json="", config_mode="test"):
     return res
 
 
-
-def test_all():
-    return 1
-
-
-
 def test_fast(ntrials=2):
     path_curr = os.getcwd()
 
     data_path = os_package_root_path(__file__, sublevel=0, path_add='dataset/GOOG-year_small.csv')
     path_save = f"{path_curr}/ztest/optuna_1lstm/" 
+
     os.makedirs(path_save, exist_ok=True)
     log("path_save", path_save, data_path)
     
@@ -258,6 +253,14 @@ def test_fast(ntrials=2):
 
     log("Finished OPTIMIZATION",n =30)
     print(res)
+
+
+
+
+
+
+def test_all():
+    return 1
 
 
 

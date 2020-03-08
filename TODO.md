@@ -1,7 +1,35 @@
 ## TODO
 
+
+
+### List of potential models
+
+https://github.com/AnubhavGupta3377/Text-Classification-Models-Pytorch/tree/master/Model_CharCNN
+
+
+https://github.com/chaitjo/character-level-cnn
+
+
+https://gluon-nlp.mxnet.io/model_zoo/word_embeddings/index.html
+
+
+http://nlp_architect.nervanasys.com/absa_solution.html
+
+
+https://github.com/golsun/SpaceFusion
+
+
+
+
+
+
+
+
+
 ###  Add use cases of mlmodels
     USECASE.md
+
+
 
 ### Renormalize signature
 

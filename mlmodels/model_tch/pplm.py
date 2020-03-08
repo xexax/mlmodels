@@ -62,7 +62,7 @@ def path_setup(out_folder="", sublevel=1, data_path="dataset/"):
 
     log(data_path, out_path, model_path)
     return data_path, out_path, model_path
-
+####################################################################################################
 
 
 
@@ -95,6 +95,54 @@ def generate(cond_text,bag_of_words,discrim=None,class_label=-1):
 
     
 
+####################################################################################################
+class Model:
+  def __init__(self, model_pars=None, data_pars=None
+               ):
+    ### Model Structure        ################################
+    self.model = None   #ex Keras model
+    
+    
+
+
+
+
+
+def fit(model, data_pars={}, compute_pars={}, out_pars={}, out_pars={},  **kw):
+  """
+
+  :param model:    Class model
+  :param data_pars:  dict of
+  :param out_pars:
+  :param compute_pars:
+  :param kwargs:
+  :return:
+  """
+
+  sess = None # Session type for compute
+  Xtrain, Xtest, ytrain, ytest = None, None, None, None  # data for training.
+  o = 0
+  
+
+  return model, sess
+
+
+
+    
+
+def predict(model, sess=None, data_pars={}, out_pars={}, compute_pars={}, **kw):
+  ##### Get Data ###############################################
+  Xpred, ypred = None, None
+
+  #### Do prediction
+  ypred = model.model.fit(Xpred)
+
+  ### Save Results
+  
+  
+  ### Return val
+  if compute_pars.get("return_pred_not") is not None :
+    return ypred
 
 
 

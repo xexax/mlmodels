@@ -22,10 +22,10 @@ import os
 import json
 import shutil
 
-#########
-# UTILS #
-#########
 
+
+###########################################################################################################
+###########################################################################################################
 def _train(m, device, train_itr, optimizer, epoch, max_epoch):
     m.train()
     corrects, train_loss = 0.0,0
@@ -191,10 +191,10 @@ def create_data_iterator(tr_batch_size, val_batch_size, tabular_train,
         repeat=False)
     return train_iter, valid_iter
 
-#########
-# MODEL #
-#########
 
+
+###########################################################################################################
+###########################################################################################################
 class TextCNN(nn.Module):
 
     def __init__(self, model_pars=None, **kwargs):
@@ -257,6 +257,7 @@ def get_params(choice="json", data_path=None, config_mode="test", **kw):
         return model_pars, data_pars, compute_pars, out_pars
 
 
+
 def metric(model, data_pars=None, out_pars=None, **kwargs):
     # return metrics on full dataset
     device = _get_device()
@@ -265,6 +266,8 @@ def metric(model, data_pars=None, out_pars=None, **kwargs):
     test_iter, _, vocab = get_dataset(data_pars, out_pars)
     model.rebuild_embed(vocab)
     return _valid(model, device, test_iter)
+
+
 
 def fit(model, sess=None, data_pars=None, compute_pars=None,
         out_pars=None, **kwargs):
@@ -302,6 +305,8 @@ def fit(model, sess=None, data_pars=None, compute_pars=None,
         test_acc.append(ts_acc)
     return model, None
 
+
+
 def get_dataset(data_pars=None, out_pars=None, **kwargs):
     device = _get_device()
     path = os.path.join(
@@ -323,6 +328,8 @@ def get_dataset(data_pars=None, out_pars=None, **kwargs):
     )
     return train_iter, valid_iter, vocab
 
+
+
 def predict(model, data_pars=None, compute_pars=None, out_pars=None):
     data_pars = data_pars.copy()
     data_pars.update(frac=1)
@@ -332,23 +339,6 @@ def predict(model, data_pars=None, compute_pars=None, out_pars=None):
     x_test = next(iter(test_iter)).text
     return model(x_test).detach().numpy()
 
-def test():
-    print("\n####### Getting params... ####################\n")
-    model_pars, data_pars, compute_pars, out_pars = get_params(test=True)
-    print("\n####### Creating model... ####################\n")
-    module, model = M.module_load_full(
-        "model_tch.textcnn.py", model_pars=model_pars, data_pars=data_pars,
-        compute_pars=compute_pars, out_pars=out_pars)
-    print("\n####### Fitting model... ####################\n")
-    M.fit(module, model, None, data_pars, compute_pars, out_pars)
-    print("\n####### Computing model metrics... ##########")
-    test_loss, accuracy = metric(model, data_pars, out_pars)
-    print(f"\nTest loss: {test_loss}, accuracy: {accuracy}")
-    print("\n####### Test predict... #####################")
-    print(predict(model, data_pars, compute_pars, out_pars))
-
-def test2():
-    pass
 
 def save(model, path):
     return torch.save(model, path)
@@ -356,5 +346,44 @@ def save(model, path):
 def load(path):
     return torch.load(path)
 
+
+###########################################################################################################
+###########################################################################################################
+def test():
+    print("\n####### Getting params... ####################\n")
+    model_pars, data_pars, compute_pars, out_pars = get_params(test=True)
+    
+
+    print("\n####### Creating model... ####################\n")
+    module, model = M.module_load_full(
+        "model_tch.textcnn.py", model_pars=model_pars, data_pars=data_pars,
+        compute_pars=compute_pars, out_pars=out_pars)
+    
+
+    print("\n####### Fitting model... ####################\n")
+    M.fit(module, model, None, data_pars, compute_pars, out_pars)
+    
+
+    print("\n####### Computing model metrics... ##########")
+    test_loss, accuracy = metric(model, data_pars, out_pars)
+    
+    print(f"\nTest loss: {test_loss}, accuracy: {accuracy}")
+    
+
+    print("\n####### Test predict... #####################")
+    print(predict(model, data_pars, compute_pars, out_pars))
+
+
+
+def test2():
+    pass
+
+
+
 if __name__ == '__main__':
     test()
+
+
+
+
+
