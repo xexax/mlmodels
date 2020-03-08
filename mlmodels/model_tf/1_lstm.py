@@ -35,14 +35,14 @@ def log(*s, n=0, m=1):
 ####################################################################################################
 class Model:
     def __init__(self, model_pars=None, data_pars=None, compute_pars=None, **kwargs):
-        epoch = model_pars.get('epoch', 5)
+        epoch         = model_pars.get('epoch', 5)
         learning_rate = model_pars.get('learning_rate', 0.001)
-        num_layers = model_pars.get('num_layers', 2)
-        size = model_pars.get('size', None)
-        size_layer = model_pars.get('size_layer', 128)
-        output_size = model_pars.get('output_size', None)
-        forget_bias = model_pars.get('forget_bias', 0.1)
-        timestep = model_pars.get('timestep', 5)
+        num_layers    = model_pars.get('num_layers', 2)
+        size          = model_pars.get('size', None)
+        size_layer    = model_pars.get('size_layer', 128)
+        output_size   = model_pars.get('output_size', None)
+        forget_bias   = model_pars.get('forget_bias', 0.1)
+        timestep      = model_pars.get('timestep', 5)
 
         self.epoch = epoch
         self.stats = {"loss": 0.0,
@@ -90,7 +90,7 @@ def fit(model, sess=None, compute_pars=None, data_pars=None, out_pars=None, **kw
         ######## Model specific  ########################################
         init_value = np.zeros((1, model.hidden_layer_size))
         for k in range(0, df.shape[0] - 1, model.timestep):
-            index = min(k + model.timestep, df.shape[0] - 1)
+            index   = min(k + model.timestep, df.shape[0] - 1)
             batch_x = np.expand_dims(df.iloc[k:index, :].values, axis=0)
             batch_y = df.iloc[k + 1: index + 1, :].values
             last_state, _, loss = sess.run(
@@ -186,6 +186,7 @@ def get_dataset(data_pars=None):
 
     ##### Specific   ######################################################
     df = pd.read_csv(filename)
+    df = df.iloc[:10,:]
     date_ori = pd.to_datetime(df.iloc[:, 0]).tolist()
     print(filename)
     print(df.head(5))
@@ -252,7 +253,7 @@ def test_global(data_path="dataset/GOOG-year.csv", pars_choice="test", config_mo
     model_pars["output_size"] = dataset.shape[1]
 
 
-    log("############ Model preparation   #########################")
+    log("############ Model preparation   ##################################")
     from mlmodels.models import module_load_full
     from mlmodels.models import fit as fit_global
     from mlmodels.models import predict as predict_global
@@ -261,12 +262,12 @@ def test_global(data_path="dataset/GOOG-year.csv", pars_choice="test", config_mo
     print(module, model)
 
 
-    log("############ Model fit   ##################################")
+    log("############ Model fit   ##########################################")
     sess = fit_global(module, model, data_pars=data_pars, out_pars=out_pars, compute_pars=compute_pars)
     print("fit success", sess)
 
 
-    log("############ Prediction####################################")
+    log("############ Prediction############################################")
     preds = predict_global(module, model, sess, data_pars=data_pars,
                     out_pars=out_pars, compute_pars=compute_pars)
     print(preds)
@@ -306,6 +307,8 @@ def test(data_path="dataset/GOOG-year.csv", pars_choice="test", config_mode="tes
     log("############ Prediction##########################")
     preds = predict(model, sess, data_pars=data_pars, out_pars=out_pars, compute_pars=compute_pars)
     print(preds)
+
+
 
 
 if __name__ == "__main__":
