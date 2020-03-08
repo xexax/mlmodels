@@ -197,28 +197,29 @@ def get_dataset(data_pars=None):
 
 
 def get_params(param_pars={}, **kw):
-    pp = param_pars
-    choice = pp['choice']
+    import json
+    pp          = param_pars
+    choice      = pp['choice']
     config_mode = pp['config_mode']
-    data_path = pp['data_path']
+    data_path   = pp['data_path']
+
+    if choice == "json":
+       cf = json.load(open(data_path, mode='r'))
+       cf = cf[config_mode]
+       return cf['model_pars'], cf['data_pars'], cf['compute_pars'], cf['out_pars']
 
 
     if choice == "test":
-        model_pars = {"learning_rate": 0.001,
-                      "num_layers": 1,
-                      "size": None,
-                      "size_layer": 128,
-                      "output_size": None,
-                      "timestep": 4,
-                      "epoch": 2,
-                      }
-
         data_path = os_package_root_path(__file__, sublevel=1, path_add=data_path)
         print(data_path)
 
-        log("############# Data, Params preparation   #################")
-        data_pars = {"data_path": data_path, "data_type": "pandas"}
-        out_pars = {"path": data_path}
+        log("############# Data, Params preparation   #################")        
+        model_pars   = {"learning_rate": 0.001, "num_layers": 1, "size": None, "size_layer": 128,
+                      "output_size": None, "timestep": 4, "epoch": 2, }
+
+
+        data_pars    = {"data_path": data_path, "data_type": "pandas"}
+        out_pars     = {"path": data_path}
         compute_pars = {}
 
         return model_pars, data_pars, compute_pars, out_pars
@@ -227,7 +228,7 @@ def get_params(param_pars={}, **kw):
 
 
 ####################################################################################################
-def test(data_path="dataset/GOOG-year.csv", pars_choice="test"):
+def test_global(data_path="dataset/GOOG-year.csv", pars_choice="test", config_mode="test"):
     """
        Using mlmodels package method
        :param data_path:
@@ -235,8 +236,54 @@ def test(data_path="dataset/GOOG-year.csv", pars_choice="test"):
 
     """
     log("#### Loading params   ##############################################")
-    model_pars, data_pars, compute_pars, out_pars = get_params(choice=pars_choice,
-                                                               data_path=data_path)
+    model_pars, data_pars, compute_pars, out_pars = get_params({ "choice": pars_choice,
+                                                                 "data_path": data_path,
+                                                                 "config_mode": config_mode,
+                                                                })
+    print(model_pars, data_pars, compute_pars, out_pars)
+
+    model_uri = "model_tf.1_lstm" if model_pars.get('model_uri') is None else model_pars['model_uri']
+    print(model_uri)
+
+    log("#### Loading dataset   #############################################")
+    dataset = get_dataset(data_pars)
+    model_pars["size"] = dataset.shape[1]
+    model_pars["output_size"] = dataset.shape[1]
+
+
+    log("############ Model preparation   #########################")
+    from mlmodels.models import module_load_full
+    from mlmodels.models import fit as fit_global
+    from mlmodels.models import predict as predict_global
+
+    module, model = module_load_full(model_uri, model_pars)
+    print(module, model)
+
+
+    log("############ Model fit   ##################################")
+    sess = fit_global(module, model, data_pars=data_pars, out_pars=out_pars, compute_pars=compute_pars)
+    print("fit success", sess)
+
+
+    log("############ Prediction##########################")
+    preds = predict_global(module, model, sess, data_pars=data_pars,
+                    out_pars=out_pars, compute_pars=compute_pars)
+    print(preds)
+
+
+
+def test(data_path="dataset/GOOG-year.csv", pars_choice="test", config_mode="test"):
+    """
+       Using mlmodels package method
+       :param data_path:
+       :param pars_choice:
+
+    """
+    log("#### Loading params   ##############################################")
+    model_pars, data_pars, compute_pars, out_pars = get_params({ "choice": pars_choice,
+                                                                 "data_path": data_path,
+                                                                 "config_mode": config_mode,
+                                                                })
     print(model_pars, data_pars, compute_pars, out_pars)
 
     log("#### Loading dataset   #############################################")
@@ -244,20 +291,28 @@ def test(data_path="dataset/GOOG-year.csv", pars_choice="test"):
     model_pars["size"] = dataset.shape[1]
     model_pars["output_size"] = dataset.shape[1]
 
+
     log("############ Model preparation   #########################")
-    from mlmodels.models import module_load_full, fit, predict
+    from mlmodels.models import module_load_full
     module, model = module_load_full("model_tf.1_lstm", model_pars)
     print(module, model)
 
+
     log("############ Model fit   ##################################")
-    sess = fit(model, module, data_pars=data_pars, out_pars=out_pars, compute_pars=compute_pars)
+    model, sess = fit(model, data_pars=data_pars, out_pars=out_pars, compute_pars=compute_pars)
     print("fit success", sess)
 
     log("############ Prediction##########################")
-    preds = predict(model, module, sess, data_pars=data_pars,
-                    out_pars=out_pars, compute_pars=compute_pars)
+    preds = predict(model, sess, data_pars=data_pars, out_pars=out_pars, compute_pars=compute_pars)
     print(preds)
 
 
 if __name__ == "__main__":
+    print("start")
     test()
+
+    test_global()
+
+
+
+
