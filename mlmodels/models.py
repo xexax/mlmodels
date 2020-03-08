@@ -224,6 +224,8 @@ def load(load_pars, **kwarg):
 
     path = load_pars['path']
     model_type = load_pars['model_type']
+    filename = load_pars['filename']
+
 
     if model_type == "model_tf" :
         return load_tf(path, filename)
@@ -254,7 +256,7 @@ def save(model, session, save_pars , **kwarg):
     folder_name = d['path']
     model_type  = d['model_type']
     modelname   = d['model_uri'].replace(".", "_")
-
+    file_path   = d['file_path']
 
     if model_type == "model_tf" :
       os.makedirs(folder_name, exist_ok = True)
@@ -290,7 +292,7 @@ def test_all(folder=None):
        folder =  os_package_root_path() +  "/model_tf/"
             
     # module_names = get_recursive_files(folder, r"[0-9]+_.+\.py$")
-    model_names  = model_list()
+    module_names  = config_model_list()
     module_names.sort()
     print(module_names)
     failed_scripts = []
