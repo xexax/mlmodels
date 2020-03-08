@@ -90,7 +90,7 @@ class Model:
 
 
 
-def fit(model, data_pars={}, compute_pars={}, out_pars={}, out_pars={},  **kw):
+def fit(model, data_pars={}, compute_pars={}, out_pars={},   **kw):
   """
   """
 
@@ -105,7 +105,7 @@ def fit(model, data_pars={}, compute_pars={}, out_pars={}, out_pars={},  **kw):
 
 
 
-def fit_metrics(model, data_pars={}, compute_pars={}, out_pars={}, out_pars={},  **kw):
+def fit_metrics(model, data_pars={}, compute_pars={}, out_pars={},  **kw):
     """
        Return metrics of the model when fitted.
     """
@@ -162,6 +162,7 @@ def save(save_pars, model, session ) :
 def load(save_pars) :
   model = Model()
   model.model = None
+  session = None
   return model, session
 
 
@@ -228,17 +229,17 @@ def test_module(data_path="dataset/", model_uri="model_tf/1_lstm.py", pars_choic
 
 
     log("#### Loading params   ##############################################")
-    model_pars, data_pars, compute_pars, out_pars = module.get_params(choice=pars_choice,
-                                                                      data_path=data_path)
-
-    test_module(model_uri, model_pars, data_pars, compute_pars, out_pars) 
+    param_pars = { "choice": "pars_choice",  "data_path": data_path}
+    model_pars, data_pars, compute_pars, out_pars = module.get_params(param_pars)
 
 
+    log("#### Run module test   ##############################################")
+    from mlmodels.models import test_module as test_module_global
+    test_module_global(model_uri, model_pars, data_pars, compute_pars, out_pars)
 
 
 
-
-def test_api_global(data_path="dataset/", model_uri="model_tf/1_lstm.py", pars_choice="json", reset=True):
+def test_api_global(data_path="dataset/", model_uri="model_tf/1_lstm.py", pars_choice="json", config_mode="test", reset=True):
     ###loading the command line arguments
     model_uri = "model_xxxx/yyyy.py"
 
@@ -316,4 +317,4 @@ if __name__ == '__main__':
     test(pars_choice="test01")
 
     ### Global mlmodels
-    test_global_api(pars_choice="json", out_path= test_path,  reset=True)
+    test_api_global(pars_choice="json", reset=True)

@@ -331,8 +331,8 @@ def test_module(model_uri, model_pars, data_pars, compute_pars, out_pars, save_p
 
 
     log("#### Loading params   ##############################################")
-    model_pars, data_pars, compute_pars, out_pars = module.get_params(choice=pars_choice,
-                                                                      data_path=data_path)
+    #model_pars, data_pars, compute_pars, out_pars = module.get_params(choice=pars_choice,
+    #                                                                  data_path=data_path)
 
 
     log("#### Model init   ############################################")
@@ -346,7 +346,7 @@ def test_module(model_uri, model_pars, data_pars, compute_pars, out_pars, save_p
 
 
     log("#### Predict   ####################################################")
-    ypred = module.predict(model, session, data_pars, compute_pars, out_pars)
+    ypred = module.predict(model, sess, data_pars, compute_pars, out_pars)
     print(ypred)
 
 
@@ -361,7 +361,7 @@ def test_module(model_uri, model_pars, data_pars, compute_pars, out_pars, save_p
     # model2, sess2 = module.load(load_pars)
     #     ypred = predict(model2, data_pars, compute_pars, out_pars)
     #     metrics_val = metrics(model2, ypred, data_pars, compute_pars, out_pars)
-    print(model2)
+    # print(model2)
 
 
 
