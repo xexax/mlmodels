@@ -65,16 +65,6 @@ class to_namespace(object):
     return self.__dict__.get(key)
 
 
-def path_setup(out_folder="ztest", sublevel=1, data_path="dataset/"):
-    data_path = os_package_root_path(__file__, sublevel=sublevel, path_add=data_path)
-    out_path = os.getcwd() + "/" + out_folder
-    os.makedirs(out_path, exist_ok=True)
-
-    model_path = out_path + "/model/"
-    os.makedirs(model_path, exist_ok=True)
-
-    log(data_path, out_path, model_path)
-    return data_path, out_path, model_path
 
 
 
@@ -178,6 +168,18 @@ def get_dataset(data_pars=None, **kw):
 
 
 
+def path_setup(out_folder="ztest", sublevel=1, data_path="dataset/"):
+    data_path = os_package_root_path(__file__, sublevel=sublevel, path_add=data_path)
+    out_path = os.getcwd() + "/" + out_folder
+    os.makedirs(out_path, exist_ok=True)
+
+    model_path = out_path + "/model/"
+    os.makedirs(model_path, exist_ok=True)
+
+    log(data_path, out_path, model_path)
+    return data_path, out_path, model_path
+
+
 def get_params(param_pars={}, **kw):
     import json
     pp          = param_pars
@@ -193,7 +195,7 @@ def get_params(param_pars={}, **kw):
 
     if choice == "test01":
         log("#### Path params   ##########################################")
-        data_path, out_path, model_path = path_setup(out_folder="", sublevel=1,
+        data_path, out_path, model_path = path_setup(out_folder="/ztest/", sublevel=1,
                                                      data_path="dataset/")
         data_pars    = {}
         model_pars   = {}
@@ -283,7 +285,7 @@ def test(data_path="dataset/", pars_choice="json"):
 
 
     log("#### metrics   #####################################################")
-    metrics_val = metrics(model, ypred, data_pars, compute_pars, out_pars)
+    metrics_val = fit_metrics(model, data_pars, compute_pars, out_pars)
     print(metrics_val)
 
 
