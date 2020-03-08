@@ -242,10 +242,10 @@ def test_global(data_path="dataset/GOOG-year.csv", pars_choice="test", config_mo
                                                                  "data_path": data_path,
                                                                  "config_mode": config_mode,
                                                                 })
-    print(model_pars, data_pars, compute_pars, out_pars)
 
     model_uri = "model_tf.1_lstm"
-    print(model_uri)
+    print(model_uri, model_pars, data_pars, compute_pars, out_pars)
+
 
     log("#### Loading dataset   #############################################")
     dataset = get_dataset(data_pars)
@@ -253,24 +253,10 @@ def test_global(data_path="dataset/GOOG-year.csv", pars_choice="test", config_mo
     model_pars["output_size"] = dataset.shape[1]
 
 
-    log("############ Model preparation   ##################################")
-    from mlmodels.models import module_load_full
-    from mlmodels.models import fit as fit_global
-    from mlmodels.models import predict as predict_global
-
-    module, model = module_load_full(model_uri, model_pars)
-    print(module, model)
-
-
-    log("############ Model fit   ##########################################")
-    sess = fit_global(module, model, data_pars=data_pars, out_pars=out_pars, compute_pars=compute_pars)
-    print("fit success", sess)
-
-
-    log("############ Prediction############################################")
-    preds = predict_global(module, model, sess, data_pars=data_pars,
-                    out_pars=out_pars, compute_pars=compute_pars)
-    print(preds)
+    log("############ Model test Global  ###########################################")
+    from mlmodels.models import test_api
+    save_pars ={}
+    test_api(model_uri, model_pars, data_pars, compute_pars, out_pars, save_pars)
 
 
 
@@ -308,6 +294,7 @@ def test(data_path="dataset/GOOG-year.csv", pars_choice="test", config_mode="tes
     preds = predict(model, sess, data_pars=data_pars, out_pars=out_pars, compute_pars=compute_pars)
     print(preds)
 
+    reset_model()
 
 
 

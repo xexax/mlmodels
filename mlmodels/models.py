@@ -304,13 +304,7 @@ def test_all(folder=None):
     for module_name in module_names:
         print("#######################")
         print(module_name)
-        try :
-          module = module_load(model_uri= module_name)
-          # module = import_module(f'{folder}.{module_name.replace(".py", "")}')
-          module.test()
-          del module
-        except Exception as e:
-          print("Failed", e)
+        test(module_name)
 
 
 
@@ -324,6 +318,44 @@ def test(modelname):
     except Exception as e:
       print("Failed", e)
 
+
+def test_global(modelname):
+    print(modelname)
+    try :
+      module = module_load( modelname , verbose=1)
+      print(module)
+      module.test_global()
+      del module
+    except Exception as e:
+      print("Failed", e)
+
+
+def test_api(model_uri, model_pars, data_pars, compute_pars, out_pars, save_pars=None) :
+    log("############ Model preparation   ##################################")
+    from mlmodels.models import module_load_full
+    from mlmodels.models import fit as fit_global
+    from mlmodels.models import predict as predict_global
+    from mlmodels.models import save as save_global, load as load_global
+
+    module, model = module_load_full(model_uri, model_pars, data_pars, compute_pars)
+    print(module, model)
+
+
+    log("############ Model fit   ##########################################")
+    model, sess = fit_global(module, model, data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars )
+    print("fit success", sess)
+
+
+    log("############ Prediction############################################")
+    preds = predict_global(module, model, sess, data_pars=data_pars,
+                           compute_pars=compute_pars, out_pars=out_pars)
+    print(preds)
+
+
+    log("############ Save/ Load ############################################")
+    #save_global( save_pars, model, sess)
+
+    #load_global(save_pars)
 
 
 
@@ -464,6 +496,7 @@ def main():
                                  
     if arg.do == "test"  :
         test(arg.model_uri)  # '1_lstm'
+        test_global(arg.model_uri)  # '1_lstm'
 
 
     if arg.do == "fit"  :
