@@ -95,9 +95,7 @@ from pathlib import Path
 from warnings import simplefilter
 
 ####################################################################################################
-from mlmodels.util import (get_recursive_files, load_config, load_pkl,
-                           log, os_package_root_path,
-                           load_tch, load_tf, save_tch, save_tf)
+from mlmodels.util import (get_recursive_files, load_config, log, os_package_root_path )
 
 
 from mlmodels.util import (env_build, env_conda_build, env_pip_requirement)
@@ -200,12 +198,6 @@ def fit(module, model, sess=None, data_pars=None, compute_pars=None, out_pars=No
 def predict(module, model, sess=None, data_pars=None, compute_pars=None,  out_pars=None,  **kwarg):
     """
        predict  using a pre-trained model and some data
-    :param model:
-    :param module:
-    :param sess:
-    :param data_pars:
-    :param out_pars:
-    :param kwarg:
     :return:
     """
     return module.predict(model, sess, data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars, **kwarg)
@@ -225,11 +217,11 @@ def load(load_pars, **kwarg):
     """
        Load model/session from files
     :param folder_name:
-    :param model_type:
-    :param filename:
-    :param kwarg:
     :return:
     """
+    from mlmodels.util import (load_pkl, load_gluon, load_keras
+                               load_tch, load_tf)
+
     path = load_pars['path']
     model_type = load_pars['model_type']
 
@@ -253,12 +245,11 @@ def save(model, session, save_pars , **kwarg):
     """
        Save model/session on disk
     (path, modelname="model_default", model_type="tf",  model_session=None, ** kwarg)
-    :param folder_name:
-    :param modelname:
-    :param model_session:
-    :param kwarg:
     :return:
     """
+    from mlmodels.util import (save_pkl, save_gluon, save_keras
+                               save_tch, save_tf)
+
     d = save_pars
     folder_name = d['path']
     model_type  = d['model_type']
@@ -396,7 +387,7 @@ def config_generate_template(template_type=None, to_path="ztest/new_model/"):
     shutil.copytree(os_root+"/template/", to_path)
 
 
-def model_list(folder=None) :
+def config_model_list(folder=None) :
   # Get all the model.py into folder  
   folder = os_package_root_path() if folder is None else folder
   # print(folder)
@@ -460,7 +451,7 @@ def main():
     print(arg.do)
 
     if arg.do == "model_list"  :  #list all models in the repo
-       l = model_list( arg.folder )
+       l = config_model_list( arg.folder )
                     
                                  
     if arg.do == "testall"  :
