@@ -6,14 +6,15 @@ from collections import Counter, OrderedDict
 
 import numpy as np
 import pandas as pd
-import scipy as sci
-import sklearn as sk
+# import scipy as sci
+# import sklearn as sk
+
 ####################################################################################################
 import tensorflow as tf
 import torch as torch
 
-import autogluon
-import gluonts
+# import autogluon
+# import gluonts
 ####################################################################################################
 import mlmodels
 
@@ -76,7 +77,7 @@ def model_get_list(folder=None, block_list=[]):
   NO_LIST = [  "__init__.py", "util", "preprocess" ]
   NO_LIST = NO_LIST + block_list
 
-
+  list_select = []
   for t in module_names :
       t = t.replace(folder, "").replace("\\", ".")
 
@@ -86,7 +87,8 @@ def model_get_list(folder=None, block_list=[]):
 
       if not flag  :
        list_select.append( t )
- 
+
+  return list_select
 
 
 def test_model_structure():
@@ -157,6 +159,7 @@ def cli_load_arguments(config_file= None):
     """
         Load CLI input, load config.toml , overwrite config.toml by CLI Input
     """
+    import argparse
     from util import load_config
     if config_file is None  :
       cur_path = os.path.dirname(os.path.realpath(__file__))
