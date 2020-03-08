@@ -13,11 +13,27 @@ jobs:
 
     steps:
     - uses: actions/checkout@v1
+
+
+
+    - name: Cache pipenv virtualenv
+      id: cache-pipenv
+      uses: actions/cache@v1
+      with:
+        path: /opt/hostedtoolcache/Python/
+        key: ${{ runner.os }}-pipenv-${{ hashFiles('**/requirements.txt') }}
+
+
+
    
     - name: Set up Python 3.6.*
       uses: actions/setup-python@v1
       with:
         python-version: 3.6.*
+
+
+
+
       
     - name: Install pipenv
       uses: dschep/install-pipenv-action@v1
@@ -34,12 +50,6 @@ jobs:
    
 
 
-    - name: Cache pipenv virtualenv
-      id: cache-pipenv
-      uses: actions/cache@v1
-      with:
-        path: /opt/hostedtoolcache/Python/
-        key: ${{ runner.os }}-pipenv-${{ hashFiles('**/requirements.txt') }}
 
           
 
