@@ -18,50 +18,17 @@ models.py   #### Generic Interface
    predict(model, module, session, data_pars, out_pars)
    save()
    load()
-
-
-Example of custom model : model_tf/mymodels.py  : Allows to de-couple with Wrapper
-  Class Model()  : Model definition
-  fit(model, data_pars )               :  Fit wrapper
-  predict(model, session, data_pars)   :
-  stats(model)
-  save(model, session)
-  load(folder, load_pars)
-  
-  
+ 
 
 ####################################################################################################
 ######### Code sample  #############################################################################
-from mlmodels.models import module_load, data_loader, create_model, fit, predict, stats
-
-model_pars = { "learning_rate": 0.001, "num_layers": 1,
-                  "size": ncol_input, "size_layer": 128, "output_size": ncol_output, "timestep": 4,  
-                  "epoch": 2,}
-data_pars = {}
-
-module = models.module_load( model_uri="model_tf.1_lstm.py" )  #Load file definition
-model =  models.model_create(module, model_pars)    # Create Model instance
-sess =   models.fit(model, module, data_pars)       # fit the model
-dict_stats = models.metrics( model, sess, ["loss"])     # get stats
-
-model.save( "myfolder/", model, module, sess,)
-
-
-model = module.load(folder)    #Create Model instance
-module.predict(model, module, data_pars)     # predict pipeline
-
-
-
-#df = data_loader(data_pars)
-
-# module, model = module_load_full("model_tf.1_lstm.py", dict_pars= model_pars)  # Net
+https://github.com/arita37/mlmodels/blob/dev/README_model_list.md
 
 
 
 ######### Command line sample  #####################################################################
 #### generate config file
 python mlmodels/models.py  --do generate_config  --model_uri model_tf.1_lstm.py  --save_folder "c:\myconfig\" 
-
 
 #### Cusomt Directory Models
 python mlmodels/models.py --do test  --model_uri "D:\_devs\Python01\gitdev\mlmodels\mlmodels\model_tf\1_lstm.py"
@@ -70,16 +37,11 @@ python mlmodels/models.py --do test  --model_uri "D:\_devs\Python01\gitdev\mlmod
 ### RL model
 python  models.py  --model_uri model_tf.rl.4_policygradient  --do test
 
-
 ### TF DNN model
 python  models.py  --model_uri model_tf.1_lstm.py  --do test
 
-
 ## PyTorch models
 python  models.py  --model_uri model_tch.mlp.py  --do test
-
-
-
 
 
 """
@@ -447,7 +409,6 @@ def cli_load_arguments(config_file= None):
       config_file = os.path.join(cur_path, "template/models_config.json")
     # print(config_file)
 
-    
     p = argparse.ArgumentParser()
     def add(*w, **kw) :
        p.add_argument(*w, **kw)
@@ -462,13 +423,10 @@ def cli_load_arguments(config_file= None):
     add("--model_uri"   , default="model_tf/1_lstm.py" , help=".")
     add("--load_folder" , default="ztest/"             , help=".")
 
-
     ##### data pars
     add("--dataname"    , default="dataset/google.csv" , help=".")
 
-
     ##### compute pars
-
 
     ##### out pars
     add("--save_folder" , default="ztest/"             , help=".")
@@ -487,47 +445,47 @@ def main():
 
     if arg.do == "model_list"  :  #list all models in the repo
        l = config_model_list( arg.folder )
-                    
-                                 
+                                                     
     if arg.do == "testall"  :
         # test_all() # tot test all te modules inside model_tf
         test_all(folder=None)
-
                                  
     if arg.do == "test"  :
         test(arg.model_uri)  # '1_lstm'
         test_global(arg.model_uri)  # '1_lstm'
 
-
     if arg.do == "fit"  :
         model_p, data_p, compute_p, out_p  = config_get_pars(arg.config_file, arg.config_mode)
         
         module = module_load(arg.model_uri)  # '1_lstm.py
-        model  = model_create(module, model_p)   # Exact map JSON and paramters
+        model  = model_create(module, model_p, data_p, compute_p)   # Exact map JSON and paramters
 
         log("Fit")
-        sess = module.fit(model, data_pars=data_p, compute_pars= compute_p)
+        model, sess = module.fit(model, data_pars=data_p, compute_pars= compute_p, out_pars = out_p)
 
         log("Save")
-        save(f"{arg.save_folder}/{arg.model_uri}", arg.model_uri, sess )
+        save_pars = { "path" : f"{arg.save_folder}/{arg.model_uri}", "model_uri" : arg.model_uri }
+        save(save_pars, model, sess )
 
 
     if arg.do == "predict"  :
         model_p, data_p, compute_p, out_p  = config_get_pars(arg.config_file, arg.config_mode)
         # module = module_load(arg.modelname)  # '1_lstm'
-        module, model, session = load(arg.load_folder)
+        load_pars = { "path" : f"{arg.save_folder}/{arg.model_uri}", "model_uri" : arg.model_uri }
+
+        module = module_load( model_p[".model_uri"])  # '1_lstm.py
+        model, session = load(load_pars)
         module.predict(model, session, data_pars= data_p, compute_pars= compute_p, out_pars=out_p )
 
-
+        
     if arg.do == "generate_config"  :
         log( arg.save_folder)
         config_generate_json(arg.model_uri, to_path= arg.save_folder)
 
-
+        
     if arg.do == "generate_template"  :
         log( arg.save_folder)
         config_generate_template(arg.model_uri, to_path= arg.save_folder)
-
 
 
 
