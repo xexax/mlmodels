@@ -126,6 +126,7 @@ def env_conda_build(env_pars=None) :
    if env_pars is None :
      env_pars = { 'name' : "test" , 'python_version': '3.6.5'  }
 
+   p = env_pars
    cmd = f"conda create -n {p['name']}  python={p['python_version']}  -y"
    print(cmd)
    os.system(cmd)
@@ -135,12 +136,13 @@ def env_pip_requirement(env_pars=None) :
    if env_pars is None :
      env_pars = { 'name' : "test" , 'file_requirement': 'requirements.txt'  }
 
+   p = env_pars
    cmd = f"source activate {p['name']} "
    cmd = cmd + f"  && pip install -r  {p['file_requirement']}"
 
    print(cmd)
    os.system(cmd)
-   sleep(200)  
+
 
 
 def env_build(model_uri, env_pars):
@@ -157,7 +159,7 @@ def env_build(model_uri, env_pars):
 
 
   env_conda_build(env_pars=env_pars) 
-  sleep(30)  
+  sleep(60)
 
   env_pip_requirement(env_pars=env_pars) 
 

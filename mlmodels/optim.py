@@ -3,13 +3,16 @@
 Lightweight Functional interface to wrap Hyper-parameter Optimization
 ###### Model param search test
 python optim.py --do test
+
 ##### #for normal optimization search method
 python optim.py --do search --ntrials 1  --config_file optim_config.json --optim_method normal
 ###### for pruning method
 python optim.py --do search --ntrials 1  --config_file optim_config.json --optim_method prune
+
 ###### HyperParam standalone run
 python optim.py --model_uri model_tf.1_lstm.py  --do test
 python optim.py --model_uri model_tf.1_lstm.py  --do search
+
 ### Distributed
 https://optuna.readthedocs.io/en/latest/tutorial/distributed.html
 { 'distributed' : 1,
@@ -83,8 +86,8 @@ def optim_optuna(model_uri="model_tf.1_lstm.py",
 
     study = optuna.load_study(study_name='distributed-example', storage='sqlite:///example.db')
     study.optimize(objective, n_trials=100)
+    
     weight_decay = trial.suggest_loguniform('weight_decay', 1e-10, 1e-3)
-
     optimizer = trial.suggest_categorical('optimizer', ['MomentumSGD', 'Adam']) # Categorical parameter
     num_layers = trial.suggest_int('num_layers', 1, 3)      # Int parameter
     dropout_rate = trial.suggest_uniform('dropout_rate', 0.0, 1.0)      # Uniform parameter
@@ -96,6 +99,8 @@ def optim_optuna(model_uri="model_tf.1_lstm.py",
     log_path      = out_pars['log_path']
     ntrials       = compute_pars['ntrials']
     metric_target = compute_pars["metric_target"]
+    model_type    = model_pars['model_type']
+
 
     module = module_load(model_uri)
     log(module)
@@ -163,9 +168,9 @@ def optim_optuna(model_uri="model_tf.1_lstm.py",
 
 
     log("#### Saving     ###########################################################")
-    model_uri = model_uri.replace(".", "-") # this is the module name which contains .
-    save( model=model, session=sess, 
-          save_pars={'path': save_path, 'model_type': model_type, 'model_uri': model_uri} )
+    model_uri = model_uri.replace(".", "-")  
+    save_pars = {'path': save_path, 'model_type': model_type, 'model_uri': model_uri}
+    save( model=model, session=sess, save_pars= save())
 
 
     log("### Save Stats   ##########################################################")
@@ -182,21 +187,20 @@ def optim_optuna(model_uri="model_tf.1_lstm.py",
 
 
 
-
 ####################################################################################################
 def test_json(path_json="", config_mode="test"):
-    with open(path_json, encoding='utf-8') as config_f:
-                cfg = json.load(config_f)
-                cfg = cfg[config_mode]
 
+    cf = json.load(copen(path_json, encoding='utf-8'))
+    cf = cf[config_mode]
 
-    model_uri = cfg['model_pars']['model_uri']  # 'model_tf.1_lstm'
+    model_uri = cf['model_pars']['model_uri']  # 'model_tf.1_lstm'
+
     res = optim( model_uri,
-                hypermodel_pars = cfg['hypermodel_pars'],
-                model_pars      = cfg['model_pars'],
-                data_pars       = cfg['data_pars'],
-                compute_pars    = cfg['compute_pars'],
-                out_pars        = cfg['out_pars']
+                hypermodel_pars = cf['hypermodel_pars'],
+                model_pars      = cf['model_pars'],
+                data_pars       = cf['data_pars'],
+                compute_pars    = cf['compute_pars'],
+                out_pars        = cf['out_pars']
                 )
 
     return res
