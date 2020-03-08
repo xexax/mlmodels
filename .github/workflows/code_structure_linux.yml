@@ -15,32 +15,17 @@ jobs:
     - uses: actions/checkout@v1
 
 
-
-    - name: Cache pipenv virtualenv
-      id: cache-pipenv
-      uses: actions/cache@v1
-      with:
-        path: /opt/hostedtoolcache/Python/
-        key: ${{ runner.os }}-pipenv-${{ hashFiles('**/requirements.txt') }}
-
-
-
    
     - name: Set up Python 3.6.*
       uses: actions/setup-python@v1
       with:
         python-version: 3.6.*
 
-
-
-
       
     - name: Install pipenv
       uses: dschep/install-pipenv-action@v1
-<<<<<<< HEAD
-      
 
-      
+            
     - uses: actions/cache@v1
       id: cache
       with:
@@ -49,11 +34,6 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-pip-
    
-
-
-
-          
-=======
   
     - name: Cache pipenv virtualenv
       id: cache-pipenv
@@ -61,7 +41,11 @@ jobs:
       with:
         path: /opt/hostedtoolcache/Python/
         key: ${{ runner.os }}-venv-mlmodels-${{ hashFiles('**/requirements.txt') }}
->>>>>>> 76e7069845cd455c218381ec7e5dec97c5e29419
+
+
+
+
+
 
     - name: Install numpy
       if: steps.cache-pipenv.outputs.cache-hit != 'true'
