@@ -21,6 +21,7 @@ https://optuna.readthedocs.io/en/latest/tutorial/distributed.html
 https://optuna.readthedocs.io/en/stable/installation.html
 https://github.com/pfnet/optuna/blob/master/examples/tensorflow_estimator_simple.py
 https://github.com/pfnet/optuna/tree/master/examples
+
 """
 import argparse
 import json
@@ -28,14 +29,13 @@ import os
 import re
 
 import pandas as pd
-
 import optuna
+
 ####################################################################################################
 # from mlmodels import models
 from mlmodels.models import model_create, module_load, save
 from mlmodels.util import log, os_package_root_path
 
-#print(os_package_root_path())
 
 ####################################################################################################
 try :
@@ -44,7 +44,7 @@ try :
 except : pass
 
 
-
+VERBOSE = False
 
 
 
@@ -66,12 +66,6 @@ def optim(model_uri="model_tf.1_lstm.py",
                             model_pars, data_pars, compute_pars,
                             out_pars)
     return None
-
-
-
-
-
-
 
 
 
@@ -109,6 +103,7 @@ def optim_optuna(model_uri="model_tf.1_lstm.py",
     
     def objective(trial):
         log("check", module)
+        log("data_pars: ", data_pars)
 
         for t,p  in hypermodel_pars.items():
             #p = model_pars[t]
@@ -126,15 +121,12 @@ def optim_optuna(model_uri="model_tf.1_lstm.py",
             model_pars[t] = pres
 
         model = model_create(module, model_pars, data_pars, compute_pars)   # module.Model(**param_dict)
-        print(model)
-        # df = data_loader(data_pars)
+        if VERBOSE : log(model)
 
-        print("data_pars: ", data_pars)
         model, sess    = module.fit(model, data_pars=data_pars, compute_pars= compute_pars, out_pars=out_pars)
         metrics        = module.fit_metrics(model, sess, data_pars=data_pars, compute_pars= compute_pars, out_pars=out_pars)
 
-        del sess
-        del model
+        del sess, model
         try :
            module.reset_model()  # Reset Graph for TF
         except Exception as e :
@@ -162,7 +154,7 @@ def optim_optuna(model_uri="model_tf.1_lstm.py",
     log("Optim, finished", n=35)
     param_dict_best =  study.best_params
     # param_dict.update(module.config_get_pars(choice="test", )
-    ###############################################################################
+    ############################################################3#####################
 
 
     log("### Run Model with best   #################################################")
@@ -173,7 +165,7 @@ def optim_optuna(model_uri="model_tf.1_lstm.py",
     log("#### Saving     ###########################################################")
     model_uri = model_uri.replace(".", "-") # this is the module name which contains .
     save( model=model, session=sess, 
-          save_pars={'path': save_path, 'model_type': "model_tf", 'model_uri': model_uri} )
+          save_pars={'path': save_path, 'model_type': model_type, 'model_uri': model_uri} )
 
 
     log("### Save Stats   ##########################################################")
@@ -193,6 +185,7 @@ def optim_optuna(model_uri="model_tf.1_lstm.py",
 
 ####################################################################################################
 def test_json(path_json="", config_mode="test"):
+    VERBOSE = True
     with open(path_json, encoding='utf-8') as config_f:
                 cfg = json.load(config_f)
                 cfg = cfg[config_mode]
@@ -211,15 +204,19 @@ def test_json(path_json="", config_mode="test"):
 
 
 def test_fast(ntrials=2):
+    VERBOSE = True
     path_curr = os.getcwd()
 
-    data_path = os_package_root_path(__file__, sublevel=0, path_add='dataset/GOOG-year_small.csv')
+    data_path = 'dataset/GOOG-year_small.csv'
     path_save = f"{path_curr}/ztest/optuna_1lstm/" 
 
+
+    data_path = os_package_root_path(__file__, sublevel=0, path_add= data_path)
     os.makedirs(path_save, exist_ok=True)
     log("path_save", path_save, data_path)
     
 
+    ############ Params setup   #########################################################
     model_uri = 'model_tf.1_lstm'
 
     hypermodel_pars =  {
@@ -316,7 +313,6 @@ def cli_load_arguments(config_file= None):
 ####################################################################################################
 def main():
     arg = cli_load_arguments()
-    
     # import logging
     # logging.getLogger("tensorflow").setLevel(logging.ERROR)
 
@@ -348,6 +344,7 @@ def main():
 
 
 if __name__ == "__main__":
+    VERBOSE = True
     main()
 
 
