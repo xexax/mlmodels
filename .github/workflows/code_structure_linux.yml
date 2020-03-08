@@ -37,6 +37,7 @@ jobs:
       
     - name: Install pipenv
       uses: dschep/install-pipenv-action@v1
+<<<<<<< HEAD
       
 
       
@@ -52,6 +53,15 @@ jobs:
 
 
           
+=======
+  
+    - name: Cache pipenv virtualenv
+      id: cache-pipenv
+      uses: actions/cache@v1
+      with:
+        path: /opt/hostedtoolcache/Python/
+        key: ${{ runner.os }}-venv-mlmodels-${{ hashFiles('**/requirements.txt') }}
+>>>>>>> 76e7069845cd455c218381ec7e5dec97c5e29419
 
     - name: Install numpy
       if: steps.cache-pipenv.outputs.cache-hit != 'true'
@@ -60,7 +70,6 @@ jobs:
     - name: Install repo
       if: steps.cache-pipenv.outputs.cache-hit != 'true'
       run: pip install -e . -r requirements.txt
-
 
     - name: repo path
       run: python -c "import mlmodels,os ; print(mlmodels); print(os)"
