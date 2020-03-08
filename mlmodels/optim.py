@@ -185,7 +185,6 @@ def optim_optuna(model_uri="model_tf.1_lstm.py",
 
 ####################################################################################################
 def test_json(path_json="", config_mode="test"):
-    VERBOSE = True
     with open(path_json, encoding='utf-8') as config_f:
                 cfg = json.load(config_f)
                 cfg = cfg[config_mode]
@@ -204,7 +203,6 @@ def test_json(path_json="", config_mode="test"):
 
 
 def test_fast(ntrials=2):
-    VERBOSE = True
     path_curr = os.getcwd()
 
     data_path = 'dataset/GOOG-year_small.csv'
