@@ -4,7 +4,7 @@ name:  code_structure_linux
 on:
   push:
     branches: 
-      - dev
+      - work
  
 jobs:
   build:
