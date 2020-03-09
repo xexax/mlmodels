@@ -55,13 +55,8 @@ def get_params(choice="", data_path="dataset/", config_mode="test", **kw):
     if choice == "json":
         return _config_process(data_path, config_mode=config_mode)
 
-<<<<<<< HEAD
     if choice == "test01" :
         log("#### Path params   ###################################################")
-=======
-    if choice == "test01":
-        log("#### Path params   ################################################")
->>>>>>> e467160e1d93e641fab49d450e9ade4b6834a432
         data_path = os_package_root_path(__file__, sublevel=1, path_add=data_path)
         out_path = os.getcwd() + "/gluon_deepar/"
         os.makedirs(out_path, exist_ok=True)
