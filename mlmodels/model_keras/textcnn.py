@@ -337,16 +337,19 @@ def test(data_path="dataset/", pars_choice="json", config_mode="test"):
 
 
     log("#### Model init, fit   #############################################")
+    
+    session = None
     model = Model(model_pars, data_pars, compute_pars)
-    model = fit(model, data_pars, compute_pars, out_pars)
+    model, session = fit(model, data_pars, compute_pars, out_pars)
 
 
     log("#### save the trained model  #######################################")
-    save(model, out_pars["modelpath"])
+    save(model, session,  save_pars= out_pars)
 
 
     log("#### Predict   #####################################################")
-    ypred = predict(model, data_pars, compute_pars, out_pars)
+    data_pars["train"] = 0
+    ypred = predict(model, session, data_pars, compute_pars, out_pars)
 
 
     log("#### metrics   #####################################################")
