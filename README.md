@@ -101,16 +101,17 @@ https://github.com/arita37/mlmodels/actions
             __init__(model_pars, data_pars, compute_pars)            :   
                                   
       def fit(model, data_pars, model_pars, compute_pars, out_pars ) : Train the model
+      def fit_metric(model, data_pars, compute_pars, out_pars )         : Measure the results
       def predict(model, sess, data_pars, compute_pars, out_pars )   : Predict the results
-      def metric(ytrue, ypred, yproba, data_pars, compute_pars, out_pars )         : Measure the results
+
 
       def get_params(choice, data_path, config_mode)                                               : returnparameters of the model
       def get_dataset(data_pars)                                     : load dataset
       def test()                                                     : example running the model     
-      def test2()                                                    : example running the model in global settings  
+      def test_api()                                                 : example running the model in global settings  
 
-      def save(model, path)                                          : save the model
-      def load(path)                                                 : load the trained model
+      def save(model, session, save_pars)                            : save the model
+      def load(load_pars)                                            : load the trained model
 
 
 - *Infos* 
@@ -121,6 +122,7 @@ https://github.com/arita37/mlmodels/actions
      data_pars :     dict containing info on input data.
      compute_pars :  dict containing info on model compute.
      out_pars :      dict containing info on output folder.
+     save_pars/load_pars : dict for saving or loading a model
      ```
 
 #### 2. Write your code and create test() to test your code.  **
@@ -167,8 +169,20 @@ then for each staging, declare some specific parameters for model, dataset and a
 ```json
     {
         "test": {
+
+              "hypermodel_pars":   {
+             "learning_rate": {"type": "log_uniform", "init": 0.01,  "range" : [0.001, 0.1] },
+             "num_layers":    {"type": "int", "init": 2,  "range" :[2, 4] },
+             "size":    {"type": "int", "init": 6,  "range" :[6, 6] },
+             "output_size":    {"type": "int", "init": 6,  "range" : [6, 6] },
+
+             "size_layer":    {"type" : "categorical", "value": [128, 256 ] },
+             "timestep":      {"type" : "categorical", "value": [5] },
+             "epoch":         {"type" : "categorical", "value": [2] }
+           },
+
             "model_pars": {
-                "learning_rate": 0.001,
+                "learning_rate": 0.001,     
                 "num_layers": 1,
                 "size": 6,
                 "size_layer": 128,
@@ -206,13 +220,15 @@ then for each staging, declare some specific parameters for model, dataset and a
 #######################################################################################
 
 ## ③ CLI tools: package provide below tools
+https://github.com/arita37/mlmodels/blob/dev/README_usage.md
+
 ```
 - ml_models    :  mlmodels/models.py
 - ml_optim     :  mlmodels/optim.py
 - ml_test      :  mlmodels/ztest.py
 
 
-https://github.com/arita37/mlmodels/blob/dev/README_model_list.md
+
 
 
 ```
@@ -263,8 +279,12 @@ optim.py
 ####################################################################################
 ### ⑤ Code sample
 
-```python
 https://github.com/arita37/mlmodels/blob/dev/README_model_list.md
+
+https://github.com/arita37/mlmodels/blob/dev/README_usage.md
+
+```python
+
 
 
 ```
@@ -285,14 +305,6 @@ np_   :  input is numpy
 sk_   :  inout is related to sklearn (ie sklearn model), input is numpy array
 plot_
 
-_col_  :  name for colums
-_colcat_  :  name for category columns
-_colnum_  :  name for numerical columns (folat)
-_coltext_  : name for text data
-
-_stat_ : show statistics
-_df_  : dataframe
-_num_ : statistics
 
 col_ :  function name for column list related.
 ```
@@ -300,15 +312,10 @@ col_ :  function name for column list related.
 ### Argument Variables naming 
 ```
 df     :  variable name for dataframe
-colname  : for list of columns
-colexclude
-colcat : For category column
-colnum :  For numerical columns
-coldate : for date columns
-coltext : for raw text columns
+s
 ```
 
-###############################################################################
+#####################################################################################
 
 
 
