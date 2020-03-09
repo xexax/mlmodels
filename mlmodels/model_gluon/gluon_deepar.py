@@ -140,13 +140,13 @@ def test(data_path="dataset/", choice=""):
     print(module, model)
 
     # model=m.model    ### WE WORK WITH THE CLASS (not the attribute GLUON )
-    model = fit(model, module, data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)
+    model = fit(module, model, data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)
 
     log("#### save the trained model  ######################################")
     save(model, data_pars["modelpath"])
 
     log("#### Predict   ####################################################")
-    ypred = predict(model, module, data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)
+    ypred = predict(module, model, data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)
     print(ypred)
 
     log("#### metrics   ####################################################")

@@ -135,7 +135,7 @@ def main():
 
     
    ### Torch
-   f"python {path}/model_tch/nbeats.py",
+   f"python {path}/model_tch/03_nbeats.py",
 
 
    ###
