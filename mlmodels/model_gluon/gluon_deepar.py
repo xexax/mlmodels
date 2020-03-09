@@ -55,13 +55,8 @@ def get_params(choice="", data_path="dataset/", config_mode="test", **kw):
     if choice == "json":
         return _config_process(data_path, config_mode=config_mode)
 
-<<<<<<< HEAD
     if choice == "test01" :
         log("#### Path params   ###################################################")
-=======
-    if choice == "test01":
-        log("#### Path params   ################################################")
->>>>>>> e467160e1d93e641fab49d450e9ade4b6834a432
         data_path = os_package_root_path(__file__, sublevel=1, path_add=data_path)
         out_path = os.getcwd() + "/gluon_deepar/"
         os.makedirs(out_path, exist_ok=True)
@@ -145,13 +140,13 @@ def test(data_path="dataset/", choice=""):
     print(module, model)
 
     # model=m.model    ### WE WORK WITH THE CLASS (not the attribute GLUON )
-    model = fit(model, module, data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)
+    model = fit(module, model, data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)
 
     log("#### save the trained model  ######################################")
     save(model, data_pars["modelpath"])
 
     log("#### Predict   ####################################################")
-    ypred = predict(model, module, data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)
+    ypred = predict(module, model, data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)
     print(ypred)
 
     log("#### metrics   ####################################################")

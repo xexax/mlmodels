@@ -147,16 +147,15 @@ def test(data_path="dataset/", choice="test01"):
     log("#### Model init, fit   ###########################################")
     from mlmodels.models import module_load_full, fit, predict
     module, model = module_load_full("model_gluon.gluon_ffn", model_pars, data_pars, compute_pars)
-    print(module, model)
     #model=m.model    ### WE WORK WITH THE CLASS (not the attribute GLUON )
-    model=fit(model, module, data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)
+    model=fit(module, model, data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)
 
     log("#### save the trained model  ######################################")
     save(model, data_pars["modelpath"])
 
 
     log("#### Predict   ###################################################")
-    ypred = predict(model, module, data_pars=data_pars, out_pars=out_pars, compute_pars=compute_pars)
+    ypred = predict(module, model, data_pars=data_pars, out_pars=out_pars, compute_pars=compute_pars)
     print(ypred)
 
 
