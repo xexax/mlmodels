@@ -181,8 +181,7 @@ def save(model=None, session=None, save_pars={}):
 def load(load_pars={}):
     from mlmodels.util import load_keras
     print(load_pars)
-    model0 =  load_keras(load_pars['path'],
-                                            filename=load_pars['model_uri'])
+    model0 =  load_keras(load_pars['path'])
 
     model = Model()
     model.model = model0
@@ -359,8 +358,8 @@ def test(data_path="dataset/", pars_choice="json", config_mode="test"):
 
 
     log("#### Save/Load   ###################################################")
-    save(model, out_pars['modelpath'])
-    model2 = load(out_pars['modelpath'])
+    save(model, None, out_pars)
+    model2 = load(out_pars)
     #     ypred = predict(model2, data_pars, compute_pars, out_pars)
     #     metrics_val = metrics(model2, ypred, data_pars, compute_pars, out_pars)
     print(model2)
