@@ -184,31 +184,13 @@ def get_params(param_pars={}, **kw):
 
 ################################################################################################
 ########## Tests are normalized Do not Change ##################################################
-def test_module(model_uri="model_tf/1_lstm.py", data_path="dataset/", pars_choice="json", reset=True):
-    ###loading the command line arguments
-    #model_uri = "model_xxxx/yyyy.py"
-
-    log("#### Module init   #################################################")
-    from mlmodels.models import module_load
-    module = module_load(model_uri)
-    log(module)
-
-
-    log("#### Loading params   ##############################################")
-    param_pars = { "choice": pars_choice,  "data_path": data_path}
-    model_pars, data_pars, compute_pars, out_pars = module.get_params(param_pars)
-
-
-    log("#### Run module test   ##############################################")
-    from mlmodels.models import test_module as test_module_global
-    test_module_global(model_uri, model_pars, data_pars, compute_pars, out_pars)
-
+from mlmodels.util import test_module
 
 
 def test_api_global(model_uri="model_tf/1_lstm.py", data_path="dataset/", pars_choice="json", config_mode="test",
                     reset=True):
     ###loading the command line arguments
-    model_uri = "model_xxxx/yyyy.py"
+    # model_uri = "model_xxxx/yyyy.py"
 
     log("#### Loading params   ##############################################")
     param_pars = {"choice":pars_choice,  "data_path":data_path,  "config_mode": config_mode}
