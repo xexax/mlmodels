@@ -23,12 +23,22 @@ def log(*s, n=0, m=1):
 
 
 ####################################################################################################
+"""
 def os_package_root_path(add_path="",n=0):
   from pathlib import Path
   add_path = os.path.join(Path(__file__).parent.absolute(), add_path)
   # print("os_package_root_path,check", add_path)
   return add_path
+"""
 
+
+
+def os_module_path():
+  import  inspect
+  current_dir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+  parent_dir = os.path.dirname(current_dir)
+  # sys.path.insert(0, parent_dir)
+  return parent_dir
 
 
 
@@ -47,6 +57,7 @@ def os_package_root_path(filepath, sublevel=0, path_add=""):
 
 
 def os_file_current_path():
+  import inspect
   val = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
   # return current_dir + "/"
   # Path of current file
@@ -66,6 +77,36 @@ def log(*s, n=0,m=1):
 
 
 
+
+####################################################################################################
+def test_module(model_uri="model_tf/1_lstm.py", data_path="dataset/", pars_choice="json", reset=True):
+    ###loading the command line arguments
+    #model_uri = "model_xxxx/yyyy.py"
+
+    log("#### Module init   #################################################")
+    from mlmodels.models import module_load
+    module = module_load(model_uri)
+    log(module)
+
+
+    log("#### Loading params   ##############################################")
+    param_pars = { "choice": pars_choice,  "data_path": data_path}
+    model_pars, data_pars, compute_pars, out_pars = module.get_params(param_pars)
+
+
+    log("#### Run module test   ##############################################")
+    from mlmodels.models import test_module as test_module_global
+    test_module_global(model_uri, model_pars, data_pars, compute_pars, out_pars)
+
+
+
+
+
+
+
+
+
+####################################################################################################
 def load_config(args, config_file, config_mode, verbose=0):
     ##### Load file dict_pars as dict namespace #############################
     import json
