@@ -242,15 +242,9 @@ def test_api_global(data_path="dataset/", model_uri="model_tf/1_lstm.py", pars_c
     model_uri = "model_xxxx/yyyy.py"
 
     log("#### Loading params   ##############################################")
-    model_pars, data_pars, compute_pars, out_pars = get_params({ "choice": pars_choice,
-                                                                 "data_path": data_path,
-                                                                 "config_mode": config_mode,
-                                                                })
-    print(model_uri, model_pars, data_pars, compute_pars, out_pars)
-
-
-    log("#### Loading dataset   ####################################################")
-    dataset = get_dataset(data_pars)
+    param_pars = {"choice":pars_choice,  "data_path":data_path,  "config_mode": config_mode}
+    model_pars, data_pars, compute_pars, out_pars = get_params(param_pars)
+    log(model_uri, model_pars, data_pars, compute_pars, out_pars)
 
 
     log("############ Model test Global  ###########################################")
@@ -263,18 +257,16 @@ def test_api_global(data_path="dataset/", model_uri="model_tf/1_lstm.py", pars_c
 
 def test(data_path="dataset/", pars_choice="json", config_mode="test"):
     ### Local test
-
     log("#### Loading params   ##############################################")
-    model_pars, data_pars, compute_pars, out_pars = get_params({"choice":pars_choice,
-                                                                "data_path":data_path,
-                                                                "config_mode": config_mode})
+
+    param_pars = {"choice":pars_choice,  "data_path":data_path,  "config_mode": config_mode}
+    model_pars, data_pars, compute_pars, out_pars = get_params(param_pars)
 
     log("#### Loading dataset   #############################################")
     Xtuple = get_dataset(data_pars)
 
 
     log("#### Model init, fit   #############################################")
-    
     session = None
     model = Model(model_pars, data_pars, compute_pars)
     model, session = fit(model, data_pars, compute_pars, out_pars)

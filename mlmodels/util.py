@@ -23,12 +23,22 @@ def log(*s, n=0, m=1):
 
 
 ####################################################################################################
+"""
 def os_package_root_path(add_path="",n=0):
   from pathlib import Path
   add_path = os.path.join(Path(__file__).parent.absolute(), add_path)
   # print("os_package_root_path,check", add_path)
   return add_path
+"""
 
+
+
+def os_module_path():
+  import  inspect
+  current_dir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+  parent_dir = os.path.dirname(current_dir)
+  # sys.path.insert(0, parent_dir)
+  return parent_dir
 
 
 
@@ -47,6 +57,7 @@ def os_package_root_path(filepath, sublevel=0, path_add=""):
 
 
 def os_file_current_path():
+  import inspect
   val = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
   # return current_dir + "/"
   # Path of current file

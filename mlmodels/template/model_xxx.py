@@ -20,62 +20,28 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
+
 VERBOSE = False
+MODEL_URI = "model_XXXX/yyy.py"
 
 ####################################################################################################
-def os_module_path():
-  current_dir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
-  parent_dir = os.path.dirname(current_dir)
-  # sys.path.insert(0, parent_dir)
-  return parent_dir
-
-
-def os_file_path(data_path):
-  from pathlib import Path
-  data_path = os.path.join(Path(__file__).parent.parent.absolute(), data_path)
-  print(data_path)
-  return data_path
-
-
+######## Logs
+from mlmodels.util import os_package_root_path, log
+"""
 def os_package_root_path(filepath, sublevel=0, path_add=""):
-  """
-     get the module package root folder
-  """
-  from pathlib import Path
-  path = Path(filepath).parent
-  for i in range(1, sublevel + 1):
-    path = path.parent
-  
-  path = os.path.join(path.absolute(), path_add)
-  return path
-# print("check", os_package_root_path(__file__, sublevel=1) )
 
-
-def log(*s, n=0, m=1):
-  sspace = "#" * n
-  sjump = "\n" * m
-  print(sjump, sspace, s, sspace, flush=True)
-
-
-class to_namespace(object):
-  def __init__(self, adict):
-    self.__dict__.update(adict)
-
-  def get(self, key):
-    return self.__dict__.get(key)
-
-
+"""
 
 
 
 ####################################################################################################
 class Model:
-  def __init__(self, model_pars=None, data_pars=None
-               ):
+  def __init__(self, model_pars=None, data_pars=None, compute_pars=None  ):
     ### Model Structure        ################################
     self.model = None   #ex Keras model
     
     
+
 
 
 
@@ -109,7 +75,7 @@ def fit_metrics(model, data_pars={}, compute_pars={}, out_pars={},  **kw):
 
   
 
-def predict(model, sess=None, data_pars={}, out_pars={}, compute_pars={}, **kw):
+def predict(model, sess=None, data_pars={}, compute_pars={}, out_pars={},  **kw):
   ##### Get Data ###############################################
   Xpred, ypred = None, None
 
@@ -136,7 +102,7 @@ def reset_model():
 def save(model=None, session=None, save_pars={}):
     from mlmodels.util import save_tf
     print(save_pars)
-    save_tf(session, save_pars['path'])
+    save_tf(model, session, save_pars['path'])
      
 
 
@@ -207,6 +173,7 @@ def get_params(param_pars={}, **kw):
         model_pars   = {}
         compute_pars = {}
         out_pars     = {}
+        
         return model_pars, data_pars, compute_pars, out_pars
 
     else:
@@ -217,7 +184,7 @@ def get_params(param_pars={}, **kw):
 
 ################################################################################################
 ########## Tests are normalized Do not Change ##################################################
-def test_module(data_path="dataset/", model_uri="model_tf/1_lstm.py", pars_choice="json", reset=True):
+def test_module(model_uri="model_tf/1_lstm.py", data_path="dataset/", pars_choice="json", reset=True):
     ###loading the command line arguments
     #model_uri = "model_xxxx/yyyy.py"
 
@@ -228,7 +195,7 @@ def test_module(data_path="dataset/", model_uri="model_tf/1_lstm.py", pars_choic
 
 
     log("#### Loading params   ##############################################")
-    param_pars = { "choice": "pars_choice",  "data_path": data_path}
+    param_pars = { "choice": pars_choice,  "data_path": data_path}
     model_pars, data_pars, compute_pars, out_pars = module.get_params(param_pars)
 
 
@@ -238,24 +205,15 @@ def test_module(data_path="dataset/", model_uri="model_tf/1_lstm.py", pars_choic
 
 
 
-def test_api_global(data_path="dataset/", model_uri="model_tf/1_lstm.py", pars_choice="json", config_mode="test", reset=True):
+def test_api_global(model_uri="model_tf/1_lstm.py", data_path="dataset/", pars_choice="json", config_mode="test",
+                    reset=True):
     ###loading the command line arguments
     model_uri = "model_xxxx/yyyy.py"
 
     log("#### Loading params   ##############################################")
-    model_pars, data_pars, compute_pars, out_pars = get_params({ "choice": pars_choice,
-                                                                 "data_path": data_path,
-                                                                 "config_mode": config_mode,
-                                                                })
-    print(model_uri, model_pars, data_pars, compute_pars, out_pars)
-
-    # log("#### Loading params   ##############################################")
-    # from mlmodels.models import get_params as get_params_batch
-    # model_pars, data_pars, compute_pars, out_pars = get_params_batch(module, choice=pars_choice,
-    #                                                                data_path=data_path)
-
-    log("#### Loading dataset   #############################################")
-    dataset = get_dataset(data_pars)
+    param_pars = {"choice":pars_choice,  "data_path":data_path,  "config_mode": config_mode}
+    model_pars, data_pars, compute_pars, out_pars = get_params(param_pars)
+    log(model_uri, model_pars, data_pars, compute_pars, out_pars)
 
 
     log("############ Model test Global  ###########################################")
@@ -269,9 +227,9 @@ def test(data_path="dataset/", pars_choice="json", config_mode="test"):
     ### Local test
 
     log("#### Loading params   ##############################################")
-    model_pars, data_pars, compute_pars, out_pars = get_params({"choice":pars_choice,
-                                                                "data_path":data_path,
-                                                                "config_mode": config_mode})
+    param_pars = {"choice":pars_choice,  "data_path":data_path,  "config_mode": config_mode}
+    model_pars, data_pars, compute_pars, out_pars = get_params(param_pars)
+
 
     log("#### Loading dataset   #############################################")
     Xtuple = get_dataset(data_pars)
@@ -310,10 +268,20 @@ def test(data_path="dataset/", pars_choice="json", config_mode="test"):
 if __name__ == '__main__':
     VERBOSE = True
     test_path = os.getcwd() + "/mytest/"
-    
+
+
     ### Local
     test(pars_choice="json")
     test(pars_choice="test01")
 
+
     ### Global mlmodels
-    test_api_global(pars_choice="json", reset=True)
+    test_api_global(model_uri="model_tf/1_lstm.py", data_path="dataset/", pars_choice="json", config_mode="test")
+
+
+    ### module test
+    test_module(model_uri="model_tf/1_lstm.py", data_path="dataset/", pars_choice="json", reset=True)
+
+
+
+
