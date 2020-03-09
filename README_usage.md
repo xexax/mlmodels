@@ -98,15 +98,8 @@ ml_models --do
 
 
   ## --do predict  
-  --load_folder   mymodel_folder/
-    "testall"     :  test all modules inside model_tf
-    "test"        :  test a certain module inside model_tf
+  --load_folder   mymodelsave_folder/
 
-
-    "model_list"  :  #list all models in the repo          
-    "fit"         :  wrap fit generic m    ethod
-    "predict"     :  predict  using a pre-trained model and some data
-    "generate_config"  :  generate config file from code source
 
 
 ml_optim --do
@@ -115,8 +108,9 @@ ml_optim --do
     search    :  search for the best hyperparameters of a specific model
 
 
-ml_test
-  "search"    :  search for the best hyperparameters of a specific model
+ml_test  --do
+    all            :  test all suites
+    model_sructure : only model structure
 
 
 
