@@ -265,21 +265,21 @@ def test_api_global(data_path="dataset/", model_uri="model_tf/1_lstm.py", pars_c
 
 
 
-
-def test(data_path="dataset/", pars_choice="json"):
+def test(data_path="dataset/", pars_choice="json", config_mode="test"):
     ### Local test
 
     log("#### Loading params   ##############################################")
-    model_pars, data_pars, compute_pars, out_pars = get_params(choice=pars_choice,
-                                                               data_path=data_path)
+    model_pars, data_pars, compute_pars, out_pars = get_params({"choice":pars_choice,
+                                                                "data_path":data_path,
+                                                                "config_mode": config_mode})
 
     log("#### Loading dataset   #############################################")
     Xtuple = get_dataset(data_pars)
 
 
     log("#### Model init, fit   #############################################")
-    model = Model(model_pars, compute_pars)
-    model = fit(model, data_pars, model_pars, compute_pars, out_pars)
+    model = Model(model_pars, data_pars, compute_pars)
+    model = fit(model, data_pars, compute_pars, out_pars)
 
 
     log("#### save the trained model  #######################################")

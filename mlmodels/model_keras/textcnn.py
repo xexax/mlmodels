@@ -100,7 +100,7 @@ def log(*s, n=0, m=1):
 
 ####################################################################################################
 class Model:
-  def __init__(self, model_pars=None, data_pars=None
+  def __init__(self, model_pars=None, data_pars=None, compute_pars=None
                ):
     ### Model Structure        ################################
     maxlen = model_pars['maxlen']
@@ -108,9 +108,9 @@ class Model:
     embedding_dims = model_pars['embedding_dims']
 
     self.model = TextCNN(maxlen, max_features, embedding_dims).get_model()
-    self.model.compile(model_pars['engine'],  # adam 
-    	               model_pars['loss'], 
-    	               metrics= model_pars['metrics'])
+    self.model.compile(compute_pars['engine'],  # adam 
+    	               compute_pars['loss'], 
+    	               metrics= compute_pars['metrics'])
     
 
 
@@ -240,6 +240,7 @@ def get_params(param_pars={}, **kw):
     config_mode = pp['config_mode']
     data_path   = pp['data_path']
 
+
     if choice == "json":
        cf = json.load(open(data_path, mode='r'))
        cf = cf[config_mode]
@@ -248,12 +249,23 @@ def get_params(param_pars={}, **kw):
 
     if choice == "test01":
         log("#### Path params   ##########################################")
-        data_path, out_path, model_path = path_setup(out_folder="/ztest/", sublevel=1,
-                                                     data_path="dataset/")
-        data_pars    = {}
-        model_pars   = {}
-        compute_pars = {}
-        out_pars     = {}
+        data_path, out_path, model_path = path_setup(out_folder="/ztest/model_keras/textcnn/", 
+        	                                         sublevel=1,
+                                                     data_path="dataset/imdb.csv")
+
+        data_pars    = {"path" : data_path, "train": 1, "maxlen":400, "max_features": 10, }
+
+        model_pars   = {"maxlen":400, "max_features": 10, "embedding_dims":50,
+
+                       }
+        compute_pars = {"engine": "adam", "loss": "binary_crossentropy", "metrics": ["accuracy"] ,
+                        "batch_size": 32, "epochs":1
+                       }
+
+        out_pars     = {"path": out_path,  "model_path": model_path}
+
+
+
         return model_pars, data_pars, compute_pars, out_pars
 
     else:
@@ -301,7 +313,7 @@ def test_api_global(data_path="dataset/", model_uri="model_tf/1_lstm.py", pars_c
     # model_pars, data_pars, compute_pars, out_pars = get_params_batch(module, choice=pars_choice,
     #                                                                data_path=data_path)
 
-    log("#### Loading dataset   #############################################")
+    log("#### Loading dataset   ####################################################")
     dataset = get_dataset(data_pars)
 
 
@@ -313,20 +325,21 @@ def test_api_global(data_path="dataset/", model_uri="model_tf/1_lstm.py", pars_c
 
 
 
-def test(data_path="dataset/", pars_choice="json"):
+def test(data_path="dataset/", pars_choice="json", config_mode="test"):
     ### Local test
 
     log("#### Loading params   ##############################################")
-    model_pars, data_pars, compute_pars, out_pars = get_params(choice=pars_choice,
-                                                               data_path=data_path)
+    model_pars, data_pars, compute_pars, out_pars = get_params({"choice":pars_choice,
+                                                                "data_path":data_path,
+                                                                "config_mode": config_mode})
 
     log("#### Loading dataset   #############################################")
     Xtuple = get_dataset(data_pars)
 
 
     log("#### Model init, fit   #############################################")
-    model = Model(model_pars, compute_pars)
-    model = fit(model, data_pars, model_pars, compute_pars, out_pars)
+    model = Model(model_pars, data_pars, compute_pars)
+    model = fit(model, data_pars, compute_pars, out_pars)
 
 
     log("#### save the trained model  #######################################")
@@ -359,8 +372,8 @@ if __name__ == '__main__':
     test_path = os.getcwd() + "/mytest/"
     
     ### Local
-    test(pars_choice="json")
+    # test(pars_choice="json")
     test(pars_choice="test01")
 
     ### Global mlmodels
-    test_api_global(pars_choice="json", reset=True)
+    # test_api_global(pars_choice="json", reset=True)
