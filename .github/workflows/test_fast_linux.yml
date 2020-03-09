@@ -5,6 +5,7 @@ on:
   push:
     branches: 
       - dev
+      - hot_fix_bugs
  
 jobs:
   build:
