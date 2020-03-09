@@ -32,69 +32,11 @@ from keras.datasets import imdb
 #### Import EXISTING model and re-map to mlmodels
 from mlmodels.model_keras.raw.textcnn_.text_cnn import TextCNN
 
-####################################################################################################
-
-"""
-max_features = 5000
-maxlen = 400
-batch_size = 32
-embedding_dims = 50
-epochs = 10
-
-print('Loading data...')
-(x_train, y_train), (x_test, y_test) = imdb.load_data(num_words=max_features)
-print(len(x_train), 'train sequences')
-print(len(x_test), 'test sequences')
-
-print('Pad sequences (samples x time)...')
-x_train = sequence.pad_sequences(x_train, maxlen=maxlen)
-x_test = sequence.pad_sequences(x_test, maxlen=maxlen)
-print('x_train shape:', x_train.shape)
-print('x_test shape:', x_test.shape)
-
-print('Build model...')
-model = TextCNN(maxlen, max_features, embedding_dims).get_model()
-model.compile('adam', 'binary_crossentropy', metrics=['accuracy'])
-
-print('Train...')
-early_stopping = EarlyStopping(monitor='val_acc', patience=3, mode='max')
-model.fit(x_train, y_train,
-          batch_size=batch_size,
-          epochs=epochs,
-          callbacks=[early_stopping],
-          validation_data=(x_test, y_test))
-
-print('Test...')
-result = model.predict(x_test)
-"""
-
 
 ####################################################################################################
-def os_file_path(data_path):
-  from pathlib import Path
-  data_path = os.path.join(Path(__file__).parent.parent.absolute(), data_path)
-  print(data_path)
-  return data_path
+######## Logs
+from mlmodels.util import os_package_root_path, log
 
-
-def os_package_root_path(filepath, sublevel=0, path_add=""):
-  """
-     get the module package root folder
-  """
-  from pathlib import Path
-  path = Path(filepath).parent
-  for i in range(1, sublevel + 1):
-    path = path.parent
-  
-  path = os.path.join(path.absolute(), path_add)
-  return path
-# print("check", os_package_root_path(__file__, sublevel=1) )
-
-
-def log(*s, n=0, m=1):
-  sspace = "#" * n
-  sjump = "\n" * m
-  print(sjump, sspace, s, sspace, flush=True)
 
 
 
@@ -215,8 +157,9 @@ def get_dataset(data_pars=None, **kw):
 
 
   else :
-    Xtest, ytest = None, None
-    return Xtest, ytest 
+     (Xtrain, ytrain), (Xtest, ytest) = imdb.load_data(num_words=max_features)
+
+     return Xtest, ytest 
 
 
 
@@ -263,8 +206,6 @@ def get_params(param_pars={}, **kw):
 
         out_pars     = {"path": out_path,  "model_path": model_path}
 
-
-
         return model_pars, data_pars, compute_pars, out_pars
 
     else:
@@ -307,10 +248,6 @@ def test_api_global(data_path="dataset/", model_uri="model_tf/1_lstm.py", pars_c
                                                                 })
     print(model_uri, model_pars, data_pars, compute_pars, out_pars)
 
-    # log("#### Loading params   ##############################################")
-    # from mlmodels.models import get_params as get_params_batch
-    # model_pars, data_pars, compute_pars, out_pars = get_params_batch(module, choice=pars_choice,
-    #                                                                data_path=data_path)
 
     log("#### Loading dataset   ####################################################")
     dataset = get_dataset(data_pars)
@@ -379,3 +316,43 @@ if __name__ == '__main__':
 
     ### Global mlmodels
     # test_api_global(pars_choice="json", reset=True)
+
+
+
+
+
+
+"""
+max_features = 5000
+maxlen = 400
+batch_size = 32
+embedding_dims = 50
+epochs = 10
+
+print('Loading data...')
+(x_train, y_train), (x_test, y_test) = imdb.load_data(num_words=max_features)
+print(len(x_train), 'train sequences')
+print(len(x_test), 'test sequences')
+
+print('Pad sequences (samples x time)...')
+x_train = sequence.pad_sequences(x_train, maxlen=maxlen)
+x_test = sequence.pad_sequences(x_test, maxlen=maxlen)
+print('x_train shape:', x_train.shape)
+print('x_test shape:', x_test.shape)
+
+print('Build model...')
+model = TextCNN(maxlen, max_features, embedding_dims).get_model()
+model.compile('adam', 'binary_crossentropy', metrics=['accuracy'])
+
+print('Train...')
+early_stopping = EarlyStopping(monitor='val_acc', patience=3, mode='max')
+model.fit(x_train, y_train,
+          batch_size=batch_size,
+          epochs=epochs,
+          callbacks=[early_stopping],
+          validation_data=(x_test, y_test))
+
+print('Test...')
+result = model.predict(x_test)
+"""
+
