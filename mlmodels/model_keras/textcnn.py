@@ -158,12 +158,13 @@ def get_dataset(data_pars=None, **kw):
 
   else :
      (Xtrain, ytrain), (Xtest, ytest) = imdb.load_data(num_words=max_features)
-
+     Xtest = sequence.pad_sequences(Xtest, maxlen=maxlen)
      return Xtest, ytest 
 
 
 
 def path_setup(out_folder="ztest", sublevel=1, data_path="dataset/"):
+	### Local path setup
     data_path = os_package_root_path(__file__, sublevel=sublevel, path_add=data_path)
     out_path = os.getcwd() + "/" + out_folder
     os.makedirs(out_path, exist_ok=True)
@@ -215,24 +216,11 @@ def get_params(param_pars={}, **kw):
 
 
 ################################################################################################
-########## Tests are normalized Do not Change ##################################################
-from mlmodels.models import test_module, test_api
-####    test_module(model_uri="model_xxxx/yyyy.py", param_pars=None):  
-
-
-
-from mlmodels.models import test_api
-####    test_api(model_uri="model_xxxx/yyyy.py", param_pars=None):
-
-
-
-
-
-
+########## Tests are  ##################################################
 def test(data_path="dataset/", pars_choice="json", config_mode="test"):
     ### Local test
-    log("#### Loading params   ##############################################")
 
+    log("#### Loading params   ##############################################")
     param_pars = {"choice":pars_choice,  "data_path":data_path,  "config_mode": config_mode}
     model_pars, data_pars, compute_pars, out_pars = get_params(param_pars)
 
@@ -276,12 +264,29 @@ if __name__ == '__main__':
     VERBOSE = True
     test_path = os.getcwd() + "/mytest/"
     
-    ### Local
-    # test(pars_choice="json")
+    ### Local fixed params
     test(pars_choice="test01")
 
-    ### Global mlmodels
-    # test_api_global(pars_choice="json", reset=True)
+
+    ### Local json file
+    # test(pars_choice="json")
+
+
+    ####    test_module(model_uri="model_xxxx/yyyy.py", param_pars=None)
+    from mlmodels.models import test_module
+    param_pars = {'choice': "test01", 'config_mode' : 'test', 'data_path' : '/dataset/' }
+    test_module(module_uri = MODEL_URI, param_pars= param_pars)
+
+    ##### get of get_params
+    # choice      = pp['choice']
+    # config_mode = pp['config_mode']
+    # data_path   = pp['data_path']
+
+
+    ####    test_api(model_uri="model_xxxx/yyyy.py", param_pars=None)
+    from mlmodels.models import test_api
+    param_pars = {'choice': "test01", 'config_mode' : 'test', 'data_path' : '/dataset/' }
+    test_api(module_uri = MODEL_URI, param_pars= param_pars)
 
 
 
