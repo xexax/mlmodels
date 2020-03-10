@@ -111,15 +111,11 @@ def optim_optuna(model_uri="model_tf.1_lstm.py",
     module = module_load(model_uri)
     log(module)
 
-    
     def objective(trial):
-        log("check", module)
-        log("data_pars: ", data_pars)
-
+        log("check", module, data_pars)
         for t,p  in hypermodel_pars.items():
-            #p = model_pars[t]
+            # type, init, range[0,1]
             x = p['type']
-  
             if   x=='log_uniform':       pres = trial.suggest_loguniform(t,p['range'][0], p['range'][1])
             elif x=='int':               pres = trial.suggest_int(t,p['range'][0], p['range'][1])
             elif x=='categorical':       pres = trial.suggest_categorical(t,p['value'])

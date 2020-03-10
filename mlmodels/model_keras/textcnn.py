@@ -36,6 +36,8 @@ from mlmodels.model_keras.raw.textcnn_.text_cnn import TextCNN
 
 VERBOSE = False
 
+MODEL_URI =  os.path.dirname(os.path.abspath( __file__ ) ).split("\\")[-1] + "." + os.path.basename(__file__).replace(".py", "")
+
 
 
 ####################################################################################################
@@ -218,7 +220,7 @@ def get_params(param_pars={}, **kw):
 
 
 ################################################################################################
-########## Tests are  ##################################################
+########## Tests are  ##########################################################################
 def test(data_path="dataset/", pars_choice="json", config_mode="test"):
     ### Local test
 
@@ -277,7 +279,7 @@ if __name__ == '__main__':
     ####    test_module(model_uri="model_xxxx/yyyy.py", param_pars=None)
     from mlmodels.models import test_module
     param_pars = {'choice': "test01", 'config_mode' : 'test', 'data_path' : '/dataset/' }
-    test_module(module_uri = MODEL_URI, param_pars= param_pars)
+    test_module(model_uri = MODEL_URI, param_pars= param_pars)
 
     ##### get of get_params
     # choice      = pp['choice']
@@ -288,7 +290,7 @@ if __name__ == '__main__':
     ####    test_api(model_uri="model_xxxx/yyyy.py", param_pars=None)
     from mlmodels.models import test_api
     param_pars = {'choice': "test01", 'config_mode' : 'test', 'data_path' : '/dataset/' }
-    test_api(module_uri = MODEL_URI, param_pars= param_pars)
+    test_api(model_uri = MODEL_URI, param_pars= param_pars)
 
 
 

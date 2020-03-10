@@ -200,7 +200,7 @@ def test2(data_path="dataset/", out_path="keras/keras.png", reset=True):
     module, model = module_load_full(model_uri, model_pars)
     print(module, model)
 
-    model=fit(model, None, data_pars, model_pars, compute_pars)
+    model= fit(model, None, data_pars, model_pars, compute_pars)
 
 
     log("#### Predict   ###################################################")

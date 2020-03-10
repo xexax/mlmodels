@@ -273,7 +273,7 @@ def test2(data_path="dataset/milk.csv", out_path="n_beats_test{}.png", reset=Tru
     print(module, model)
 
     log("############ Model fit   ##################################")
-    model, sess = fit(model, module, data_pars=data_pars, out_pars=out_pars, compute_pars={})
+    model, sess = fit(model, module, data_pars=data_pars, compute_pars={}, out_pars=out_pars)
     print("fit success", sess)
 
     log("############ Prediction  ##################################")

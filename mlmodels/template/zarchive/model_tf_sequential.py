@@ -279,7 +279,7 @@ def test(data_path="dataset/GOOG-year.csv", out_path="", reset=True):
   print(module, model)
   
   log("############ Model fit   ##################################")
-  sess = fit(model, module, data_pars=data_pars, out_pars=out_pars, compute_pars={})
+  sess = fit(model, module, data_pars=data_pars, compute_pars={}, out_pars=out_pars)
   print("fit success", sess)
   
   log("############ Prediction##########################")

@@ -147,9 +147,9 @@ def fit(module, model, sess=None, data_pars=None, compute_pars=None, out_pars=No
     :type model: object
     """
 
-    module, model = module_load_full(model_uri, model_pars, data_pars, compute_pars)
-    sess=None
-    return module.fit(model, sess, data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars, **kwarg)
+    #module, model = module_load_full(model_uri, model_pars, data_pars, compute_pars)
+    #sess=None
+    return module.fit(model, data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars, **kwarg)
 
 
 def predict(module, model, sess=None, data_pars=None, compute_pars=None, out_pars=None, **kwarg):
@@ -157,8 +157,8 @@ def predict(module, model, sess=None, data_pars=None, compute_pars=None, out_par
        predict  using a pre-trained model and some data
     :return:
     """
-    module      = module_load(model_uri)
-    #model,sess  = load(model_pars)
+    # module      = module_load(model_uri)
+    # model,sess  = load(model_pars)
 
     return module.predict(model, sess, data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars, **kwarg)
 
@@ -263,8 +263,7 @@ def test_api(model_uri="model_xxxx/yyyy.py", param_pars=None):
 
     log("############ Prediction############################################")
     ### Load model, and predict 
-    preds = predict_global(module, model, session, data_pars=data_pars,
-                           compute_pars=compute_pars, out_pars=out_pars)
+    preds = predict_global(module, model, session, data_pars=data_pars,  compute_pars=compute_pars, out_pars=out_pars)
     print(preds)
 
 
@@ -292,7 +291,7 @@ def test_module(model_uri="model_xxxx/yyyy.py", param_pars=None):
     log(model)
 
     log("#### Fit   ########################################################")
-    model, sess = module.fit(model, data_pars, model_pars, compute_pars, out_pars)
+    model, sess = module.fit(model, data_pars, compute_pars, out_pars)
 
     log("#### Predict   ####################################################")
     ypred = module.predict(model, sess, data_pars, compute_pars, out_pars)
