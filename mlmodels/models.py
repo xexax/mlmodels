@@ -302,14 +302,17 @@ def test_module(model_uri="model_xxxx/yyyy.py", param_pars=None):
     log("#### Get  metrics   ################################################")
     metrics_val = module.fit_metrics(model, data_pars, compute_pars, out_pars)
 
-    log("#### Save/Load   ###################################################")
+    log("#### Save   ########################################################")
     # save_pars = {}
     # load_pars = {}
     # module.save( save_pars,  model, sess)
+
+    log("#### Load   ########################################################")    
     # model2, sess2 = module.load(load_pars)
     #     ypred = predict(model2, data_pars, compute_pars, out_pars)
     #     metrics_val = metrics(model2, ypred, data_pars, compute_pars, out_pars)
     # print(model2)
+
 
 
 ####################################################################################################
@@ -407,8 +410,8 @@ def cli_load_arguments(config_file=None):
     add("--config_file", default=config_file, help="Params File")
     add("--config_mode", default="test", help="test/ prod /uat")
     add("--log_file", default="mlmodels_log.log", help="log.log")
-    add("--do", default="test", help="test")
-    add("--folder", default=None, help="test")
+    add("--do", default="test", help="do ")
+    add("--folder", default=None, help="folder ")
 
     ##### model pars
     add("--model_uri", default="model_tf/1_lstm.py", help=".")
