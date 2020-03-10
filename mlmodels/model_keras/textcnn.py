@@ -20,23 +20,21 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-VERBOSE = False
-
 
 from keras.callbacks import EarlyStopping
 from keras.preprocessing import sequence
 from keras.datasets import imdb
 ####################################################################################################
 
+######## Logs
+from mlmodels.util import os_package_root_path, log
+
+
 
 #### Import EXISTING model and re-map to mlmodels
 from mlmodels.model_keras.raw.textcnn_.text_cnn import TextCNN
 
-
-####################################################################################################
-######## Logs
-from mlmodels.util import os_package_root_path, log
-
+VERBOSE = False
 
 
 
@@ -50,6 +48,7 @@ class Model:
     embedding_dims = model_pars['embedding_dims']
 
     self.model = TextCNN(maxlen, max_features, embedding_dims).get_model()
+
     self.model.compile(compute_pars['engine'],  # adam 
     	               compute_pars['loss'], 
     	               metrics= compute_pars['metrics'])
@@ -80,7 +79,7 @@ def fit(model, data_pars={}, compute_pars={}, out_pars={},   **kw):
 
 def fit_metrics(model, data_pars={}, compute_pars={}, out_pars={},  **kw):
     """
-       Return metrics of the model when fitted.
+       Return metrics ofw the model when fitted.
     """
     ddict = {}
     
@@ -90,6 +89,7 @@ def fit_metrics(model, data_pars={}, compute_pars={}, out_pars={},  **kw):
 
 def predict(model, sess=None, data_pars={}, out_pars={}, compute_pars={}, **kw):
   ##### Get Data ###############################################
+  data_pars['train'] = False
   Xpred, ypred = get_dataset(data_pars)
 
   #### Do prediction
@@ -146,6 +146,8 @@ def get_dataset(data_pars=None, **kw):
     max_features = data_pars['max_features']
     maxlen = data_pars['maxlen']
 
+
+    ### Remove Keras download --> csv on disk
     (Xtrain, ytrain), (Xtest, ytest) = imdb.load_data(num_words=max_features)
 
     print('Pad sequences (samples x time)...')
@@ -158,12 +160,13 @@ def get_dataset(data_pars=None, **kw):
 
   else :
      (Xtrain, ytrain), (Xtest, ytest) = imdb.load_data(num_words=max_features)
-
+     Xtest = sequence.pad_sequences(Xtest, maxlen=maxlen)
      return Xtest, ytest 
 
 
 
 def path_setup(out_folder="ztest", sublevel=1, data_path="dataset/"):
+	### Local path setup
     data_path = os_package_root_path(__file__, sublevel=sublevel, path_add=data_path)
     out_path = os.getcwd() + "/" + out_folder
     os.makedirs(out_path, exist_ok=True)
@@ -215,50 +218,11 @@ def get_params(param_pars={}, **kw):
 
 
 ################################################################################################
-########## Tests are normalized Do not Change ##################################################
-def test_module(data_path="dataset/", model_uri="model_tf/1_lstm.py", pars_choice="json", reset=True):
-    ###loading the command line arguments
-    #model_uri = "model_xxxx/yyyy.py"
-
-    log("#### Module init   #################################################")
-    from mlmodels.models import module_load
-    module = module_load(model_uri)
-    log(module)
-
-
-    log("#### Loading params   ##############################################")
-    param_pars = { "choice": "pars_choice",  "data_path": data_path}
-    model_pars, data_pars, compute_pars, out_pars = module.get_params(param_pars)
-
-
-    log("#### Run module test   ##############################################")
-    from mlmodels.models import test_module as test_module_global
-    test_module_global(model_uri, model_pars, data_pars, compute_pars, out_pars)
-
-
-
-def test_api_global(data_path="dataset/", model_uri="model_tf/1_lstm.py", pars_choice="json", config_mode="test", reset=True):
-    ###loading the command line arguments
-    model_uri = "model_xxxx/yyyy.py"
-
-    log("#### Loading params   ##############################################")
-    param_pars = {"choice":pars_choice,  "data_path":data_path,  "config_mode": config_mode}
-    model_pars, data_pars, compute_pars, out_pars = get_params(param_pars)
-    log(model_uri, model_pars, data_pars, compute_pars, out_pars)
-
-
-    log("############ Model test Global  ###########################################")
-    from mlmodels.models import test_api
-    save_pars ={}
-    test_api(model_uri, model_pars, data_pars, compute_pars, out_pars, save_pars)
-
-
-
-
+########## Tests are  ##################################################
 def test(data_path="dataset/", pars_choice="json", config_mode="test"):
     ### Local test
-    log("#### Loading params   ##############################################")
 
+    log("#### Loading params   ##############################################")
     param_pars = {"choice":pars_choice,  "data_path":data_path,  "config_mode": config_mode}
     model_pars, data_pars, compute_pars, out_pars = get_params(param_pars)
 
@@ -302,12 +266,29 @@ if __name__ == '__main__':
     VERBOSE = True
     test_path = os.getcwd() + "/mytest/"
     
-    ### Local
-    # test(pars_choice="json")
+    ### Local fixed params
     test(pars_choice="test01")
 
-    ### Global mlmodels
-    # test_api_global(pars_choice="json", reset=True)
+
+    ### Local json file
+    # test(pars_choice="json")
+
+
+    ####    test_module(model_uri="model_xxxx/yyyy.py", param_pars=None)
+    from mlmodels.models import test_module
+    param_pars = {'choice': "test01", 'config_mode' : 'test', 'data_path' : '/dataset/' }
+    test_module(module_uri = MODEL_URI, param_pars= param_pars)
+
+    ##### get of get_params
+    # choice      = pp['choice']
+    # config_mode = pp['config_mode']
+    # data_path   = pp['data_path']
+
+
+    ####    test_api(model_uri="model_xxxx/yyyy.py", param_pars=None)
+    from mlmodels.models import test_api
+    param_pars = {'choice': "test01", 'config_mode' : 'test', 'data_path' : '/dataset/' }
+    test_api(module_uri = MODEL_URI, param_pars= param_pars)
 
 
 

@@ -25,7 +25,7 @@ VERBOSE = False
 MODEL_URI = "model_XXXX/yyy.py"
 
 ####################################################################################################
-######## Logs
+######## Logs, root path
 from mlmodels.util import os_package_root_path, log
 """
 def os_package_root_path(filepath, sublevel=0, path_add=""):
@@ -184,27 +184,6 @@ def get_params(param_pars={}, **kw):
 
 ################################################################################################
 ########## Tests are normalized Do not Change ##################################################
-from mlmodels.util import test_module
-
-
-def test_api_global(model_uri="model_tf/1_lstm.py", data_path="dataset/", pars_choice="json", config_mode="test",
-                    reset=True):
-    ###loading the command line arguments
-    # model_uri = "model_xxxx/yyyy.py"
-
-    log("#### Loading params   ##############################################")
-    param_pars = {"choice":pars_choice,  "data_path":data_path,  "config_mode": config_mode}
-    model_pars, data_pars, compute_pars, out_pars = get_params(param_pars)
-    log(model_uri, model_pars, data_pars, compute_pars, out_pars)
-
-
-    log("############ Model test Global  ###########################################")
-    from mlmodels.models import test_api
-    save_pars ={}
-    test_api(model_uri, model_pars, data_pars, compute_pars, out_pars, save_pars)
-
-
-
 def test(data_path="dataset/", pars_choice="json", config_mode="test"):
     ### Local test
 
@@ -224,7 +203,6 @@ def test(data_path="dataset/", pars_choice="json", config_mode="test"):
 
 
     log("#### save the trained model  #######################################")
-    save(model, session, out_pars)
 
 
     log("#### Predict   #####################################################")
@@ -240,31 +218,42 @@ def test(data_path="dataset/", pars_choice="json", config_mode="test"):
 
 
     log("#### Save/Load   ###################################################")
-    save(model, out_pars['modelpath'])
-    model2 = load(out_pars['modelpath'])
+    save(model, session, out_pars)
+    model2 = load( out_pars )
     #     ypred = predict(model2, data_pars, compute_pars, out_pars)
     #     metrics_val = metrics(model2, ypred, data_pars, compute_pars, out_pars)
     print(model2)
 
 
 
+
 if __name__ == '__main__':
     VERBOSE = True
     test_path = os.getcwd() + "/mytest/"
-
-
-    ### Local
-    test(pars_choice="json")
+    
+    ### Local fixed params
     test(pars_choice="test01")
 
 
-    ### Global mlmodels
-    test_api_global(model_uri="model_tf/1_lstm.py", data_path="dataset/", pars_choice="json", config_mode="test")
+    ### Local json file
+    # test(pars_choice="json")
 
 
-    ### module test
-    test_module(model_uri="model_tf/1_lstm.py", data_path="dataset/", pars_choice="json", reset=True)
+    ####    test_module(model_uri="model_xxxx/yyyy.py", param_pars=None)
+    from mlmodels.models import test_module
+    param_pars = {'choice': "test01", 'config_mode' : 'test', 'data_path' : '/dataset/' }
+    test_module(module_uri = MODEL_URI, param_pars= param_pars)
 
+    ##### get of get_params
+    # choice      = pp['choice']
+    # config_mode = pp['config_mode']
+    # data_path   = pp['data_path']
+
+
+    ####    test_api(model_uri="model_xxxx/yyyy.py", param_pars=None)
+    from mlmodels.models import test_api
+    param_pars = {'choice': "test01", 'config_mode' : 'test', 'data_path' : '/dataset/' }
+    test_api(module_uri = MODEL_URI, param_pars= param_pars)
 
 
 

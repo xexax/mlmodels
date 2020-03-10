@@ -23,9 +23,9 @@ import torch.nn.functional as F
 import torch.optim as optim
 from torch.autograd import Variable
 
-import mlflow
-from tensorboardX import SummaryWriter
-from torchvision import datasets, transforms
+#import mlflow
+# from tensorboardX import SummaryWriter
+# from torchvision import datasets, transforms
 
 ####################################################################################################
 
@@ -37,7 +37,7 @@ from torchvision import datasets, transforms
 
 ########Model definiton and Generic method #########################################################
 class Model(nn.Module):
-    def __init__(self):
+    def __init__(self, model_pars=NOne, data_pars=None, compute_pars=None):
         super(Model, self).__init__()
         self.conv1 = nn.Conv2d(1, 10, kernel_size=5)
         self.conv2 = nn.Conv2d(10, 20, kernel_size=5)
@@ -54,6 +54,7 @@ class Model(nn.Module):
         x = self.fc2(x)
         return F.log_softmax(x, dim=0)
 
+    """
     def log_weights(self, step):
         writer.add_histogram('weights/conv1/weight', model.conv1.weight.data, step)
         writer.add_histogram('weights/conv1/bias', model.conv1.bias.data, step)
@@ -63,10 +64,10 @@ class Model(nn.Module):
         writer.add_histogram('weights/fc1/bias', model.fc1.bias.data, step)
         writer.add_histogram('weights/fc2/weight', model.fc2.weight.data, step)
         writer.add_histogram('weights/fc2/bias', model.fc2.bias.data, step)
-
+    """
 
 ######## Generic methods ###########################################################################
-def get_pars(choice="test", **kwargs):
+def get_params(choice="test", **kwargs):
     # output parms sample
     # print(kwargs)
     if choice=="test":
@@ -155,14 +156,14 @@ def metrics(model, sess=None, data_params={}, compute_params={}) :
 
 
 def test(arg) :
-
+    a =1
     # some test runs
 
     # Create a SummaryWriter to write TensorBoard events locally
-    writer = tfboard_writer_create()
+    # writer = tfboard_writer_create()
 
     #### Add MLFlow args
-    mlflow_add(args)
+    # mlflow_add(args)
 
     check_data = get_dataset()
 
@@ -171,11 +172,11 @@ def test(arg) :
 
 
     # Upload the TensorBoard event logs as a run artifact
-    print("Uploading TensorBoard events as a run artifact...")
-    mlflow.log_artifacts(output_dir, artifact_path="events")
+    # print("Uploading TensorBoard events as a run artifact...")
+    # mlflow.log_artifacts(output_dir, artifact_path="events")
 
-    print("\nLaunch TensorBoard with:\n\ntensorboard --logdir=%s" %
-        os.path.join(mlflow.get_artifact_uri(), "events"))
+    #print("\nLaunch TensorBoard with:\n\ntensorboard --logdir=%s" %
+    #    os.path.join(mlflow.get_artifact_uri(), "events"))
 
 
 

@@ -146,6 +146,9 @@ def fit(module, model, sess=None, data_pars=None, compute_pars=None, out_pars=No
     Wrap fit generic method
     :type model: object
     """
+
+    module, model = module_load_full(model_uri, model_pars, data_pars, compute_pars)
+    sess=None
     return module.fit(model, sess, data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars, **kwarg)
 
 
@@ -154,11 +157,18 @@ def predict(module, model, sess=None, data_pars=None, compute_pars=None, out_par
        predict  using a pre-trained model and some data
     :return:
     """
+    module      = module_load(model_uri)
+    #model,sess  = load(model_pars)
+
     return module.predict(model, sess, data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars, **kwarg)
 
 
 def fit_metrics(module, model, sess=None, data_pars=None, compute_pars=None, out_pars=None, **kwarg):
     return module.fit_metrics(model, sess, data_pars, compute_pars, out_pars, **kwarg)
+
+
+def get_params(module, params_pars, **kwarg):
+    return module.get_params(params_pars, **kwarg)
 
 
 def metrics(module, model, sess=None, data_pars=None, compute_pars=None, out_pars=None, **kwarg):
@@ -220,34 +230,52 @@ def test_global(modelname):
         print("Failed", e)
 
 
-def test_api(model_uri, model_pars, data_pars, compute_pars, out_pars, save_pars=None):
+def test_api(model_uri="model_xxxx/yyyy.py", param_pars=None):
     log("############ Model preparation   ##################################")
     from mlmodels.models import module_load_full
     from mlmodels.models import fit as fit_global
     from mlmodels.models import predict as predict_global
     from mlmodels.models import save as save_global, load as load_global
 
+
+    log("#### Module init   ############################################")
+    from mlmodels.models import module_load
+    module = module_load(model_uri)
+    log(module)
+
+
+    log("#### Loading params   ##############################################")
+    model_pars, data_pars, compute_pars, out_pars = get_params(module, param_pars)
+
+
+    log("#### Model init   ############################################")
+    session = None
+    from mlmodels.models import model_create
+    model = model_create(module, model_pars, data_pars, compute_pars)
+
     module, model = module_load_full(model_uri, model_pars, data_pars, compute_pars)
-    print(module, model)
+
 
     log("############ Model fit   ##########################################")
-    model, sess = fit_global(module, model, data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)
+    model, sess = fit_global(module, model, sess=None, data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)
     print("fit success", sess)
 
+
     log("############ Prediction############################################")
-    preds = predict_global(module, model, sess, data_pars=data_pars,
+    ### Load model, and predict 
+    preds = predict_global(module, model, session, data_pars=data_pars,
                            compute_pars=compute_pars, out_pars=out_pars)
     print(preds)
 
+
     log("############ Save/ Load ############################################")
     # save_global( save_pars, model, sess)
-
     # load_global(save_pars)
 
 
-def test_module(model_uri, model_pars, data_pars, compute_pars, out_pars, save_pars=None):
-    ###loading the command line arguments
-    # model_uri = "model_xxxx/yyyy.py"
+
+def test_module(model_uri="model_xxxx/yyyy.py", param_pars=None):
+    # Using local method only
 
     log("#### Module init   ############################################")
     from mlmodels.models import module_load
@@ -255,12 +283,12 @@ def test_module(model_uri, model_pars, data_pars, compute_pars, out_pars, save_p
     log(module)
 
     log("#### Loading params   ##############################################")
-    # model_pars, data_pars, compute_pars, out_pars = module.get_params(choice=pars_choice,
-    #                                                                  data_path=data_path)
+    #param_pars = {"choice":pars_choice,  "data_path":data_path,  "config_mode": config_mode}
+    model_pars, data_pars, compute_pars, out_pars = module.get_params(param_pars)
+
 
     log("#### Model init   ############################################")
-    from mlmodels.models import model_create
-    model = model_create(module, model_pars)
+    model = module.Model(model_pars, data_pars, compute_pars)
     log(model)
 
     log("#### Fit   ########################################################")
@@ -273,14 +301,17 @@ def test_module(model_uri, model_pars, data_pars, compute_pars, out_pars, save_p
     log("#### Get  metrics   ################################################")
     metrics_val = module.fit_metrics(model, data_pars, compute_pars, out_pars)
 
-    log("#### Save/Load   ###################################################")
+    log("#### Save   ########################################################")
     # save_pars = {}
     # load_pars = {}
     # module.save( save_pars,  model, sess)
+
+    log("#### Load   ########################################################")    
     # model2, sess2 = module.load(load_pars)
     #     ypred = predict(model2, data_pars, compute_pars, out_pars)
     #     metrics_val = metrics(model2, ypred, data_pars, compute_pars, out_pars)
     # print(model2)
+
 
 
 ####################################################################################################
@@ -378,8 +409,8 @@ def cli_load_arguments(config_file=None):
     add("--config_file", default=config_file, help="Params File")
     add("--config_mode", default="test", help="test/ prod /uat")
     add("--log_file", default="mlmodels_log.log", help="log.log")
-    add("--do", default="test", help="test")
-    add("--folder", default=None, help="test")
+    add("--do", default="test", help="do ")
+    add("--folder", default=None, help="folder ")
 
     ##### model pars
     add("--model_uri", default="model_tf/1_lstm.py", help=".")

@@ -1,23 +1,28 @@
 
 
-from transformers import GPT2Tokenizer, GPT2LMHeadModel
-from pplm.pplm_classification_head import ClassificationHead
+import os
+
 
 from nltk.tokenize.treebank import TreebankWordDetokenizer
-from pplm.run_pplm import run_pplm_example
-from pplm.run_pplm_discrim_train import train_discriminator as test_case_1
+
+
+
+from transformers import GPT2Tokenizer, GPT2LMHeadModel
+
+
+
+from mlmodels.model_tch.pplm.pplm_classification_head import ClassificationHead
+
+from mlmodels.model_tch.pplm.run_pplm import run_pplm_example
+from mlmodels.model_tch.pplm.run_pplm_discrim_train import train_discriminator as test_case_1
+
+
+
 
 
 VERBOSE = False
 
 ####################################################################################################
-def os_module_path():
-  current_dir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
-  parent_dir = os.path.dirname(current_dir)
-  # sys.path.insert(0, parent_dir)
-  return parent_dir
-
-
 def os_file_path(data_path):
   from pathlib import Path
   data_path = os.path.join(Path(__file__).parent.parent.absolute(), data_path)
@@ -108,7 +113,7 @@ class Model:
 
 
 
-def fit(model, data_pars={}, compute_pars={}, out_pars={}, out_pars={},  **kw):
+def fit(model, data_pars={}, compute_pars={}, out_pars={},   **kw):
   """
 
   :param model:    Class model
@@ -170,6 +175,7 @@ def get_dataset(data_pars=None, **kw):
 
 
 def get_params(choice="", data_path="dataset/", config_mode="test", **kw):
+    import json
     if choice == "json":
         with open(data_path, encoding='utf-8') as config_f:
             config = json.load(config_f)
@@ -193,7 +199,7 @@ def get_params(choice="", data_path="dataset/", config_mode="test", **kw):
 
 
 
-        
+
 #################################################################################        
 #################################################################################
 if __name__ == '__main__':

@@ -4,10 +4,18 @@
 
 ### List of potential models
 
+
+
+https://github.com/graknlabs/kglib#knowledge-graph-tasks
+
+
 https://github.com/AnubhavGupta3377/Text-Classification-Models-Pytorch/tree/master/Model_CharCNN
 
 
 https://github.com/chaitjo/character-level-cnn
+
+
+https://github.com/benedekrozemberczki/awesome-graph-classification#deep-learning
 
 
 https://gluon-nlp.mxnet.io/model_zoo/word_embeddings/index.html
