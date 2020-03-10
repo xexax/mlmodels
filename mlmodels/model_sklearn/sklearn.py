@@ -64,7 +64,6 @@ class Model(object):
 def fit(model, data_pars={}, compute_pars={}, out_pars={}, **kw):
     """
     """
-
     sess = None  # Session type for compute
     Xtrain, ytrain, Xtest,  ytest = get_dataset(data_pars)
     model.model.fit(Xtrain, ytrain)
@@ -149,7 +148,7 @@ def get_dataset(data_pars=None, **kw):
 
     else:
         Xtest, ytest = None, None
-        return None, NOne, Xtest, ytest
+        return None, None, Xtest, ytest
 
 
 def path_setup(out_folder="ztest", sublevel=1, data_path="dataset/"):
