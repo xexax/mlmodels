@@ -20,23 +20,21 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-VERBOSE = False
-
 
 from keras.callbacks import EarlyStopping
 from keras.preprocessing import sequence
 from keras.datasets import imdb
 ####################################################################################################
 
+######## Logs
+from mlmodels.util import os_package_root_path, log
+
+
 
 #### Import EXISTING model and re-map to mlmodels
 from mlmodels.model_keras.raw.textcnn_.text_cnn import TextCNN
 
-
-####################################################################################################
-######## Logs
-from mlmodels.util import os_package_root_path, log
-
+VERBOSE = False
 
 
 
@@ -50,6 +48,7 @@ class Model:
     embedding_dims = model_pars['embedding_dims']
 
     self.model = TextCNN(maxlen, max_features, embedding_dims).get_model()
+
     self.model.compile(compute_pars['engine'],  # adam 
     	               compute_pars['loss'], 
     	               metrics= compute_pars['metrics'])
@@ -90,6 +89,7 @@ def fit_metrics(model, data_pars={}, compute_pars={}, out_pars={},  **kw):
 
 def predict(model, sess=None, data_pars={}, out_pars={}, compute_pars={}, **kw):
   ##### Get Data ###############################################
+  data_pars['train'] = False
   Xpred, ypred = get_dataset(data_pars)
 
   #### Do prediction
@@ -146,6 +146,8 @@ def get_dataset(data_pars=None, **kw):
     max_features = data_pars['max_features']
     maxlen = data_pars['maxlen']
 
+
+    ### Remove Keras download --> csv on disk
     (Xtrain, ytrain), (Xtest, ytest) = imdb.load_data(num_words=max_features)
 
     print('Pad sequences (samples x time)...')

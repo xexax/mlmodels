@@ -256,7 +256,6 @@ def test_api(model_uri="model_xxxx/yyyy.py", param_pars=None):
     module, model = module_load_full(model_uri, model_pars, data_pars, compute_pars)
 
 
-
     log("############ Model fit   ##########################################")
     model, sess = fit_global(module, model, sess=None, data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)
     print("fit success", sess)
