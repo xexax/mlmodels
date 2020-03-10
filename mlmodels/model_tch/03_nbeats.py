@@ -15,23 +15,8 @@ VERBOSE = False
 
 ####################################################################################################
 # Helper functions
-def os_package_root_path(filepath, sublevel=0, path_add=""):
-    """
-       get the module package root folder
-    """
-    from pathlib import Path
-    path = Path(filepath).parent
-    for i in range(1, sublevel + 1):
-        path = path.parent
+from mlmodels.util import  os_package_root_path, log
 
-    path = os.path.join(path.absolute(), path_add)
-    return path
-
-
-def log(*s, n=0, m=1):
-    sspace = "#" * n
-    sjump = "\n" * m
-    print(sjump, sspace, s, sspace, flush=True)
 
 
 ####################################################################################################
@@ -205,7 +190,12 @@ def plot_predict(x_test, y_test, p, data_pars, compute_pars, out_pars):
 
 ###############################################################################################################
 # save and load model helper function
-def save(model, optimiser, grad_step, CHECKPOINT_NAME="mycheckpoint"):
+# def save(model, optimiser, grad_step, CHECKPOINT_NAME="mycheckpoint"):
+
+def save(model, session, save_pars):
+    optimiser = session
+    grad_step = save_pars['grad_step']
+    CHECKPOINT_NAME = save_pars['checkpoint_name']
     torch.save({
         'grad_step': grad_step,
         'model_state_dict': model.state_dict(),
@@ -213,7 +203,15 @@ def save(model, optimiser, grad_step, CHECKPOINT_NAME="mycheckpoint"):
     }, CHECKPOINT_NAME)
 
 
-def load(model, optimiser, CHECKPOINT_NAME='nbeats-fiting-checkpoint.th'):
+
+# def load(model, optimiser, CHECKPOINT_NAME='nbeats-fiting-checkpoint.th'):
+def load(load_pars):
+    model = None
+    session = None
+
+    CHECKPOINT_NAME = load_pars['checkpoint_name']
+    optimiser = session
+
     if os.path.exists(CHECKPOINT_NAME):
         checkpoint = torch.load(CHECKPOINT_NAME)
         model.load_state_dict(checkpoint['model_state_dict'])
@@ -259,28 +257,9 @@ def get_params(choice=0, data_path="dataset/", config_mode="test", **kw):
     return model_pars, data_pars, compute_pars, out_pars
 
 
-def test2(data_path="dataset/milk.csv", out_path="n_beats_test{}.png", reset=True):
-    ###loading the command line arguments
-    # arg = load_arguments()
-    model_uri = "model_tch/nbeats.py"
 
-    log("#### Loading params   #######################################")
-    model_pars, data_pars, compute_pars, out_pars = get_params(choice=1, data_path=data_path)
 
-    log("############ Model preparation   #########################")
-    from mlmodels.models import module_load_full, fit, predict
-    module, model = module_load_full(model_uri, model_pars)
-    print(module, model)
-
-    log("############ Model fit   ##################################")
-    model, sess = fit(model, module, data_pars=data_pars, compute_pars={}, out_pars=out_pars)
-    print("fit success", sess)
-
-    log("############ Prediction  ##################################")
-    preds = predict(model, module, sess, data_pars=data_pars,
-                    out_pars=out_pars, compute_pars=compute_pars)
-    print(preds)
-
+#############################################################################################################
 
 def test(data_path="dataset/milk.csv"):
     ###loading the command line arguments
@@ -308,3 +287,8 @@ def test(data_path="dataset/milk.csv"):
 if __name__ == '__main__':
     VERBOSE = True
     test()
+
+
+
+
+
