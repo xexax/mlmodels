@@ -22,9 +22,9 @@
 
 ## ① Installation
 Install as editable package (ONLY dev branch), in Linux
+    
     conda create -n py36 python=3.6.5  -y
     source activate py36
-
     cd yourfolder
     git clone https://github.com/arita37/mlmodels.git mlmodels
     cd mlmodels
