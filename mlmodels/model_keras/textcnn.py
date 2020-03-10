@@ -217,6 +217,13 @@ def get_params(param_pars={}, **kw):
 ################################################################################################
 ########## Tests are normalized Do not Change ##################################################
 from mlmodels.models import test_module, test_api
+####    test_module(model_uri="model_xxxx/yyyy.py", param_pars=None):  
+
+
+
+from mlmodels.models import test_api
+####    test_api(model_uri="model_xxxx/yyyy.py", param_pars=None):
+
 
 
 
