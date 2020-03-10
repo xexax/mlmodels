@@ -1,19 +1,16 @@
 # pylint: disable=C0321,C0103,C0301,E1305,E1121,C0302,C0330,C0111,W0613,W0611,R1705
 # -*- coding: utf-8 -*-
 
-from sklearn.ensemble import *
-from sklearn.linear_model import *
-
-#########################################################################################
-#########################################################################################
 """
 Generic template for new model.
 Check parameters template in models_config.json
 
-"model_pars":   { "learning_rate": 0.001, "num_layers": 1, "size": 6, "size_layer": 128, "output_size": 6, "timestep": 4, "epoch": 2 },
-"data_pars":    { "data_path": "dataset/GOOG-year.csv", "data_type": "pandas", "size": [0, 0, 6], "output_size": [0, 6] },
-"compute_pars": { "distributed": "mpi", "epoch": 10 },
-"out_pars":     { "out_path": "dataset/", "data_type": "pandas", "size": [0, 0, 6], "output_size": [0, 6] }
+
+        data_pars = {'mode': 'test', 'path': data_path, 'data_type' : 'pandas' }
+        model_pars = {"model_name":  "RandomForestClassifier", "max_depth" : 4 , "random_state":0}
+        compute_pars = {}
+        out_pars = {'path' : out_path}
+
 
 
 
@@ -35,16 +32,32 @@ MODEL_URI = "model_XXXX/yyy.py"
 from mlmodels.util import os_package_root_path, log
 
 
+from sklearn.metrics import accuracy_score
+
+from sklearn.linear_model import *
+from sklearn.svm import *
+from sklearn.ensemble import *
+from sklearn.cluster import *
+from sklearn.tree import *
+
+
+
+
+
+
 
 
 ####################################################################################################
 class Model(object):
-    def __init__(self, model_pars):
-        model_class = globals()[model_pars["model_name"]]
+    def __init__(self, model_pars=None, data_pars=None, compute_pars=None):
+        self.model_pars, self.compute_pars = model_pars, compute_pars
 
-        del model_pars["model_name"]
-
-        self.model = model_class(**model_pars)
+        if model_pars is None :
+            self.model = None
+        else :
+          model_class = globals()[model_pars["model_name"]]
+          del model_pars["model_name"]
+          self.model = model_class(**model_pars)
 
 
 
@@ -53,8 +66,8 @@ def fit(model, data_pars={}, compute_pars={}, out_pars={}, **kw):
     """
 
     sess = None  # Session type for compute
-    Xtrain, Xtest, ytrain, ytest = get_dataset(data_pars)
-    model.model = model.model.fit(Xtrain, ytest)
+    Xtrain, ytrain, Xtest,  ytest = get_dataset(data_pars)
+    model.model.fit(Xtrain, ytrain)
     return model, sess
 
 
@@ -70,10 +83,12 @@ def fit_metrics(model, data_pars={}, compute_pars={}, out_pars={}, **kw):
 
 def predict(model, sess=None, data_pars={}, compute_pars={}, out_pars={}, **kw):
     ##### Get Data ###############################################
-    Xpred, ypred = None, None
+    data_pars['train'] = False
+    _, _, Xpred, ypred = get_dataset(data_pars)
+    print(Xpred)
 
     #### Do prediction
-    ypred = model.model.fit(Xpred)
+    ypred = model.model.predict(Xpred)
 
     ### Save Results
 
@@ -98,7 +113,7 @@ def load(load_pars={}):
     model0 = load_pkl(load_pars['path'])
 
     model = Model()
-    model.model = None
+    model.model = model0
     session = None
     return model, session
 
@@ -112,17 +127,29 @@ def get_dataset(data_pars=None, **kw):
       "size": [0, 0, 6], "output_size": [0, 6] },
     """
 
+    if data_pars['mode'] == 'test':
+        from sklearn.datasets import  make_classification
+        from sklearn.model_selection import train_test_split
+
+        X, y = make_classification(n_features=10, n_redundant=0, n_informative=2,
+                                   random_state=1, n_clusters_per_class=1)
+
+        # print(X,y)
+        Xtrain, Xtest, ytrain, ytest = train_test_split(X, y)
+        return Xtrain,  ytrain, Xtest, ytest
+
+
     if data_pars['train']:
         from sklearn.model_selection import train_test_split
         df = pd.read_csv(data_pars['path'] )
         dfX = df[data_pars['colX']]
         dfy = df[data_pars['coly']]
         Xtrain, Xtest, ytrain, ytest =  train_test_split(dfX.values, dfy.values)
-        return Xtrain, Xtest, ytrain, ytest
+        return Xtrain,  ytrain, Xtest, ytest
 
     else:
         Xtest, ytest = None, None
-        return Xtest, ytest
+        return None, NOne, Xtest, ytest
 
 
 def path_setup(out_folder="ztest", sublevel=1, data_path="dataset/"):
@@ -153,10 +180,10 @@ def get_params(param_pars={}, **kw):
         log("#### Path params   ##########################################")
         data_path, out_path, model_path = path_setup(out_folder="/ztest/", sublevel=1,
                                                      data_path="dataset/")
-        data_pars = {}
-        model_pars = {}
+        data_pars = {'mode': 'test', 'path': data_path, 'data_type' : 'pandas' }
+        model_pars = {"model_name":  "RandomForestClassifier", "max_depth" : 4 , "random_state":0}
         compute_pars = {}
-        out_pars = {}
+        out_pars = {'path' : out_path}
 
         return model_pars, data_pars, compute_pars, out_pars
 
@@ -194,10 +221,10 @@ def test(data_path="dataset/", pars_choice="json", config_mode="test"):
 
     log("#### Save/Load   ###################################################")
     save(model, session, out_pars)
-    model2 = load(out_pars)
+    model2, session = load(out_pars)
     #     ypred = predict(model2, data_pars, compute_pars, out_pars)
     #     metrics_val = metrics(model2, ypred, data_pars, compute_pars, out_pars)
-    print(model2)
+    print(model2.model)
 
 
 if __name__ == '__main__':
@@ -207,14 +234,15 @@ if __name__ == '__main__':
     ### Local fixed params
     test(pars_choice="test01")
 
+
     ### Local json file
     # test(pars_choice="json")
 
     ####    test_module(model_uri="model_xxxx/yyyy.py", param_pars=None)
     from mlmodels.models import test_module
 
-    param_pars = {'choice': "test01", 'config_mode': 'test', 'data_path': '/dataset/'}
-    test_module(module_uri=MODEL_URI, param_pars=param_pars)
+    #param_pars = {'choice': "test01", 'config_mode': 'test', 'data_path': '/dataset/'}
+    #test_module(module_uri=MODEL_URI, param_pars=param_pars)
 
     ##### get of get_params
     # choice      = pp['choice']
@@ -225,7 +253,7 @@ if __name__ == '__main__':
     from mlmodels.models import test_api
 
     param_pars = {'choice': "test01", 'config_mode': 'test', 'data_path': '/dataset/'}
-    test_api(module_uri=MODEL_URI, param_pars=param_pars)
+    #test_api(module_uri=MODEL_URI, param_pars=param_pars)
 
 
 
