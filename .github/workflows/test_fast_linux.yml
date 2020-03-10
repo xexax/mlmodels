@@ -5,6 +5,7 @@ on:
   push:
     branches: 
       - dev
+      - add_charcnn
  
 jobs:
   build:
