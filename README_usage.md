@@ -1,7 +1,15 @@
 
 ## In Jupyter 
 
-#### Model, data, ... definition
+### LSTM example in TensorFlow ([Example notebook](example/1_lstm.ipynb))
+
+#### Import library and functions
+```python
+# import library
+import mlmodels
+```
+
+#### Define model and data definitions
 ```python
 model_uri    = "model_tf.1_lstm.py"
 model_pars   =  {  "num_layers": 1,
@@ -17,57 +25,84 @@ load_pars = { "path" : "ztest_1lstm/model/" }
 ```
 
 
-#### Using local module (which contain the model)
+#### Load Parameters and Train
 ```python
 from mlmodels.models import module_load
 
 module        =  module_load( model_uri= model_uri )                           # Load file definition
-model         =  module.Model(model_pars, data_pars, compute_pars)             # Create Model instance
-model, sess   =  module.fit(model, data_pars, compute_pars, out_pars)          # fit the model
-metrics_val   =  module.fit_metrics( model, sess, data_pars, compute_pars, out_pars) # get stats
-module.save(model, sess, save_pars)
-
+model         =  module.Model(model_pars=model_pars, data_pars=data_pars, compute_pars=compute_pars)             # Create Model instance
+model, sess   =  module.fit(model, data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)          # fit the model
+```
 
 
 #### Inference
-model, sess = load(load_pars)    #Create Model instance
+```python
+metrics_val   =  module.fit_metrics( model, sess, data_pars, compute_pars, out_pars) # get stats
 ypred       = module.predict(model, sess,  data_pars, compute_pars, out_pars)     # predict pipeline
 
 
 ```
 
 
+### AutoML example in Gluon ([Example notebook](example/gluon_automl.ipynb))
 
-
-###### Using Generic API : Common to all models
+#### Import library and functions
 ```python
+# import library
+import mlmodels
+import autogluon as ag
+```
 
-from mlmodels.models import module_load, create_model, fit, predict, stats
-from mlmodels.models import load #Load model weights
+#### Define model and data definitions
+```python
+model_uri = "model_gluon.gluon_automl.py"
+data_pars = {"train": True, "uri_type": "amazon_aws", "dt_name": "Inc"}
+
+model_pars = {"model_type": "tabular",
+              "learning_rate": ag.space.Real(1e-4, 1e-2, default=5e-4, log=True),
+              "activation": ag.space.Categorical(*tuple(["relu", "softrelu", "tanh"])),
+              "layers": ag.space.Categorical(
+                          *tuple([[100], [1000], [200, 100], [300, 200, 100]])),
+              'dropout_prob': ag.space.Real(0.0, 0.5, default=0.1),
+              'num_boost_round': 10,
+              'num_leaves': ag.space.Int(lower=26, upper=30, default=36)
+             }
+
+
+compute_pars = {
+    "hp_tune": True,
+    "num_epochs": 10,
+    "time_limits": 120,
+    "num_trials": 5,
+    "search_strategy": "skopt"
+}
+
+out_pars = {
+    "out_path": "dataset/"
+}
+
+```
+
+
+#### Load Parameters and Train
+```python
+from mlmodels.models import module_load
+from mlmodels.model_gluon.util_autogluon import fit, metrics
 
 module        =  module_load( model_uri= model_uri )                           # Load file definition
-model         =  model_create(module, model_pars, data_pars, compute_pars)     # Create Model instance
-model, sess   =  fit(model, data_pars, compute_pars, out_pars)                 # fit the model
-metrics_val   =  fit_metrics( model, sess, data_pars, compute_pars, out_pars)  # get stats
-
-save(save_pars, model, sess)
-
+model         =  module.Model(model_pars=model_pars, compute_pars=compute_pars)             # Create Model instance
+model   =  fit(model, data_pars=data_pars, model_pars=model_pars, compute_pars=compute_pars, out_pars=out_pars)          # fit the model
+```
 
 
 #### Inference
-load_pars = { "path" : "ztest_1lstm/model/" }
-
-module      = module_load( model_uri= model_uri )     # Load file definition
-model,sess  = load(load_pars)      # Create Model instance
-ypred       = predict(model, module, sess,  data_pars, compute_pars, out_pars)     
-
-
-
-
-
+```python
+ypred       = module.predict(model, data_pars, compute_pars, out_pars)     # predict pipeline
 
 
 ```
+
+
 
 
 ## CLI tools: package provide below tools 
