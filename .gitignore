@@ -125,3 +125,8 @@ venv.bak/
 
 # torchtext cache
 .vector_cache
+
+# misc
+example/dask*
+example/dataset
+example/exp
