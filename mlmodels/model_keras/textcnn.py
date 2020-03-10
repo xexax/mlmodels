@@ -80,7 +80,7 @@ def fit(model, data_pars={}, compute_pars={}, out_pars={},   **kw):
 
 def fit_metrics(model, data_pars={}, compute_pars={}, out_pars={},  **kw):
     """
-       Return metrics of the model when fitted.
+       Return metrics ofw the model when fitted.
     """
     ddict = {}
     
@@ -216,41 +216,8 @@ def get_params(param_pars={}, **kw):
 
 ################################################################################################
 ########## Tests are normalized Do not Change ##################################################
-def test_module(data_path="dataset/", model_uri="model_tf/1_lstm.py", pars_choice="json", reset=True):
-    ###loading the command line arguments
-    #model_uri = "model_xxxx/yyyy.py"
+from mlmodels.models import test_module, test_api
 
-    log("#### Module init   #################################################")
-    from mlmodels.models import module_load
-    module = module_load(model_uri)
-    log(module)
-
-
-    log("#### Loading params   ##############################################")
-    param_pars = { "choice": "pars_choice",  "data_path": data_path}
-    model_pars, data_pars, compute_pars, out_pars = module.get_params(param_pars)
-
-
-    log("#### Run module test   ##############################################")
-    from mlmodels.models import test_module as test_module_global
-    test_module_global(model_uri, model_pars, data_pars, compute_pars, out_pars)
-
-
-
-def test_api_global(data_path="dataset/", model_uri="model_tf/1_lstm.py", pars_choice="json", config_mode="test", reset=True):
-    ###loading the command line arguments
-    model_uri = "model_xxxx/yyyy.py"
-
-    log("#### Loading params   ##############################################")
-    param_pars = {"choice":pars_choice,  "data_path":data_path,  "config_mode": config_mode}
-    model_pars, data_pars, compute_pars, out_pars = get_params(param_pars)
-    log(model_uri, model_pars, data_pars, compute_pars, out_pars)
-
-
-    log("############ Model test Global  ###########################################")
-    from mlmodels.models import test_api
-    save_pars ={}
-    test_api(model_uri, model_pars, data_pars, compute_pars, out_pars, save_pars)
 
 
 
