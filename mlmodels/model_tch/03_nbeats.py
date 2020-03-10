@@ -8,7 +8,7 @@ from torch import optim
 from torch.nn import functional as F
 
 ####################################################################################################
-from mlmodels.model_tch.nbeats.model import NBeatsNet
+from mlmodels.model_tch.raw.nbeats.model import NBeatsNet
 
 VERBOSE = False
 
