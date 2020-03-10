@@ -127,9 +127,9 @@ def test(data_path="dataset/", pars_choice="json"):
     log("#### Predict   ####################################################")
     ypred = predict(model, data_pars, compute_pars, out_pars)
 
-    log("#### metrics   ####################################################")
-    metrics_val = metrics(model, ypred, data_pars, compute_pars, out_pars)
-    print(metrics_val)
+    #log("#### metrics   ####################################################")
+    #metrics_val = metrics(model, ypred, data_pars, compute_pars, out_pars)
+    #print(metrics_val)
 
     log("#### Plot   #######################################################")
 
@@ -144,4 +144,4 @@ def test(data_path="dataset/", pars_choice="json"):
 if __name__ == '__main__':
     VERBOSE = True
     test(pars_choice="json")
-    test(pars_choice="test01")
+    #test(pars_choice="test01")
