@@ -44,16 +44,18 @@ jobs:
 
 
 
-
-
-
     - name: Install numpy
       if: steps.cache-pipenv.outputs.cache-hit != 'true'
       run: pip install numpy
       
-    - name: Install repo
+    - name: Install repo requirements
       if: steps.cache-pipenv.outputs.cache-hit != 'true'
-      run: pip install -e . -r requirements.txt
+      run: pip install -r requirements.txt
+
+
+    - name: Install repo
+      run: pip install -e .   --no-deps
+
 
     - name: repo path
       run: python -c "import mlmodels,os ; print(mlmodels); print(os)"
