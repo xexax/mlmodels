@@ -1,8 +1,10 @@
 # coding: utf-8
 """
-
 Named Entity Recognition¶
 In Natural Language Processing (NLP) an Entity Recognition is one of the common problem. The entity is referred to as the part of the text that is interested in. In NLP, NER is a method of extracting the relevant information from a large corpus and classifying those entities into predefined categories such as location, organization, name and so on. Information about lables:
+
+https://github.com/Akshayc1/named-entity-recognition/blob/master/NER%20using%20Bidirectional%20LSTM%20-%20CRF%20.ipynb
+
 
 geo = Geographical Entity
 org = Organization
