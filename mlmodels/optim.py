@@ -161,9 +161,11 @@ def optim_optuna(model_uri="model_tf.1_lstm.py",
     param_dict_best =  study.best_params
     # param_dict.update(module.config_get_pars(choice="test", )
 
+    model_pars_update = model_pars
+    model_pars_update.update( param_dict_best)
 
     log("### Run Model with best   #################################################")
-    model        = model_create( module, model_pars=param_dict_best)
+    model        = model_create( module, model_pars= model_pars_update)
     model, sess  = module.fit(model,  data_pars=data_pars, compute_pars=compute_pars)
 
 

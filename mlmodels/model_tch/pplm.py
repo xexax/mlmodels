@@ -11,10 +11,10 @@ from transformers import GPT2Tokenizer, GPT2LMHeadModel
 
 
 
-from mlmodels.model_tch.pplm.pplm_classification_head import ClassificationHead
+from mlmodels.model_tch.raw.pplm.pplm_classification_head import ClassificationHead
 
-from mlmodels.model_tch.pplm.run_pplm import run_pplm_example
-from mlmodels.model_tch.pplm.run_pplm_discrim_train import train_discriminator as test_case_1
+from mlmodels.model_tch.raw.pplm.run_pplm import run_pplm_example
+from mlmodels.model_tch.raw.pplm.run_pplm_discrim_train import train_discriminator as test_case_1
 
 
 
@@ -23,40 +23,7 @@ from mlmodels.model_tch.pplm.run_pplm_discrim_train import train_discriminator a
 VERBOSE = False
 
 ####################################################################################################
-def os_file_path(data_path):
-  from pathlib import Path
-  data_path = os.path.join(Path(__file__).parent.parent.absolute(), data_path)
-  print(data_path)
-  return data_path
-
-
-def os_package_root_path(filepath, sublevel=0, path_add=""):
-  """
-     get the module package root folder
-  """
-  from pathlib import Path
-  path = Path(filepath).parent
-  for i in range(1, sublevel + 1):
-    path = path.parent
-  
-  path = os.path.join(path.absolute(), path_add)
-  return path
-# print("check", os_package_root_path(__file__, sublevel=1) )
-
-
-def log(*s, n=0, m=1):
-  sspace = "#" * n
-  sjump = "\n" * m
-  print(sjump, sspace, s, sspace, flush=True)
-
-
-class to_namespace(object):
-  def __init__(self, adict):
-    self.__dict__.update(adict)
-
-  def get(self, key):
-    return self.__dict__.get(key)
-
+from mlmodels.util import os_package_root_path, log
 
 def path_setup(out_folder="", sublevel=1, data_path="dataset/"):
     data_path = os_package_root_path(__file__, sublevel=sublevel, path_add=data_path)
@@ -67,6 +34,8 @@ def path_setup(out_folder="", sublevel=1, data_path="dataset/"):
 
     log(data_path, out_path, model_path)
     return data_path, out_path, model_path
+
+
 ####################################################################################################
 
 
@@ -140,7 +109,8 @@ def predict(model, sess=None, data_pars={}, out_pars={}, compute_pars={}, **kw):
   Xpred, ypred = None, None
 
   #### Do prediction
-  ypred = model.model.fit(Xpred)
+  #ypred = model.model.fit(Xpred)
+  generate(cond_text="ok", bag_of_words="ok", discrim=None, class_label=-1)
 
   ### Save Results
   

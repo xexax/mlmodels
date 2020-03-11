@@ -66,13 +66,14 @@ def import_data_fromfile(**kw):
 
 
 def import_data_dask(**kw):
+  extension = kw['path'].split(".")[-1]
 
-  if m.get("use_dask", False):
+  if kw.get("use_dask", False):
     import dask.dataframe as dd
     if extension in [".csv", ".txt"]: 
-       df = dd.read_csv(m["data_path"])
+       df = dd.read_csv(kw["data_path"])
     elif extension in [".pkl"]: 
-       df = dd.read_pickle(m["data_path"])
+       df = dd.read_pickle(kw["data_path"])
     elif extension in [".npz"]: 
        df = dd.read_pickle(m["data_path"])
     else: raise Exception(f"Not support extension {extension}")
