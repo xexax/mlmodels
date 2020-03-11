@@ -28,8 +28,10 @@
 
 
 
+
 ### List of potential models
 
+https://github.com/asyml/texar/tree/master/examples
 
 https://www.depends-on-the-definition.com/sequence-tagging-lstm-crf/
 
