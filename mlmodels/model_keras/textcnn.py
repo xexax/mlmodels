@@ -206,6 +206,7 @@ def get_params(param_pars={}, **kw):
         model_pars   = {"maxlen":400, "max_features": 10, "embedding_dims":50,
 
                        }
+                       
         compute_pars = {"engine": "adam", "loss": "binary_crossentropy", "metrics": ["accuracy"] ,
                         "batch_size": 32, "epochs":1
                        }

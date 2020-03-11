@@ -2,14 +2,27 @@
 
 
 TODO
-Add config json in .mlmodels session_path : store the session model_artifact : pre-trained model model_code : model code log_path : path of the logs working_path
-: path where logs, ... stored.
+```
+
+Add config json in .mlmodels 
+
+session_path : store the session 
+model_artifact : pre-trained model 
+model_code : model code 
+log_path : path of the logs 
+working_path : path where logs, ... stored.
+
 
 ml_models --do setup --json_file myconfig.json
 
 Create dataset readme.md timseries text tabular recommender
 
 get_dataset(data_uri="", data_type= "pandas" )
+
+
+
+
+
 
 List of potential models
 https://github.com/asyml/texar/tree/master/examples
@@ -30,6 +43,7 @@ http://nlp_architect.nervanasys.com/absa_solution.html
 
 https://github.com/golsun/SpaceFusion
 
+```
 
 ### Renormalize signature
 
