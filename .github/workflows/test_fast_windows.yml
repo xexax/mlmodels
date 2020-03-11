@@ -38,7 +38,7 @@ jobs:
       id: cache-pipenv
       uses: actions/cache@v1
       with:
-        path: path: /opt/hostedtoolcache/Python/
+        path: /opt/hostedtoolcache/Python/
         key: ${{ runner.os }}-pipenv-${{ hashFiles('**/requirements_wi.txt') }}
 
 
