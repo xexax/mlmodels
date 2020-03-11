@@ -2,24 +2,7 @@
 	"test": {
 		"model_pars": {
 			"embedding_size": 128,
-			"conv_layers": [
-				[
-					256,
-					10
-				],
-				[
-					256,
-					7
-				],
-				[
-					256,
-					5
-				],
-				[
-					256,
-					3
-				]
-			],
+			"conv_layers": [[256, 10 ], [256, 7 ], [256, 5 ], [256, 3 ] ], 
 			"fully_connected_layers": [
 				1024,
 				1024
@@ -35,15 +18,15 @@
 			"alphabet_size": 69,
 			"input_size": 1014,
 			"num_of_classes": 4,
-			"training_data_source": "dataset/data/ag_news_csv/train.csv",
-			"validation_data_source": "dataset/data/ag_news_csv/test.csv"
+			"train_data_source": "dataset/data/ag_news_csv/train.csv",
+			"val_data_source": "dataset/data/ag_news_csv/test.csv"
 		},
 		"compute_pars": {
-			"epochs": 10,
+			"epochs": 1,
 			"batch_size": 128
 		},
 		"out_pars": {
-			"out_path": "dataset/",
+			"path": "ztest/ml_keras/charcnn/",
 			"data_type": "pandas",
 			"size": [
 				0,

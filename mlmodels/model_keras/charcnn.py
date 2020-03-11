@@ -12,14 +12,19 @@ Check parameters template in models_config.json
 
 """
 import os
-
 from keras.callbacks import EarlyStopping
 
-from mlmodels.model_keras.raw.char_cnn.data_utils import Data
-#### Import EXISTING model and re-map to mlmodels
-from mlmodels.model_keras.raw.char_cnn.models.char_cnn_kim import CharCNNKim
+
+
 ######## Logs
 from mlmodels.util import os_package_root_path, log
+
+
+
+#### Import EXISTING model and re-map to mlmodels
+from mlmodels.model_keras.raw.char_cnn.data_utils import Data
+from mlmodels.model_keras.raw.char_cnn.models.char_cnn_kim import CharCNNKim
+
 
 ####################################################################################################
 
@@ -34,8 +39,11 @@ class Model:
     def __init__(self, model_pars=None, data_pars=None, compute_pars=None
                  ):
         ### Model Structure        ################################
+        if model_pars is None :
+            self.model = None
 
-        self.model = CharCNNKim(input_size=data_pars["input_size"],
+        else :
+            self.model = CharCNNKim(input_size=data_pars["input_size"],
                                 alphabet_size=data_pars["alphabet_size"],
                                 embedding_size=model_pars["embedding_size"],
                                 conv_layers=model_pars["conv_layers"],
@@ -57,7 +65,7 @@ def fit(model, data_pars={}, compute_pars={}, out_pars={}, **kw):
     Xtrain, Xtest, ytrain, ytest = get_dataset(data_pars)
 
     early_stopping = EarlyStopping(monitor='val_acc', patience=3, mode='max')
-    model.model = model.model.fit(Xtrain, ytrain,
+    model.model.fit(Xtrain, ytrain,
                                   batch_size=batch_size,
                                   epochs=epochs,
                                   callbacks=[early_stopping],
@@ -86,7 +94,7 @@ def predict(model, sess=None, data_pars={}, out_pars={}, compute_pars={}, **kw):
     ### Save Results
 
     ### Return val
-    if compute_pars.get("return_pred_not") is not None:
+    if compute_pars.get("return_pred_not") is  None:
         return ypred
 
 
@@ -119,31 +127,34 @@ def get_dataset(data_pars=None, **kw):
       "size": [0, 0, 6], "output_size": [0, 6] },
     """
     if data_pars['train']:
+
         print('Loading data...')
-        training_data = Data(data_source=data_pars["training_data_source"],
-                             alphabet=data_pars["alphabet"],
-                             input_size=data_pars["input_size"],
-                             num_of_classes=data_pars["num_of_classes"])
-        training_data.load_data()
-        training_inputs, training_labels = training_data.get_all_data()
-        # Load validation data
-        validation_data = Data(data_source=data_pars["validation_data_source"],
+        train_data = Data(data_source=data_pars["train_data_source"],
+                             alphabet       = data_pars["alphabet"],
+                             input_size     = data_pars["input_size"],
+                             num_of_classes = data_pars["num_of_classes"])
+        train_data.load_data()
+        train_inputs, train_labels = train_data.get_all_data()
+
+
+        # Load val data
+        val_data = Data(data_source=data_pars["val_data_source"],
                                alphabet=data_pars["alphabet"],
                                input_size=data_pars["input_size"],
                                num_of_classes=data_pars["num_of_classes"])
-        validation_data.load_data()
-        validation_inputs, validation_labels = validation_data.get_all_data()
+        val_data.load_data()
+        val_inputs, val_labels = val_data.get_all_data()
 
-        return training_inputs, validation_inputs, training_labels, validation_labels
+        return train_inputs, val_inputs, train_labels, val_labels
 
 
     else:
-        validation_data = Data(data_source=data_pars["validation_data_source"],
+        val_data = Data(data_source=data_pars["val_data_source"],
                                alphabet=data_pars["alphabet"],
                                input_size=data_pars["input_size"],
                                num_of_classes=data_pars["num_of_classes"])
-        validation_data.load_data()
-        Xtest, ytest = validation_data.get_all_data()
+        val_data.load_data()
+        Xtest, ytest = val_data.get_all_data()
         return Xtest, ytest
 
 
@@ -212,9 +223,7 @@ def test(data_path="dataset/", pars_choice="json", config_mode="test"):
     model = Model(model_pars, data_pars, compute_pars)
     model, session = fit(model, data_pars, compute_pars, out_pars)
 
-    log("#### save the trained model  #######################################")
-    save(model, session, save_pars=out_pars)
-
+ 
     log("#### Predict   #####################################################")
     data_pars["train"] = 0
     ypred = predict(model, session, data_pars, compute_pars, out_pars)
@@ -226,7 +235,7 @@ def test(data_path="dataset/", pars_choice="json", config_mode="test"):
     log("#### Plot   ########################################################")
 
     log("#### Save/Load   ###################################################")
-    save(model, None, out_pars)
+    save(model, session, save_pars=out_pars)
     model2 = load(out_pars)
     #     ypred = predict(model2, data_pars, compute_pars, out_pars)
     #     metrics_val = metrics(model2, ypred, data_pars, compute_pars, out_pars)
@@ -236,12 +245,13 @@ def test(data_path="dataset/", pars_choice="json", config_mode="test"):
 if __name__ == '__main__':
     VERBOSE = True
     test_path = os.getcwd() + "/mytest/"
+    root_path = os_package_root_path(__file__,1)
 
     ### Local fixed params
     # test(pars_choice="test01")
 
     ### Local json file
-    test(pars_choice="json", data_path="model_keras/charcnn.json")
+    test(pars_choice="json", data_path= f"{root_path}/model_keras/charcnn.json")
 
     ####    test_module(model_uri="model_xxxx/yyyy.py", param_pars=None)
     from mlmodels.models import test_module
@@ -259,3 +269,6 @@ if __name__ == '__main__':
 
     param_pars = {'choice': "json", 'config_mode': 'test', 'data_path': "model_keras/charcnn.json"}
     test_api(model_uri=MODEL_URI, param_pars=param_pars)
+
+
+
