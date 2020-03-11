@@ -1,6 +1,7 @@
 tensorflow<2.0
 keras<2.4.0
-torch<1.0.0
+#torch<1.0.0
+torch==1.0.1
 mxnet
 numpy
 transformers==2.4.1 #### fix issue #23 could not run on macos
