@@ -44,14 +44,14 @@ class Model:
 
         else :
             self.model = CharCNNKim(input_size=data_pars["input_size"],
-                                alphabet_size=data_pars["alphabet_size"],
-                                embedding_size=model_pars["embedding_size"],
-                                conv_layers=model_pars["conv_layers"],
-                                fully_connected_layers=model_pars["fully_connected_layers"],
-                                num_of_classes=data_pars["num_of_classes"],
-                                dropout_p=model_pars["dropout_p"],
-                                optimizer=model_pars["optimizer"],
-                                loss=model_pars["loss"]).model
+                                alphabet_size          = data_pars["alphabet_size"],
+                                embedding_size         = model_pars["embedding_size"],
+                                conv_layers            = model_pars["conv_layers"],
+                                fully_connected_layers = model_pars["fully_connected_layers"],
+                                num_of_classes         = data_pars["num_of_classes"],
+                                dropout_p              = model_pars["dropout_p"],
+                                optimizer              = model_pars["optimizer"],
+                                loss                   = model_pars["loss"]).model
 
 
 def fit(model, data_pars={}, compute_pars={}, out_pars={}, **kw):
@@ -182,6 +182,7 @@ def get_params(param_pars={}, **kw):
         cf = json.load(open(data_path, mode='r'))
         cf = cf[config_mode]
         return cf['model_pars'], cf['data_pars'], cf['compute_pars'], cf['out_pars']
+
 
     if choice == "test01":
         log("#### Path params   ##########################################")

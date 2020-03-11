@@ -22,7 +22,9 @@ import pandas as pd
 
 
 VERBOSE = False
-MODEL_URI = "model_XXXX/yyy.py"
+MODEL_URI = MODEL_URI = os.path.dirname(os.path.abspath(__file__)).split("\\")[-1] + "." + os.path.basename(__file__).replace(".py",  "")
+
+
 
 ####################################################################################################
 ######## Logs, root path
@@ -38,11 +40,11 @@ def os_package_root_path(filepath, sublevel=0, path_add=""):
 class Model:
   def __init__(self, model_pars=None, data_pars=None, compute_pars=None  ):
     ### Model Structure        ################################
-    self.model = None   #ex Keras model
-    
-    
+    if model_pars is None :
+        self.model = None
 
-
+    else :
+        self.model = None
 
 
 
@@ -56,8 +58,6 @@ def fit(model, data_pars={}, compute_pars={}, out_pars={},   **kw):
   
 
   return model, sess
-
-
 
 
 
@@ -200,9 +200,6 @@ def test(data_path="dataset/", pars_choice="json", config_mode="test"):
     session = None
     model = Model(model_pars, data_pars, compute_pars)
     model, session = fit(model, data_pars, compute_pars, out_pars)
-
-
-    log("#### save the trained model  #######################################")
 
 
     log("#### Predict   #####################################################")
