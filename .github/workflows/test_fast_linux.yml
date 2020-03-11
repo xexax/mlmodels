@@ -49,7 +49,7 @@ jobs:
 
     - name: Install repo requirements
       if: steps.cache-pipenv.outputs.cache-hit != 'true'
-      run: pip install -r requirements_wi.txt
+      run: pip install -r requirements.txt
 
 
     - name: Install repo
