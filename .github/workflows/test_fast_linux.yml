@@ -22,7 +22,6 @@ jobs:
     - name: Install pipenv
       uses: dschep/install-pipenv-action@v1
       
-
       
     - uses: actions/cache@v1
       id: cache
@@ -38,7 +37,7 @@ jobs:
       id: cache-pipenv
       uses: actions/cache@v1
       with:
-        path: ~/.local/share/virtualenvs
+        path: /opt/hostedtoolcache/Python/
         key: ${{ runner.os }}-pipenv-${{ hashFiles('**/requirements.txt') }}
 
           
@@ -47,9 +46,19 @@ jobs:
       if: steps.cache-pipenv.outputs.cache-hit != 'true'
       run: pip install numpy
       
-    - name: Install repo
+
+    - name: Install repo requirements
       if: steps.cache-pipenv.outputs.cache-hit != 'true'
-      run: pip install -e . -r requirements.txt
+      run: pip install -r requirements.txt
+
+
+    - name: Install repo
+      run: pip install -e .   --no-deps
+
+
+    - name: Repo Check
+      run: python -c "import mlmodels,os ; print(mlmodels); print(os)"
+
 
 
     ########  Test running 
@@ -67,7 +76,7 @@ jobs:
          
 
 
-#
+
 # https://ianwhitestone.work/AWS-Serverless-Deployments-With-Github-Actions/
 #
 #

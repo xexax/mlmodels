@@ -38,7 +38,7 @@ model, sess   =  module.fit(model, data_pars=data_pars, compute_pars=compute_par
 #### Inference
 ```python
 metrics_val   =  module.fit_metrics( model, sess, data_pars, compute_pars, out_pars) # get stats
-ypred       = module.predict(model, sess,  data_pars, compute_pars, out_pars)     # predict pipeline
+ypred         = module.predict(model, sess,  data_pars, compute_pars, out_pars)     # predict pipeline
 
 
 ```
@@ -87,11 +87,10 @@ out_pars = {
 #### Load Parameters and Train
 ```python
 from mlmodels.models import module_load
-from mlmodels.model_gluon.util_autogluon import fit, metrics
 
 module        =  module_load( model_uri= model_uri )                           # Load file definition
 model         =  module.Model(model_pars=model_pars, compute_pars=compute_pars)             # Create Model instance
-model   =  fit(model, data_pars=data_pars, model_pars=model_pars, compute_pars=compute_pars, out_pars=out_pars)          # fit the model
+model, sess   =  module.fit(model, data_pars=data_pars, model_pars=model_pars, compute_pars=compute_pars, out_pars=out_pars)      
 ```
 
 

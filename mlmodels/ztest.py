@@ -34,13 +34,6 @@ def log(*s, n=0, m=1):
 
 
 ####################################################################################################
-def os_package_root_path(add_path="",n=0):
-  from pathlib import Path
-  add_path = os.path.join(Path(__file__).parent.absolute(), add_path)
-  # print("os_package_root_path,check", add_path)
-  return add_path
-
-
 def os_package_root_path(filepath, sublevel=0, path_add=""):
     """
        get the module package root folder
@@ -55,6 +48,7 @@ def os_package_root_path(filepath, sublevel=0, path_add=""):
 
   
 def os_file_current_path():
+  import inspect
   val = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
   # return current_dir + "/"
   # Path of current file
@@ -95,9 +89,6 @@ def model_get_list(folder=None, block_list=[]):
 
 def test_model_structure():
   print("os.getcwd", os.getcwd())
-  print(np, np.__version__) 
-  print(tf, tf.__version__)
-  print(torch, torch.__version__)
   print(mlmodels) 
 
   path = mlmodels.__path__[0]
@@ -107,18 +98,18 @@ def test_model_structure():
   os.system( cmd )
 
 
+def test_import() :
+    print(np, np.__version__)
+    print(tf, tf.__version__)
+    print(torch, torch.__version__)
+    print(mlmodels)
+
 
 
 def main():
   print("os.getcwd", os.getcwd())
-  print(np, np.__version__) 
-  print(tf, tf.__version__)
-  print(torch, torch.__version__)
-  print(mlmodels) 
 
   path = mlmodels.__path__[0]
-  
-
   print("############Check model ################################")
   model_list = model_get_list(folder=None, block_list=[])
   print(model_list)
@@ -126,19 +117,25 @@ def main():
 
   test_list =[    
    ### Tflow
-
    f"python {path}/model_tf/1_lstm.py",
  
     
    ### Keras
    f"python {path}/model_keras/01_deepctr.py",
+   f"python {path}/model_keras/textcnn.py",
 
-    
+
+   ### SKLearn
+   f"python {path}/model_sklearn/sklearn.py",
+
+
    ### Torch
    f"python {path}/model_tch/03_nbeats.py",
+   f"python {path}/model_tch/textcnn.py",
+   f"python {path}/model_tch/transformer_classifier.py",
 
 
-   ###
+   ### Glueon
    f"python {path}/model_gluon/gluon_deepar.py",
    f"python {path}/model_glufon/gluon_ffn.py",
 
@@ -146,12 +143,14 @@ def main():
    #### Too slow
    # f"python {path}/model_gluon/gluon_automl.py",
 
+
   ]
 
   
   for cmd in test_list :
     print(cmd, flush=True)
     os.system( cmd )
+
 
 
 

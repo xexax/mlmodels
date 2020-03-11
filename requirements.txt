@@ -1,8 +1,10 @@
+torch==1.0.1
 tensorflow<2.0
 keras<2.4.0
-torch<1.0.0
+#torch<1.0.0
 mxnet
 numpy
+pytorch-transformers
 transformers==2.4.1 #### fix issue #23 could not run on macos
 gluonts==0.4.2
 autogluon==0.0.5
@@ -22,4 +24,5 @@ setuptools==45.2.0
 python-dateutil==2.8.0
 # horovod==0.16.2   #### Issues with OPEN MPI
 spacy
-gensim
+gensim 
+

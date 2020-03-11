@@ -64,16 +64,71 @@ def import_data_fromfile(**kw):
 
 
 
-
 def import_data_dask(**kw):
+  extension = kw['path'].split(".")[-1]
 
-  if m.get("use_dask", False):
+  if kw.get("use_dask", False):
     import dask.dataframe as dd
     if extension in [".csv", ".txt"]: 
-       df = dd.read_csv(m["data_path"])
+       df = dd.read_csv(kw["data_path"])
     elif extension in [".pkl"]: 
-       df = dd.read_pickle(m["data_path"])
+       df = dd.read_pickle(kw["data_path"])
     elif extension in [".npz"]: 
        df = dd.read_pickle(m["data_path"])
     else: raise Exception(f"Not support extension {extension}")
   return df
+
+
+
+
+
+
+
+
+
+def os_package_root_path(filepath, sublevel=0, path_add=""):
+    """
+       get the module package root folder
+    """
+    from pathlib import Path
+    path = Path(os.path.realpath(filepath)).parent
+    for i in range(1, sublevel + 1):
+        path = path.parent
+
+    path = os.path.join(path.absolute(), path_add)
+    return path
+
+
+
+
+
+def get_dataset(data_pars) :
+  """
+    path:
+    data_type:
+    
+
+
+
+  """
+
+  if not data_pars.get('is_local') is None :
+      data_pars['path'] = os_package_root_path(__file__, sublevel=0, data_pars['path'] )
+
+
+
+
+
+
+     ### Donwload from external
+
+
+     ## Get from csv, local 
+
+
+     ## Get from csv, external
+
+
+     ### Get from external tool
+
+

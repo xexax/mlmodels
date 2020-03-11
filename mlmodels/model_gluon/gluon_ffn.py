@@ -109,7 +109,7 @@ def test2(data_path="dataset/", out_path="GLUON/gluon.png", reset=True):
     module, model = module_load_full(model_uri, model_pars)
     print(module, model)
 
-    model=fit(model, None, data_pars, model_pars, compute_pars)
+    model= fit(model, None, data_pars, model_pars, compute_pars)
 
     log("#### save the trained model  ######################################")
     save(model, data_pars["modelpath"])
@@ -148,7 +148,7 @@ def test(data_path="dataset/", choice="test01"):
     from mlmodels.models import module_load_full, fit, predict
     module, model = module_load_full("model_gluon.gluon_ffn", model_pars, data_pars, compute_pars)
     #model=m.model    ### WE WORK WITH THE CLASS (not the attribute GLUON )
-    model=fit(module, model, data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)
+    model= fit(module, model, data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)
 
     log("#### save the trained model  ######################################")
     save(model, data_pars["modelpath"])

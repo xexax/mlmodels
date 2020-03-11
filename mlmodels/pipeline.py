@@ -93,7 +93,7 @@ def drop_cols(df, cols=None, **kw):
 
 ###################################################################################################
 def pd_concat(df1, df2, colid1):
-    df3 = df1.join(df2.set_index(colid), on=colid, how="left")
+    df3 = df1.join(df2.set_index(colid1), on=colid1, how="left")
     return df3
 
 
@@ -120,7 +120,7 @@ def pipe_merge(in_pars, out_pars, compute_pars=None, **kw):
     for filename in in_pars['file_list']:
         log(filename)
         dfi = pd.read_pickle(filename)
-        dfall = df if dfall is None else pd_concat(dfall, dfi, in_pars['colid'])
+        dfall = dfi if dfall is None else pd_concat(dfall, dfi, in_pars['colid'])
 
     dfall.to_pickle(out_pars['out_path'])
     return dfall

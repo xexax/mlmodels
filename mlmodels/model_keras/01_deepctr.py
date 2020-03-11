@@ -430,7 +430,7 @@ def test(data_path="dataset/", pars_choice=0):
     log("#### Model init, fit   #############################################")
     from mlmodels.models import module_load_full, fit, predict
     module, model = module_load_full("model_keras.01_deepctr", model_pars, data_pars, compute_pars, dataset=dataset)
-    model = fit(module, model, compute_pars=compute_pars, data_pars=data_pars, out_pars=out_pars)
+    model = fit(module, model, data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)
 
     log("#### Predict   ####################################################")
     ypred = predict(module, model, compute_pars=compute_pars, data_pars=data_pars, out_pars=out_pars)

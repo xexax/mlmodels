@@ -1,16 +1,16 @@
 # mlmodels : Model ZOO for Pytorch, Tensorflow, Keras, Gluon models...
 
-* Model ZOO with Lightweight Functional interface to wrap access to Recent and State o Art Deep Learning, ML models and Hyper-Parameter Search, cross platforms such as Tensorflow, Pytorch, Gluon, Keras,...
+* Model ZOO with Lightweight Functional interface to wrap access to Recent and State o Art Deep Learning, ML models and Hyper-Parameter Search, cross platforms such as Tensorflow, Pytorch, Gluon, Keras, sklearn, lightGBM, Catboost,...
 
-* Logic follows sklearn API: fit, predict, transform, metrics, save, load
+* Logic follows sklearn : fit, predict, transform, metrics, save, load
 
-* Goal is to transform Jupyter code into Semi-Prod code with minimal code change ... 
+* Goal is to transform Jupyter/research code into Semi-Prod (batch,..) code with minimal code change ... 
 
 * Model list is available here : 
   https://github.com/arita37/mlmodels/blob/dev/README_model_list.md
 
 * Why Functional interface instead of OOP ?
-    Just Functional reduces the amount of code needed, focus more on the computing part (vs design part), 
+    Functional reduces the amount of code needed, focus more on the computing part (vs design part), 
     a bit easier maintenability for medium size project, good for scientific computing process.
 
 
@@ -310,11 +310,6 @@ plot_
 col_ :  function name for column list related.
 ```
 
-### Argument Variables naming 
-```
-df     :  variable name for dataframe
-s
-```
 
 #####################################################################################
 
