@@ -1,10 +1,37 @@
 ## TODO
 
 
+   Add config json in    .mlmodels
+     session_path    : store the session
+     model_artifact  : pre-trained model
+     model_code      : model code
+     log_path        : path of the logs
+     working_path    :  path where logs, ... stored.
+     
+     
+   ml_models  --do setup   --json_file myconfig.json
+
+
+   Create dataset readme.md
+        timseries
+        text
+        tabular
+        recommender
+        
+   get_dataset(data_uri="", data_type= "pandas" )       
+
+
+
+
+
+
+
+
 
 ### List of potential models
 
 
+https://www.depends-on-the-definition.com/sequence-tagging-lstm-crf/
 
 https://github.com/graknlabs/kglib#knowledge-graph-tasks
 
