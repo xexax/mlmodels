@@ -251,8 +251,13 @@ def get_dataset(data_pars=None, **kw):
     return reader
 
 
-def get_params(choice="", data_path="dataset/", config_mode="test", **kw):
+def get_params(param_pars, **kw):
+    import json
+    choice      = param_pars['choice']
+    config_mode = param_pars['config_mode']
+    data_path   = param_pars['data_path']
 
+    
     if choice == "json":
        data_path = path_normalize(data_path) 
        cf = json.load(open(data_path, mode='r'))
@@ -301,9 +306,10 @@ def get_params(choice="", data_path="dataset/", config_mode="test", **kw):
 def test(data_path="dataset/", pars_choice="test01"):
     ### Local test
 
-    log("#### Loading params   ##############################################")
-    model_pars, data_pars, compute_pars, out_pars = get_params(choice=pars_choice,
-                                                               data_path=data_path)
+    log("#### Loading params   ##############################################") 
+    param_pars = { "choice": pars_choice, "data_path": data_path, "config_mode" : "test" }
+    model_pars, data_pars, compute_pars, out_pars = get_params(param_pars)
+
 
     log("#### Loading dataset   #############################################")
     Xtuple = get_dataset(data_pars)
