@@ -169,7 +169,23 @@ def get_params(param_pars={}, **kw):
         log("#### Path params   ##########################################")
         data_path, out_path, model_path = path_setup(out_folder="/ztest/", sublevel=1,
                                                      data_path="dataset/")
-        data_pars    = {}
+        data_pars ={
+            "path"            : 
+            "path_type"   :  "local/absolute/web"
+
+            "data_type"   :   "text" / "recommender"  / "timeseries" /"image"
+            "data_split"  : {"istrain" :  1   , "split_size" : 0.5, "randomseed" : 1   },
+
+            "data_loader"      :   "mlmodels.data.pd_reader",
+            "data_loader_pars" :   { "ok"  },
+
+            "data_preprocessor" : "mlmodels.model_keras.prepocess:process",
+            "data_preprocessor_pars" :  {  },
+
+            "size" : [0,1,2],
+            "output_size": [0, 6]            
+          }
+
         model_pars   = {}
         compute_pars = {}
         out_pars     = {}
@@ -227,30 +243,29 @@ def test(data_path="dataset/", pars_choice="json", config_mode="test"):
 if __name__ == '__main__':
     VERBOSE = True
     test_path = os.getcwd() + "/mytest/"
-    
+
     ### Local fixed params
     test(pars_choice="test01")
-
 
     ### Local json file
     # test(pars_choice="json")
 
-
     ####    test_module(model_uri="model_xxxx/yyyy.py", param_pars=None)
     from mlmodels.models import test_module
-    param_pars = {'choice': "test01", 'config_mode' : 'test', 'data_path' : '/dataset/' }
-    test_module(module_uri = MODEL_URI, param_pars= param_pars)
+
+    param_pars = {'choice': "test01", 'config_mode': 'test', 'data_path': '/dataset/'}
+    test_module(module_uri=MODEL_URI, param_pars=param_pars)
 
     ##### get of get_params
     # choice      = pp['choice']
     # config_mode = pp['config_mode']
     # data_path   = pp['data_path']
 
-
     ####    test_api(model_uri="model_xxxx/yyyy.py", param_pars=None)
     from mlmodels.models import test_api
-    param_pars = {'choice': "test01", 'config_mode' : 'test', 'data_path' : '/dataset/' }
-    test_api(module_uri = MODEL_URI, param_pars= param_pars)
+
+    param_pars = {'choice': "test01", 'config_mode': 'test', 'data_path': '/dataset/'}
+    test_api(module_uri=MODEL_URI, param_pars=param_pars)
 
 
 

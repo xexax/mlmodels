@@ -191,12 +191,18 @@ then for each staging, declare some specific parameters for model, dataset and a
                 "timestep": 4,
                 "epoch": 2
             },
-            "data_pars": {
-                "data_path": "dataset/GOOG-year.csv",
-                "data_type": "pandas",
-                "size": [0, 0, 6],
-                "output_size": [0, 6]
+
+            "data_pars" :{
+              "path"            : 
+              "location_type"   :  "local/absolute/web",
+              "data_type"   :   "text" / "recommender"  / "timeseries" /"image",
+              "data_loader" :  "pandas",
+              "data_preprocessor" : "mlmodels.model_keras.prepocess:process",
+              "size" : [0,1,2],
+              "output_size": [0, 6]              
             },
+
+
             "compute_pars": {
                 "distributed": "mpi",
                 "epoch": 10
