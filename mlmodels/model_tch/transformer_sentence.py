@@ -163,21 +163,23 @@ def path_setup(out_folder="", sublevel=1, data_path="dataset/"):
 
 ####################################################################################################
 class Model:
-  def __init__(self, model_pars=None, data_pars=None, skip_create=False):
+  def __init__(self, model_pars=None, data_pars=None):
     ### Model Structure        ################################
-    if not skip_create:
-        self.EmbeddingModel = getattr(models, model_pars["embedding_model"])
-        self.word_embedding_model = self.EmbeddingModel(
-            model_pars["embedding_model_name"])
-        self.pooling_model = models.Pooling(
-            self.word_embedding_model.get_word_embedding_dimension(),
-            pooling_mode_mean_tokens=True,
-            pooling_mode_cls_token=False,
-            pooling_mode_max_tokens=False)
-        self.model = SentenceTransformer(
-            modules=[self.word_embedding_model, self.pooling_model]
-        )
-    self.fit_metrics = {"train": {}, "test": {}}    #### metrics during training
+    if model_pars is None :
+        self.model = None
+
+    else :
+        if not skip_create:
+            self.EmbeddingModel       = getattr(models, model_pars["embedding_model"])
+            self.word_embedding_model = self.EmbeddingModel( model_pars["embedding_model_name"])
+            self.pooling_model        = models.Pooling(
+                self.word_embedding_model.get_word_embedding_dimension(),
+                pooling_mode_mean_tokens = True,
+                pooling_mode_cls_token   = False,
+                pooling_mode_max_tokens  = False)
+            self.model = SentenceTransformer( modules=[self.word_embedding_model, self.pooling_model] )
+
+        self.fit_metrics = {"train": {}, "test": {}}    #### metrics during training
 
 
 def fit(model, data_pars={}, model_pars={}, compute_pars={}, out_pars={}, *args, **kw):
@@ -236,8 +238,7 @@ def fit_metrics(model, **kw):
 def predict(model, sess=None, data_pars={}, out_pars={}, compute_pars={}, **kw):
     ##### Get Data ###############################################
     reader = get_dataset(data_pars)
-    train_fname = 'train.gz' if data_pars["train_type"].lower() == 'nli'\
-            else 'sts-train.csv'
+    train_fname = 'train.gz' if data_pars["train_type"].lower() == 'nli' else 'sts-train.csv'
     examples = [ex.texts for ex in reader.get_examples(train_fname)]
     Xpred = sum(examples, [])
 
@@ -305,10 +306,11 @@ def get_params(choice="", data_path="dataset/", config_mode="test", **kw):
             "test_type": "sts",
             "train": 1
         }
+
         model_pars = {
-            "embedding_model": "BERT",
-            "embedding_model_name": "bert-base-uncased",
+            "embedding_model": "BERT",  "embedding_model_name": "bert-base-uncased",
         }
+
         compute_pars = {
             # "loss": "CosineSimilarityLoss",
             "loss": "SoftmaxLoss",
@@ -317,6 +319,7 @@ def get_params(choice="", data_path="dataset/", config_mode="test", **kw):
             "evaluation_steps": 10,
             "warmup_steps": 100,
         }
+
         out_pars = {
             "model_save_path": "/tmp/sentence_transformers"
         }
@@ -377,7 +380,6 @@ if __name__ == '__main__':
 
     ####    test_module(model_uri="model_xxxx/yyyy.py", param_pars=None)
     from mlmodels.models import test_module
-
     param_pars = {'choice': "test01", 'config_mode': 'test', 'data_path': '/dataset/'}
     # test_module(module_uri=MODEL_URI, param_pars=param_pars)
 
@@ -386,9 +388,9 @@ if __name__ == '__main__':
     # config_mode = pp['config_mode']
     # data_path   = pp['data_path']
 
+
     ####    test_api(model_uri="model_xxxx/yyyy.py", param_pars=None)
     from mlmodels.models import test_api
-
     param_pars = {'choice': "test01", 'config_mode': 'test', 'data_path': '/dataset/'}
     # test_api(module_uri=MODEL_URI, param_pars=param_pars)
 
