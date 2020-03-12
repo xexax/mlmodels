@@ -170,10 +170,9 @@ def get_dataset(data_pars=None, **kw):
 
 def get_params(param_pars={}, **kw):
     import json
-    pp          = param_pars
-    choice      = pp['choice']
-    config_mode = pp['config_mode']
-    data_path   = pp['data_path']
+    choice      = param_pars['choice']
+    config_mode = param_pars['config_mode']
+    data_path   = param_pars['data_path']
 
 
     if choice == "json":

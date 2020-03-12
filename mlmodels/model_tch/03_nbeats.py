@@ -15,7 +15,7 @@ VERBOSE = False
 
 ####################################################################################################
 # Helper functions
-from mlmodels.util import  os_package_root_path, log
+from mlmodels.util import  os_package_root_path, log, path_norm
 
 
 
@@ -223,20 +223,26 @@ def load(load_pars):
 
 
 #############################################################################################################
-def get_params(choice=0, data_path="dataset/", config_mode="test", **kw):
-    if choice == 0:
-        with open(data_path, encoding='utf-8') as config_f:
-            config = json.load(config_f)
-            cfg = config[config_mode]
+def get_params(param_pars=None, **kw):
+    import json
+    pp = param_pars
+    choice = pp['choice']
+    config_mode = pp['config_mode']
+    data_path = pp['data_path']
 
-        return cfg["model_pars"], cfg["data_pars"], cfg["compute_pars"], cfg["out_pars"]
 
-    if choice == 1:
-        from mlmodels.util import path_local_setup
-        log("#### Path params   ##########################################")
-        data_path, out_path, model_path = path_local_setup(out_folder="/ztest/model_tch/nbeats/",
-                                                           sublevel=1,
-                                                           data_path="/dataset/timeseries/")
+    if choice == "json":
+        data_path = path_norm(data_path)
+        cf = json.load(open(data_path, mode='r'))
+        cf = cf[config_mode]
+        return cf['model_pars'], cf['data_pars'], cf['compute_pars'], cf['out_pars']
+
+
+    if choice == "test01":
+        log("#### Path params   ########################################################")
+        data_path  = path_norm( "/dataset/timeseries/"  )   
+        out_path   = path_norm( "/ztest/model_tch/nbeats/" )   
+        model_path = os.path.join(out_path , "model")
 
 
         data_pars = {"data_path": data_path, "forecast_length": 5, "backcast_length": 10}
@@ -265,10 +271,13 @@ def test(data_path="dataset/milk.csv"):
     ###loading the command line arguments
 
     log("#### Loading params   #######################################")
-    model_pars, data_pars, compute_pars, out_pars = get_params(choice=1, data_path=data_path)
+    param_pars = { "choice" : 0, "data_path" : "dataset/", "config_mode" : "test" }
+    model_pars, data_pars, compute_pars, out_pars = get_params(param_pars)
+
 
     log("#### Loading dataset  #######################################")
     x_train, y_train, x_test, y_test, norm_const = get_dataset(**data_pars)
+
 
     log("#### Model setup   ##########################################")
     model = NBeatsNet(**model_pars)

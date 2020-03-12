@@ -173,7 +173,6 @@ def get_params(param_pars={}, **kw):
 
 
     if choice == "json":
-        from mlmodels.util import path_norm
         data_path = path_norm(data_path)
         cf = json.load(open(data_path, mode='r'))
         cf = cf[config_mode]
@@ -181,7 +180,6 @@ def get_params(param_pars={}, **kw):
 
 
     if choice == "test01":
-        from mlmodels.util import  path_norm
         log("#### Path params   ##########################################")
         data_path  = path_norm( "dataset/text/imdb.csv"  )   
         out_path   = path_norm( "/ztest/model_keras/charcnn/" )   
