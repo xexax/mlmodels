@@ -1,22 +1,28 @@
-
-
 #### Datasets
 
-
-timeseries
-
-
-
-text
+```
+dataset/timeseries/
+   Time series related
 
 
 
+dataset/text/
+   Time series related
 
-tabular
+
+dataset/tabular/
+   Tabular related
+
+
+dataset/recommender/
+   Recommender
+
+
+```
 
 
 
-recommender
+
 
 
 
