@@ -169,7 +169,6 @@ class Model:
         self.model = None
 
     else :
-        if not skip_create:
             self.EmbeddingModel       = getattr(models, model_pars["embedding_model"])
             self.word_embedding_model = self.EmbeddingModel( model_pars["embedding_model_name"])
             self.pooling_model        = models.Pooling(
@@ -179,7 +178,7 @@ class Model:
                 pooling_mode_max_tokens  = False)
             self.model = SentenceTransformer( modules=[self.word_embedding_model, self.pooling_model] )
 
-        self.fit_metrics = {"train": {}, "test": {}}    #### metrics during training
+            self.fit_metrics = {"train": {}, "test": {}}    #### metrics during training
 
 
 def fit(model, data_pars={}, model_pars={}, compute_pars={}, out_pars={}, *args, **kw):
