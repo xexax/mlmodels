@@ -22,6 +22,7 @@ Importing Libraries
 import os
 import warnings
 
+from pathlib import Path
 import pandas as pd
 from keras.callbacks import EarlyStopping
 from keras.callbacks import ModelCheckpoint
@@ -49,10 +50,7 @@ from mlmodels.util import os_package_root_path, log
 
 VERBOSE = False
 
-MODEL_URI = os.path.dirname(os.path.abspath(__file__)).split("\\")[-1] + "." + os.path.basename(__file__).replace(".py",
-                                                                                                                  "")
-
-
+MODEL_URI = Path(os.path.abspath(__file__)).parent.name + "." + os.path.basename(__file__).replace(".py", "")
 ####################################################################################################
 class Model:
     def __init__(self, model_pars=None, data_pars=None, compute_pars=None, **kwargs):
@@ -110,7 +108,7 @@ def fit(model, data_pars={}, compute_pars={}, out_pars={}, **kw):
                               validation_data=(Xtest, ytest))
     model.metrics = history
 
-    return model
+    return model, sess
 
 
 def fit_metrics(model, data_pars={}, compute_pars={}, out_pars={}, **kw):
@@ -276,7 +274,7 @@ def test(data_path="dataset/", pars_choice="json", config_mode="test"):
     log("#### Model init, fit   #############################################")
     from mlmodels.models import module_load_full, fit, predict
     module, model = module_load_full("model_keras.namentity_crm_bilstm", model_pars, data_pars, compute_pars)
-    model = fit(module, model, data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)
+    model, sess = fit(module, model, data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)
 
     # model = Model(model_pars, data_pars, compute_pars)
     # model, session = fit(model, data_pars, compute_pars, out_pars)
