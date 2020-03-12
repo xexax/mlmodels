@@ -39,8 +39,8 @@ def path_local_setup(current_file=None, out_folder="", sublevel=1, data_path="da
     """
     root  = os_package_root_path(__file__, sublevel=0, path_add="")
 
-    out_folder = path_normalize(out_folder)
-    data_path = path_normalize(data_path)
+    out_folder = path_norm(out_folder)
+    data_path = path_norm(data_path)
 
     model_path = f"{out_path}/model/"
     os.makedirs(out_path, exist_ok=True)

@@ -193,7 +193,7 @@ def get_dataset(data_pars=None, **kw):
     idx2word = {i: w for w, i in word_to_index.items()}
     idx2tag = {i: w for w, i in tag_to_index.items()}
 
-    # Converting each sentence into list of index from list of tokens
+
     # Converting each sentence into list of index from list of tokens
     X = [[word_to_index[w[0]] for w in s] for s in sentences]
 
