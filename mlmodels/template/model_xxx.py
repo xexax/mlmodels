@@ -227,30 +227,29 @@ def test(data_path="dataset/", pars_choice="json", config_mode="test"):
 if __name__ == '__main__':
     VERBOSE = True
     test_path = os.getcwd() + "/mytest/"
-    
+
     ### Local fixed params
     test(pars_choice="test01")
-
 
     ### Local json file
     # test(pars_choice="json")
 
-
     ####    test_module(model_uri="model_xxxx/yyyy.py", param_pars=None)
     from mlmodels.models import test_module
-    param_pars = {'choice': "test01", 'config_mode' : 'test', 'data_path' : '/dataset/' }
-    test_module(module_uri = MODEL_URI, param_pars= param_pars)
+
+    param_pars = {'choice': "test01", 'config_mode': 'test', 'data_path': '/dataset/'}
+    test_module(module_uri=MODEL_URI, param_pars=param_pars)
 
     ##### get of get_params
     # choice      = pp['choice']
     # config_mode = pp['config_mode']
     # data_path   = pp['data_path']
 
-
     ####    test_api(model_uri="model_xxxx/yyyy.py", param_pars=None)
     from mlmodels.models import test_api
-    param_pars = {'choice': "test01", 'config_mode' : 'test', 'data_path' : '/dataset/' }
-    test_api(module_uri = MODEL_URI, param_pars= param_pars)
+
+    param_pars = {'choice': "test01", 'config_mode': 'test', 'data_path': '/dataset/'}
+    test_api(module_uri=MODEL_URI, param_pars=param_pars)
 
 
 

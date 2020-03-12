@@ -1,20 +1,4 @@
 # -*- coding: utf-8 -*-
-def predict(model, sess=None, data_pars={}, out_pars={}, compute_pars={}, **kw):
-    ##### Get Data ###############################################
-    reader = get_dataset(data_pars)
-    train_fname = 'train.gz' if data_pars["train_type"].lower() == 'nli'\
-            else 'sts-train.csv'
-    examples = [ex.texts for ex in reader.get_examples(train_fname)]
-    Xpred = sum(examples, [])
-
-    #### Do prediction
-    ypred = model.model.encode(Xpred)
-
-    ### Save Results
-
-    ### Return val
-    # if compute_pars.get("return_pred_not") is not None :
-    return ypred
 """
 
 https://pypi.org/project/sentence-transformers/
@@ -118,8 +102,8 @@ import sentence_transformers as K
 from sentence_transformers import models
 #####################################################################################################
 
-
 VERBOSE = False
+MODEL_URI = MODEL_URI = os.path.dirname(os.path.abspath(__file__)).split("\\")[-1] + "." + os.path.basename(__file__).replace(".py",  "")
 
 
 
@@ -195,8 +179,8 @@ class Model:
         )
     self.fit_metrics = {"train": {}, "test": {}}    #### metrics during training
 
-def fit(model, data_pars={}, model_pars={}, compute_pars={},
-        out_pars={}, *args, **kw):
+
+def fit(model, data_pars={}, model_pars={}, compute_pars={}, out_pars={}, *args, **kw):
     """
 
   :param model:    Class model
@@ -206,42 +190,37 @@ def fit(model, data_pars={}, model_pars={}, compute_pars={},
   :param kwargs:
   :return:
     """
-    train_pars = data_pars.copy()
-    train_pars.update(train=1)
-    train_fname = 'train.gz' if data_pars["train_type"].lower() == 'nli'\
-        else 'sts-train.csv'
-    val_pars = data_pars.copy()
-    val_pars.update(train=0)
-    val_fname = 'dev.gz' if data_pars["test_type"].lower() == 'nli'\
-        else 'sts-dev.csv'
-    train_reader = get_dataset(train_pars)
-    val_reader = get_dataset(val_pars)
+    train_pars              = data_pars.copy()
+    train_pars.update(train = 1)
+    train_fname             = 'train.gz' if data_pars["train_type"].lower() == 'nli'else 'sts-train.csv'
+    val_pars                = data_pars.copy()
+    val_pars.update(train   = 0)
+    val_fname               = 'dev.gz' if data_pars["test_type"].lower() == 'nli'  else 'sts-dev.csv'
+    train_reader            = get_dataset(train_pars)
+    val_reader              = get_dataset(val_pars)
 
-    train_data = SentencesDataset(train_reader.get_examples(train_fname),
-                                  model=model.model)
-    val_data = SentencesDataset(val_reader.get_examples(val_fname),
-                                model=model.model)
-    train_dataloader = DataLoader(train_data, shuffle=True,
-                                  batch_size=compute_pars["batch_size"])
-    val_dataloader = DataLoader(val_data, shuffle=True,
-                                batch_size=compute_pars["batch_size"])
-    emb_dim = model.model.get_sentence_embedding_dimension()
+    train_data       = SentencesDataset(train_reader.get_examples(train_fname),  model=model.model)
+    val_data         = SentencesDataset(val_reader.get_examples(val_fname), model=model.model)
+    train_dataloader = DataLoader(train_data, shuffle=True, batch_size=compute_pars["batch_size"])
+    val_dataloader   = DataLoader(val_data, shuffle=True, batch_size=compute_pars["batch_size"])
+    emb_dim          = model.model.get_sentence_embedding_dimension()
     train_num_labels = train_reader.get_num_labels()
+
     train_loss = getattr(losses, compute_pars["loss"])(
-        model=model.model,
-        sentence_embedding_dimension=emb_dim,
-        num_labels=train_num_labels
+        model                        = model.model,
+        sentence_embedding_dimension = emb_dim,
+        num_labels                   = train_num_labels
     )
     train_loss.float()
     evaluator = EmbeddingSimilarityEvaluator(val_dataloader)
     model.model.float()
-    model.fit_metrics =\
-        model.model.fit(train_objectives=[(train_dataloader, train_loss)],
-                        evaluator=evaluator,
-                        epochs=compute_pars["num_epochs"],
-                        evaluation_steps=compute_pars["evaluation_steps"],
-                        warmup_steps=compute_pars["warmup_steps"],
-                        output_path=out_pars["model_save_path"]
+
+    model.fit_metrics = model.model.fit(train_objectives=[(train_dataloader, train_loss)],
+                        evaluator        = evaluator,
+                        epochs           = compute_pars["num_epochs"],
+                        evaluation_steps = compute_pars["evaluation_steps"],
+                        warmup_steps     = compute_pars["warmup_steps"],
+                        output_path      = out_pars["model_save_path"]
                         )
     return model, None
 
@@ -294,23 +273,23 @@ def get_dataset(data_pars=None, **kw):
     """
     data_path, _, _ = path_setup()
     mode = "train" if data_pars["train"] else "test"
+
     if data_pars[f"{mode}_type"].lower() == 'nli':
         Reader = readers.NLIDataReader
+
     elif data_pars[f"{mode}_type"].lower() == 'sts':
         Reader = readers.STSDataReader
-    path = os.path.join(data_path, data_pars[f"{mode}_path"])
+
+    path = os.path.join(data_path + "/text/", data_pars[f"{mode}_path"])
     reader = Reader(path)
     return reader
 
+
 def get_params(choice="", data_path="dataset/", config_mode="test", **kw):
     if choice == "json":
-        with open(data_path, encoding='utf-8') as config_f:
-            config = json.load(config_f)
-            c = config[config_mode]
-
-        model_pars, data_pars  = c[ "model_pars" ], c[ "data_pars" ]
-        compute_pars, out_pars = c[ "compute_pars" ], c[ "out_pars" ]
-        return model_pars, data_pars, compute_pars, out_pars
+       cf = json.load(open(data_path, mode='r'))
+       cf = cf[config_mode]
+       return cf['model_pars'], cf['data_pars'], cf['compute_pars'], cf['out_pars']
 
 
     if choice == "test01":
@@ -346,101 +325,7 @@ def get_params(choice="", data_path="dataset/", config_mode="test", **kw):
 
 
 
-################################################################################################
-def test_global(data_path="dataset/", model_uri="model_tch/transformer_sentence.py", pars_choice="test01", reset=True):
-    ###loading the command line arguments
-    #model_uri = "model_xxxx/yyyy.py"
-
-    log("#### Module init   ############################################")
-    from mlmodels.models import module_load
-    module = module_load(model_uri)
-    log(module)
-
-
-    log("#### Loading params   ##############################################")
-    model_pars, data_pars, compute_pars, out_pars = module.get_params(choice=pars_choice,
-                                                                      data_path=data_path)
-
-
-    log("#### Model init   ############################################")
-    from mlmodels.models import model_create 
-    model = model_create(module, model_pars)
-    log(model)
-
-
-    log("#### Fit   ########################################################")
-    model, session = module.fit(model, data_pars, model_pars, compute_pars, out_pars)
-
-
-    log("#### Predict   ####################################################")
-    ypred = module.predict(model, session, data_pars, compute_pars, out_pars)
-    print(ypred)
-
-
-    log("#### Get  metrics   ################################################")
-    metrics_val = module.fit_metrics(model, data_pars, compute_pars, out_pars)
-
-
-    log("#### Save/Load   ###################################################")
-    module.save(model, out_pars['modelpath'])
-    model2 = module.load(out_pars['modelpath'])
-    #     ypred = predict(model2, data_pars, compute_pars, out_pars)
-    #     metrics_val = metrics(model2, ypred, data_pars, compute_pars, out_pars)
-    print(model2)
-
-
-
-
-def test_global2(data_path="dataset/", model_uri="model_tch", pars_choice="json", reset=True):
-    ###loading the command line arguments
-    model_uri = "model_xxxx/yyyy.py"
-
-
-    log("#### Module init   #################################################")
-    from mlmodels.models import module_load
-    module = module_load(model_uri)
-    log(module)
-
-
-    log("#### Loading params   ##############################################")
-    from mlmodels.models import get_params as get_params_batch
-    model_pars, data_pars, compute_pars, out_pars = get_params_batch(module, choice=pars_choice,
-                                                                    data_path=data_path)
-
-    log("#### Model init, fit   ############################################")
-    from mlmodels.models import module_load_full 
-    module, model = module_load_full(model_uri, model_pars)
-    log(module, model)
-
-
-    log("#### Fit   ########################################################")
-    from mlmodels.models import fit as fit_batch
-    model, session = fit_batch(model, module, compute_pars, data_pars, out_pars)
-
-
-    log("#### Predict   ####################################################")
-    ypred = predict_batch(model, module, session, compute_pars, data_pars, out_pars)
-    print(ypred)
-
-
-    log("#### Mtrics   ################################################")
-    from mlmodels.models import  metrics as metrics_batch 
-    metrics_val = metrics_batch(model, module, session, compute_pars, data_pars,  out_pars)
-
-
-    log("#### Save/Load   ###################################################")
-    from mlmodels.models import load_batch, save_batch
-    save_batch(model, module, session, out_pars['modelpath'])
-    model2 = load_batch(out_pars['modelpath'])
-    #     ypred = predict(model2, data_pars, compute_pars, out_pars)
-    #     metrics_val = metrics(model2, ypred, data_pars, compute_pars, out_pars)
-    print(model2)
-
-
-
-
-
-
+##################################################################################################
 def test(data_path="dataset/", pars_choice="test01"):
     ### Local test
 
@@ -478,12 +363,35 @@ def test(data_path="dataset/", pars_choice="test01"):
     print(model2)
 
 
+
 if __name__ == '__main__':
     VERBOSE = True
-    
-    ### Local
+    test_path = os.getcwd() + "/mytest/"
+
+    ### Local fixed params
     test(pars_choice="json")
     test(pars_choice="test01")
 
-    ### Global mlmodels
-    test_global(pars_choice="json", out_path= test_path,  reset=True)
+    ### Local json file
+    # test(pars_choice="json")
+
+    ####    test_module(model_uri="model_xxxx/yyyy.py", param_pars=None)
+    from mlmodels.models import test_module
+
+    param_pars = {'choice': "test01", 'config_mode': 'test', 'data_path': '/dataset/'}
+    # test_module(module_uri=MODEL_URI, param_pars=param_pars)
+
+    ##### get of get_params
+    # choice      = pp['choice']
+    # config_mode = pp['config_mode']
+    # data_path   = pp['data_path']
+
+    ####    test_api(model_uri="model_xxxx/yyyy.py", param_pars=None)
+    from mlmodels.models import test_api
+
+    param_pars = {'choice': "test01", 'config_mode': 'test', 'data_path': '/dataset/'}
+    # test_api(module_uri=MODEL_URI, param_pars=param_pars)
+
+
+
+
