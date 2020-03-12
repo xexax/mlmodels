@@ -181,20 +181,54 @@ def get_params(param_pars={}, **kw):
 
     if choice == "test01":
         log("#### Path params   ##########################################")
+        root       = path_norm()
         data_path  = path_norm( "dataset/text/imdb.npz"  )   
         out_path   = path_norm( "/ztest/model_keras/charcnn/" )   
         model_path = os.path.join(out_path , "model")
 
 
-        data_pars = {"path": data_path, "train": 1, "maxlen": 400, "max_features": 10, }
+        model_pars = {
+            "embedding_size": 128,
+            "conv_layers": [[256, 10 ], [256, 7 ], [256, 5 ], [256, 3 ] ], 
+            "fully_connected_layers": [
+                1024,
+                1024
+            ],
+            "threshold": 1e-6,
+            "dropout_p": 0.1,
+            "optimizer": "adam",
+            "loss": "categorical_crossentropy"
+        }
 
-        model_pars = {"maxlen": 400, "max_features": 10, "embedding_dims": 50,
-                      }
-        compute_pars = {"engine": "adam", "loss": "binary_crossentropy", "metrics": ["accuracy"],
-                        "batch_size": 32, "epochs": 1
-                        }
+        data_pars = {
+            "train": true,
+            "alphabet": "abcdefghijklmnopqrstuvwxyz0123456789-,;.!?:'\"/\\|_@#$%^&*~`+-=<>()[]{}",
+            "alphabet_size": 69,
+            "input_size": 1014,
+            "num_of_classes": 4,
+            "train_data_source": norm_path( "/dataset/text/ag_news_csv/train.csv") ,
+            "val_data_source": norm_path("dataset/text/ag_news_csv/test.csv")
+        }
 
-        out_pars = {"path": out_path, "model_path": model_path}
+
+        compute_pars = {
+            "epochs": 1,
+            "batch_size": 128
+        }
+
+        out_pars = {
+            "path":  norm_path( "ztest/ml_keras/charcnn/"),
+            "data_type": "pandas",
+            "size": [
+                0,
+                0,
+                6
+            ],
+            "output_size": [
+                0,
+                6
+            ]
+        }
 
         return model_pars, data_pars, compute_pars, out_pars
 

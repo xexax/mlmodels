@@ -51,9 +51,13 @@ def path_local_setup(current_file=None, out_folder="", sublevel=1, data_path="da
 
 
 
-def path_norm(path) :
+def path_norm(path="") :
 
-  if  path.startswith("model_") or path.startswith("/model_")   :
+  if  len(path) == 0  :
+    path = os_package_root_path(__file__, 0) 
+
+
+  elif  path.startswith("model_") or path.startswith("/model_")   :
     path = os.path.join(os_package_root_path(__file__, 0) , path )   
 
 
