@@ -149,17 +149,6 @@ class to_namespace(object):
             return self.__dict__.get(key)
 
 
-def path_setup(out_folder="", sublevel=1, data_path="dataset/"):
-    data_path = os_package_root_path(__file__, sublevel=sublevel, path_add=data_path)
-    out_path = os.getcwd() + "/" + out_folder
-    os.makedirs(out_path, exist_ok=True)
-    model_path = out_path + "/model/"
-    os.makedirs(model_path, exist_ok=True)
-
-    log(data_path, out_path, model_path)
-    return data_path, out_path, model_path
-
-
 
 ####################################################################################################
 class Model:
@@ -286,6 +275,8 @@ def get_dataset(data_pars=None, **kw):
 
 
 def get_params(choice="", data_path="dataset/", config_mode="test", **kw):
+    from mlmodels.util import path_local_setup
+
     if choice == "json":
        cf = json.load(open(data_path, mode='r'))
        cf = cf[config_mode]
@@ -294,8 +285,9 @@ def get_params(choice="", data_path="dataset/", config_mode="test", **kw):
 
     if choice == "test01":
         log("#### Path params   ##########################################")
-        data_path, out_path, model_path = path_setup(out_folder="", sublevel=1,
-                                                     data_path="dataset/")
+        data_path, out_path, model_path = path_local_setup( __file__, sublevel=1,
+                                                           out_folder="/ztest/transformer_sentence/", 
+                                                           data_path="/dataset/text/")
         data_pars = {
             "train_path": "AllNLI",
             # one of: STS, NLI

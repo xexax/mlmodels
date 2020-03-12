@@ -55,23 +55,9 @@ from deepctr.models import DeepFM
 
 ####################################################################################################
 # Helper functions
-def os_package_root_path(filepath, sublevel=0, path_add=""):
-    """
-       get the module package root folder
-    """
-    from pathlib import Path
-    path = Path(os.path.realpath(filepath)).parent
-    for i in range(1, sublevel + 1):
-        path = path.parent
-
-    path = os.path.join(path.absolute(), path_add)
-    return path
+from mlmodels.util import os_package_root_path, log
 
 
-def log(*s, n=0, m=1):
-    sspace = "#" * n
-    sjump = "\n" * m
-    print(sjump, sspace, s, sspace, flush=True)
 
 
 ####################################################################################################
@@ -226,8 +212,10 @@ def get_dataset(data_pars=None, **kw):
 
     if data_type == "criteo":
         df, linear_cols, dnn_cols, train, test, target, ytrue = _preprocess_criteo(df, **data_pars)
+    
     elif data_type == "movie_len":
         df, linear_cols, dnn_cols, train, test, target, ytrue = _preprocess_movielens(df, **data_pars)
+
     else:  ## Already define
         linear_cols = data_pars['linear_cols']
         dnn_cols = data_pars['dnn_cols']
@@ -371,7 +359,7 @@ def get_params(choice="", data_path="dataset/", config_mode="test", **kw):
         log("#### Path params   ################################################")
         data_path, out_path = path_setup(out_folder="/deepctr_test/", data_path=data_path)
 
-        train_data_path = data_path + "movielens_sample.txt"
+        train_data_path = data_path + "/recommender/movielens_sample.txt"
         data_pars = {"train_data_path": train_data_path, "dataset_type": "movie_len",
                      "test_size": 0.2}
 
@@ -386,7 +374,7 @@ def get_params(choice="", data_path="dataset/", config_mode="test", **kw):
         log("#### Path params   ##################################################")
         data_path, out_path = path_setup(out_folder="/deepctr_test/", data_path=data_path)
 
-        train_data_path = data_path + "movielens_sample.txt"
+        train_data_path = data_path + "/recommender/movielens_sample.txt"
         data_pars = {"train_data_path": train_data_path, "multiple_value": True,
                      "dataset_type": "movie_len", "test_size": 0.2}
 
@@ -401,7 +389,7 @@ def get_params(choice="", data_path="dataset/", config_mode="test", **kw):
         log("#### Path params   #################################################")
         data_path, out_path = path_setup(out_folder="/deepctr_test/", data_path=data_path)
 
-        train_data_path = data_path + "movielens_sample.txt"
+        train_data_path = data_path + "/recommender/movielens_sample.txt"
         data_pars = {"train_data_path": train_data_path, "multiple_value": True,
                      "hash_feature": True, "dataset_type": "movie_len", "test_size": 0.2}
 

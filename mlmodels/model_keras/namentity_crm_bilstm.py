@@ -223,17 +223,6 @@ def get_dataset(data_pars=None, **kw):
         return Xtest, ytest
 
 
-def path_setup(out_folder="ztest", sublevel=1, data_path="dataset/"):
-    ### Local path setup
-    data_path  = os_package_root_path(__file__, sublevel=sublevel, path_add=data_path)
-    out_path   = os.getcwd() + "/" + out_folder
-    model_path = out_path + "/model/"
-    os.makedirs(out_path, exist_ok=True)
-    os.makedirs(model_path, exist_ok=True)
-
-    log(data_path, out_path, model_path)
-    return data_path, out_path, model_path
-
 
 def get_params(param_pars={}, **kw):
     import json
@@ -249,10 +238,11 @@ def get_params(param_pars={}, **kw):
 
 
     if choice == "test01":
+        from mlmodels.util import path_local_setup
         log("#### Path params   ##########################################")
-        data_path, out_path, model_path = path_setup(out_folder="/ztest/model_keras/charcnn/",
-                                                     sublevel=1,
-                                                     data_path="dataset/imdb.csv")
+        data_path, out_path, model_path = path_local_setup(out_folder="/ztest/model_keras/crf_bilstm/",
+                                                           sublevel=1,
+                                                           data_path="dataset/imdbfsdfs.csv")
 
         data_pars = {"path": data_path, "train": 1, "maxlen": 400, "max_features": 10, }
 
