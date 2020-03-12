@@ -286,7 +286,7 @@ def load_tf(path, filename):
   https://www.mlflow.org/docs/latest/python_api/mlflow.tensorflow.html#
 
  """
-  import mlflow.tensorflow
+  import mlflow
   import tensorflow as tf
   
   model_uri = path + "/" + filename

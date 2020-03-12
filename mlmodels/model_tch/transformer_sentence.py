@@ -103,7 +103,7 @@ from sentence_transformers import models
 #####################################################################################################
 
 VERBOSE = False
-MODEL_URI = MODEL_URI = os.path.dirname(os.path.abspath(__file__)).split("\\")[-1] + "." + os.path.basename(__file__).replace(".py",  "")
+MODEL_URI = os.path.dirname(os.path.abspath(__file__)).split("\\")[-1] + "." + os.path.basename(__file__).replace(".py",  "")
 
 
 
@@ -237,7 +237,8 @@ def get_dataset(data_pars=None, **kw):
     "data_pars":    { "data_path": "dataset/GOOG-year.csv", "data_type": "pandas",
     "size": [0, 0, 6], "output_size": [0, 6] },
     """
-    data_path, _, _ = path_setup()
+    data_path = path_norm(data_pars["data_path"])
+
     mode = "train" if data_pars["train"] else "test"
 
     if data_pars[f"{mode}_type"].lower() == 'nli':
@@ -259,7 +260,7 @@ def get_params(param_pars, **kw):
 
     
     if choice == "json":
-       data_path = path_normalize(data_path) 
+       data_path = path_norm(data_path)
        cf = json.load(open(data_path, mode='r'))
        cf = cf[config_mode]
        return cf['model_pars'], cf['data_pars'], cf['compute_pars'], cf['out_pars']
@@ -272,6 +273,7 @@ def get_params(param_pars, **kw):
         model_path = os.path.join(out_path , "model")
 
         data_pars = {
+            "data_path" : data_path,
             "train_path": "AllNLI",
             # one of: STS, NLI
             "train_type": "NLI",
