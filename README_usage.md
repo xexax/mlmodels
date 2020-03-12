@@ -120,7 +120,7 @@ module        =  module_load( model_uri= model_uri )                           #
 model_pars, data_pars, compute_pars, out_pars = module.get_params(param_pars={
     'choice':'json',
     'config_mode':'test',
-    'data_path':'../mlmodels/model_tf/1_lstm.json'
+    'data_path':'../mlmodels/dataset/json/1_lstm.json'
 })
 ```
 
