@@ -28,7 +28,7 @@ MODEL_URI = MODEL_URI = os.path.dirname(os.path.abspath(__file__)).split("\\")[-
 
 ####################################################################################################
 ######## Logs, root path
-from mlmodels.util import os_package_root_path, log
+from mlmodels.util import os_package_root_path, log, path_norm
 """
 def os_package_root_path(filepath, sublevel=0, path_add=""):
 
@@ -140,18 +140,6 @@ def get_dataset(data_pars=None, **kw):
 
 
 
-def path_setup(out_folder="ztest", sublevel=1, data_path="dataset/"):
-    data_path = os_package_root_path(__file__, sublevel=sublevel, path_add=data_path)
-    out_path = os.getcwd() + "/" + out_folder
-    os.makedirs(out_path, exist_ok=True)
-
-    model_path = out_path + "/model/"
-    os.makedirs(model_path, exist_ok=True)
-
-    log(data_path, out_path, model_path)
-    return data_path, out_path, model_path
-
-
 def get_params(param_pars={}, **kw):
     import json
     pp          = param_pars
@@ -159,7 +147,9 @@ def get_params(param_pars={}, **kw):
     config_mode = pp['config_mode']
     data_path   = pp['data_path']
 
+
     if choice == "json":
+       data_path = path_norm(data_path)
        cf = json.load(open(data_path, mode='r'))
        cf = cf[config_mode]
        return cf['model_pars'], cf['data_pars'], cf['compute_pars'], cf['out_pars']
@@ -167,8 +157,11 @@ def get_params(param_pars={}, **kw):
 
     if choice == "test01":
         log("#### Path params   ##########################################")
-        data_path, out_path, model_path = path_setup(out_folder="/ztest/", sublevel=1,
-                                                     data_path="dataset/")
+        data_path  = path_norm( "dataset/text/imdb.csv"  )   
+        out_path   = path_norm( "/ztest/model_keras/crf_bilstm/" )   
+        model_path = os.path.join(out_path , "model")
+
+
         data_pars ={
             "path"            : 
             "path_type"   :  "local/absolute/web"
