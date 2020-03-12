@@ -12,24 +12,19 @@ import tensorflow as tf
 from sklearn.preprocessing import MinMaxScaler
 
 ####################################################################################################
-from mlmodels.model_tf.util import os_package_root_path
+from mlmodels.util import os_package_root_path, log
+
+
 
 simplefilter(action='ignore', category=FutureWarning)
 simplefilter(action='ignore', category=DeprecationWarning)
-
-
-
-
 tf.get_logger().setLevel('ERROR')
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '1'  # **** change the warning level ****
 
 
 
 ####################################################################################################
-def log(*s, n=0, m=1):
-    sspace = "#" * n
-    sjump = "\n" * m
-    print(sjump, sspace, s, sspace, flush=True)
+
 
 
 ####################################################################################################
@@ -233,9 +228,8 @@ def get_params(param_pars={}, **kw):
 
     if choice == "test":
         data_path = os_package_root_path(__file__, sublevel=1, path_add=data_path)
-        print(data_path)
-
         log("############# Data, Params preparation   #################")        
+
         model_pars   = {"learning_rate": 0.001, "num_layers": 1, "size": None, "size_layer": 128,
                       "output_size": None, "timestep": 4, "epoch": 2, }
 
@@ -250,37 +244,7 @@ def get_params(param_pars={}, **kw):
 
 
 ####################################################################################################
-def test_global(data_path="dataset/GOOG-year.csv", pars_choice="test", config_mode="test"):
-    """
-       Using mlmodels package method
-       :param data_path:
-       :param pars_choice:
-
-    """
-    log("#### Loading params   ##############################################")
-    model_pars, data_pars, compute_pars, out_pars = get_params({ "choice": pars_choice,
-                                                                 "data_path": data_path,
-                                                                 "config_mode": config_mode,
-                                                                })
-
-    model_uri = "model_tf.1_lstm"
-    print(model_uri, model_pars, data_pars, compute_pars, out_pars)
-
-
-    log("#### Loading dataset   #############################################")
-    dataset = get_dataset(data_pars)
-    model_pars["size"] = dataset.shape[1]
-    model_pars["output_size"] = dataset.shape[1]
-
-
-    log("############ Model test Global  ###########################################")
-    from mlmodels.models import test_api
-    save_pars ={}
-    test_api(model_uri, model_pars, data_pars, compute_pars, out_pars, save_pars)
-
-
-
-def test(data_path="dataset/GOOG-year.csv", pars_choice="test", config_mode="test"):
+def test(data_path="dataset/timeseries/GOOG-year.csv", pars_choice="test", config_mode="test"):
     """
        Using mlmodels package method
        :param data_path:
@@ -320,9 +284,9 @@ def test(data_path="dataset/GOOG-year.csv", pars_choice="test", config_mode="tes
 
 if __name__ == "__main__":
     print("start")
-    test()
+    test(data_path="dataset/timeseries/GOOG-year.csv", pars_choice="test", config_mode="test")
 
-    test_global()
+
 
 
 

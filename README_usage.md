@@ -101,7 +101,39 @@ ypred       = module.predict(model, data_pars, compute_pars, out_pars)     # pre
 
 ```
 
+### Using json config file for input ([Example notebook](example/1_lstm_json.ipynb))
 
+#### Import library and functions
+```python
+# import library
+import mlmodels
+```
+
+#### Load model and data definitions from json
+```python
+from mlmodels.models import module_load
+from mlmodels.util import load_config
+
+model_uri    = "model_tf.1_lstm.py"
+module        =  module_load( model_uri= model_uri )                           # Load file definition
+
+model_pars, data_pars, compute_pars, out_pars = module.get_params(param_pars={
+    'choice':'json',
+    'config_mode':'test',
+    'data_path':'../mlmodels/dataset/json/1_lstm.json'
+})
+```
+
+#### Load parameters and train
+```python
+model         =  module.Model(model_pars=model_pars, data_pars=data_pars, compute_pars=compute_pars)             # Create Model instance
+model, sess   =  module.fit(model, data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)          # fit the model
+```
+
+#### Check inference
+```python
+ypred       = module.predict(model, sess=sess,  data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)     # predict pipeline
+```
 
 
 ## CLI tools: package provide below tools 

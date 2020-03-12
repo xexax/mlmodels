@@ -31,6 +31,51 @@ def os_package_root_path(add_path="",n=0):
   return add_path
 """
 
+def path_local_setup(current_file=None, out_folder="", sublevel=1, data_path="dataset/"):
+    """
+      mlmodels/dataset/
+      mlmodels/ztest/  :  in gitgnore !!
+
+    """
+    root  = os_package_root_path(__file__, sublevel=0, path_add="")
+
+    out_folder = path_normalize(out_folder)
+    data_path = path_normalize(data_path)
+
+    model_path = f"{out_path}/model/"
+    os.makedirs(out_path, exist_ok=True)
+    os.makedirs(model_path, exist_ok=True)
+
+    log(data_path, out_path, model_path)
+    return data_path, out_path, model_path
+
+
+
+def path_norm(path="") :
+
+  if  len(path) == 0  :
+    path = os_package_root_path(__file__, 0) 
+
+
+  elif  path.startswith("model_") or path.startswith("/model_")   :
+    path = os.path.join(os_package_root_path(__file__, 0) , path )   
+
+
+  elif  path.startswith("dataset") or path.startswith("/dataset")   :
+    path = os.path.join(os_package_root_path(__file__, 0) , path )   
+
+
+  elif  path.startswith("template") or path.startswith("/template")   :
+    path = os.path.join( os_package_root_path(__file__, 0) , path )    
+
+
+  elif  path.startswith("ztest") or path.startswith("/ztest")   :
+    path = os.path.join( os_package_root_path(__file__, 0) , path )    
+
+
+  return path
+
+
 
 
 def os_module_path():
@@ -245,7 +290,7 @@ def load_tf(path, filename):
   https://www.mlflow.org/docs/latest/python_api/mlflow.tensorflow.html#
 
  """
-  import mlflow.tensorflow
+  import mlflow
   import tensorflow as tf
   
   model_uri = path + "/" + filename

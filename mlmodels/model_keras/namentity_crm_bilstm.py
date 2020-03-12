@@ -1,8 +1,10 @@
 # coding: utf-8
 """
-
 Named Entity Recognition¶
 In Natural Language Processing (NLP) an Entity Recognition is one of the common problem. The entity is referred to as the part of the text that is interested in. In NLP, NER is a method of extracting the relevant information from a large corpus and classifying those entities into predefined categories such as location, organization, name and so on. Information about lables:
+
+https://github.com/Akshayc1/named-entity-recognition/blob/master/NER%20using%20Bidirectional%20LSTM%20-%20CRF%20.ipynb
+
 
 geo = Geographical Entity
 org = Organization
@@ -39,7 +41,7 @@ warnings.filterwarnings("ignore")
 from sklearn.model_selection import train_test_split
 
 ######## Logs
-from mlmodels.util import os_package_root_path, log
+from mlmodels.util import os_package_root_path, log, path_norm
 
 #### Import EXISTING model and re-map to mlmodels
 # from mlmodels.model_keras.raw.char_cnn.data_utils import Data
@@ -232,15 +234,17 @@ def get_params(param_pars={}, **kw):
     data_path = pp['data_path']
 
     if choice == "json":
+        data_path = path_normalize(data_path)
         cf = json.load(open(data_path, mode='r'))
         cf = cf[config_mode]
         return cf['model_pars'], cf['data_pars'], cf['compute_pars'], cf['out_pars']
 
     if choice == "test01":
         log("#### Path params   ##########################################")
-        data_path, out_path, model_path = path_setup(out_folder="/ztest/model_keras/charcnn/",
-                                                     sublevel=1,
-                                                     data_path="dataset/imdb.csv")
+        data_path  = path_norm( "dataset/text/imdb.csv"  )   
+        out_path   = path_norm( "/ztest/model_keras/crf_bilstm/" )   
+        model_path = os.path.join(out_path , "model")
+
 
         data_pars = {"path": data_path, "train": 1, "maxlen": 400, "max_features": 10, }
 

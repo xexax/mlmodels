@@ -31,7 +31,7 @@ import optuna
 ####################################################################################################
 # from mlmodels import models
 from mlmodels.models import model_create, module_load, save
-from mlmodels.util import log, os_package_root_path
+from mlmodels.util import log, os_package_root_path, path_norm
 
 
 ####################################################################################################
@@ -212,11 +212,9 @@ def test_json(path_json="", config_mode="test"):
 def test_fast(ntrials=2):
     path_curr = os.getcwd()
 
-    data_path = 'dataset/GOOG-year_small.csv'
+    data_path = path_norm( 'dataset/timeseries/GOOG-year_small.csv' )
     path_save = f"{path_curr}/ztest/optuna_1lstm/"
 
-
-    data_path = os_package_root_path(__file__, sublevel=0, path_add= data_path)
     os.makedirs(path_save, exist_ok=True)
     log("path_save", path_save, data_path)
     
