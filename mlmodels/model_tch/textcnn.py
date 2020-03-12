@@ -24,6 +24,9 @@ import shutil
 
 
 
+from mlmodels.util import os_package_root_path, log
+
+
 ###########################################################################################################
 ###########################################################################################################
 def _train(m, device, train_itr, optimizer, epoch, max_epoch):
@@ -77,18 +80,6 @@ def _valid(m, device, test_itr):
 def _get_device():
     # use GPU if it is available
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
-def os_package_root_path(filepath, sublevel=0, path_add=""):
-    """
-       get the module package root folder
-    """
-    from pathlib import Path
-    path = Path(filepath).parent
-    for i in range(1, sublevel + 1):
-        path = path.parent
-
-    path = os.path.join(path.absolute(), path_add)
-    return path
 
 
 def get_config_file():
@@ -243,18 +234,17 @@ Model = TextCNN
 # functions #
 #############
 
+
+
 def get_params(choice="json", data_path=None, config_mode="test", **kw):
+    from mlmodels.util import path_normalize
+
+    data_path = path_normalize(data_path) 
     if choice == "json":
-        if data_path is None:
-            path = get_config_file()
-        with open(path, 'r') as f:
-            config = json.load(f)
-        config = config.get(config_mode)
-        model_pars = config.get('model_pars', dict())
-        data_pars = config.get('data_pars', dict())
-        compute_pars = config.get('compute_pars', dict())
-        out_pars = config.get('out_pars', dict())
-        return model_pars, data_pars, compute_pars, out_pars
+        cf = json.load(open(data_path, mode='r'))
+        cf = cf[config_mode]
+        return cf['model_pars'], cf['data_pars'], cf['compute_pars'], cf['out_pars']
+
 
 
 
@@ -373,10 +363,6 @@ def test():
     print("\n####### Test predict... #####################")
     print(predict(model, data_pars, compute_pars, out_pars))
 
-
-
-def test2():
-    pass
 
 
 

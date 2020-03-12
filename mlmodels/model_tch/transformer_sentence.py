@@ -107,6 +107,10 @@ MODEL_URI = MODEL_URI = os.path.dirname(os.path.abspath(__file__)).split("\\")[-
 
 
 
+
+from mlmodels.util import os_package_root_path, log, path_norm, to_namespace
+
+
 ####################################################################################################
 def os_module_path():
     current_dir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
@@ -119,34 +123,6 @@ def os_file_path(data_path):
     from pathlib import Path
     data_path = os.path.join(Path(__file__).parent.parent.absolute(), data_path)
     return data_path
-
-
-def os_package_root_path(filepath, sublevel=0, path_add=""):
-    """
-    get the module package root folder
-    """
-    from pathlib import Path
-    path = Path(filepath).parent
-    for i in range(1, sublevel + 1):
-        path = path.parent
-
-        path = os.path.join(path.absolute(), path_add)
-        return path
-# print("check", os_package_root_path(__file__, sublevel=1) )
-
-
-def log(*s, n=0, m=1):
-    sspace = "#" * n
-    sjump = "\n" * m
-    print(sjump, sspace, s, sspace, flush=True)
-
-
-class to_namespace(object):
-    def __init__(self, adict):
-        self.__dict__.update(adict)
-
-        def get(self, key):
-            return self.__dict__.get(key)
 
 
 
@@ -246,6 +222,7 @@ def reset_model():
 def save(model, out_pars):
     return torch.save(model.model, out_pars['modelpath'])
 
+
 def load(out_pars={}):
     model = Model(skip_create=True)
     model.model = torch.load(out_pars['modelpath'])
@@ -275,9 +252,9 @@ def get_dataset(data_pars=None, **kw):
 
 
 def get_params(choice="", data_path="dataset/", config_mode="test", **kw):
-    from mlmodels.util import path_local_setup
 
     if choice == "json":
+       data_path = path_normalize(data_path) 
        cf = json.load(open(data_path, mode='r'))
        cf = cf[config_mode]
        return cf['model_pars'], cf['data_pars'], cf['compute_pars'], cf['out_pars']
@@ -285,9 +262,10 @@ def get_params(choice="", data_path="dataset/", config_mode="test", **kw):
 
     if choice == "test01":
         log("#### Path params   ##########################################")
-        data_path, out_path, model_path = path_local_setup( __file__, sublevel=1,
-                                                           out_folder="/ztest/transformer_sentence/", 
-                                                           data_path="/dataset/text/")
+        data_path  = path_norm( "dataset/text/"  )   
+        out_path   = path_norm( "/ztest/model_tch/transformer_sentence/" )   
+        model_path = os.path.join(out_path , "model")
+
         data_pars = {
             "train_path": "AllNLI",
             # one of: STS, NLI

@@ -26,6 +26,10 @@ from mlmodels.model_keras.raw.char_cnn.data_utils import Data
 from mlmodels.model_keras.raw.char_cnn.models.char_cnn_kim import CharCNNKim
 
 
+from mlmodels.util import path_norm
+print( path_norm("dataset") )
+
+
 ####################################################################################################
 
 VERBOSE = False
@@ -126,10 +130,12 @@ def get_dataset(data_pars=None, **kw):
       "data_pars":    { "data_path": "dataset/GOOG-year.csv", "data_type": "pandas",
       "size": [0, 0, 6], "output_size": [0, 6] },
     """
+    from mlmodels.util import path_norm
+    
     if data_pars['train']:
 
         print('Loading data...')
-        train_data = Data(data_source=data_pars["train_data_source"],
+        train_data = Data(data_source= path_norm( data_pars["train_data_source"]) ,
                              alphabet       = data_pars["alphabet"],
                              input_size     = data_pars["input_size"],
                              num_of_classes = data_pars["num_of_classes"])
@@ -138,7 +144,7 @@ def get_dataset(data_pars=None, **kw):
 
 
         # Load val data
-        val_data = Data(data_source=data_pars["val_data_source"],
+        val_data = Data(data_source = path_norm( data_pars["val_data_source"]) ,
                                alphabet=data_pars["alphabet"],
                                input_size=data_pars["input_size"],
                                num_of_classes=data_pars["num_of_classes"])
@@ -149,26 +155,13 @@ def get_dataset(data_pars=None, **kw):
 
 
     else:
-        val_data = Data(data_source=data_pars["val_data_source"],
+        val_data = Data(data_source = path_norm( data_pars["val_data_source"]) ,
                                alphabet=data_pars["alphabet"],
                                input_size=data_pars["input_size"],
                                num_of_classes=data_pars["num_of_classes"])
         val_data.load_data()
         Xtest, ytest = val_data.get_all_data()
         return Xtest, ytest
-
-
-def path_setup(out_folder="ztest", sublevel=1, data_path="dataset/"):
-    ### Local path setup
-    data_path = os_package_root_path(__file__, sublevel=sublevel, path_add=data_path)
-    out_path = os.getcwd() + "/" + out_folder
-    os.makedirs(out_path, exist_ok=True)
-
-    model_path = out_path + "/model/"
-    os.makedirs(model_path, exist_ok=True)
-
-    log(data_path, out_path, model_path)
-    return data_path, out_path, model_path
 
 
 def get_params(param_pars={}, **kw):
@@ -178,24 +171,26 @@ def get_params(param_pars={}, **kw):
     config_mode = pp['config_mode']
     data_path = pp['data_path']
 
+
     if choice == "json":
+        from mlmodels.util import path_norm
+        data_path = path_norm(data_path)
         cf = json.load(open(data_path, mode='r'))
         cf = cf[config_mode]
         return cf['model_pars'], cf['data_pars'], cf['compute_pars'], cf['out_pars']
 
 
     if choice == "test01":
-        from mlmodels.util import path_local_setup
+        from mlmodels.util import  path_norm
         log("#### Path params   ##########################################")
-        data_path, out_path, model_path = path_local_setup(out_folder="/ztest/model_keras/charcnn/",
-                                               sublevel=1,
-                                               data_path="dataset/text/imdb.csv")
+        data_path  = path_norm( "dataset/text/imdb.csv"  )   
+        out_path   = path_norm( "/ztest/model_keras/charcnn/" )   
+        model_path = os.path.join(out_path , "model")
 
 
         data_pars = {"path": data_path, "train": 1, "maxlen": 400, "max_features": 10, }
 
         model_pars = {"maxlen": 400, "max_features": 10, "embedding_dims": 50,
-
                       }
         compute_pars = {"engine": "adam", "loss": "binary_crossentropy", "metrics": ["accuracy"],
                         "batch_size": 32, "epochs": 1
@@ -213,6 +208,8 @@ def get_params(param_pars={}, **kw):
 ########## Tests are  ##########################################################################
 def test(data_path="dataset/", pars_choice="json", config_mode="test"):
     ### Local test
+    from mlmodels.util import path_norm
+    data_path = path_norm(data_path)
 
     log("#### Loading params   ##############################################")
     param_pars = {"choice": pars_choice, "data_path": data_path, "config_mode": config_mode}
@@ -245,13 +242,14 @@ def test(data_path="dataset/", pars_choice="json", config_mode="test"):
     print(model2)
 
 
+
 if __name__ == '__main__':
     VERBOSE = True
     test_path = os.getcwd() + "/mytest/"
     root_path = os_package_root_path(__file__,1)
 
     ### Local fixed params
-    # test(pars_choice="test01")
+    test(pars_choice="test01")
 
     ### Local json file
     test(pars_choice="json", data_path= f"{root_path}/model_keras/charcnn.json")

@@ -37,16 +37,39 @@ def path_local_setup(current_file=None, out_folder="", sublevel=1, data_path="da
       mlmodels/ztest/  :  in gitgnore !!
 
     """
-    root  = os_package_root_path(current_file, sublevel=sublevel, path_add="")
+    root  = os_package_root_path(__file__, sublevel=0, path_add="")
 
-    data_path  = f"{root}/{data_path}/" 
-    out_path   = f"{root}/{out_folder}/" 
+    out_folder = path_normalize(out_folder)
+    data_path = path_normalize(data_path)
+
     model_path = f"{out_path}/model/"
     os.makedirs(out_path, exist_ok=True)
     os.makedirs(model_path, exist_ok=True)
 
     log(data_path, out_path, model_path)
     return data_path, out_path, model_path
+
+
+
+def path_norm(path) :
+
+  if  path.startswith("model_") or path.startswith("/model_")   :
+    path = os.path.join(os_package_root_path(__file__, 0) , path )   
+
+
+  elif  path.startswith("dataset") or path.startswith("/dataset")   :
+    path = os.path.join(os_package_root_path(__file__, 0) , path )   
+
+
+  elif  path.startswith("template") or path.startswith("/template")   :
+    path = os.path.join( os_package_root_path(__file__, 0) , path )    
+
+
+  elif  path.startswith("ztest") or path.startswith("/ztest")   :
+    path = os.path.join( os_package_root_path(__file__, 0) , path )    
+
+
+  return path
 
 
 

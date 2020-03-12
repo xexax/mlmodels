@@ -27,7 +27,7 @@ from keras.datasets import imdb
 ####################################################################################################
 
 ######## Logs
-from mlmodels.util import os_package_root_path, log
+from mlmodels.util import os_package_root_path, log, path_norm
 
 
 
@@ -177,17 +177,18 @@ def get_params(param_pars={}, **kw):
 
 
     if choice == "json":
+       data_path = path_normalize(data_path)
        cf = json.load(open(data_path, mode='r'))
        cf = cf[config_mode]
        return cf['model_pars'], cf['data_pars'], cf['compute_pars'], cf['out_pars']
 
 
     if choice == "test01":
-        from mlmodels.util import path_local_setup
         log("#### Path params   ##########################################")
-        data_path, out_path, model_path = path_local_setup(out_folder="/ztest/model_keras/textcnn/", 
-        	                                         sublevel=1,
-                                                   data_path="dataset/text/imdb.csv")
+        data_path  = path_norm( "dataset/text/imdb.csv"  )   
+        out_path   = path_norm( "/ztest/model_keras/textcnn/" )   
+        model_path = os.path.join(out_path , "model")
+
 
         data_pars    = {"path" : data_path, "train": 1, "maxlen":400, "max_features": 10, }
 
