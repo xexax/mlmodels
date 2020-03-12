@@ -185,10 +185,12 @@ def get_params(param_pars={}, **kw):
 
 
     if choice == "test01":
+        from mlmodels.util import path_local_setup
         log("#### Path params   ##########################################")
-        data_path, out_path, model_path = path_setup(out_folder="/ztest/model_keras/charcnn/",
-                                                     sublevel=1,
-                                                     data_path="dataset/imdb.csv")
+        data_path, out_path, model_path = path_local_setup(out_folder="/ztest/model_keras/charcnn/",
+                                               sublevel=1,
+                                               data_path="dataset/text/imdb.csv")
+
 
         data_pars = {"path": data_path, "train": 1, "maxlen": 400, "max_features": 10, }
 
@@ -216,7 +218,7 @@ def test(data_path="dataset/", pars_choice="json", config_mode="test"):
     param_pars = {"choice": pars_choice, "data_path": data_path, "config_mode": config_mode}
     model_pars, data_pars, compute_pars, out_pars = get_params(param_pars)
 
-    log("#### Loading dataset   #############################################")
+    log("#### Loading daaset   #############################################")
     Xtuple = get_dataset(data_pars)
 
     log("#### Model init, fit   #############################################")

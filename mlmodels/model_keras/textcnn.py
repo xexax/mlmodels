@@ -46,8 +46,8 @@ class Model:
   def __init__(self, model_pars=None, data_pars=None, compute_pars=None
                ):
     ### Model Structure        ################################
-    maxlen = model_pars['maxlen']
-    max_features = model_pars['max_features']
+    maxlen         = model_pars['maxlen']
+    max_features   = model_pars['max_features']
     embedding_dims = model_pars['embedding_dims']
 
     self.model = TextCNN(maxlen, max_features, embedding_dims).get_model()
@@ -168,19 +168,6 @@ def get_dataset(data_pars=None, **kw):
 
 
 
-def path_setup(out_folder="ztest", sublevel=1, data_path="dataset/"):
-	### Local path setup
-    data_path = os_package_root_path(__file__, sublevel=sublevel, path_add=data_path)
-    out_path = os.getcwd() + "/" + out_folder
-    os.makedirs(out_path, exist_ok=True)
-
-    model_path = out_path + "/model/"
-    os.makedirs(model_path, exist_ok=True)
-
-    log(data_path, out_path, model_path)
-    return data_path, out_path, model_path
-
-
 def get_params(param_pars={}, **kw):
     import json
     pp          = param_pars
@@ -196,10 +183,11 @@ def get_params(param_pars={}, **kw):
 
 
     if choice == "test01":
+        from mlmodels.util import path_local_setup
         log("#### Path params   ##########################################")
-        data_path, out_path, model_path = path_setup(out_folder="/ztest/model_keras/textcnn/", 
+        data_path, out_path, model_path = path_local_setup(out_folder="/ztest/model_keras/textcnn/", 
         	                                         sublevel=1,
-                                                     data_path="dataset/imdb.csv")
+                                                   data_path="dataset/text/imdb.csv")
 
         data_pars    = {"path" : data_path, "train": 1, "maxlen":400, "max_features": 10, }
 

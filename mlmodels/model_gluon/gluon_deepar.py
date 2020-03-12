@@ -51,26 +51,27 @@ class Model(object):
 
 
 ########################################################################################################################
-def get_params(choice="", data_path="dataset/", config_mode="test", **kw):
+def get_params(choice="", data_path="dataset/timeseries/", config_mode="test", **kw):
+    from mlmodels.util import path_local_setup
+    
     if choice == "json":
         return _config_process(data_path, config_mode=config_mode)
 
+
     if choice == "test01" :
         log("#### Path params   ###################################################")
-        data_path = os_package_root_path(__file__, sublevel=1, path_add=data_path)
-        out_path = os.getcwd() + "/gluon_deepar/"
-        os.makedirs(out_path, exist_ok=True)
-        model_path = os.getcwd() + "/gluon_deepar/model/"
-        os.makedirs(model_path, exist_ok=True)
-        log(data_path, out_path, model_path)
+        data_path, out_path, model_path = path_local_setup( __file__, sublevel=1,
+                                                           out_folder="/ztest/gluon_deepar/", 
+                                                           data_path=data_path)
 
-        train_data_path = data_path + "GLUON-GLUON-train.csv"
-        test_data_path = data_path + "GLUON-test.csv"
-        start = pd.Timestamp("01-01-1750", freq='1H')
-
-        data_pars = {"train_data_path": train_data_path, "test_data_path": test_data_path, "train": False,
-                     'prediction_length': 48, 'freq': '1H', "start": start, "num_series": 245,
+        data_pars = {"train_data_path": data_path + "/GLUON-GLUON-train.csv" , 
+                     "test_data_path":  data_path + "/GLUON-test.csv" , 
+                     "train": False,
+                     'prediction_length': 48, 'freq': '1H', 
+                     "start": pd.Timestamp("01-01-1750", freq='1H'), 
+                     "num_series": 245,
                      "save_fig": "./series.png", "modelpath": model_path}
+
 
         log("#### Model params   ################################################")
         model_pars = {"prediction_length": data_pars["prediction_length"], "freq": data_pars["freq"],
@@ -78,15 +79,15 @@ def get_params(choice="", data_path="dataset/", config_mode="test", **kw):
                       "use_feat_dynamic_real": False, "use_feat_static_cat": False, "use_feat_static_real": False,
                       "scaling": True, "num_parallel_samples": 100}
 
+
         compute_pars = {"batch_size": 32, "clip_gradient": 100, "ctx": None, "epochs": 1, "init": "xavier",
                         "learning_rate": 1e-3,
                         "learning_rate_decay_factor": 0.5, "hybridize": False, "num_batches_per_epoch": 10,
                         'num_samples': 100,
                         "minimum_learning_rate": 5e-05, "patience": 10, "weight_decay": 1e-08}
 
-        outpath = out_path + "result"
-
-        out_pars = {"outpath": outpath, "plot_prob": True, "quantiles": [0.1, 0.5, 0.9]}
+        out_pars = {"outpath": out_path + "/result", 
+                    "plot_prob": True, "quantiles": [0.1, 0.5, 0.9]}
 
     return model_pars, data_pars, compute_pars, out_pars
 

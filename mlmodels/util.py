@@ -31,6 +31,24 @@ def os_package_root_path(add_path="",n=0):
   return add_path
 """
 
+def path_local_setup(current_file=None, out_folder="", sublevel=1, data_path="dataset/"):
+    """
+      mlmodels/dataset/
+      mlmodels/ztest/  :  in gitgnore !!
+
+    """
+    root  = os_package_root_path(current_file, sublevel=sublevel, path_add="")
+
+    data_path  = f"{root}/{data_path}/" 
+    out_path   = f"{root}/{out_folder}/" 
+    model_path = f"{out_path}/model/"
+    os.makedirs(out_path, exist_ok=True)
+    os.makedirs(model_path, exist_ok=True)
+
+    log(data_path, out_path, model_path)
+    return data_path, out_path, model_path
+
+
 
 
 def os_module_path():

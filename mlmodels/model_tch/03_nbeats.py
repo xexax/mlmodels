@@ -232,15 +232,15 @@ def get_params(choice=0, data_path="dataset/", config_mode="test", **kw):
         return cfg["model_pars"], cfg["data_pars"], cfg["compute_pars"], cfg["out_pars"]
 
     if choice == 1:
-        log("#### Path params   ################################################")
-        data_path = os_package_root_path(__file__, sublevel=1, path_add=data_path)
-        out_path = os.getcwd() + "/nbeats_test/"
-        os.makedirs(out_path, exist_ok=True)
-        log(data_path, out_path)
+        from mlmodels.util import path_local_setup
+        log("#### Path params   ##########################################")
+        data_path, out_path, model_path = path_local_setup(out_folder="/ztest/model_tch/nbeats/",
+                                                           sublevel=1,
+                                                           data_path="/dataset/timeseries/")
+
 
         data_pars = {"data_path": data_path, "forecast_length": 5, "backcast_length": 10}
 
-        log("## Model params   #########################################")
         device = torch.device('cpu')
         model_pars = {"stack_types": [NBeatsNet.GENERIC_BLOCK, NBeatsNet.GENERIC_BLOCK],
                       "device": device,
