@@ -181,7 +181,7 @@ def get_params(param_pars={}, **kw):
 
     if choice == "test01":
         log("#### Path params   ##########################################")
-        data_path  = path_norm( "dataset/text/imdb.csv"  )   
+        data_path  = path_norm( "dataset/text/imdb.npz"  )   
         out_path   = path_norm( "/ztest/model_keras/charcnn/" )   
         model_path = os.path.join(out_path , "model")
 
