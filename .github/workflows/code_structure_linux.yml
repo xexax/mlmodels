@@ -50,11 +50,12 @@ jobs:
       
     - name: Install repo requirements
       if: steps.cache-pipenv.outputs.cache-hit != 'true'
-      run: pip install -r requirements.txt
-
+      run:  |
+        pip install -r requirements.txt
+        pip install -r requirements_fake.txt
 
     - name: Install repo
-      run: pip install -e  -r requirements_fake.txt   --no-deps
+      run: pip install -e . -r requirements.txt   --no-deps
 
 
     - name: repo path
