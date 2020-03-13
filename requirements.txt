@@ -1,7 +1,6 @@
 torch==1.0.1
 tensorflow<2.0
 keras<2.4.0
-git+https://www.github.com/keras-team/keras-contrib.git
 #torch<1.0.0
 mxnet
 numpy
