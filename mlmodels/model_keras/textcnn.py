@@ -70,7 +70,7 @@ def fit(model, data_pars={}, compute_pars={}, out_pars={},   **kw):
 
 
   early_stopping = EarlyStopping(monitor='val_acc', patience=3, mode='max')
-  model.model = model.model.fit(Xtrain, ytrain,
+  model.model.fit(Xtrain, ytrain,
           batch_size=batch_size,
           epochs=epochs,
           callbacks=[early_stopping],
@@ -143,11 +143,12 @@ def get_dataset(data_pars=None, **kw):
     "data_pars":    { "data_path": "dataset/GOOG-year.csv", "data_type": "pandas",
     "size": [0, 0, 6], "output_size": [0, 6] },
   """
-
+  max_features = data_pars['max_features']
+  maxlen = data_pars['maxlen']
+    
   if data_pars['train'] :
     print('Loading data...')
-    max_features = data_pars['max_features']
-    maxlen = data_pars['maxlen']
+    
 
 
     ### Remove Keras download --> csv on disk
