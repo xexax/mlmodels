@@ -59,7 +59,7 @@ jobs:
 
 
     - name: Install repo
-      run: pip install -e .   --no-deps
+      run: pip install -e .  -r requirements_wi.txt  --no-deps
 
 
     - name: Repo Check
