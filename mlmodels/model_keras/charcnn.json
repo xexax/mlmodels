@@ -18,8 +18,8 @@
 			"alphabet_size": 69,
 			"input_size": 1014,
 			"num_of_classes": 4,
-			"train_data_source": "dataset/data/ag_news_csv/train.csv",
-			"val_data_source": "dataset/data/ag_news_csv/test.csv"
+			"train_data_source": "dataset/text/ag_news_csv/train.csv",
+			"val_data_source": "dataset/text/ag_news_csv/test.csv"
 		},
 		"compute_pars": {
 			"epochs": 1,

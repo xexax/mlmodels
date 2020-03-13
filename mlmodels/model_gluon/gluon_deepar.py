@@ -15,6 +15,9 @@ from mlmodels.model_gluon.util import (_config_process, fit, get_dataset, log,
                                        predict, save)
 
 
+from mlmodels.util import os_package_root_path, path_norm
+
+
 ########################################################################################################################
 #### Model defintion
 class Model(object):
@@ -52,17 +55,18 @@ class Model(object):
 
 ########################################################################################################################
 def get_params(choice="", data_path="dataset/timeseries/", config_mode="test", **kw):
-    from mlmodels.util import path_local_setup
     
+
     if choice == "json":
         return _config_process(data_path, config_mode=config_mode)
 
 
     if choice == "test01" :
         log("#### Path params   ###################################################")
-        data_path, out_path, model_path = path_local_setup( __file__, sublevel=1,
-                                                           out_folder="/ztest/gluon_deepar/", 
-                                                           data_path=data_path)
+        data_path  = path_norm( data_path  )   
+        out_path   = path_norm( "/ztest/model_gluon/deepar/" )   
+        model_path = os.path.join(out_path , "model")
+
 
         data_pars = {"train_data_path": data_path + "/GLUON-GLUON-train.csv" , 
                      "test_data_path":  data_path + "/GLUON-test.csv" , 

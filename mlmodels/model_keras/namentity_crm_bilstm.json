@@ -1,0 +1,26 @@
+{
+	"test": {
+		"model_pars": {
+			"embedding": 40,
+			"optimizer": "rmsprop"
+		},
+		"data_pars": {
+			"train": true,
+			"max_len": 75,
+			"data_path": "dataset/text/ner_dataset.csv"
+		},
+		"compute_pars": {
+			"epochs": 1,
+			"batch_size": 64
+		},
+		"out_pars": {
+			"path": "ztest/ml_keras/namentity_crm_bilstm/",
+			"data_type": "pandas"
+		}
+	},
+	"prod": {
+		"model_pars": {},
+		"data_pars": {}
+	}
+}
+

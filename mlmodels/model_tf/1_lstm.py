@@ -12,7 +12,8 @@ import tensorflow as tf
 from sklearn.preprocessing import MinMaxScaler
 
 ####################################################################################################
-from mlmodels.model_tf.util import os_package_root_path, log
+from mlmodels.util import os_package_root_path, log
+
 
 
 simplefilter(action='ignore', category=FutureWarning)

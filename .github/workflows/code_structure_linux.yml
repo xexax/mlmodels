@@ -26,13 +26,13 @@ jobs:
       uses: dschep/install-pipenv-action@v1
 
             
-    - uses: actions/cache@v1
-      id: cache
-      with:
-        path: ~/.cache/pip
-        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
-        restore-keys: |
-          ${{ runner.os }}-pip-
+    #- uses: actions/cache@v1
+    #  id: cache
+    #  with:
+    #    path: ~/.cache/pip
+    #    key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+    #    restore-keys: |
+    #      ${{ runner.os }}-pip-
    
   
     - name: Cache pipenv virtualenv
@@ -54,7 +54,7 @@ jobs:
 
 
     - name: Install repo
-      run: pip install -e .   --no-deps
+      run: pip install -e  -r requirements_fake.txt   --no-deps
 
 
     - name: repo path

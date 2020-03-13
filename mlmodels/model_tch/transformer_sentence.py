@@ -103,8 +103,12 @@ from sentence_transformers import models
 #####################################################################################################
 
 VERBOSE = False
-MODEL_URI = MODEL_URI = os.path.dirname(os.path.abspath(__file__)).split("\\")[-1] + "." + os.path.basename(__file__).replace(".py",  "")
+MODEL_URI = os.path.dirname(os.path.abspath(__file__)).split("\\")[-1] + "." + os.path.basename(__file__).replace(".py",  "")
 
+
+
+
+from mlmodels.util import os_package_root_path, log, path_norm, to_namespace
 
 
 ####################################################################################################
@@ -119,34 +123,6 @@ def os_file_path(data_path):
     from pathlib import Path
     data_path = os.path.join(Path(__file__).parent.parent.absolute(), data_path)
     return data_path
-
-
-def os_package_root_path(filepath, sublevel=0, path_add=""):
-    """
-    get the module package root folder
-    """
-    from pathlib import Path
-    path = Path(filepath).parent
-    for i in range(1, sublevel + 1):
-        path = path.parent
-
-        path = os.path.join(path.absolute(), path_add)
-        return path
-# print("check", os_package_root_path(__file__, sublevel=1) )
-
-
-def log(*s, n=0, m=1):
-    sspace = "#" * n
-    sjump = "\n" * m
-    print(sjump, sspace, s, sspace, flush=True)
-
-
-class to_namespace(object):
-    def __init__(self, adict):
-        self.__dict__.update(adict)
-
-        def get(self, key):
-            return self.__dict__.get(key)
 
 
 
@@ -246,6 +222,7 @@ def reset_model():
 def save(model, out_pars):
     return torch.save(model.model, out_pars['modelpath'])
 
+
 def load(out_pars={}):
     model = Model(skip_create=True)
     model.model = torch.load(out_pars['modelpath'])
@@ -260,7 +237,8 @@ def get_dataset(data_pars=None, **kw):
     "data_pars":    { "data_path": "dataset/GOOG-year.csv", "data_type": "pandas",
     "size": [0, 0, 6], "output_size": [0, 6] },
     """
-    data_path, _, _ = path_setup()
+    data_path = path_norm(data_pars["data_path"])
+
     mode = "train" if data_pars["train"] else "test"
 
     if data_pars[f"{mode}_type"].lower() == 'nli':
@@ -274,10 +252,15 @@ def get_dataset(data_pars=None, **kw):
     return reader
 
 
-def get_params(choice="", data_path="dataset/", config_mode="test", **kw):
-    from mlmodels.util import path_local_setup
+def get_params(param_pars, **kw):
+    import json
+    choice      = param_pars['choice']
+    config_mode = param_pars['config_mode']
+    data_path   = param_pars['data_path']
 
+    
     if choice == "json":
+       data_path = path_norm(data_path)
        cf = json.load(open(data_path, mode='r'))
        cf = cf[config_mode]
        return cf['model_pars'], cf['data_pars'], cf['compute_pars'], cf['out_pars']
@@ -285,10 +268,12 @@ def get_params(choice="", data_path="dataset/", config_mode="test", **kw):
 
     if choice == "test01":
         log("#### Path params   ##########################################")
-        data_path, out_path, model_path = path_local_setup( __file__, sublevel=1,
-                                                           out_folder="/ztest/transformer_sentence/", 
-                                                           data_path="/dataset/text/")
+        data_path  = path_norm( "dataset/text/"  )   
+        out_path   = path_norm( "/ztest/model_tch/transformer_sentence/" )   
+        model_path = os.path.join(out_path , "model")
+
         data_pars = {
+            "data_path" : data_path,
             "train_path": "AllNLI",
             # one of: STS, NLI
             "train_type": "NLI",
@@ -323,9 +308,10 @@ def get_params(choice="", data_path="dataset/", config_mode="test", **kw):
 def test(data_path="dataset/", pars_choice="test01"):
     ### Local test
 
-    log("#### Loading params   ##############################################")
-    model_pars, data_pars, compute_pars, out_pars = get_params(choice=pars_choice,
-                                                               data_path=data_path)
+    log("#### Loading params   ##############################################") 
+    param_pars = { "choice": pars_choice, "data_path": data_path, "config_mode" : "test" }
+    model_pars, data_pars, compute_pars, out_pars = get_params(param_pars)
+
 
     log("#### Loading dataset   #############################################")
     Xtuple = get_dataset(data_pars)

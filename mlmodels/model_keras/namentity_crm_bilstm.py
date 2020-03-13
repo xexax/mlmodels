@@ -22,36 +22,26 @@ Importing Libraries
 
 """
 import os
-from keras.callbacks import EarlyStopping
+import warnings
 
-
+from pathlib import Path
 import pandas as pd
-import numpy as np
-
+from keras.callbacks import EarlyStopping
+from keras.callbacks import ModelCheckpoint
+from keras.layers import LSTM, Dense, TimeDistributed, Embedding, Bidirectional
+from keras.models import Model as KModel, Input
 from keras.preprocessing.sequence import pad_sequences
 from keras.utils import to_categorical
-from keras.layers import LSTM, Dense, TimeDistributed, Embedding, Bidirectional
-from keras.models import Model, Input
 from keras_contrib.layers import CRF
-from keras.callbacks import ModelCheckpoint
 
-import warnings
+import numpy as np
+
 warnings.filterwarnings("ignore")
 
 from sklearn.model_selection import train_test_split
 
-from sklearn_crfsuite.metrics import flat_classification_report
-from sklearn.metrics import f1_score
-from seqeval.metrics import precision_score, recall_score, f1_score, classification_report
-from keras.preprocessing.text import text_to_word_sequence
-
-import pickle
-
-
 ######## Logs
-from mlmodels.util import os_package_root_path, log
-
-
+from mlmodels.util import os_package_root_path, log, path_norm
 
 #### Import EXISTING model and re-map to mlmodels
 # from mlmodels.model_keras.raw.char_cnn.data_utils import Data
@@ -62,48 +52,35 @@ from mlmodels.util import os_package_root_path, log
 
 VERBOSE = False
 
-MODEL_URI = os.path.dirname(os.path.abspath(__file__)).split("\\")[-1] + "." + os.path.basename(__file__).replace(".py",
-                                                                                                                  "")
-
-
-
-
-
+MODEL_URI = Path(os.path.abspath(__file__)).parent.name + "." + os.path.basename(__file__).replace(".py", "")
 ####################################################################################################
 class Model:
-    def __init__(self, model_pars=None, data_pars=None, compute_pars=None
-                 ):
+    def __init__(self, model_pars=None, data_pars=None, compute_pars=None, **kwargs):
         ### Model Structure        ################################
-        if model_pars is None :
+        if model_pars is None:
             self.model = None
 
-        else :
-            embedding = embedding
-            maxlen = maxlen
-            words = words
+        else:
+            max_len = data_pars["max_len"]
 
-            recurrent_dropout = recurrent_dropout
-            units = units
-            timedistribution = timedistribution
-            
-            optimizer = optimizer
-
+            df = get_dataset(data_pars)[0]
+            num_tags = df['Tag'].nunique()
+            words = list(df['Word'].unique())
 
             # Model architecture
-            input = Input(shape = (max_len,))
-            model = Embedding(input_dim = len(words) + 2, output_dim = embedding, input_length = max_len, mask_zero = True)(input)
-            model = Bidirectional(LSTM(units = 50, return_sequences=True, recurrent_dropout=0.1))(model)
+            input = Input(shape=(max_len,))
+            model = Embedding(input_dim=len(words) + 2, output_dim=model_pars["embedding"], input_length=max_len)(input)
+            model = Bidirectional(LSTM(units=50, return_sequences=True, recurrent_dropout=0.1))(model)
             model = TimeDistributed(Dense(50, activation="relu"))(model)
-            crf = CRF(num_tags+1)  # CRF layer
+            crf = CRF(num_tags + 1)  # CRF layer
             out = crf(model)  # output
 
-            model = Model(input, out)
-            model.compile(optimizer="rmsprop", loss=crf.loss_function, metrics=[crf.accuracy])
+            model = KModel(input, out)
+            model.compile(optimizer=model_pars["optimizer"], loss=crf.loss_function, metrics=[crf.accuracy])
+
             model.summary()
 
             self.model = model
-            self.metrics = {}
-
 
 
 def fit(model, data_pars={}, compute_pars={}, out_pars={}, **kw):
@@ -114,52 +91,49 @@ def fit(model, data_pars={}, compute_pars={}, out_pars={}, **kw):
     epochs = compute_pars['epochs']
 
     sess = None  #
-    Xtrain, Xtest, ytrain, ytest = get_dataset(data_pars)
+    _, Xtrain, ytrain, Xtest, ytest = get_dataset(data_pars)
 
     early_stopping = EarlyStopping(monitor='val_acc', patience=3, mode='max')
 
-    checkpointer = ModelCheckpoint(filepath = out_pars['path'] + '/model.h5',
-                           verbose = 0,
-                           mode = 'auto',
-                           save_best_only = True,
-                           monitor='val_loss')
+    if not os.path.exists(out_pars['path']):
+        os.makedirs(out_pars['path'], exist_ok=True)
+    checkpointer = ModelCheckpoint(filepath=out_pars['path'] + '/model.h5',
+                                   verbose=0,
+                                   mode='auto',
+                                   save_best_only=True,
+                                   monitor='val_loss')
 
     history = model.model.fit(Xtrain, ytrain,
-                                  batch_size=batch_size,
-                                  epochs=epochs,
-                                  callbacks=[early_stopping, checkpointer],
-                                  validation_data=(Xtest, ytest))
+                              batch_size=compute_pars["batch_size"],
+                              epochs=compute_pars["epochs"],
+                              callbacks=[early_stopping, checkpointer],
+                              validation_data=(Xtest, ytest))
     model.metrics = history
 
     return model, sess
-
-
-
 
 
 def fit_metrics(model, data_pars={}, compute_pars={}, out_pars={}, **kw):
     """
        Return metrics ofw the model when fitted.
     """
-    ddict = {}
     history = model.metrics
-    ddict = { k:v for k,v in  history.history.keys() }
 
-    return ddict
+    return history.history
 
 
-def predict(model, sess=None, data_pars={}, out_pars={}, compute_pars={}, **kw):
+def predict(model, sess=None, data_pars=None, out_pars=None, compute_pars={}, **kw):
     ##### Get Data ###############################################
     data_pars['train'] = False
-    Xpred, ypred = get_dataset(data_pars)
+    _, Xtrain, ytrain, Xtest, ytest = get_dataset(data_pars)
 
     #### Do prediction
-    ypred = model.model.predict(Xpred)
+    ypred = model.model.predict(Xtest)
 
     ### Save Results
 
     ### Return val
-    if compute_pars.get("return_pred_not") is  None:
+    if compute_pars.get("return_pred_not") is None:
         return ypred
 
 
@@ -191,58 +165,86 @@ def get_dataset(data_pars=None, **kw):
       "data_pars":    { "data_path": "dataset/GOOG-year.csv", "data_type": "pandas",
       "size": [0, 0, 6], "output_size": [0, 6] },
     """
-    if data_pars['train']:
 
-        print('Loading data...')
-        train_data = Data(data_source=data_pars["train_data_source"],
-                             alphabet       = data_pars["alphabet"],
-                             input_size     = data_pars["input_size"],
-                             num_of_classes = data_pars["num_of_classes"])
-        train_data.load_data()
-        train_inputs, train_labels = train_data.get_all_data()
+    df = pd.read_csv(data_pars['data_path'], encoding="ISO-8859-1")
+    df = df[:50]  # quick test
+
+    df = df.fillna(method='ffill')
+    agg = lambda s: [(w, p, t) for w, p, t in zip(s['Word'].values.tolist(),
+                                                  s['POS'].values.tolist(),
+                                                  s['Tag'].values.tolist())]
+    grouped = df.groupby("Sentence #").apply(agg)
+    sentences = [s for s in grouped]
+
+    # Getting unique words and labels from data
+    words = list(df['Word'].unique())
+    tags = list(df['Tag'].unique())
+    # Dictionary word:index pair
+    # word is key and its value is corresponding index
+    word_to_index = {w: i + 2 for i, w in enumerate(words)}
+    word_to_index["UNK"] = 1
+    word_to_index["PAD"] = 0
+
+    # Dictionary lable:index pair
+    # label is key and value is index.
+    tag_to_index = {t: i + 1 for i, t in enumerate(tags)}
+    tag_to_index["PAD"] = 0
+
+    idx2word = {i: w for w, i in word_to_index.items()}
+    idx2tag = {i: w for w, i in tag_to_index.items()}
 
 
-        # Load val data
-        val_data = Data(data_source=data_pars["val_data_source"],
-                               alphabet=data_pars["alphabet"],
-                               input_size=data_pars["input_size"],
-                               num_of_classes=data_pars["num_of_classes"])
-        val_data.load_data()
-        val_inputs, val_labels = val_data.get_all_data()
+    # Converting each sentence into list of index from list of tokens
+    X = [[word_to_index[w[0]] for w in s] for s in sentences]
 
-        return train_inputs, val_inputs, train_labels, val_labels
+    # Padding each sequence to have same length  of each word
+    X = pad_sequences(maxlen=data_pars["max_len"], sequences=X, padding="post", value=word_to_index["PAD"])
+
+    # Convert label to index
+    y = [[tag_to_index[w[2]] for w in s] for s in sentences]
+
+    # padding
+    y = pad_sequences(maxlen=data_pars["max_len"], sequences=y, padding="post", value=tag_to_index["PAD"])
+    num_tag = df['Tag'].nunique()
+    # One hot encoded labels
+    y = [to_categorical(i, num_classes=num_tag + 1) for i in y]
+
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.15)
+
+    return df, X_train, np.array(y_train), X_test, np.array(y_test)
 
 
-    else:
-        val_data = Data(data_source=data_pars["val_data_source"],
-                               alphabet=data_pars["alphabet"],
-                               input_size=data_pars["input_size"],
-                               num_of_classes=data_pars["num_of_classes"])
-        val_data.load_data()
-        Xtest, ytest = val_data.get_all_data()
-        return Xtest, ytest
+def path_setup(out_folder="ztest", sublevel=1, data_path="dataset/"):
+    ### Local path setup
+    data_path = os_package_root_path(__file__, sublevel=sublevel, path_add=data_path)
+    out_path = os.getcwd() + "/" + out_folder
+    model_path = out_path + "/model/"
+    os.makedirs(out_path, exist_ok=True)
+    os.makedirs(model_path, exist_ok=True)
 
+    log(data_path, out_path, model_path)
+    return data_path, out_path, model_path
 
 
 def get_params(param_pars={}, **kw):
     import json
-    pp          = param_pars
-    choice      = pp['choice']
+    pp = param_pars
+    choice = pp['choice']
     config_mode = pp['config_mode']
-    data_path   = pp['data_path']
+    data_path = pp['data_path']
 
     if choice == "json":
+        data_path = path_normalize(data_path)
         cf = json.load(open(data_path, mode='r'))
         cf = cf[config_mode]
         return cf['model_pars'], cf['data_pars'], cf['compute_pars'], cf['out_pars']
 
-
     if choice == "test01":
-        from mlmodels.util import path_local_setup
         log("#### Path params   ##########################################")
-        data_path, out_path, model_path = path_local_setup(out_folder="/ztest/model_keras/crf_bilstm/",
-                                                           sublevel=1,
-                                                           data_path="dataset/imdbfsdfs.csv")
+        data_path  = path_norm( "dataset/text/imdb.csv"  )   
+        out_path   = path_norm( "/ztest/model_keras/crf_bilstm/" )   
+        model_path = os.path.join(out_path , "model")
+
 
         data_pars = {"path": data_path, "train": 1, "maxlen": 400, "max_features": 10, }
 
@@ -274,44 +276,46 @@ def test(data_path="dataset/", pars_choice="json", config_mode="test"):
     Xtuple = get_dataset(data_pars)
 
     log("#### Model init, fit   #############################################")
-    session = None
-    model = Model(model_pars, data_pars, compute_pars)
-    model, session = fit(model, data_pars, compute_pars, out_pars)
+    from mlmodels.models import module_load_full, fit, predict
+    module, model = module_load_full("model_keras.namentity_crm_bilstm", model_pars, data_pars, compute_pars)
+    model, sess = fit(module, model, data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)
 
- 
+    # model = Model(model_pars, data_pars, compute_pars)
+    # model, session = fit(model, data_pars, compute_pars, out_pars)
+
     log("#### Predict   #####################################################")
     data_pars["train"] = 0
-    ypred = predict(model, session, data_pars, compute_pars, out_pars)
+    ypred = predict(module, model, data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)
 
     log("#### metrics   #####################################################")
-    metrics_val = fit_metrics(model, data_pars, compute_pars, out_pars)
+    metrics_val = fit_metrics(model, data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)
     print(metrics_val)
 
     log("#### Plot   ########################################################")
 
     log("#### Save/Load   ###################################################")
-    save(model, session, save_pars=out_pars)
-    model2 = load(out_pars)
+    # save(model, session, save_pars=out_pars)
+    # model2 = load(out_pars)
     #     ypred = predict(model2, data_pars, compute_pars, out_pars)
     #     metrics_val = metrics(model2, ypred, data_pars, compute_pars, out_pars)
-    print(model2)
+    # print(model2)
 
 
 if __name__ == '__main__':
     VERBOSE = True
     test_path = os.getcwd() + "/mytest/"
-    root_path = os_package_root_path(__file__,1)
+    root_path = os_package_root_path(__file__, 1)
 
     ### Local fixed params
     # test(pars_choice="test01")
 
     ### Local json file
-    test(pars_choice="json", data_path= f"{root_path}/model_keras/charcnn.json")
+    test(pars_choice="json", data_path=f"{root_path}/model_keras/namentity_crm_bilstm.json")
 
     ####    test_module(model_uri="model_xxxx/yyyy.py", param_pars=None)
     from mlmodels.models import test_module
 
-    param_pars = {'choice': "json", 'config_mode': 'test', 'data_path': "model_keras/charcnn.json"}
+    param_pars = {'choice': "json", 'config_mode': 'test', 'data_path': f"{root_path}/model_keras/namentity_crm_bilstm.json"}
     test_module(model_uri=MODEL_URI, param_pars=param_pars)
 
     ##### get of get_params
@@ -322,10 +326,8 @@ if __name__ == '__main__':
     ####    test_api(model_uri="model_xxxx/yyyy.py", param_pars=None)
     from mlmodels.models import test_api
 
-    param_pars = {'choice': "json", 'config_mode': 'test', 'data_path': "model_keras/charcnn.json"}
+    param_pars = {'choice': "json", 'config_mode': 'test', 'data_path': f"{root_path}/model_keras/namentity_crm_bilstm.json"}
     test_api(model_uri=MODEL_URI, param_pars=param_pars)
-
-
 
 """
 

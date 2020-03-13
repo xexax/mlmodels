@@ -102,21 +102,22 @@ def os_package_root_path(filepath, sublevel=0, path_add=""):
 
 
 
-def get_dataset(data_pars) :
+def get_dataset(data_pars) : 
   """
     path:
+    is_local  : Local to the repo 
     data_type:
-    
-
-
-
+    train : 1/0
+    data_source :  ams
   """
+  dd = data_pars
 
-  if not data_pars.get('is_local') is None :
-      data_pars['path'] = os_package_root_path(__file__, sublevel=0, data_pars['path'] )
+  if not d.get('is_local') is None :
+      dd['path'] = os_package_root_path(__file__, sublevel=0, dd['path'] )
 
 
-
+  if dd['train'] :
+     df = pd.read_csv(path) 
 
 
 
