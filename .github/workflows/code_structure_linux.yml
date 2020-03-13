@@ -54,6 +54,7 @@ jobs:
         pip install -r requirements.txt
         pip install -r requirements_fake.txt
 
+
     - name: Install repo
       run: pip install -e . -r requirements.txt   --no-deps
 

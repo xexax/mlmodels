@@ -144,10 +144,12 @@ def get_dataset(data_pars=None, **kw):
     "size": [0, 0, 6], "output_size": [0, 6] },
   """
 
+   print('Loading data...')
+   max_features = data_pars['max_features']
+   maxlen       = data_pars['maxlen']
+
   if data_pars['train'] :
-    print('Loading data...')
-    max_features = data_pars['max_features']
-    maxlen = data_pars['maxlen']
+
 
 
     ### Remove Keras download --> csv on disk
@@ -155,7 +157,7 @@ def get_dataset(data_pars=None, **kw):
 
     print('Pad sequences (samples x time)...')
     Xtrain = sequence.pad_sequences(Xtrain, maxlen=maxlen)
-    Xtest = sequence.pad_sequences(Xtest, maxlen=maxlen)
+    Xtest  = sequence.pad_sequences(Xtest, maxlen=maxlen)
 
 
     return Xtrain, Xtest, ytrain, ytest 
@@ -165,6 +167,7 @@ def get_dataset(data_pars=None, **kw):
      (Xtrain, ytrain), (Xtest, ytest) = imdb.load_data(num_words=max_features)
      Xtest = sequence.pad_sequences(Xtest, maxlen=maxlen)
      return Xtest, ytest 
+
 
 
 
