@@ -101,6 +101,85 @@ ypred       = module.predict(model, data_pars, compute_pars, out_pars)     # pre
 
 ```
 
+### RandomForest example in Scikit-learn ([Example notebook](example/sklearn.ipynb))
+
+#### Import library and functions
+```python
+# import library
+import mlmodels
+```
+
+#### Define model and data definitions
+```python
+model_uri    = "model_sklearn.sklearn.py"
+
+model_pars   = {"model_name":  "RandomForestClassifier", "max_depth" : 4 , "random_state":0}
+
+data_pars    = {'mode': 'test', 'path': "../mlmodels/dataset", 'data_type' : 'pandas' }
+
+compute_pars = {'return_pred_not': False}
+
+out_pars    = {'path' : "../ztest"}
+```
+
+
+#### Load Parameters and Train
+```python
+from mlmodels.models import module_load
+
+module        =  module_load( model_uri= model_uri )                           # Load file definition
+model         =  module.Model(model_pars=model_pars, data_pars=data_pars, compute_pars=compute_pars)             # Create Model instance
+model, sess   =  module.fit(model, data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)          # fit the model
+```
+
+
+#### Inference
+```python
+ypred       = module.predict(model,  data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)     # predict pipeline
+```
+
+### TextCNN example in keras ([Example notebook](example/textcnn.ipynb))
+
+#### Import library and functions
+```python
+# import library
+import mlmodels
+```
+
+#### Define model and data definitions
+```python
+model_uri    = "model_keras.textcnn.py"
+
+data_pars    = {"path" : "../mlmodels/dataset/text/imdb.csv", "train": 1, "maxlen":400, "max_features": 10}
+
+model_pars   = {"maxlen":400, "max_features": 10, "embedding_dims":50}
+                       
+compute_pars = {"engine": "adam", "loss": "binary_crossentropy", "metrics": ["accuracy"] ,
+                        "batch_size": 32, "epochs":1, 'return_pred_not':False}
+
+out_pars     = {"path": "ztest/model_keras/textcnn/"}
+
+```
+
+
+#### Load Parameters and Train
+```python
+from mlmodels.models import module_load
+
+module        =  module_load( model_uri= model_uri )                           # Load file definition
+model         =  module.Model(model_pars=model_pars, data_pars=data_pars, compute_pars=compute_pars)             # Create Model instance
+module.fit(model, data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)          # fit the model
+```
+
+
+#### Inference
+```python
+data_pars['train'] = 0
+ypred       = module.predict(model,  data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)
+```
+
+
+
 ### Using json config file for input ([Example notebook](example/1_lstm_json.ipynb))
 
 #### Import library and functions
