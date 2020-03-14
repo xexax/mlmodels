@@ -169,12 +169,12 @@ def get_dataset(data_pars=None, **kw):
               "data_type"       :   "text",
 
 
-              "data_loader" :  "mlmodels.data:import_data_fromfile",
-              "data_loader_pars" :  {"size" : 50, },
+              "loader" :  "mlmodels.data:import_data_fromfile",
+              "loader_pars" :  {"size" : 50, },
 
 
-              "data_processor" : "mlmodels.model_keras.prepocess:process",
-              "data_processor_pars" : { "split" : 0.5, "max_len": 75 },
+              "processor" : "mlmodels.model_keras.prepocess:process",
+              "processor_pars" : { "split" : 0.5, "max_len": 75 },
               "max_len": 75,
 
 
@@ -185,7 +185,16 @@ def get_dataset(data_pars=None, **kw):
 
     """
    if data_pars.get('mode') == "test_repo"  :
+     """
+       df = run_process( d['loader'], d['loader_pars'])
+       Xtuple = run_process( d['processor'], d['loader_pars'])
+       return Xtuple
+
+     """ 
      return _preprocess_test()
+  else :
+     pass
+
 
 
 
