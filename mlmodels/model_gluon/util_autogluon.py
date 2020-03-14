@@ -50,6 +50,49 @@ def _get_dataset_from_aws(**kw):
         print(f"Not support {dt_name} yet!")
 
 
+def import_data_fromfile(**kw):
+   """
+       data_pars["data_path"]
+   
+   """ 
+   import pandas as pd
+   import numpy as np
+
+   m = kw
+   if m.get("uri_type") in ["pickle", "pandas_pickle" ]:
+       df = pd.read_pickle(m["data_path"])
+       return df
+
+
+   if m.get("uri_type") in ["csv", "pandas_csv" ]:
+       df = pd.read_csv(m["data_path"])
+       return df
+
+
+   if m.get("uri_type") in [ "dask" ]:
+       df = pd.read_csv(m["data_path"])
+       return df
+
+
+   if ".npz" in m['data_path'] :
+       arr = import_to_numpy(data_pars, mode=mode, **kw)
+       return arr
+
+
+   if ".csv" in m['data_path'] or ".txt" in m['data_path']  :
+       df = import_to_pandas(data_pars, mode=mode, **kw)
+       return df
+
+
+   if ".pkl" in m['data_path']   :
+       df = pd.read_pickle(m["data_path"], **kw)
+       return df
+
+
+
+
+
+
 
 
 def get_dataset(**kw):
@@ -60,15 +103,11 @@ def get_dataset(**kw):
 
     ##check whether dataset is of kind train or test
     # data_path = kw['train_data_path'] if kw['train'] else kw['test_data_path']
-    df = data.import_data_fromfile(**kw )
+    df = import_data_fromfile(**kw )
 
     col_target = kw.get('col_target') if kw.get('col_target') else 'y'
-    colX = list(df.columns)
-    colX.remove( col_target)
-
-    label = df[col_target].values
-    train = df[colX].values
-    return data, label
+    
+    return df, col_target
   
 
     if VERBOSE:
