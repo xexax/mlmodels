@@ -34,9 +34,9 @@ from mlmodels.util import os_package_root_path, log, path_norm
 #### Import EXISTING model and re-map to mlmodels
 from mlmodels.model_keras.raw.textcnn_.text_cnn import TextCNN
 
-VERBOSE = False
 
-MODEL_URI =  os.path.dirname(os.path.abspath( __file__ ) ).split("\\")[-1] + "." + os.path.basename(__file__).replace(".py", "")
+VERBOSE = False
+MODEL_URI = Path(os.path.abspath(__file__)).parent.name + "." + os.path.basename(__file__).replace(".py", "")
 
 
 
@@ -150,8 +150,6 @@ def get_dataset(data_pars=None, **kw):
    maxlen       = data_pars['maxlen']
 
   if data_pars['train'] :
-
-
 
     ### Remove Keras download --> csv on disk
     (Xtrain, ytrain), (Xtest, ytest) = imdb.load_data(num_words=max_features)
