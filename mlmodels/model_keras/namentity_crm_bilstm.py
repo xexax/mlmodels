@@ -26,8 +26,7 @@ import warnings
 
 from pathlib import Path
 import pandas as pd
-from keras.callbacks import EarlyStopping
-from keras.callbacks import ModelCheckpoint
+from keras.callbacks import EarlyStopping, ModelCheckpoint
 from keras.layers import LSTM, Dense, TimeDistributed, Embedding, Bidirectional
 from keras.models import Model as KModel, Input
 
