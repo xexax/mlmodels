@@ -1,0 +1,38 @@
+{
+	"test": {
+
+		"model_pars": {
+		    "model_name":  "RandomForestClassifier",
+		    "max_depth" : 4 , 
+		    "random_state":0
+	    },
+
+		"data_pars": {
+            "mode": "train", 
+            "path": "../mlmodels/dataset/tabular/titanic_train_preprocessed.csv", 
+            "data_type" : "pandas", 
+            "train":"True" ,
+            "colX":["Pclass", "Sex", "Age", "SibSp", "Parch", "Fare", "Embarked_Q", "Embarked_S", "Title"],
+            "coly": "Survived"
+        },
+		
+        "compute_pars" :  { "return_pred_not": "False"},
+        
+        "out_pars":  { "path": "../ztest/"}
+
+
+	},
+
+
+	"prod": {
+
+		"model_pars": {},
+
+		"data_pars": {}
+
+
+	}
+
+
+
+}
