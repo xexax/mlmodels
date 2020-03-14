@@ -30,15 +30,13 @@ from keras.callbacks import EarlyStopping
 from keras.callbacks import ModelCheckpoint
 from keras.layers import LSTM, Dense, TimeDistributed, Embedding, Bidirectional
 from keras.models import Model as KModel, Input
-from keras.preprocessing.sequence import pad_sequences
-from keras.utils import to_categorical
+
 from keras_contrib.layers import CRF
 
 import numpy as np
 
 warnings.filterwarnings("ignore")
 
-from sklearn.model_selection import train_test_split
 
 ######## Logs
 from mlmodels.util import os_package_root_path, log, path_norm
@@ -49,10 +47,11 @@ from mlmodels.util import os_package_root_path, log, path_norm
 
 
 ####################################################################################################
-
 VERBOSE = False
 
 MODEL_URI = Path(os.path.abspath(__file__)).parent.name + "." + os.path.basename(__file__).replace(".py", "")
+
+
 ####################################################################################################
 class Model:
     def __init__(self, model_pars=None, data_pars=None, compute_pars=None, **kwargs):
@@ -161,15 +160,51 @@ def load(load_pars={}):
 ####################################################################################################
 def get_dataset(data_pars=None, **kw):
     """
-      JSON data_pars to get dataset
-      "data_pars":    { "data_path": "dataset/GOOG-year.csv", "data_type": "pandas",
-      "size": [0, 0, 6], "output_size": [0, 6] },
+        "data_pars": {
+              "train": true,
+              "test_mode" : "repo_unit",
+
+              "path"            : "dataset/text/ner_dataset.csv",
+              "location_type"   :  "repo",
+              "data_type"       :   "text",
+
+
+              "data_loader" :  "mlmodels.data:import_data_fromfile",
+              "data_loader_pars" :  {"size" : 50, },
+
+
+              "data_processor" : "mlmodels.model_keras.prepocess:process",
+              "data_processor_pars" : { "split" : 0.5, "max_len": 75 },
+              "max_len": 75,
+
+
+              "size" : [0,1,2],
+              "output_size": [0, 6]    
+
+        },
+
     """
+   if data_pars.get('test_mode') == "repo_unit"  :
+     return _preprocess_test()
+
+
+
+
+def _preprocess_test(data_pars=None, **kw):
+    """
+
+    """
+    from sklearn.model_selection import train_test_split
+    from keras.preprocessing.sequence import pad_sequences
+    from keras.utils import to_categorical
+
 
     df = pd.read_csv(data_pars['data_path'], encoding="ISO-8859-1")
     df = df[:50]  # quick test
-
     df = df.fillna(method='ffill')
+
+
+    ##### Get sentences
     agg = lambda s: [(w, p, t) for w, p, t in zip(s['Word'].values.tolist(),
                                                   s['POS'].values.tolist(),
                                                   s['Tag'].values.tolist())]
@@ -209,21 +244,13 @@ def get_dataset(data_pars=None, **kw):
     # One hot encoded labels
     y = [to_categorical(i, num_classes=num_tag + 1) for i in y]
 
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.15)
 
+
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.15)
     return df, X_train, np.array(y_train), X_test, np.array(y_test)
 
 
-def path_setup(out_folder="ztest", sublevel=1, data_path="dataset/"):
-    ### Local path setup
-    data_path = os_package_root_path(__file__, sublevel=sublevel, path_add=data_path)
-    out_path = os.getcwd() + "/" + out_folder
-    model_path = out_path + "/model/"
-    os.makedirs(out_path, exist_ok=True)
-    os.makedirs(model_path, exist_ok=True)
 
-    log(data_path, out_path, model_path)
-    return data_path, out_path, model_path
 
 
 def get_params(param_pars={}, **kw):
@@ -239,16 +266,17 @@ def get_params(param_pars={}, **kw):
         cf = cf[config_mode]
         return cf['model_pars'], cf['data_pars'], cf['compute_pars'], cf['out_pars']
 
+
     if choice == "test01":
         log("#### Path params   ##########################################")
-        data_path  = path_norm( "dataset/text/imdb.csv"  )   
+        data_path  = path_norm( "dataset/text/ner_dataset.csv"  )   
         out_path   = path_norm( "/ztest/model_keras/crf_bilstm/" )   
         model_path = os.path.join(out_path , "model")
 
 
         data_pars = {"path": data_path, "train": 1, "maxlen": 400, "max_features": 10, }
 
-        model_pars = {"maxlen": 400, "max_features": 10, "embedding_dims": 50,
+        model_pars = {
 
                       }
         compute_pars = {"engine": "adam", "loss": "binary_crossentropy", "metrics": ["accuracy"],

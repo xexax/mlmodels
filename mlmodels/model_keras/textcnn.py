@@ -34,9 +34,9 @@ from mlmodels.util import os_package_root_path, log, path_norm
 #### Import EXISTING model and re-map to mlmodels
 from mlmodels.model_keras.raw.textcnn_.text_cnn import TextCNN
 
-VERBOSE = False
 
-MODEL_URI =  os.path.dirname(os.path.abspath( __file__ ) ).split("\\")[-1] + "." + os.path.basename(__file__).replace(".py", "")
+VERBOSE = False
+MODEL_URI = Path(os.path.abspath(__file__)).parent.name + "." + os.path.basename(__file__).replace(".py", "")
 
 
 
