@@ -162,7 +162,7 @@ def get_dataset(data_pars=None, **kw):
     """
         "data_pars": {
               "train": true,
-              "test_mode" : "repo_unit",
+              "mode" : "test_repo",
 
               "path"            : "dataset/text/ner_dataset.csv",
               "location_type"   :  "repo",
@@ -184,7 +184,7 @@ def get_dataset(data_pars=None, **kw):
         },
 
     """
-   if data_pars.get('test_mode') == "repo_unit"  :
+   if data_pars.get('mode') == "test_repo"  :
      return _preprocess_test()
 
 
