@@ -84,7 +84,7 @@ def predict(model, sess=None, data_pars={}, compute_pars={}, out_pars={}, **kw):
     ##### Get Data ###############################################
     data_pars['train'] = False
     _, _, Xpred, ypred = get_dataset(data_pars)
-    print(Xpred)
+    #print(Xpred)
 
     #### Do prediction
     ypred = model.model.predict(Xpred)
@@ -147,7 +147,10 @@ def get_dataset(data_pars=None, **kw):
         return Xtrain,  ytrain, Xtest, ytest
 
     else:
-        Xtest, ytest = None, None
+        df = pd.read_csv(data_pars['path'] )
+        dfX = df[data_pars['colX']]
+        
+        Xtest, ytest = dfX, None
         return None, None, Xtest, ytest
 
 

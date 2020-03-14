@@ -214,6 +214,125 @@ model, sess   =  module.fit(model, data_pars=data_pars, compute_pars=compute_par
 ypred       = module.predict(model, sess=sess,  data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)     # predict pipeline
 ```
 
+### Using Scikit-learn's SVM for Titanic Problem from json file ([Example notebook](example/sklearn_titanic_svm.ipynb))
+
+#### Import library and functions
+```python
+# import library
+import mlmodels
+```
+
+#### Load model and data definitions from json
+```python
+from mlmodels.models import module_load
+from mlmodels.util import load_config
+
+model_uri    = "model_sklearn.sklearn.py"
+module        =  module_load( model_uri= model_uri )                           # Load file definition
+
+model_pars, data_pars, compute_pars, out_pars = module.get_params(param_pars={
+    'choice':'json',
+    'config_mode':'test',
+    'data_path':'../mlmodels/dataset/json/sklearn_titanic_svm.json'
+})
+```
+
+
+#### Load Parameters and Train
+```python
+from mlmodels.models import module_load
+
+module        =  module_load( model_uri= model_uri )                           # Load file definition
+model         =  module.Model(model_pars=model_pars, data_pars=data_pars, compute_pars=compute_pars)             # Create Model instance
+model, sess   =  module.fit(model, data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)          # fit the model
+```
+
+
+#### Inference
+```python
+data_pars['path'] = "../mlmodels/dataset/tabular/titanic_test_preprocessed.csv"
+ypred       = module.predict(model,  data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)     # predict pipeline
+```
+
+### Using Scikit-learn's Random Forest for Titanic Problem from json file ([Example notebook](example/sklearn_titanic_randomForest.ipynb))
+
+#### Import library and functions
+```python
+# import library
+import mlmodels
+```
+
+#### Load model and data definitions from json
+```python
+from mlmodels.models import module_load
+from mlmodels.util import load_config
+
+model_uri    = "model_sklearn.sklearn.py"
+module        =  module_load( model_uri= model_uri )                           # Load file definition
+
+model_pars, data_pars, compute_pars, out_pars = module.get_params(param_pars={
+    'choice':'json',
+    'config_mode':'test',
+    'data_path':'../mlmodels/dataset/json/sklearn_titanic_randomForest.json'
+})
+```
+
+
+#### Load Parameters and Train
+```python
+from mlmodels.models import module_load
+
+module        =  module_load( model_uri= model_uri )                           # Load file definition
+model         =  module.Model(model_pars=model_pars, data_pars=data_pars, compute_pars=compute_pars)             # Create Model instance
+model, sess   =  module.fit(model, data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)          # fit the model
+```
+
+
+#### Inference
+```python
+data_pars['path'] = "../mlmodels/dataset/tabular/titanic_test_preprocessed.csv"
+ypred       = module.predict(model,  data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)     # predict pipeline
+```
+
+### Using Autogluon for Titanic Problem from json file ([Example notebook](example/gluon_automl_titanic.ipynb))
+
+#### Import library and functions
+```python
+# import library
+import mlmodels
+```
+
+#### Load model and data definitions from json
+```python
+from mlmodels.models import module_load
+from mlmodels.util import load_config
+
+model_uri    = "model_gluon.gluon_automl.py"
+module        =  module_load( model_uri= model_uri )                           # Load file definition
+
+model_pars, data_pars, compute_pars, out_pars = module.get_params(
+    choice='json',
+    config_mode= 'test',
+    data_path= '../mlmodels/dataset/json/gluon_automl.json'
+)
+```
+
+
+#### Load Parameters and Train
+```python
+model         =  module.Model(model_pars=model_pars, compute_pars=compute_pars)             # Create Model instance
+model, sess   =  module.fit(model, model_pars=model_pars, data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)          # fit the model
+```
+
+
+#### Inference
+```python
+data_pars['data_path'] = "../mlmodels/dataset/tabular/titanic_test_preprocessed.csv"
+ypred       = module.predict(model,  data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)     # predict pipeline
+```
+
+
+
 
 ## CLI tools: package provide below tools 
 ```bash
