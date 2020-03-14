@@ -150,8 +150,6 @@ def get_dataset(data_pars=None, **kw):
 
   if data_pars['train'] :
 
-
-
     ### Remove Keras download --> csv on disk
     (Xtrain, ytrain), (Xtest, ytest) = imdb.load_data(num_words=max_features)
 
