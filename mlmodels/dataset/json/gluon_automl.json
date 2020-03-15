@@ -37,7 +37,7 @@
         "compute_pars": {
             "hp_tune": true,
             "num_epochs": 10,
-            "time_limits": 120,
+            "time_limits": 60,
             "num_trials": 5,
             "search_strategy": "skopt"
         },

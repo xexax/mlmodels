@@ -3,9 +3,20 @@
 
 		"model_pars": {
 		    "model_name":  "SVC",
-		    "kernel": "linear",
-		    "C":  0.1,
-		    "gamma": 0.01
+            "verbose": true,
+            "tol": 0.001,
+            "shrinking": true,
+            "random_state": null,
+            "probability": false,
+            "max_iter": -1,
+            "kernel": "linear",
+            "gamma": 0.01,
+            "degree": 3,
+            "decision_function_shape": "ovr",
+            "coef0": 0.0,
+            "class_weight": null,
+            "cache_size": 200,
+            "C": 0.1
 	    },
 
 		"data_pars": {

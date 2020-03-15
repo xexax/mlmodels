@@ -150,7 +150,8 @@ def fit(model, data_pars=None, model_pars=None, compute_pars=None, out_pars=None
                                 num_trials          = compute_pars['num_trials'],
                                 hyperparameter_tune = compute_pars['hp_tune'],
                                 hyperparameters     = {'NN': nn_options, 'GBM': gbm_options},
-                                search_strategy     = compute_pars['search_strategy'])
+                                search_strategy     = compute_pars['search_strategy'],
+                                verbosity=3)
     model.model = predictor
     return model
 

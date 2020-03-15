@@ -246,9 +246,6 @@ model_pars, data_pars, compute_pars, out_pars = module.get_params(param_pars={
 
 #### Load Parameters and Train
 ```python
-from mlmodels.models import module_load
-
-module        =  module_load( model_uri= model_uri )                           # Load file definition
 model         =  module.Model(model_pars=model_pars, data_pars=data_pars, compute_pars=compute_pars)             # Create Model instance
 model, sess   =  module.fit(model, data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)          # fit the model
 ```
@@ -256,8 +253,17 @@ model, sess   =  module.fit(model, data_pars=data_pars, compute_pars=compute_par
 
 #### Inference
 ```python
-data_pars['path'] = "../mlmodels/dataset/tabular/titanic_test_preprocessed.csv"
 ypred       = module.predict(model,  data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)     # predict pipeline
+ypred
+```
+
+#### Check metrics
+```python
+import pandas as pd
+from sklearn.metrics import roc_auc_score
+
+y = pd.read_csv('../mlmodels/dataset/tabular/titanic_train_preprocessed.csv')['Survived'].values
+roc_auc_score(y, ypred)
 ```
 
 ---
@@ -288,9 +294,6 @@ model_pars, data_pars, compute_pars, out_pars = module.get_params(param_pars={
 
 #### Load Parameters and Train
 ```python
-from mlmodels.models import module_load
-
-module        =  module_load( model_uri= model_uri )                           # Load file definition
 model         =  module.Model(model_pars=model_pars, data_pars=data_pars, compute_pars=compute_pars)             # Create Model instance
 model, sess   =  module.fit(model, data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)          # fit the model
 ```
@@ -298,8 +301,17 @@ model, sess   =  module.fit(model, data_pars=data_pars, compute_pars=compute_par
 
 #### Inference
 ```python
-data_pars['path'] = "../mlmodels/dataset/tabular/titanic_test_preprocessed.csv"
 ypred       = module.predict(model,  data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)     # predict pipeline
+ypred
+```
+
+#### Check metrics
+```python
+import pandas as pd
+from sklearn.metrics import roc_auc_score
+
+y = pd.read_csv('../mlmodels/dataset/tabular/titanic_train_preprocessed.csv')['Survived'].values
+roc_auc_score(y, ypred)
 ```
 
 ---
@@ -331,14 +343,25 @@ model_pars, data_pars, compute_pars, out_pars = module.get_params(
 #### Load Parameters and Train
 ```python
 model         =  module.Model(model_pars=model_pars, compute_pars=compute_pars)             # Create Model instance
-model, sess   =  module.fit(model, model_pars=model_pars, data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)          # fit the model
+model   =  module.fit(model, model_pars=model_pars, data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)          # fit the model
+model.model.fit_summary()
 ```
 
 
-#### Inference
+#### Check inference
 ```python
-data_pars['data_path'] = "../mlmodels/dataset/tabular/titanic_test_preprocessed.csv"
 ypred       = module.predict(model,  data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)     # predict pipeline
+```
+
+#### Check metrics
+```python
+model.model.model_performance
+
+import pandas as pd
+from sklearn.metrics import roc_auc_score
+
+y = pd.read_csv('../mlmodels/dataset/tabular/titanic_train_preprocessed.csv')['Survived'].values
+roc_auc_score(y, ypred)
 ```
 
 ---
