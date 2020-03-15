@@ -3,8 +3,24 @@
 
 		"model_pars": {
 		    "model_name":  "RandomForestClassifier",
-		    "max_depth" : 4 , 
-		    "random_state":0
+		    "warm_start": false,
+            "verbose": 1,
+            "random_state": 0,
+            "oob_score": false,
+            "n_jobs": null,
+            "n_estimators": 10,
+            "min_weight_fraction_leaf": 0.0,
+            "min_samples_split": 2,
+            "min_samples_leaf": 1,
+            "min_impurity_split": null,
+            "min_impurity_decrease": 0.0,
+            "max_leaf_nodes": null,
+            "max_features": "auto",
+            "max_depth": 4,
+            "criterion": "gini",
+            "class_weight": null,
+            "bootstrap": true
+		    
 	    },
 
 		"data_pars": {
