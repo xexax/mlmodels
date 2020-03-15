@@ -79,6 +79,8 @@ https://github.com/arita37/mlmodels/actions
 ![test_fast_windows](https://github.com/arita37/mlmodels/workflows/test_fast_windows/badge.svg?branch=dev)
 
 
+![ All model testing (Linux) ](https://github.com/arita37/mlmodels/workflows/code_structure_linux/badge.svg)
+
 
 
 #######################################################################################
