@@ -31,6 +31,19 @@ def os_package_root_path(add_path="",n=0):
   return add_path
 """
 
+
+def params_json_load(path, config_mode="test"):
+  import json
+  pars = json.load(open(path, mode="rb"))
+  pars = pars[config_mode]
+
+  ### HyperParam, model_pars, data_pars, 
+  list_pars = [ pdict for key,pdict  in pars.items() ]
+  return tuple(list_pars)
+
+
+
+
 def path_local_setup(current_file=None, out_folder="", sublevel=1, data_path="dataset/"):
     """
       mlmodels/dataset/
