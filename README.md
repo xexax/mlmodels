@@ -1,6 +1,6 @@
 # mlmodels : Model ZOO for Pytorch, Tensorflow, Keras, Gluon models...
 
-* Model ZOO with Lightweight Functional interface to wrap access to Recent and State o Art Deep Learning, ML models and Hyper-Parameter Search, cross platforms such as Tensorflow, Pytorch, Gluon, Keras, sklearn, lightGBM, Catboost,...
+* Model ZOO with Lightweight Functional interface to wrap access to Recent and State o Art Deep Learning, ML models and Hyper-Parameter Search, cross platforms such as Tensorflow, Pytorch, Gluon, Keras, sklearn, lightGBM,...
 
 * Logic follows sklearn : fit, predict, transform, metrics, save, load
 
@@ -14,9 +14,12 @@
     a bit easier maintenability for medium size project, good for scientific computing process.
 
 
-```
-#### Docs here:   https://mlmodels.readthedocs.io/en/latest/  (incomplete docs)
-```
+
+Model List :
+
+https://github.com/arita37/mlmodels/blob/dev/README_model_list.md
+
+
 
 ######################################################################################
 
@@ -35,18 +38,19 @@ Install as editable package (ONLY dev branch), in Linux
     ### On Linux/MacOS    
     pip install numpy<1.17.0
     pip install -e .  -r requirements.txt
+    pip install   -r requirements_fake.txt
 
 
     ### On Windows 
     VC 14   https://www.visualstudio.com/downloads/#build-tools-for-visual-studio-2019
     pip install  numpy<1.17.0
-    pip install torch==0.4.1 -f https://download.pytorch.org/whl/torch_stable.html   
+    pip install torch==1.0.1 -f https://download.pytorch.org/whl/torch_stable.html  
     pip install -e .  -r requirements_wi.txt  
+    pip install   -r requirements_fake.txt
 
 
     ### No Deps
     # pip install -e .  --no-deps    
-
 
 
     ##### To test :
@@ -55,12 +59,17 @@ Install as editable package (ONLY dev branch), in Linux
     ##### To test model fitting
     ml_models
     
-    
+
+    ##### Initialize
+    Will copy template, dataset, example to your folder
+    cd your workingFolder
+    ml_models --do init  --save_folder  /yourworkingFolder/
     
 
+  
 ####  Dependencies
 ```
-requirements.txt
+https://github.com/arita37/mlmodels/blob/dev/requirements.txt
 
 ```
 
@@ -75,7 +84,16 @@ https://github.com/arita37/mlmodels/actions
 ![test_fast_windows](https://github.com/arita37/mlmodels/workflows/test_fast_windows/badge.svg?branch=dev)
 
 
+![ All model testing (Linux) ](https://github.com/arita37/mlmodels/workflows/code_structure_linux/badge.svg)
 
+
+
+#######################################################################################
+## ② Usage in Jupyter
+- follow those templates :
+
+
+  https://github.com/arita37/mlmodels/blob/dev/README_usage.md
 
 
 
