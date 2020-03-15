@@ -4,9 +4,9 @@
 		"hypermodel_pars" :  {
 
         "n_estimators":    {"type": "int", "init": 2,  "range" :[5, 50] },
-        "max_depth":    {"type": "int", "init": 6,  "range" :[6, 6] },
+        "max_depth":    {"type": "int", "init": 6,  "range" :[6, 6] }
 
-},
+        },
 		
 		
 	    "model_pars": {
@@ -40,9 +40,9 @@
             "coly": "Survived"
         },
 		
-        "compute_pars" :  { "return_pred_not": "False"},
+        "compute_pars" :  { "return_pred_not": "False", "engine":"optuna", "ntrials":1, "metric_target":"roc_auc_score", "method": "normal"},
         
-        "out_pars":  { "path": "../ztest/"}
+        "out_pars":  { "save_path": "../ztest/temp", "log_path": "../ztest/temp"}
 
 
 	},
