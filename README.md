@@ -86,6 +86,8 @@ https://github.com/arita37/mlmodels/actions
 #######################################################################################
 ## ② Usage in Jupyter
 - follow those templates :
+
+
   https://github.com/arita37/mlmodels/blob/dev/README_usage.md
 
 
