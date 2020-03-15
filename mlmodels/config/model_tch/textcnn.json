@@ -1,4 +1,4 @@
-{
+{"path": out_path, "model_path": model_path}{
 	"test": {
 
 		"model_pars": {

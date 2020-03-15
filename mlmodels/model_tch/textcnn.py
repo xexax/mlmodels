@@ -189,6 +189,7 @@ def create_data_iterator(tr_batch_size, val_batch_size, tabular_train,
 class TextCNN(nn.Module):
 
     def __init__(self, model_pars=None, **kwargs):
+        print(model_pars)
         kernel_wins = [int(x) for x in model_pars["kernel_height"]]
         super(TextCNN, self).__init__()
         # load pretrained embedding in embedding layer.
@@ -259,39 +260,36 @@ def get_params(param_pars=None, **kw):
         model_path = os.path.join(out_path , "model")
 
         data_pars= {
-            "train": True, "dt_source": "amazon_aws", "dt_name": "Inc"},
+			"data_path": "dataset/recommender/IMDB_sample.txt",
+            "split_if_exists": True,
+			"frac": 0.7,
+            "lang": "en",
+            "pretrained_emb": "glove.6B.300d",
+            "batch_size": 64,
+            "val_batch_size": 64
+		}
 
 
         model_pars= {
-            "model_type": "tabular",
-            "learning_rate_min": 1e-4,
-             "learning_rate_max": 1e-2,
-            "learning_rate_default": 5e-4,
-
-        }
+            "dim_channel": 100,
+            "kernel_height": [3,4,5],
+            "dropout_rate": 0.5,
+            "num_class": 2
+		}
 
 
         compute_pars= {
-            "hp_tune": true,
-            "num_epochs": 10,
-            "time_limits": 120,
-            "num_trials": 5,
-            "search_strategy": "skopt"
+            "learning_rate": 0.001,
+            "epochs": 2,
+            "checkpointdir": "/tmp"
         }
 
-        out_pars= {"path": out_path, "model_path": model_path}
+        out_pars= {
+            "train_path": "/tmp/IMDB_train.csv",
+            "valid_path": "/tmp/IMDB_valid.csv",
+            "checkpointdir": "/tmp"
+        }
         
-        """
-        "path": data_path, "train": 1, "maxlen": 400, "max_features": 10, }
-
-        model_pars = {"maxlen": 400, "max_features": 10, "embedding_dims": 50,
-                      }
-        compute_pars = {"engine": "adam", "loss": "binary_crossentropy", "metrics": ["accuracy"],
-                        "batch_size": 32, "epochs": 1
-                        }
-
-        out_pars = {"path": out_path, "model_path": model_path}
-        """
         return model_pars, data_pars, compute_pars, out_pars
 
 
@@ -389,7 +387,7 @@ def load(path):
 ###########################################################################################################
 def test():
     print("\n####### Getting params... ####################\n")
-    param_pars = { "choice" : "json", "data_path" : "model_tch/textcnn.json", "config_mode" : "test" }
+    param_pars = { "choice" : "test01", "data_path" : "model_tch/textcnn.json", "config_mode" : "test" }
     model_pars, data_pars, compute_pars, out_pars = get_params( param_pars )
     
 
