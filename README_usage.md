@@ -367,7 +367,10 @@ roc_auc_score(y, ypred)
 ---
 ---
 
-### Using hypar-parmas for Titanic Problem from json file ([Example notebook](example/gluon_automl_titanic.ipynb), [JSON file](mlmodels/dataset/json/gluon_automl.json))
+### Using hypar-parans for Titanic Problem from json file ([Example notebook](example/gluon_automl_titanic.ipynb))
+
+
+https://github.com/arita37/mlmodels/blob/dev/mlmodels/dataset/json/hyper_titanic_randomForest.json
 
 #### Import library and functions
 ```python
@@ -386,13 +389,23 @@ from mlmodels.optim import optim  ### Hyper-parameters
 model_uri    = "model_sklearn.sklearn.py"
 module       =  module_load( model_uri= model_uri )                           # Load file definition
 
-model_pars, data_pars, compute_pars, out_pars = module.get_params(
-    choice = 'json',
-    config_mode = 'test',
-    data_path = '../mlmodels/dataset/json/hyper_titanic_randomForest.json'  
-)
+import json
+data_path = '../mlmodels/dataset/json/hyper_titanic_randomForest.json'  
+pars = json.load(open( data_patj , mode='r'))
+for key, pdict in  pars.items() :
+  print(key)
+  globals()[key] = pdict   
 
-hypermodel_pars =  {
+res = optim(model_uri,
+                hypermodel_pars = hypermodel_pars,
+                model_pars      = model_pars,
+                data_pars       = data_pars,
+                compute_pars    = compute_pars,
+                out_pars        = out_pars
+                )
+
+
+_hypermodel_pars =  {
         "learning_rate": {"type": "log_uniform", "init": 0.01,  "range" : [0.001, 0.1] },
         "num_layers":    {"type": "int", "init": 2,  "range" :[2, 4] },
         "size":    {"type": "int", "init": 6,  "range" :[6, 6] },
@@ -404,14 +417,7 @@ hypermodel_pars =  {
 }
 
 
-    res = optim(model_uri,
-                hypermodel_pars = hypermodel_pars,
-                model_pars      = model_pars,
-                data_pars       = data_pars,
-                compute_pars    = compute_pars,
-                out_pars        = out_pars
-                )
-
+ 
 
 
 
