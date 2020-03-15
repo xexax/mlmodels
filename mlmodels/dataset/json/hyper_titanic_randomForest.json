@@ -1,7 +1,15 @@
 {
 	"test": {
 
-		"model_pars": {
+		hypermodel_pars =  {
+
+        "n_estimators":    {"type": "int", "init": 2,  "range" :[5, 50] },
+        "max_depth":    {"type": "int", "init": 6,  "range" :[6, 6] },
+
+},
+		
+		
+	    "model_pars": {
 		    "model_name":  "RandomForestClassifier",
 		    "warm_start": false,
             "verbose": 1,
