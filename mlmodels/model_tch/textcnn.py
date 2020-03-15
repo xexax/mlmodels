@@ -258,8 +258,31 @@ def get_params(param_pars=None, **kw):
         out_path   = path_norm( "/ztest/model_keras/charcnn/" )   
         model_path = os.path.join(out_path , "model")
 
+        data_pars= {
+            "train": True, "dt_source": "amazon_aws", "dt_name": "Inc"},
 
-        data_pars = {"path": data_path, "train": 1, "maxlen": 400, "max_features": 10, }
+
+        model_pars= {
+            "model_type": "tabular",
+            "learning_rate_min": 1e-4,
+             "learning_rate_max": 1e-2,
+            "learning_rate_default": 5e-4,
+
+        }
+
+
+        compute_pars= {
+            "hp_tune": true,
+            "num_epochs": 10,
+            "time_limits": 120,
+            "num_trials": 5,
+            "search_strategy": "skopt"
+        }
+
+        out_pars= {"path": out_path, "model_path": model_path}
+        
+        """
+        "path": data_path, "train": 1, "maxlen": 400, "max_features": 10, }
 
         model_pars = {"maxlen": 400, "max_features": 10, "embedding_dims": 50,
                       }
@@ -268,7 +291,7 @@ def get_params(param_pars=None, **kw):
                         }
 
         out_pars = {"path": out_path, "model_path": model_path}
-
+        """
         return model_pars, data_pars, compute_pars, out_pars
 
 
