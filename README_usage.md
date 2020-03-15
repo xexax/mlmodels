@@ -365,6 +365,88 @@ roc_auc_score(y, ypred)
 ```
 
 ---
+---
+
+### Using hypar-parmas for Titanic Problem from json file ([Example notebook](example/gluon_automl_titanic.ipynb), [JSON file](mlmodels/dataset/json/gluon_automl.json))
+
+#### Import library and functions
+```python
+# import library
+import mlmodels
+```
+
+#### Load model and data definitions from json
+```python
+from mlmodels.models import module_load
+from mlmodels.util import load_config
+from mlmodels.optim import optim  ### Hyper-parameters
+
+
+
+model_uri    = "model_sklearn.sklearn.py"
+module       =  module_load( model_uri= model_uri )                           # Load file definition
+
+model_pars, data_pars, compute_pars, out_pars = module.get_params(
+    choice = 'json',
+    config_mode = 'test',
+    data_path = '../mlmodels/dataset/json/hyper_titanic_randomForest.json'  
+)
+
+hypermodel_pars =  {
+        "learning_rate": {"type": "log_uniform", "init": 0.01,  "range" : [0.001, 0.1] },
+        "num_layers":    {"type": "int", "init": 2,  "range" :[2, 4] },
+        "size":    {"type": "int", "init": 6,  "range" :[6, 6] },
+        "output_size":    {"type": "int", "init": 6,  "range" : [6, 6] },
+
+        "size_layer":    {"type" : "categorical", "value": [128, 256 ] },
+        "timestep":      {"type" : "categorical", "value": [5] },
+        "epoch":         {"type" : "categorical", "value": [2] }
+}
+
+
+    res = optim(model_uri,
+                hypermodel_pars = hypermodel_pars,
+                model_pars      = model_pars,
+                data_pars       = data_pars,
+                compute_pars    = compute_pars,
+                out_pars        = out_pars
+                )
+
+
+
+
+```
+
+
+#### Load Parameters and Train
+```python
+model         =  module.Model(model_pars=model_pars, compute_pars=compute_pars)             # Create Model instance
+model   =  module.fit(model, model_pars=model_pars, data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)          # fit the model
+model.model.fit_summary()
+```
+
+
+#### Check inference
+```python
+ypred       = module.predict(model,  data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)     # predict pipeline
+```
+
+#### Check metrics
+```python
+model.model.model_performance
+
+import pandas as pd
+from sklearn.metrics import roc_auc_score
+
+y = pd.read_csv('../mlmodels/dataset/tabular/titanic_train_preprocessed.csv')['Survived'].values
+roc_auc_score(y, ypred)
+```
+
+---
+
+
+
+
 
 
 ## CLI tools: package provide below tools 
