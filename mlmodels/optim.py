@@ -165,14 +165,14 @@ def optim_optuna(model_uri="model_tf.1_lstm.py",
     model_pars_update.update( param_dict_best)
 
     log("### Run Model with best   #################################################")
-    model        = model_create( module, model_pars= model_pars_update)
-    model, sess  = module.fit(model,  data_pars=data_pars, compute_pars=compute_pars)
+    model        = model_create( module, model_pars_update, data_pars, compute_pars)
+    model, sess  = module.fit(model,  data_pars=data_pars, compute_pars= compute_pars, out_pars=out_pars)
 
 
     log("#### Saving     ###########################################################")
     model_uri = model_uri.replace(".", "-")  
     save_pars = {'path': save_path, 'model_type': model_type, 'model_uri': model_uri}
-    save( module, model=model, session=sess, save_pars= save_pars )
+    module.save( model=model, session=sess, save_pars= save_pars )
 
 
     log("### Save Stats   ##########################################################")
