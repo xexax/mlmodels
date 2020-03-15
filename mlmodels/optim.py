@@ -106,7 +106,7 @@ def optim_optuna(model_uri="model_tf.1_lstm.py",
     ntrials       = compute_pars['ntrials']
     metric_target = compute_pars["metric_target"]
     #model_type    = model_pars['model_type']
-    model_name = model_pars["model_name"]
+    model_name = model_pars.get("model_name")   #### Only for sklearn model
     log(model_pars, data_pars, compute_pars)
 
     module = module_load(model_uri)
@@ -164,14 +164,14 @@ def optim_optuna(model_uri="model_tf.1_lstm.py",
 
     model_pars_update = model_pars
     model_pars_update.update( param_dict_best)
-    model_pars_update["model_name"] = model_name
+    model_pars_update["model_name"] = model_name  ###SKLearn model
 
 
     log("### Run Model with best   #################################################")
     model        = model_create( module, model_pars_update, data_pars, compute_pars)
     model, sess  = module.fit(model,  data_pars=data_pars, compute_pars= compute_pars, out_pars=out_pars)
 
-    """
+    
     log("#### Saving     ###########################################################")
     model_uri = model_uri.replace(".", "-")  
     #save_pars = {'path': save_path, 'model_type': model_type, 'model_uri': model_uri}
@@ -185,9 +185,9 @@ def optim_optuna(model_uri="model_tf.1_lstm.py",
     param_dict_best["best_value"] = study.best_value
     # param_dict["file_path"] = file_path
     json.dump( param_dict_best, open(f"{save_path}/{model_uri}_best-params.json", mode="w") )
-    """
+    
 
-    model_pars_update["model_name"] = model_name
+    ## model_pars_update["model_name"] = model_name
     
     return model_pars_update
 
@@ -199,7 +199,7 @@ def optim_optuna(model_uri="model_tf.1_lstm.py",
 ####################################################################################################
 def test_json(path_json="", config_mode="test"):
 
-    cf = json.load(open(path_json, mode='r', encoding='utf-8'))
+    cf = json.load(open(path_json, mode='rb', encoding='utf-8'))
     cf = cf[config_mode]
 
     model_uri = cf['model_pars']['model_uri']  # 'model_tf.1_lstm'
