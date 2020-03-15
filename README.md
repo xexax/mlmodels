@@ -14,13 +14,12 @@
     a bit easier maintenability for medium size project, good for scientific computing process.
 
 
-```
+
 Model List :
 
-https
-github.com/arita37/mlmodels/blob/dev/README_model_list.md
+https://github.com/arita37/mlmodels/blob/dev/README_model_list.md
 
-```
+
 
 ######################################################################################
 
