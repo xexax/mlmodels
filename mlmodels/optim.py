@@ -105,7 +105,8 @@ def optim_optuna(model_uri="model_tf.1_lstm.py",
     log_path      = out_pars['log_path']
     ntrials       = compute_pars['ntrials']
     metric_target = compute_pars["metric_target"]
-    model_type    = model_pars['model_type']
+    #model_type    = model_pars['model_type']
+    model_name = model_pars["model_name"]
     log(model_pars, data_pars, compute_pars)
 
     module = module_load(model_uri)
@@ -131,7 +132,7 @@ def optim_optuna(model_uri="model_tf.1_lstm.py",
         if VERBOSE : log(model)
 
         model, sess    = module.fit(model, data_pars=data_pars, compute_pars= compute_pars, out_pars=out_pars)
-        metrics        = module.fit_metrics(model, sess, data_pars=data_pars, compute_pars= compute_pars, out_pars=out_pars)
+        metrics        = module.fit_metrics(model, data_pars=data_pars, compute_pars= compute_pars, out_pars=out_pars)
 
         del sess, model
         try :
@@ -163,15 +164,17 @@ def optim_optuna(model_uri="model_tf.1_lstm.py",
 
     model_pars_update = model_pars
     model_pars_update.update( param_dict_best)
+    model_pars_update["model_name"] = model_name
+
 
     log("### Run Model with best   #################################################")
     model        = model_create( module, model_pars_update, data_pars, compute_pars)
     model, sess  = module.fit(model,  data_pars=data_pars, compute_pars= compute_pars, out_pars=out_pars)
 
-
+    """
     log("#### Saving     ###########################################################")
     model_uri = model_uri.replace(".", "-")  
-    save_pars = {'path': save_path, 'model_type': model_type, 'model_uri': model_uri}
+    #save_pars = {'path': save_path, 'model_type': model_type, 'model_uri': model_uri}
     module.save( model=model, session=sess, save_pars= save_pars )
 
 
@@ -182,8 +185,11 @@ def optim_optuna(model_uri="model_tf.1_lstm.py",
     param_dict_best["best_value"] = study.best_value
     # param_dict["file_path"] = file_path
     json.dump( param_dict_best, open(f"{save_path}/{model_uri}_best-params.json", mode="w") )
+    """
 
-    return param_dict_best
+    model_pars_update["model_name"] = model_name
+    
+    return model_pars_update
 
 
 
@@ -235,7 +241,10 @@ def test_fast(ntrials=2):
     log( "model details" , model_uri, hypermodel_pars )
 
 
-    model_pars   = {"model_uri" :"model_tf.1_lstm",  "model_type": "model_tf",
+#    model_pars   = {"model_uri" :"model_tf.1_lstm",  "model_type": "model_tf",
+#                    "learning_rate": 0.001, "num_layers": 1, "size": None,
+#                    "size_layer": 128, "output_size": None, "timestep": 4, "epoch": 2, }
+    model_pars   = {"model_uri" :"model_tf.1_lstm",  
                     "learning_rate": 0.001, "num_layers": 1, "size": None,
                     "size_layer": 128, "output_size": None, "timestep": 4, "epoch": 2, }
     

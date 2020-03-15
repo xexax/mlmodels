@@ -55,9 +55,9 @@ class Model(object):
         if model_pars is None :
             self.model = None
         else :
-          model_class = globals()[model_pars["model_name"]]
-          del model_pars["model_name"]
-          self.model = model_class(**model_pars)
+            model_class = globals()[model_pars["model_name"]]
+            del model_pars["model_name"]
+            self.model = model_class(**model_pars)
 
 
 
@@ -72,10 +72,21 @@ def fit(model, data_pars={}, compute_pars={}, out_pars={}, **kw):
 
 
 def fit_metrics(model, data_pars={}, compute_pars={}, out_pars={}, **kw):
+    from sklearn.metrics import roc_auc_score
     """
        Return metrics of the model when fitted.
     """
-    ddict = {}
+    data_pars['train'] = True
+    _, _, Xval, yval = get_dataset(data_pars)
+    #### Do prediction
+    ypred = model.model.predict(Xval)
+    
+    print(data_pars)
+    
+    score = roc_auc_score(yval, ypred)
+
+
+    ddict = {"roc_auc_score":score}
 
     return ddict
 

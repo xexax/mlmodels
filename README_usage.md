@@ -367,10 +367,7 @@ roc_auc_score(y, ypred)
 ---
 ---
 
-### Using hypar-parans for Titanic Problem from json file ([Example notebook](example/gluon_automl_titanic.ipynb))
-
-
-https://github.com/arita37/mlmodels/blob/dev/mlmodels/dataset/json/hyper_titanic_randomForest.json
+### Using hyper-params (optuna) for Titanic Problem from json file ([Example notebook](example/sklearn_titanic_randomForest_example2.ipynb), [JSON file](mlmodels/dataset/json/hyper_titanic_randomForest.json))
 
 #### Import library and functions
 ```python
@@ -381,66 +378,49 @@ import mlmodels
 #### Load model and data definitions from json
 ```python
 from mlmodels.models import module_load
-from mlmodels.util import load_config
-from mlmodels.optim import optim  ### Hyper-parameters
-
-
-
-model_uri    = "model_sklearn.sklearn.py"
-module       =  module_load( model_uri= model_uri )                           # Load file definition
-
+from mlmodels.optim import optim
 import json
+
 data_path = '../mlmodels/dataset/json/hyper_titanic_randomForest.json'  
-pars = json.load(open( data_patj , mode='r'))
+pars = json.load(open( data_path , mode='r'))
 for key, pdict in  pars.items() :
-  print(key)
   globals()[key] = pdict   
 
-res = optim(model_uri,
-                hypermodel_pars = hypermodel_pars,
-                model_pars      = model_pars,
-                data_pars       = data_pars,
-                compute_pars    = compute_pars,
-                out_pars        = out_pars
-                )
+hypermodel_pars = test['hypermodel_pars']
+model_pars      = test['model_pars']
+data_pars       = test['data_pars']
+compute_pars    = test['compute_pars']
+out_pars        = test['out_pars']
 
+model_uri    = "model_sklearn.sklearn.py"
+module        =  module_load( model_uri= model_uri )                           # Load file definition
 
-_hypermodel_pars =  {
-        "learning_rate": {"type": "log_uniform", "init": 0.01,  "range" : [0.001, 0.1] },
-        "num_layers":    {"type": "int", "init": 2,  "range" :[2, 4] },
-        "size":    {"type": "int", "init": 6,  "range" :[6, 6] },
-        "output_size":    {"type": "int", "init": 6,  "range" : [6, 6] },
-
-        "size_layer":    {"type" : "categorical", "value": [128, 256 ] },
-        "timestep":      {"type" : "categorical", "value": [5] },
-        "epoch":         {"type" : "categorical", "value": [2] }
-}
-
-
- 
-
-
-
+model_pars_update = optim(
+    model_uri       = model_uri,
+    hypermodel_pars = hypermodel_pars,
+    model_pars      = model_pars,
+    data_pars       = data_pars,
+    compute_pars    = compute_pars,
+    out_pars        = out_pars
+)
 ```
 
 
 #### Load Parameters and Train
 ```python
-model         =  module.Model(model_pars=model_pars, compute_pars=compute_pars)             # Create Model instance
-model   =  module.fit(model, model_pars=model_pars, data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)          # fit the model
-model.model.fit_summary()
+model         =  module.Model(model_pars=model_pars_update, data_pars=data_pars, compute_pars=compute_pars)             # Create Model instance
+model, sess   =  module.fit(model, data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)          # fit the model
 ```
 
 
 #### Check inference
 ```python
 ypred       = module.predict(model,  data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)     # predict pipeline
+ypred
 ```
 
 #### Check metrics
 ```python
-model.model.model_performance
-
 import pandas as pd
 from sklearn.metrics import roc_auc_score
 
