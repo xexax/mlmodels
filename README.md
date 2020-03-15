@@ -60,7 +60,13 @@ Install as editable package (ONLY dev branch), in Linux
     ##### To test model fitting
     ml_models
     
+
+    ##### Initialize
+    Will copy template, dataset, example to your folder
+    cd your workingFolder
+    ml_models --do init  --save_folder  /yourworkingFolder/
     
+
   
 ####  Dependencies
 ```

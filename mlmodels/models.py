@@ -332,7 +332,7 @@ def config_get_pars(config_file, config_mode="test"):
 def config_generate_json(modelname, to_path="ztest/new_model/"):
     """
       Generate config file from code source
-      config_generate_template("model_tf.1_lstm", to_folder="ztest/")
+      config_init("model_tf.1_lstm", to_folder="ztest/")
 
     """
     os.makedirs(to_path, exist_ok=True)
@@ -359,10 +359,10 @@ def config_generate_json(modelname, to_path="ztest/new_model/"):
     print(fname)
 
 
-def config_generate_template(template_type=None, to_path="ztest/new_model/"):
+def config_init(to_path="ztest/new_model/"):
     """
       Generate template from code source
-      config_generate_template("model_tf.1_lstm", to_folder="ztest/")
+      config_init("model_tf.1_lstm", to_folder="ztest/")
 
     if template_type is None :
        os_root = os_package_root_path()
@@ -373,7 +373,9 @@ def config_generate_template(template_type=None, to_path="ztest/new_model/"):
     import shutil
     os_root = os_package_root_path()
     # os.makedirs(to_path, exist_ok=True)
-    shutil.copytree(os_root + "/template/", to_path)
+    shutil.copytree(os_root + "/template/", to_path + "/template/")
+    shutil.copytree(os_root + "/dataset/", to_path + "/dataset/")
+    shutil.copytree(os_root + "/example/", to_path + "/")
 
 
 def config_model_list(folder=None):
@@ -387,6 +389,8 @@ def config_model_list(folder=None):
         print(mlist[-1])
 
     return mlist
+
+
 
 
 ####################################################################################################
@@ -469,9 +473,11 @@ def main():
         log(arg.save_folder)
         config_generate_json(arg.model_uri, to_path=arg.save_folder)
 
-    if arg.do == "generate_template":
+
+    if arg.do == "init":
         log(arg.save_folder)
-        config_generate_template(arg.model_uri, to_path=arg.save_folder)
+        config_init( to_path=arg.save_folder)
+
 
 
 if __name__ == "__main__":
