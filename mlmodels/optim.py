@@ -174,7 +174,7 @@ def optim_optuna(model_uri="model_tf.1_lstm.py",
     
     log("#### Saving     ###########################################################")
     model_uri = model_uri.replace(".", "-")  
-    save_pars = {'path': save_path, 'model_type': model_uri.split(".")[0], 'model_uri': model_uri}
+    save_pars = {'path': save_path, 'model_type': model_uri.split("-")[0], 'model_uri': model_uri}
     module.save( model=model, session=sess, save_pars= save_pars )
 
 
@@ -337,7 +337,7 @@ def main():
 
     if arg.do == "search"  :
         # model_pars, data_pars, compute_pars = config_get_pars(arg)
-        js = json.load(open(arg.config_file, 'r'))  # Config
+        js = json.load(open(arg.config_file, 'rb'))  # Config
         js = js[arg.config_mode]  # test /uat /prod
 
 
