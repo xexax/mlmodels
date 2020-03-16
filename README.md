@@ -15,7 +15,24 @@
 
 
 
-Model List :
+## Model List :
+
+Nbeats: 2019, Time Series NNetwork,  https://arxiv.org/abs/1905.10437
+
+Amazon Deep AR: 2019, Time Series NNetwork,  https://arxiv.org/abs/1905.10437
+
+
+Sentence Transformers :  2019, Embedding of full sentences using BERT,  https://arxiv.org/pdf/1908.10084.pdf
+
+Transformers Classifier : Using Transformer for Text Classification, https://arxiv.org/abs/1905.05583
+
+TextCNN : 2016, Text CNN Classifier, https://arxiv.org/abs/1801.06287
+
+AutoML Gluon  :  2020, AutoML in Gluon, MxNet
+
+A lot more :
+......
+
 
 https://github.com/arita37/mlmodels/blob/dev/README_model_list.md
 
