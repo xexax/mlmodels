@@ -12,7 +12,7 @@ import tensorflow as tf
 from sklearn.preprocessing import MinMaxScaler
 
 ####################################################################################################
-from mlmodels.util import os_package_root_path, log
+from mlmodels.util import os_package_root_path, log, params_json_load
 
 
 
@@ -221,9 +221,12 @@ def get_params(param_pars={}, **kw):
     data_path   = pp['data_path']
 
     if choice == "json":
-       cf = json.load(open(data_path, mode='r'))
-       cf = cf[config_mode]
-       return cf['model_pars'], cf['data_pars'], cf['compute_pars'], cf['out_pars']
+       cf = params_json_load(data_path) 
+       #  cf['model_pars'], cf['data_pars'], cf['compute_pars'], cf['out_pars']
+       return cf
+       #cf = json.load(open(data_path, mode='r'))
+       #cf = cf[config_mode]
+       #return cf['model_pars'], cf['data_pars'], cf['compute_pars'], cf['out_pars']
 
 
     if choice == "test":
