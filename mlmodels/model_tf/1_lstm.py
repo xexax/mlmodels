@@ -194,7 +194,22 @@ def load(load_pars={}):
 ####################################################################################################
 def get_dataset(data_pars=None):
     """
-      JSON data_pars  to  actual dataframe of data
+              "path"            : "dataset/text/ner_dataset.csv",
+              "location_type"   :  "repo",
+              "data_type"   :   "text",
+
+
+              "data_loader" :  "pandas.read_csv",
+              "data_loader_pars" :  {""},
+
+
+              "data_preprocessor" : "mlmodels.model_keras.prepocess:process",
+              "data_preprocessor_pars" : "mlmodels.model_keras.prepocess:process",              
+
+              "size" : [0,1,2],
+              "output_size": [0, 6]  
+
+
     """
     print(data_pars)
     filename = data_pars["data_path"]  #

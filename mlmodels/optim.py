@@ -25,23 +25,20 @@ import json
 import os
 import re
 
-import pandas as pd
+# import pandas as pd
 
 
 ####################################################################################################
 # from mlmodels import models
 from mlmodels.models import model_create, module_load, save
-from mlmodels.util import log, os_package_root_path, path_norm
+from mlmodels.util import log, os_package_root_path, path_norm, tf_deprecation
 
 
 ####################################################################################################
-try :
-  from tensorflow.python.util import deprecation
-  deprecation._PRINT_DEPRECATION_WARNINGS = False
-except : pass
-
+tf_deprecation()
 
 VERBOSE = False
+
 
 
 
