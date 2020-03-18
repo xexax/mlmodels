@@ -15,6 +15,7 @@ Check parameters template in models_config.json
 import codecs
 import csv
 import os
+from pathlib import Path
 
 import numpy as np
 import tensorflow as tf
@@ -28,8 +29,7 @@ from keras.preprocessing.sequence import pad_sequences
 from keras.preprocessing.text import Tokenizer
 
 VERBOSE = False
-MODEL_URI = MODEL_URI = os.path.dirname(os.path.abspath(__file__)).split("\\")[-1] + "." + os.path.basename(
-    __file__).replace(".py", "")
+MODEL_URI = Path(os.path.abspath(__file__)).parent.name + "." + os.path.basename(__file__).replace(".py", "")
 
 ####################################################################################################
 ######## Logs, root path
@@ -185,7 +185,7 @@ def fit(model, data_pars={}, compute_pars={}, out_pars={}, **kw):
 
     batch_size = compute_pars['batch_size']
     epochs = compute_pars['epochs']
-
+    n_steps = (800000 / 2) / batch_size
     sess = None  #
 
     def sent_generator(TRAIN_DATA_FILE, chunksize):
@@ -205,8 +205,8 @@ def fit(model, data_pars={}, compute_pars={}, out_pars={}, **kw):
             yield [data_train, data_train]
 
     model.model.fit(sent_generator(data_pars["train_data_path"], batch_size / 2),
-                    batch_size=batch_size,
                     epochs=epochs,
+                    steps_per_epoch=n_steps,
                     validation_data=(data_pars["data_1_val"], data_pars["data_1_val"]))
 
     return model, sess
@@ -223,7 +223,7 @@ def fit_metrics(model, data_pars={}, compute_pars={}, out_pars={}, **kw):
 
 def predict(model, sess=None, data_pars={}, compute_pars={}, out_pars={}, **kw):
     ##### Get Data ###############################################
-    sentence1=['where can i find a book on machine learning']
+    sentence1 = ['where can i find a book on machine learning']
 
     def sent_parse(sentence, mat_shape):
         sequence = model.tokenizer.texts_to_sequences(sentence)
@@ -232,7 +232,7 @@ def predict(model, sess=None, data_pars={}, compute_pars={}, out_pars={}, **kw):
 
     mysent = sent_parse(sentence1, [15])
     #### Do prediction
-    ypred = model.model.predict(mysent, batch_size = 16)
+    ypred = model.model.predict(mysent, batch_size=16)
 
     ### Save Results
 
@@ -366,7 +366,7 @@ if __name__ == '__main__':
     from mlmodels.models import test_module
 
     param_pars = {'choice': "test01", 'config_mode': 'test', 'data_path': '/dataset/'}
-    test_module(module_uri=MODEL_URI, param_pars=param_pars)
+    test_module(model_uri=MODEL_URI, param_pars=param_pars)
 
     ##### get of get_params
     # choice      = pp['choice']
@@ -377,4 +377,4 @@ if __name__ == '__main__':
     from mlmodels.models import test_api
 
     param_pars = {'choice': "test01", 'config_mode': 'test', 'data_path': '/dataset/'}
-    test_api(module_uri=MODEL_URI, param_pars=param_pars)
+    test_api(model_uri=MODEL_URI, param_pars=param_pars)
