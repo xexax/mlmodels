@@ -175,7 +175,7 @@ class Model:
             loss_layer = CustomVariationalLayer()([x, x_decoded_mean])
             self.model = KModel(x, [loss_layer])
             opt = Adam(lr=0.01)  # SGD(lr=1e-2, decay=1e-6, momentum=0.9, nesterov=True)
-            self.model.compile(optimizer=model_pars['adam'], loss=[zero_loss])
+            self.model.compile(optimizer=model_pars['optimizer'], loss=[zero_loss])
             self.model.summary()
 
 
