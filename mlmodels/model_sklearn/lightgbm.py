@@ -12,6 +12,51 @@ Check parameters template in models_config.json
         out_pars = {'path' : out_path}
 
 
+https://github.com/optuna/optuna/blob/master/examples/lightgbm_tuner_simple.py#L22
+
+
+
+
+Optuna example that optimizes a classifier configuration for cancer dataset using LightGBM tuner.
+In this example, we optimize the validation log loss of cancer detection.
+You can execute this code directly.
+    $ python lightgbm_tuner_simple.py
+
+
+if __name__ == '__main__':
+    data, target = sklearn.datasets.load_breast_cancer(return_X_y=True)
+    train_x, val_x, train_y, val_y = train_test_split(data, target, test_size=0.25)
+    dtrain = lgb.Dataset(train_x, label=train_y)
+    dval = lgb.Dataset(val_x, label=val_y)
+
+    params = {
+        'objective': 'binary',
+        'metric': 'binary_logloss',
+        'verbosity': -1,
+        'boosting_type': 'gbdt',
+    }
+
+    best_params, tuning_history = dict(), list()
+
+    model = lgb.train(params,
+                      dtrain,
+                      valid_sets=[dtrain, dval],
+                      best_params=best_params,
+                      tuning_history=tuning_history,
+                      verbose_eval=100,
+                      early_stopping_rounds=100,
+                      )
+
+    prediction = np.rint(model.predict(val_x, num_iteration=model.best_iteration))
+    accuracy = accuracy_score(val_y, prediction)
+
+    print('Number of finished trials: {}'.format(len(tuning_history)))
+    print('Best params:', best_params)
+    print('  Accuracy = {}'.format(accuracy))
+    print('  Params: ')
+    for key, value in best_params.items():
+        print('    {}: {}'.format(key, value))
+
 
 
 """
@@ -24,6 +69,15 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
+
+import sklearn.datasets
+from sklearn.metrics import accuracy_score
+from sklearn.model_selection import train_test_split
+
+import optuna.integration.lightgbm as lgb
+
+
+
 VERBOSE = False
 MODEL_URI = "model_XXXX/yyy.py"
 
@@ -34,11 +88,8 @@ from mlmodels.util import os_package_root_path, log
 
 from sklearn.metrics import accuracy_score
 
-from sklearn.linear_model import *
-from sklearn.svm import *
-from sklearn.ensemble import *
-from sklearn.cluster import *
-from sklearn.tree import *
+
+
 
 
 
@@ -48,16 +99,20 @@ from sklearn.tree import *
 
 
 ####################################################################################################
-class Model(object):
+class Model(
+
+
+    object):
     def __init__(self, model_pars=None, data_pars=None, compute_pars=None):
         self.model_pars, self.compute_pars = model_pars, compute_pars
 
         if model_pars is None :
             self.model = None
         else :
-          model_class = globals()[model_pars["model_name"]]
-          del model_pars["model_name"]
-          self.model = model_class(**model_pars)
+          
+          self.model =  lgb(**model_pars)
+
+
 
 
 

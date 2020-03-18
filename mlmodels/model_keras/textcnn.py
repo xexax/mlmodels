@@ -27,16 +27,16 @@ from keras.datasets import imdb
 ####################################################################################################
 
 ######## Logs
-from mlmodels.util import os_package_root_path, log
+from mlmodels.util import os_package_root_path, log, path_norm
 
 
 
 #### Import EXISTING model and re-map to mlmodels
 from mlmodels.model_keras.raw.textcnn_.text_cnn import TextCNN
 
-VERBOSE = False
 
-MODEL_URI =  os.path.dirname(os.path.abspath( __file__ ) ).split("\\")[-1] + "." + os.path.basename(__file__).replace(".py", "")
+VERBOSE = False
+MODEL_URI = Path(os.path.abspath(__file__)).parent.name + "." + os.path.basename(__file__).replace(".py", "")
 
 
 
@@ -46,8 +46,8 @@ class Model:
   def __init__(self, model_pars=None, data_pars=None, compute_pars=None
                ):
     ### Model Structure        ################################
-    maxlen = model_pars['maxlen']
-    max_features = model_pars['max_features']
+    maxlen         = model_pars['maxlen']
+    max_features   = model_pars['max_features']
     embedding_dims = model_pars['embedding_dims']
 
     self.model = TextCNN(maxlen, max_features, embedding_dims).get_model()
@@ -70,7 +70,7 @@ def fit(model, data_pars={}, compute_pars={}, out_pars={},   **kw):
 
 
   early_stopping = EarlyStopping(monitor='val_acc', patience=3, mode='max')
-  model.model = model.model.fit(Xtrain, ytrain,
+  model.model.fit(Xtrain, ytrain,
           batch_size=batch_size,
           epochs=epochs,
           callbacks=[early_stopping],
@@ -144,18 +144,19 @@ def get_dataset(data_pars=None, **kw):
     "size": [0, 0, 6], "output_size": [0, 6] },
   """
 
-  if data_pars['train'] :
-    print('Loading data...')
-    max_features = data_pars['max_features']
-    maxlen = data_pars['maxlen']
 
+   print('Loading data...')
+   max_features = data_pars['max_features']
+   maxlen       = data_pars['maxlen']
+
+  if data_pars['train'] :
 
     ### Remove Keras download --> csv on disk
     (Xtrain, ytrain), (Xtest, ytest) = imdb.load_data(num_words=max_features)
 
     print('Pad sequences (samples x time)...')
     Xtrain = sequence.pad_sequences(Xtrain, maxlen=maxlen)
-    Xtest = sequence.pad_sequences(Xtest, maxlen=maxlen)
+    Xtest  = sequence.pad_sequences(Xtest, maxlen=maxlen)
 
 
     return Xtrain, Xtest, ytrain, ytest 
@@ -168,28 +169,16 @@ def get_dataset(data_pars=None, **kw):
 
 
 
-def path_setup(out_folder="ztest", sublevel=1, data_path="dataset/"):
-	### Local path setup
-    data_path = os_package_root_path(__file__, sublevel=sublevel, path_add=data_path)
-    out_path = os.getcwd() + "/" + out_folder
-    os.makedirs(out_path, exist_ok=True)
-
-    model_path = out_path + "/model/"
-    os.makedirs(model_path, exist_ok=True)
-
-    log(data_path, out_path, model_path)
-    return data_path, out_path, model_path
-
 
 def get_params(param_pars={}, **kw):
     import json
-    pp          = param_pars
-    choice      = pp['choice']
-    config_mode = pp['config_mode']
-    data_path   = pp['data_path']
+    choice      = param_pars['choice']
+    config_mode = param_pars['config_mode']
+    data_path   = param_pars['data_path']
 
 
     if choice == "json":
+       data_path = path_normalize(data_path)
        cf = json.load(open(data_path, mode='r'))
        cf = cf[config_mode]
        return cf['model_pars'], cf['data_pars'], cf['compute_pars'], cf['out_pars']
@@ -197,15 +186,17 @@ def get_params(param_pars={}, **kw):
 
     if choice == "test01":
         log("#### Path params   ##########################################")
-        data_path, out_path, model_path = path_setup(out_folder="/ztest/model_keras/textcnn/", 
-        	                                         sublevel=1,
-                                                     data_path="dataset/imdb.csv")
+        data_path  = path_norm( "dataset/text/imdb.csv"  )   
+        out_path   = path_norm( "/ztest/model_keras/textcnn/" )   
+        model_path = os.path.join(out_path , "model")
+
 
         data_pars    = {"path" : data_path, "train": 1, "maxlen":400, "max_features": 10, }
 
         model_pars   = {"maxlen":400, "max_features": 10, "embedding_dims":50,
 
                        }
+                       
         compute_pars = {"engine": "adam", "loss": "binary_crossentropy", "metrics": ["accuracy"] ,
                         "batch_size": 32, "epochs":1
                        }

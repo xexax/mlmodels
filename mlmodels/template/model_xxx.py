@@ -28,7 +28,7 @@ MODEL_URI = MODEL_URI = os.path.dirname(os.path.abspath(__file__)).split("\\")[-
 
 ####################################################################################################
 ######## Logs, root path
-from mlmodels.util import os_package_root_path, log
+from mlmodels.util import os_package_root_path, log, path_norm
 """
 def os_package_root_path(filepath, sublevel=0, path_add=""):
 
@@ -140,18 +140,6 @@ def get_dataset(data_pars=None, **kw):
 
 
 
-def path_setup(out_folder="ztest", sublevel=1, data_path="dataset/"):
-    data_path = os_package_root_path(__file__, sublevel=sublevel, path_add=data_path)
-    out_path = os.getcwd() + "/" + out_folder
-    os.makedirs(out_path, exist_ok=True)
-
-    model_path = out_path + "/model/"
-    os.makedirs(model_path, exist_ok=True)
-
-    log(data_path, out_path, model_path)
-    return data_path, out_path, model_path
-
-
 def get_params(param_pars={}, **kw):
     import json
     pp          = param_pars
@@ -159,7 +147,9 @@ def get_params(param_pars={}, **kw):
     config_mode = pp['config_mode']
     data_path   = pp['data_path']
 
+
     if choice == "json":
+       data_path = path_norm(data_path)
        cf = json.load(open(data_path, mode='r'))
        cf = cf[config_mode]
        return cf['model_pars'], cf['data_pars'], cf['compute_pars'], cf['out_pars']
@@ -167,9 +157,28 @@ def get_params(param_pars={}, **kw):
 
     if choice == "test01":
         log("#### Path params   ##########################################")
-        data_path, out_path, model_path = path_setup(out_folder="/ztest/", sublevel=1,
-                                                     data_path="dataset/")
-        data_pars    = {}
+        data_path  = path_norm( "dataset/text/imdb.csv"  )   
+        out_path   = path_norm( "/ztest/model_keras/crf_bilstm/" )   
+        model_path = os.path.join(out_path , "model")
+
+
+        data_pars ={
+            "path"            : 
+            "path_type"   :  "local/absolute/web"
+
+            "data_type"   :   "text" / "recommender"  / "timeseries" /"image"
+            "data_split"  : {"istrain" :  1   , "split_size" : 0.5, "randomseed" : 1   },
+
+            "data_loader"      :   "mlmodels.data.pd_reader",
+            "data_loader_pars" :   { "ok"  },
+
+            "data_preprocessor" : "mlmodels.model_keras.prepocess:process",
+            "data_preprocessor_pars" :  {  },
+
+            "size" : [0,1,2],
+            "output_size": [0, 6]            
+          }
+
         model_pars   = {}
         compute_pars = {}
         out_pars     = {}
@@ -227,30 +236,29 @@ def test(data_path="dataset/", pars_choice="json", config_mode="test"):
 if __name__ == '__main__':
     VERBOSE = True
     test_path = os.getcwd() + "/mytest/"
-    
+
     ### Local fixed params
     test(pars_choice="test01")
-
 
     ### Local json file
     # test(pars_choice="json")
 
-
     ####    test_module(model_uri="model_xxxx/yyyy.py", param_pars=None)
     from mlmodels.models import test_module
-    param_pars = {'choice': "test01", 'config_mode' : 'test', 'data_path' : '/dataset/' }
-    test_module(module_uri = MODEL_URI, param_pars= param_pars)
+
+    param_pars = {'choice': "test01", 'config_mode': 'test', 'data_path': '/dataset/'}
+    test_module(module_uri=MODEL_URI, param_pars=param_pars)
 
     ##### get of get_params
     # choice      = pp['choice']
     # config_mode = pp['config_mode']
     # data_path   = pp['data_path']
 
-
     ####    test_api(model_uri="model_xxxx/yyyy.py", param_pars=None)
     from mlmodels.models import test_api
-    param_pars = {'choice': "test01", 'config_mode' : 'test', 'data_path' : '/dataset/' }
-    test_api(module_uri = MODEL_URI, param_pars= param_pars)
+
+    param_pars = {'choice': "test01", 'config_mode': 'test', 'data_path': '/dataset/'}
+    test_api(module_uri=MODEL_URI, param_pars=param_pars)
 
 
 

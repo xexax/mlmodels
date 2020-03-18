@@ -52,6 +52,17 @@ MODEL_CLASSES = {
 
 
 ####################################################################################################
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+
+
+fromm mlmodels.util import os_package_root_path, log, path_norm
+
+
+
+####################################################################################################
 class Model:
     def __init__(self, model_pars=None, data_pars=None, compute_pars=None
                ):

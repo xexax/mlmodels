@@ -34,17 +34,7 @@ def log(*s, n=0, m=1):
 
 
 ####################################################################################################
-def os_package_root_path(filepath, sublevel=0, path_add=""):
-    """
-       get the module package root folder
-    """
-    from pathlib import Path
-    path = Path(os.path.realpath(filepath)).parent
-    for i in range(1, sublevel + 1):
-        path = path.parent
-
-    path = os.path.join(path.absolute(), path_add)
-    return path
+from mlmodels.util  import os_package_root_path
 
   
 def os_file_current_path():
@@ -70,7 +60,7 @@ def model_get_list(folder=None, block_list=[]):
   module_names = get_recursive_files(folder, r'/*model*/*.py' )                       
 
 
-  NO_LIST = [  "__init__.py", "util", "preprocess" ]
+  NO_LIST = [  "__init__", "util", "preprocess" ]
   NO_LIST = NO_LIST + block_list
 
   list_select = []
@@ -79,10 +69,11 @@ def model_get_list(folder=None, block_list=[]):
 
       flag = False     
       for x in NO_LIST :
-        if x in t: FLAG = True
+        if x in t: flag = True
 
       if not flag  :
        list_select.append( t )
+
 
   return list_select
 
@@ -114,13 +105,20 @@ def main():
   model_list = model_get_list(folder=None, block_list=[])
   print(model_list)
 
+  # return 7
+
 
   test_list =[    
    ### Tflow
-   f"python {path}/model_tf/1_lstm.py",
+   f"python {path}/model_tf/namentity_crm_bilstm.py",
  
+
     
    ### Keras
+   f"python {path}/model_keras/01_deepctr.py",
+  f"python {path}/model_keras/charcnn.py",
+
+
    f"python {path}/model_keras/01_deepctr.py",
    f"python {path}/model_keras/textcnn.py",
 
@@ -146,8 +144,16 @@ def main():
 
   ]
 
+
   
+
+  path = path.replace("\\", "//")
+  
+  test_list =[ f"python {path}/"  + t.replace(".","//").replace("//py", ".py") for t in model_list ] 
+
+
   for cmd in test_list :
+    print("\n\n\n", flush=True)
     print(cmd, flush=True)
     os.system( cmd )
 
