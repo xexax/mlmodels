@@ -55,17 +55,19 @@ class Model:
             self.tokenizer.fit_on_texts(texts)
             word_index = self.tokenizer.word_index  # the dict values start from 1 so this is fine with zeropadding
             index2word = {v: k for k, v in word_index.items()}
+            
             print('Found %s unique tokens' % len(word_index))
             sequences = self.tokenizer.texts_to_sequences(texts)
-            data_1 = pad_sequences(sequences, maxlen=data_pars["MAX_SEQUENCE_LENGTH"])
+            data_1    = pad_sequences(sequences, maxlen=data_pars["MAX_SEQUENCE_LENGTH"])
+            
             print('Shape of data tensor:', data_1.shape)
-            NB_WORDS = (min(self.tokenizer.num_words, len(word_index)) + 1)  # +1 for zero padding
+            NB_WORDS   = (min(self.tokenizer.num_words, len(word_index)) + 1)  # +1 for zero padding
             data_1_val = data_1[801000:807000]  # select 6000 sentences as validation data
-            data_pars["data_1"] = data_1
+            data_pars["data_1"]     = data_1
             data_pars["data_1_val"] = data_1_val
 
-            max_len = data_pars["MAX_SEQUENCE_LENGTH"]
-            emb_dim = model_pars["EMBEDDING_DIM"]
+            max_len    = data_pars["MAX_SEQUENCE_LENGTH"]
+            emb_dim    = model_pars["EMBEDDING_DIM"]
             latent_dim = model_pars["latent_dim"]
             intermediate_dim = model_pars["intermediate_dim"]
             epsilon_std = model_pars["epsilon_std"]
@@ -85,8 +87,9 @@ class Model:
                         glove_embedding_matrix[i] = embeddings_index.get('unk')
             print('Null word embeddings: %d' % np.sum(np.sum(glove_embedding_matrix, axis=1) == 0))
 
+            
             # y = Input(batch_shape=(None, max_len, NB_WORDS))
-            x = Input(batch_shape=(None, max_len))
+            x       = Input(batch_shape=(None, max_len))
             x_embed = Embedding(NB_WORDS, emb_dim, weights=[glove_embedding_matrix],
                                 input_length=max_len, trainable=False)(x)
             h = Bidirectional(LSTM(intermediate_dim, return_sequences=False, recurrent_dropout=0.2),
@@ -96,8 +99,8 @@ class Model:
             h = Dense(intermediate_dim, activation='linear')(h)
             h = act(h)
             h = Dropout(0.2)(h)
-            z_mean = Dense(latent_dim)(h)
-            z_log_var = Dense(latent_dim)(h)
+            z_mean    = Dense(latent_dim)(h)
+            z_log_var = Dense(latent_dim)(h )
 
             def sampling(args):
                 z_mean, z_log_var = args
@@ -110,11 +113,10 @@ class Model:
 
             # we instantiate these layers separately so as to reuse them later
             repeated_context = RepeatVector(max_len)
-            decoder_h = LSTM(intermediate_dim, return_sequences=True, recurrent_dropout=0.2)
-            decoder_mean = TimeDistributed(
-                Dense(NB_WORDS, activation='linear'))  # softmax is applied in the seq2seqloss by tf
-            h_decoded = decoder_h(repeated_context(z))
-            x_decoded_mean = decoder_mean(h_decoded)
+            decoder_h        = LSTM(intermediate_dim, return_sequences=True, recurrent_dropout=0.2)
+            decoder_mean     = TimeDistributed( Dense(NB_WORDS, activation='linear'))  # softmax is applied in the seq2seqloss by tf
+            h_decoded        = decoder_h(repeated_context(z))
+            x_decoded_mean   = decoder_mean(h_decoded)
 
             # placeholder loss
             def zero_loss(y_true, y_pred):
@@ -122,29 +124,22 @@ class Model:
 
             # =========================== Necessary only if you want to use Sampled Softmax =======================#
             # Sampled softmax
-            logits = tf.constant(np.random.randn(compute_pars["batch_size"], max_len, NB_WORDS), tf.float32)
+            logits  = tf.constant(np.random.randn(compute_pars["batch_size"], max_len, NB_WORDS), tf.float32)
             targets = tf.constant(np.random.randint(NB_WORDS, size=(compute_pars["batch_size"], max_len)), tf.int32)
-            proj_w = tf.constant(np.random.randn(NB_WORDS, NB_WORDS), tf.float32)
-            proj_b = tf.constant(np.zeros(NB_WORDS), tf.float32)
+            proj_w  = tf.constant(np.random.randn(NB_WORDS, NB_WORDS), tf.float32)
+            proj_b  = tf.constant(np.zeros(NB_WORDS), tf.float32)
 
             def _sampled_loss(labels, logits):
                 labels = tf.cast(labels, tf.int64)
                 labels = tf.reshape(labels, [-1, 1])
                 logits = tf.cast(logits, tf.float32)
-                return tf.cast(
-                    tf.nn.sampled_softmax_loss(
-                        proj_w,
-                        proj_b,
-                        labels,
-                        logits,
-                        num_sampled=num_sampled,
-                        num_classes=NB_WORDS),
+                return tf.cast( tf.nn.sampled_softmax_loss(
+                        proj_w,  proj_b,   labels,  logits, num_sampled=num_sampled, num_classes=NB_WORDS),
                     tf.float32)
 
             softmax_loss_f = _sampled_loss
 
             # ====================================================================================================#
-
             # Custom VAE loss layer
             class CustomVariationalLayer(Layer):
                 def __init__(self, **kwargs):
@@ -156,9 +151,9 @@ class Model:
                     # xent_loss = K.sum(metrics.categorical_crossentropy(x, x_decoded_mean), axis=-1)
                     labels = tf.cast(x, tf.int32)
                     xent_loss = K.sum(tf.contrib.seq2seq.sequence_loss(x_decoded_mean, labels,
-                                                                       weights=self.target_weights,
-                                                                       average_across_timesteps=False,
-                                                                       average_across_batch=False), axis=-1)
+                                                                       weights                  = self.target_weights,
+                                                                       average_across_timesteps = False,
+                                                                       average_across_batch     = False), axis=-1)
                     # softmax_loss_function=softmax_loss_f), axis=-1)#, uncomment for sampled doftmax
                     kl_loss = - 0.5 * K.sum(1 + z_log_var - K.square(z_mean) - K.exp(z_log_var), axis=-1)
                     return K.mean(xent_loss + kl_loss)
@@ -182,32 +177,31 @@ class Model:
 def fit(model, data_pars={}, compute_pars={}, out_pars={}, **kw):
     """
     """
-
     batch_size = compute_pars['batch_size']
-    epochs = compute_pars['epochs']
-    n_steps = (800000 / 2) / batch_size
-    sess = None  #
+    epochs     = compute_pars['epochs']
+    n_steps    = (800000 / 2) / batch_size
+    sess       = None  
 
     def sent_generator(TRAIN_DATA_FILE, chunksize):
         import pandas as pd
         reader = pd.read_csv(TRAIN_DATA_FILE, chunksize=chunksize, iterator=True)
         for df in reader:
-            val3 = df.iloc[:, 3:4].values.tolist()
-            val4 = df.iloc[:, 4:5].values.tolist()
+            val3  = df.iloc[:, 3:4].values.tolist()
+            val4  = df.iloc[:, 4:5].values.tolist()
             flat3 = [item for sublist in val3 for item in sublist]
             flat4 = [str(item) for sublist in val4 for item in sublist]
             texts = []
             texts.extend(flat3[:])
             texts.extend(flat4[:])
 
-            sequences = model.tokenizer.texts_to_sequences(texts)
+            sequences  = model.tokenizer.texts_to_sequences(texts)
             data_train = pad_sequences(sequences, maxlen=data_pars["MAX_SEQUENCE_LENGTH"])
             yield [data_train, data_train]
 
     model.model.fit(sent_generator(data_pars["train_data_path"], batch_size / 2),
-                    epochs=epochs,
-                    steps_per_epoch=n_steps,
-                    validation_data=(data_pars["data_1_val"], data_pars["data_1_val"]))
+                    epochs          = epochs,
+                    steps_per_epoch = n_steps,
+                    validation_data = (data_pars["data_1_val"], data_pars["data_1_val"]))
 
     return model, sess
 
@@ -226,7 +220,7 @@ def predict(model, sess=None, data_pars={}, compute_pars={}, out_pars={}, **kw):
     sentence1 = ['where can i find a book on machine learning']
 
     def sent_parse(sentence, mat_shape):
-        sequence = model.tokenizer.texts_to_sequences(sentence)
+        sequence    = model.tokenizer.texts_to_sequences(sentence)
         padded_sent = pad_sequences(sequence, maxlen=data_pars["MAX_SEQUENCE_LENGTH"])
         return padded_sent  # [padded_sent, sent_one_hot]
 
@@ -254,12 +248,12 @@ def save(model=None, session=None, save_pars={}):
 def load(load_pars={}):
     from mlmodels.util import load_tf
     print(load_pars)
-    input_tensors, output_tensors = load_tf(load_pars['path'],
-                                            filename=load_pars['model_uri'])
+    input_tensors, output_tensors = load_tf( load_pars['path'],
+                                             filename = load_pars['model_uri'])
 
-    model = Model()
+    model       = Model()
     model.model = None
-    session = None
+    session     = None
     return model, session
 
 
