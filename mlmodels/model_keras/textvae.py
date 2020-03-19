@@ -294,17 +294,17 @@ def get_params(param_pars={}, **kw):
 
     if choice == "test01":
         log("#### Path params   ###################################################")
-        data_path = path_norm("dataset/text/quora/train.csv")
-        glove_path = path_norm("dataset/text/glove/glove.6B.50d.txt")
-        out_path = path_norm("/ztest/model_keras/textvae/")
+        data_path  = path_norm("dataset/text/quora/train.csv")
+        glove_path = path_norm("dataset/text/glove/glove.6B.50d.txt")    #Big file
+        out_path   = path_norm("/ztest/model_keras/textvae/")
 
-        data_pars = {"MAX_SEQUENCE_LENGTH": 15, "train_data_path": data_path, "glove_embedding": glove_path}
+        data_pars  = {"MAX_SEQUENCE_LENGTH": 15, "train_data_path": data_path, "glove_embedding": glove_path}
 
         log("#### Model params   #################################################")
-        model_pars = {"MAX_NB_WORDS": 12000, "EMBEDDING_DIM": 50, "latent_dim": 32,
-                      "intermediate_dim": 96, "epsilon_std": 0.1, "num_sampled": 500, "optimizer": "adam"}
+        model_pars   = {"MAX_NB_WORDS": 12000,  "EMBEDDING_DIM": 50, "latent_dim": 32,
+                        "intermediate_dim": 96, "epsilon_std": 0.1,  "num_sampled": 500, "optimizer": "adam"}
         compute_pars = {"batch_size": 100, "epochs": 1, "VALIDATION_SPLIT": 0.2}
-        out_pars = {"path": out_path}
+        out_pars     = {"path": out_path}
 
         return model_pars, data_pars, compute_pars, out_pars
 
