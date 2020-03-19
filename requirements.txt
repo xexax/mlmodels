@@ -6,6 +6,7 @@ mxnet
 numpy
 pytorch-transformers
 transformers==2.4.1 #### fix issue #23 could not run on macos
+sentence-transformers
 gluonts==0.4.2
 autogluon==0.0.5
 optuna<1.2.0
