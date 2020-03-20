@@ -49,8 +49,8 @@ def test_model_structure():
 
 
 def test_import() :
-   import tensorflow as tf
-   import torch as torch
+    import tensorflow as tf
+    import torch as torch
 
     print(np, np.__version__)
     print(tf, tf.__version__)
