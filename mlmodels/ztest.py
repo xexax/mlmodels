@@ -10,8 +10,6 @@ import pandas as pd
 # import sklearn as sk
 
 ####################################################################################################
-import tensorflow as tf
-import torch as torch
 
 # import autogluon
 # import gluonts
@@ -20,23 +18,10 @@ import mlmodels
 
 
 ####################################################################################################
-def get_recursive_files(folderPath, ext='/*model*/*.py'):
-  import glob
-  files = glob.glob( folderPath + ext, recursive=True) 
-  return files
-
-
-def log(*s, n=0, m=1):
-    sspace = "#" * n
-    sjump = "\n" * m
-    print(sjump, sspace, s, sspace, flush=True)
+from mlmodels.util import get_recursive_files, log, os_package_root_path, model_get_list
 
 
 
-####################################################################################################
-from mlmodels.util  import os_package_root_path
-
-  
 def os_file_current_path():
   import inspect
   val = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
@@ -51,33 +36,7 @@ def os_file_current_path():
 
 
 
-
-
-def model_get_list(folder=None, block_list=[]):
-  # Get all the model.py into folder  
-  folder = os_package_root_path(__file__) if folder is None else folder
-  # print(folder)
-  module_names = get_recursive_files(folder, r'/*model*/*.py' )                       
-
-
-  NO_LIST = [  "__init__", "util", "preprocess" ]
-  NO_LIST = NO_LIST + block_list
-
-  list_select = []
-  for t in module_names :
-      t = t.replace(folder, "").replace("\\", ".")
-
-      flag = False     
-      for x in NO_LIST :
-        if x in t: flag = True
-
-      if not flag  :
-       list_select.append( t )
-
-
-  return list_select
-
-
+####################################################################################################  
 def test_model_structure():
   print("os.getcwd", os.getcwd())
   print(mlmodels) 
@@ -90,6 +49,9 @@ def test_model_structure():
 
 
 def test_import() :
+   import tensorflow as tf
+   import torch as torch
+
     print(np, np.__version__)
     print(tf, tf.__version__)
     print(torch, torch.__version__)

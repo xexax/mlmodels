@@ -31,6 +31,39 @@ def os_package_root_path(add_path="",n=0):
   return add_path
 """
 
+def get_recursive_files(folderPath, ext='/*model*/*.py'):
+  import glob
+  files = glob.glob( folderPath + ext, recursive=True) 
+  return files
+
+
+
+def model_get_list(folder=None, block_list=[]):
+  # Get all the model.py into folder  
+  folder = os_package_root_path(__file__) if folder is None else folder
+  # print(folder)
+  module_names = get_recursive_files(folder, r'/*model*/*.py' )                       
+
+
+  NO_LIST = [  "__init__", "util", "preprocess" ]
+  NO_LIST = NO_LIST + block_list
+
+  list_select = []
+  for t in module_names :
+      t = t.replace(folder, "").replace("\\", ".")
+
+      flag = False     
+      for x in NO_LIST :
+        if x in t: flag = True
+
+      if not flag  :
+         list_select.append( t )
+
+
+  return list_select
+
+
+
 
 
 def tf_deprecation() :
