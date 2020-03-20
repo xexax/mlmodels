@@ -31,22 +31,19 @@ Thanks.
 I have some questions on the interview format :
 
    Phone call only or video ?
-    (phone number or by Skype/else)
 
    Does it include live coding test ?
-
+     (Do we need to connect to platform ?)
 
 
 These are the dates ( I am taking some time off for this):
 
 
 
-Wednesday April 1st :
 
-   From 1:00 AM (1:00) Tokyo Time, (  9:00 AM (9:00) Previous Day San Francisco Time )
+Wednesday April 1st (Japan time):
 
-
-Wednesday April 1st :
+   At 0:00 AM (0:00) Tokyo Time = 8:00 AM (8:00) Previous Day San Francisco Time
 
    From  9:00 AM (9:00) Tokyo Time =   until anytime 
       (5:00 PM (17:00) Previous Day San Francisco Time)
@@ -55,7 +52,7 @@ Wednesday April 1st :
 
 
 
-Thursday April 2nd :
+Thursday April 2nd (Japan time:
 
    From 1:00 AM (1:00) Tokyo Time (  9:00 AM (9:00) Previous Day San Francisco Time )
 
@@ -67,8 +64,16 @@ Thursday April 2nd :
 
 
 
+AFTER April 2th, it is difficult since I have some project assignments,
+before it's better.
+
+
 Thank you
 Kevin
+
+
+
+
 
 
 
