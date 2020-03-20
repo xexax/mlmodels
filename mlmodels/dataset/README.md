@@ -24,7 +24,37 @@ dataset/recommender/
 
 
 
+Wednesday April :
 
+   From  9:00 AM (9:00) Tokyo Time =   until anytime 
+      (5:00 PM (17:00) Previous Day San Francisco Time)
+
+   From  10 AM (Tokyo tme),  (6pm DF time).
+
+
+   From 1:00 AM (1:00) Tokyo Time (  9:00 AM (9:00) Previous Day San Francisco Time )
+
+
+Thursday April 2:
+   From  9:00 AM (9:00) Tokyo Time =   until anytime 
+      (5:00 PM (17:00) Previous Day San Francisco Time)
+
+  From  10 AM (Tokyo tme),  (6pm DF time).
+
+
+
+
+
+
+
+
+
+
+    to login with a token:
+        http://localhost:8889/?token=
+
+
+ded64cfa8d4cf6d08ad190a74431341157eac09e73d36fda&token=ded64cfa8d4cf6d08ad190a74431341157eac09e73d36fda
 
 
 

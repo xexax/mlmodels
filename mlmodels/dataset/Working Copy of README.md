@@ -24,6 +24,70 @@ dataset/recommender/
 
 
 
+Hello,
+
+Thanks.
+
+I have some questions on the interview format :
+
+   Phone call only or video ?
+    (phone number or by Skype/else)
+
+   Does it include live coding test ?
+
+
+
+These are the dates ( I am taking some time off for this):
+
+
+
+Wednesday April 1st :
+
+   From 1:00 AM (1:00) Tokyo Time, (  9:00 AM (9:00) Previous Day San Francisco Time )
+
+
+Wednesday April 1st :
+
+   From  9:00 AM (9:00) Tokyo Time =   until anytime 
+      (5:00 PM (17:00) Previous Day San Francisco Time)
+
+   From  10 AM (Tokyo tme),  (6pm previous day SF time).
+
+
+
+Thursday April 2nd :
+
+   From 1:00 AM (1:00) Tokyo Time (  9:00 AM (9:00) Previous Day San Francisco Time )
+
+
+   From  9:00 AM (9:00) Tokyo Time =   until anytime 
+      (5:00 PM (17:00) Previous Day San Francisco Time)
+
+   From  10 AM (Tokyo tme),  (6pm, previous day SF time).
+
+
+
+Thank you
+Kevin
+
+
+
+
+
+
+
+https://github.com/arita37/ml_sampler
+
+
+
+
+
+
+
+
+
+
+
     to login with a token:
         http://localhost:8889/?token=
 
