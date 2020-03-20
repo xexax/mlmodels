@@ -169,7 +169,8 @@ def cli_load_arguments(config_file= None):
     return arg
 
 
-
+def main():
+  test_all()
 
 
 if __name__ == "__main__":
