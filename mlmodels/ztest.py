@@ -156,8 +156,7 @@ def test_custom():
    f"model_gluon/gluon_deepar.py",
    f"model_glufon/gluon_ffn.py",
    ]
-
-   test_list(test_list0)
+  test_list(test_list0)
 
 
 
@@ -169,10 +168,10 @@ def cli_load_arguments(config_file= None):
         Load CLI input, load config.toml , overwrite config.toml by CLI Input
     """
     import argparse
-    from util import load_config
-    if config_file is None  :
-      cur_path = os.path.dirname(os.path.realpath(__file__))
-      config_file = os.path.join(cur_path, "template/test_config.json")
+    # from util import load_config
+    #if config_file is None  :
+    #  cur_path = os.path.dirname(os.path.realpath(__file__))
+    #  config_file = os.path.join(cur_path, "template/test_config.json")
     # print(config_file)
 
     
@@ -183,7 +182,7 @@ def cli_load_arguments(config_file= None):
     add("--config_file", default=config_file, help="Params File")
     add("--config_mode", default="test", help="test/ prod /uat")
     add("--log_file", help="log.log")
-    add("--do", default="all", help="test")
+    add("--do", default="test_all", help="test")
     add("--folder", default=None, help="test")
     
     ##### model pars
@@ -203,7 +202,7 @@ def cli_load_arguments(config_file= None):
     
 
     arg = p.parse_args()
-    arg = load_config(arg, arg.config_file, arg.config_mode, verbose=0)
+    # arg = load_config(arg, arg.config_file, arg.config_mode, verbose=0)
     return arg
 
 
@@ -220,7 +219,7 @@ if __name__ == "__main__":
 
 
   else :
-    globals()[arg.do]
+    globals()[arg.do]()
 
   
 
