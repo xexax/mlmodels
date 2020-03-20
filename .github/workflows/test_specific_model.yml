@@ -1,10 +1,10 @@
-name:  code_structure_linux
+name:  test_custom_model
 
 
 on:
   push:
     branches: 
-      - dev
+      - feat_XXX
  
 jobs:
   build:
@@ -65,7 +65,7 @@ jobs:
 
     ########  Test running 
     - name: ml_test
-      run: ml_test  --do test_all
+      run: ml_test  --do model_tf/1_lstm.py
       
          
 

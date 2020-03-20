@@ -85,7 +85,7 @@ def test_model_structure():
   path = mlmodels.__path__[0]
   
   print("############Check structure ############################")
-  cmd = f"python {path}/ztest_structure.py"
+  cmd = f"ztest_structure.py"
   os.system( cmd )
 
 
@@ -96,8 +96,7 @@ def test_import() :
     print(mlmodels)
 
 
-
-def main():
+def test_all():
   print("os.getcwd", os.getcwd())
 
   path = mlmodels.__path__[0]
@@ -105,57 +104,60 @@ def main():
   model_list = model_get_list(folder=None, block_list=[])
   print(model_list)
 
-  # return 7
-
-
-  test_list =[    
-   ### Tflow
-   f"python {path}/model_tf/namentity_crm_bilstm.py",
- 
-
-    
-   ### Keras
-   f"python {path}/model_keras/01_deepctr.py",
-  f"python {path}/model_keras/charcnn.py",
-
-
-   f"python {path}/model_keras/01_deepctr.py",
-   f"python {path}/model_keras/textcnn.py",
-
-
-   ### SKLearn
-   f"python {path}/model_sklearn/sklearn.py",
-
-
-   ### Torch
-   f"python {path}/model_tch/03_nbeats.py",
-   f"python {path}/model_tch/textcnn.py",
-   f"python {path}/model_tch/transformer_classifier.py",
-
-
-   ### Glueon
-   f"python {path}/model_gluon/gluon_deepar.py",
-   f"python {path}/model_glufon/gluon_ffn.py",
-
-
-   #### Too slow
-   # f"python {path}/model_gluon/gluon_automl.py",
-
-
-  ]
-
-
-  
-
-  path = path.replace("\\", "//")
-  
+  path = path.replace("\\", "//")  
   test_list =[ f"python {path}/"  + t.replace(".","//").replace("//py", ".py") for t in model_list ] 
-
 
   for cmd in test_list :
     print("\n\n\n", flush=True)
     print(cmd, flush=True)
     os.system( cmd )
+
+
+def test_list(str_list):
+  print( "os.getcwd", os.getcwd() )
+  print("############Check model ################################")
+  path  = mlmodels.__path__[0]
+  mlist = str_lis.split(",")
+  test_list =[   f"python {path}/{model}"  for model in  mlist ]  
+   
+  for cmd in test_list :
+    print("\n\n\n", flush=True)
+    print(cmd, flush=True)
+    os.system( cmd )
+
+
+
+def test_custom():
+  test_list0 =[    
+   ### Tflow
+   f"model_tf/namentity_crm_bilstm.py",
+ 
+  
+   ### Keras
+   f"model_keras/01_deepctr.py",
+   f"model_keras/charcnn.py",
+
+
+   f"model_keras/01_deepctr.py",
+   f"model_keras/textcnn.py",
+
+
+   ### SKLearn
+   f"model_sklearn/sklearn.py",
+
+
+   ### Torch
+   f"model_tch/03_nbeats.py",
+   f"model_tch/textcnn.py",
+   f"model_tch/transformer_classifier.py",
+
+
+   ### Glueon
+   f"model_gluon/gluon_deepar.py",
+   f"model_glufon/gluon_ffn.py",
+   ]
+
+   test_list(test_list0)
 
 
 
@@ -191,7 +193,9 @@ def cli_load_arguments(config_file= None):
     ##### data pars
 
 
+
     ##### compute pars
+
 
 
     ##### out pars
@@ -210,13 +214,18 @@ if __name__ == "__main__":
   arg = cli_load_arguments()
   print(arg.do)
 
-  if arg.do == "all"  :  #list all models in the repo                    
-     main()
 
-  if arg.do == "model_structure"  :  #list all models in the repo                    
-     test_model_structure()
+  if ".py" in arg.do   :  #list all models in the repo                    
+    test_list(  [  arg.do ])
 
 
+  else :
+    globals()[arg.do]
+
+  
+
+
+  
 
 
 
