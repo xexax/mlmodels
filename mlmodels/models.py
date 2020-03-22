@@ -380,6 +380,7 @@ def os_folder_copy(src, dst):
                 print(e)
 
 
+
 def config_init(to_path="."):
     """
       Generate template from code source
@@ -389,7 +390,7 @@ def config_init(to_path="."):
     os_root = os_package_root_path(__file__)
 
     to_path = os_root + "/ztest/current/"  if to_path == "."  else to_path
-    log("initializing", to_path)
+    log("Working Folder", to_path)
     # os.makedirs(to_path, exist_ok=True)
 
     os_folder_copy(os_root + "/template/", to_path + "/template/")
@@ -399,12 +400,22 @@ def config_init(to_path="."):
     os.makedirs(to_path + "model_trained", exist_ok=True)
     os.makedirs(to_path + "model_code", exist_ok=True)
      
-    from pathlib import Path
-    print(Path.home())
+    import json
+    path_user = os.path.expanduser('~')
+    path_config =  path_user + "/.mlmodels/config.json"
+    #print("config file", path_config)
 
-    config_file = to_path + "/config.json"
-    ddict = { "pretrained" : to_path + "model_trained"  }
-    json.dump( ddict, open(config_file, mode="w") )
+    os.makedirs(path_user + "/.mlmodels/" , exist_ok=True)
+    ddict = { "model_trained" : to_path + "/model_trained"  }
+    log("Config values", ddict)
+    json.dump( ddict, open(path_config, mode="w") )
+
+
+    from mlmodels.util import get_pretrained_path
+    log("Config path",  get_pretrained_path() )
+
+
+
 
 
 
@@ -479,6 +490,12 @@ def main():
         return 0
 
 
+    if arg.do == "generate_config":
+        log(arg.save_folder)
+        config_generate_json(arg.model_uri, to_path=arg.save_folder)
+
+
+    ###################################################################
     if arg.do == "model_list":  # list all models in the repo
         l = config_model_list(arg.folder)
 
@@ -512,9 +529,6 @@ def main():
         model, session = load(load_pars)
         module.predict(model, session, data_pars=data_p, compute_pars=compute_p, out_pars=out_p)
 
-    if arg.do == "generate_config":
-        log(arg.save_folder)
-        config_generate_json(arg.model_uri, to_path=arg.save_folder)
 
 
 

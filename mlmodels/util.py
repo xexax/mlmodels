@@ -3,7 +3,10 @@ import os
 import re
 import sys
 
-import toml
+#import toml
+import json
+import shutil
+import glob 
 
 
 ####################################################################################################
@@ -30,6 +33,8 @@ def os_package_root_path(add_path="",n=0):
   # print("os_package_root_path,check", add_path)
   return add_path
 """
+
+
 
 def os_folder_copy(src, dst):
     """Copy a directory structure overwriting existing files"""
@@ -217,6 +222,23 @@ def test_module(model_uri="model_tf/1_lstm.py", data_path="dataset/", pars_choic
 
 
 ####################################################################################################
+def load_root_config():
+    from pathlib import Path
+    import json
+    path_user = os.path.expanduser('~')
+    path_config =  path_user + "/.mlmodels/config.json"
+
+    ddict = json.load(open(path_config, mode= 'r'))
+    return ddict
+
+
+def get_pretrained_path():
+    ddict = load_root_config()
+    return ddict['model_trained']
+
+
+
+
 def params_json_load(path, config_mode="test"):
   import json
   pars = json.load(open(path, mode="rb"))
