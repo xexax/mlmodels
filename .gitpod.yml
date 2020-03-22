@@ -10,15 +10,10 @@ tasks:
     python3 -m pip install -r requirements_fake.txt &&
     python3 -m pip install -e . 
 
-
-tasks:
-  - openMode: split-right
-    command: echo SplitTerminal && clear
-
-
   command: >
     python -c "import mlmodels; print(mlmodels)"
-    
+
+
 github:
   prebuilds:
     # enable for the master/default branch (defaults to true)
@@ -32,9 +27,5 @@ github:
 
 
 
-vscode:
-  extensions:
-    - almenon.arepl@1.0.20:Uu7lIOwyLgmNWpTwCl/iqQ==
-    
     
     
