@@ -359,23 +359,57 @@ def config_generate_json(modelname, to_path="ztest/new_model/"):
     print(fname)
 
 
-def config_init(to_path="ztest/new_model/"):
+
+def os_folder_copy(src, dst):
+    """Copy a directory structure overwriting existing files"""
+    import shutil
+    for root, dirs, files in os.walk(src):
+        if not os.path.isdir(root):
+            os.makedirs(root)
+
+        for file in files:
+            rel_path = root.replace(src, '').lstrip(os.sep)
+            dest_path = os.path.join(dst, rel_path)
+
+            if not os.path.isdir(dest_path):
+                os.makedirs(dest_path, exist_ok=True)
+
+            try :
+              shutil.copyfile(os.path.join(root, file), os.path.join(dest_path, file))
+            except Exception as e :
+                print(e)
+
+
+def config_init(to_path="."):
     """
       Generate template from code source
       config_init("model_tf.1_lstm", to_folder="ztest/")
-
-    if template_type is None :
-       os_root = os_package_root_path()
-       lfiles = get_recursive_files(os_root, ext='/*template*/*.py')
-       for f in lfiles :
-           print(f.replace(os_root, ""))
     """
     import shutil
-    os_root = os_package_root_path()
+    os_root = os_package_root_path(__file__)
+
+    to_path = os_root + "/ztest/current/"  if to_path == "."  else to_path
+    log("initializing", to_path)
     # os.makedirs(to_path, exist_ok=True)
-    shutil.copytree(os_root + "/template/", to_path + "/template/")
-    shutil.copytree(os_root + "/dataset/", to_path + "/dataset/")
-    shutil.copytree(os_root + "/example/", to_path + "/")
+
+    os_folder_copy(os_root + "/template/", to_path + "/template/")
+    os_folder_copy(os_root + "/dataset/", to_path + "/dataset/")
+    os_folder_copy(os_root + "/example/", to_path + "/example/")
+    
+    os.makedirs(to_path + "model_trained", exist_ok=True)
+    os.makedirs(to_path + "model_code", exist_ok=True)
+     
+    from pathlib import Path
+    print(Path.home())
+
+    config_file = to_path + "/config.json"
+    ddict = { "pretrained" : to_path + "model_trained"  }
+    json.dump( ddict, open(config_file, mode="w") )
+
+
+
+
+
 
 
 def config_model_list(folder=None):
@@ -415,6 +449,9 @@ def cli_load_arguments(config_file=None):
     add("--do", default="test", help="do ")
     add("--folder", default=None, help="folder ")
 
+
+    add("--init", default=".", help=".")
+
     ##### model pars
     add("--model_uri", default="model_tf/1_lstm.py", help=".")
     add("--load_folder", default="ztest/", help=".")
@@ -435,6 +472,12 @@ def cli_load_arguments(config_file=None):
 def main():
     arg = cli_load_arguments()
     print(arg.do)
+
+
+    if len(arg.init) > 0 :
+        config_init( to_path=  arg.init )
+        return 0
+
 
     if arg.do == "model_list":  # list all models in the repo
         l = config_model_list(arg.folder)
@@ -474,11 +517,12 @@ def main():
         config_generate_json(arg.model_uri, to_path=arg.save_folder)
 
 
-    if arg.do == "init":
-        log(arg.save_folder)
-        config_init( to_path=arg.save_folder)
+
 
 
 
 if __name__ == "__main__":
     main()
+
+
+

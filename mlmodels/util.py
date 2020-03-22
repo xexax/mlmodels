@@ -31,6 +31,24 @@ def os_package_root_path(add_path="",n=0):
   return add_path
 """
 
+def os_folder_copy(src, dst):
+    """Copy a directory structure overwriting existing files"""
+    import shutil
+    for root, dirs, files in os.walk(src):
+        if not os.path.isdir(root):
+            os.makedirs(root)
+
+        for file in files:
+            rel_path = root.replace(src, '').lstrip(os.sep)
+            dest_path = os.path.join(dst, rel_path)
+
+            if not os.path.isdir(dest_path):
+                os.makedirs(dest_path)
+
+            shutil.copyfile(os.path.join(root, file), os.path.join(dest_path, file))
+
+
+
 def get_recursive_files(folderPath, ext='/*model*/*.py'):
   import glob
   files = glob.glob( folderPath + ext, recursive=True) 
