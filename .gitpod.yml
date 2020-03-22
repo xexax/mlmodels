@@ -23,3 +23,10 @@ github:
     pullRequests: true
 
 
+
+vscode:
+  extensions:
+    - almenon.arepl@1.0.20:Uu7lIOwyLgmNWpTwCl/iqQ==
+    
+    
+    
