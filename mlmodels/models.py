@@ -400,13 +400,14 @@ def config_init(to_path="."):
     os.makedirs(to_path + "model_trained", exist_ok=True)
     os.makedirs(to_path + "model_code", exist_ok=True)
      
-    import json
+
+    #### Config files
     path_user = os.path.expanduser('~')
     path_config =  path_user + "/.mlmodels/config.json"
     #print("config file", path_config)
 
     os.makedirs(path_user + "/.mlmodels/" , exist_ok=True)
-    ddict = { "model_trained" : to_path + "/model_trained"  }
+    ddict = { "model_trained" : to_path + "/model_trained/"  }
     log("Config values", ddict)
     json.dump( ddict, open(path_config, mode="w") )
 
