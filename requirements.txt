@@ -1,7 +1,6 @@
 torch==1.0.1
 tensorflow<2.0
 keras<2.4.0
-#torch<1.0.0
 numpy
 ### transformers
 pytorch-transformers
@@ -12,11 +11,10 @@ sentence-transformers
 mxnet
 gluonts==0.4.2
 autogluon==0.0.5
-lightgbm>=2.3.0,<3.0
+lightgbm==2.3.0
 ############################
 optuna<1.2.0
 mlflow==1.7.1
-torchtext
 ############################
 deepctr
 pandas<1.0
@@ -31,6 +29,7 @@ setuptools==45.2.0
 python-dateutil==2.8.0
 # horovod==0.16.2   #### Issues with OPEN MPI
 #### NLP
+torchtext
 nltk
 spacy
 gensim 
