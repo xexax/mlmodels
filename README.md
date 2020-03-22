@@ -70,6 +70,12 @@ Install as editable package (ONLY dev branch), in Linux
     # pip install -e .  --no-deps    
 
 
+    ##### Initialize
+    Will copy template, dataset, example to your folder
+
+    ml_models --init  /yourworkingFolder/
+
+
     ##### To test :
     ml_optim
 
@@ -77,10 +83,6 @@ Install as editable package (ONLY dev branch), in Linux
     ml_models
     
 
-    ##### Initialize
-    Will copy template, dataset, example to your folder
-    cd your workingFolder
-    ml_models --do init  --save_folder  /yourworkingFolder/
     
 
   
