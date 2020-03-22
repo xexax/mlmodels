@@ -70,6 +70,10 @@ Install as editable package (ONLY dev branch), in Linux
     # pip install -e .  --no-deps    
 
 
+    ### Check this Colab for install :
+    https://colab.research.google.com/drive/1PFSRN5JpiOTt7W3YV8BsT4PG8mCOofo1
+
+
     ##### Initialize
     Will copy template, dataset, example to your folder
 
