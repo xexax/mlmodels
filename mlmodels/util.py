@@ -66,6 +66,7 @@ def model_get_list(folder=None, block_list=[]):
 
 
 
+
 def tf_deprecation() :
   try :
     from tensorflow.python.util import deprecation
@@ -319,28 +320,6 @@ def env_build(model_uri, env_pars):
 
 ####################################################################################################
 ####################################################################################################
-def model_get_list(folder=None, block_list=[]):
-  # Get all the model.py into folder  
-  folder = os_package_root_path() if folder is None else folder
-  # print(folder)
-  module_names = get_recursive_files(folder, r'/*model*//*model*/*.py' )                       
-
-
-  NO_LIST = [  "__init__.py", "util", "preprocess" ]
-  NO_LIST = NO_LIST + block_list
-
-
-  for t in module_names :
-      t = t.replace(folder, "").replace("\\", ".")
-
-      flag = False     
-      for x in NO_LIST :
-        if x in t: FLAG = True
-
-      if not flag  :
-       list_select.append( t )
-  
-
 
 
 
