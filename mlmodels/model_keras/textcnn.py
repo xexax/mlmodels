@@ -145,9 +145,9 @@ def get_dataset(data_pars=None, **kw):
   """
 
 
-   print('Loading data...')
-   max_features = data_pars['max_features']
-   maxlen       = data_pars['maxlen']
+  print('Loading data...')
+  max_features = data_pars['max_features']
+  maxlen       = data_pars['maxlen']
 
   if data_pars['train'] :
 
