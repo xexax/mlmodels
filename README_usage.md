@@ -1,3 +1,5 @@
+## Installation
+https://github.com/arita37/mlmodels/blob/dev/README.md
 
 ## In Jupyter 
 
