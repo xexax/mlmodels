@@ -3,13 +3,14 @@ ports:
   onOpen: open-preview
 tasks:
 - init: >
+    python3 -m pip install numpy==1.17.5 &&
     python3 -m pip install -r requirements.txt &&
-    python3 manage.py migrate
+    python3 -m pip install -r requirements_fake.txt &&
+    python3 -m pip install -e . 
+
   command: >
-    echo "from locallibrary.settings import *" > locallibrary/local_settings.py &&
-    echo "ALLOWED_HOSTS = ['*']" >> locallibrary/local_settings.py &&
-    export DJANGO_SETTINGS_MODULE=locallibrary.local_settings &&
-    python3 manage.py runserver 0.0.0.0:8080
+    python -c "import mlmodels; print(mlmodels)"
+    
 github:
     prebuilds:
         pullRequestsFromForks: true
