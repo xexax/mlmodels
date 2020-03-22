@@ -64,34 +64,24 @@ def model_get_list(folder=None, block_list=[]):
 
 
 
+def get_recursive_files2(folderPath, ext):
+    results = os.listdir(folderPath)
+    outFiles = []
+    for file in results:
+      if os.path.isdir(os.path.join(folderPath, file)):
+        outFiles += get_recursive_files(os.path.join(folderPath, file), ext)
+      elif re.match(ext, file):
+        outFiles.append(file)
+  
+    return outFiles
 
 
-
-def tf_deprecation() :
-  try :
-    from tensorflow.python.util import deprecation
-    deprecation._PRINT_DEPRECATION_WARNINGS = False
-    print("Deprecaton set to False")
-  except : 
-    pass
+def get_recursive_files(folderPath, ext='/*model*/*.py'):
+  import glob
+  files = glob.glob( folderPath + ext, recursive=True) 
+  return files
 
 
-
-def params_json_load(path, config_mode="test"):
-  import json
-  pars = json.load(open(path, mode="rb"))
-  pars = pars[config_mode]
-
-  ### HyperParam, model_pars, data_pars,
-  list_pars = [] 
-  for t in [ "hypermodel_pars", "model_pars", "data_pars", "compute_pars", "out_pars" ] :
-    pdict = pars.get(t)
-    if pdict :
-       list_pars.append(pdict)
-    else :
-       log("error in json, cannot load ",t)
-
-  return tuple(list_pars)
 
 
 
@@ -180,14 +170,6 @@ def os_file_current_path():
 
 
 
-def log(*s, n=0,m=1):
-  sspace = "#" * n
-  sjump =  "\n" * m
-  print(sjump, sspace, s, sspace, flush=True)
-
-
-
-
 ####################################################################################################
 def test_module(model_uri="model_tf/1_lstm.py", data_path="dataset/", pars_choice="json", reset=True):
     ###loading the command line arguments
@@ -217,6 +199,25 @@ def test_module(model_uri="model_tf/1_lstm.py", data_path="dataset/", pars_choic
 
 
 ####################################################################################################
+def params_json_load(path, config_mode="test"):
+  import json
+  pars = json.load(open(path, mode="rb"))
+  pars = pars[config_mode]
+
+  ### HyperParam, model_pars, data_pars,
+  list_pars = [] 
+  for t in [ "hypermodel_pars", "model_pars", "data_pars", "compute_pars", "out_pars" ] :
+    pdict = pars.get(t)
+    if pdict :
+       list_pars.append(pdict)
+    else :
+       log("error in json, cannot load ",t)
+
+  return tuple(list_pars)
+
+
+
+
 def load_config(args, config_file, config_mode, verbose=0):
     ##### Load file dict_pars as dict namespace #############################
     import json
@@ -252,23 +253,6 @@ def val(x,xdefault) :
       return xdefault
 
 
-
-def get_recursive_files2(folderPath, ext):
-    results = os.listdir(folderPath)
-    outFiles = []
-    for file in results:
-      if os.path.isdir(os.path.join(folderPath, file)):
-        outFiles += get_recursive_files(os.path.join(folderPath, file), ext)
-      elif re.match(ext, file):
-        outFiles.append(file)
-  
-    return outFiles
-
-
-def get_recursive_files(folderPath, ext='/*model*/*.py'):
-  import glob
-  files = glob.glob( folderPath + ext, recursive=True) 
-  return files
 
 
 ####################################################################################################
@@ -328,6 +312,16 @@ def env_build(model_uri, env_pars):
 
 ####################################################################################################
 ########## TF specific #############################################################################
+def tf_deprecation() :
+  try :
+    from tensorflow.python.util import deprecation
+    deprecation._PRINT_DEPRECATION_WARNINGS = False
+    print("Deprecaton set to False")
+  except : 
+    pass
+
+
+
 def load_tf(path, filename):
   """
   https://www.mlflow.org/docs/latest/python_api/mlflow.tensorflow.html#
@@ -356,10 +350,6 @@ def save_tf(sess, file_path):
 
 
 
-
-
-####################################################################################################
-########## pyTorch specific ########################################################################
 def load_tch(path, filename="model"):
   return 1
 

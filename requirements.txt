@@ -11,7 +11,7 @@ sentence-transformers
 gluonts==0.4.2
 autogluon==0.0.5
 optuna<1.2.0
-mlflow
+mlflow==1.7.1
 torchtext
 nltk
 deepctr
