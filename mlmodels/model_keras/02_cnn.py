@@ -47,39 +47,39 @@ def log(*s, n=0, m=1):
 
 ####################################################################################################
 class Model(object) :
-    def __init__(self, model_pars=None, compute_pars=None, data_pars=None) :
+
+    def __init__(self, model_pars=None, compute_pars=None, data_pars=None):
 
         if model_pars is None and compute_pars is None :
             self.model = None
 
-
-        if not model_pars is None and not compute_pars is None :
+        if not model_pars is None and not compute_pars is None:
             m = model_pars
             c = compute_pars
 
-   		    rows = 28
-		    cols = 28
+            rows = 28
+            cols = 28
             # rows, cols = data_pars["rows"], data_pars["cols"]
 
-			nclasses = m["nclasses"]
-			input_shape = m["input_shape"]
+            nclasses = m["nclasses"]
+            input_shape = m["input_shape"]
 
-			model = Sequential()
-			model.add(Conv2D(32, kernel_size=(3, 3), activatxion='relu', input_shape=input_shape))
-			model.add(Conv2D(64, (3, 3), activation='relu'))
+            model = Sequential()
+            model.add(Conv2D(32, kernel_size=(3, 3), activatxion='relu', input_shape=input_shape))
+            model.add(Conv2D(64, (3, 3), activation='relu'))
 
-			model.add(MaxPooling2D(pool_size=(2, 2)))
-			model.add(Dropout(0.25))
-			model.add(Flatten())
-			model.add(Dense(128, activation='relu'))
-			model.add(Dropout(0.5))
-			model.add(Dense(nclasses, activation='softmax'))
+            model.add(MaxPooling2D(pool_size=(2, 2)))
+            model.add(Dropout(0.25))
+            model.add(Flatten())
+            model.add(Dense(128, activation='relu'))
+            model.add(Dropout(0.5))
+            model.add(Dense(nclasses, activation='softmax'))
 
-			model.compile(loss=keras.losses.categorical_crossentropy,
-			              optimizer=keras.optimizers.Adadelta(), metrics=metrics)
+            model.compile(loss=keras.losses.categorical_crossentropy,
+                            optimizer=keras.optimizers.Adadelta(), metrics=metrics)
 
-		self.model = model
-		
+        self.model = model
+
 
 
 def get_dataset( data_params, **kw):
@@ -91,28 +91,28 @@ def get_dataset( data_params, **kw):
         log(data_path, out_path)
 
 
-		(x_train, y_train), (x_test, y_test) = mnist.load_data()
+        (x_train, y_train), (x_test, y_test) = mnist.load_data()
 		
         rows, cols = data_pars["rows"], data_pars["cols"]
 
 
 		# decide on input shape (depends on backend)
-		if K.image_data_format() == 'channels_first':
-		    x_train = x_train.reshape(x_train.shape[0], 1, rows, cols)
-		    x_test = x_test.reshape(x_test.shape[0], 1, rows, cols)
-		    input_shape = (1, rows, cols)
-		else:
-		    x_train = x_train.reshape(x_train.shape[0], rows, cols, 1)
-		    x_test = x_test.reshape(x_test.shape[0], rows, cols, 1)
-		    input_shape = (rows, cols, 1)
+        if K.image_data_format() == 'channels_first':
+            x_train = x_train.reshape(x_train.shape[0], 1, rows, cols)
+            x_test = x_test.reshape(x_test.shape[0], 1, rows, cols)
+            input_shape = (1, rows, cols)
+        else:
+            x_train = x_train.reshape(x_train.shape[0], rows, cols, 1)
+            x_test = x_test.reshape(x_test.shape[0], rows, cols, 1)
+            input_shape = (rows, cols, 1)
 
-		x_train = x_train.astype('float32')
-		x_test = x_test.astype('float32')
-		x_train /= 255
-		x_test /= 255
+        x_train = x_train.astype('float32')
+        x_test = x_test.astype('float32')
+        x_train /= 255
+        x_test /= 255
 
-		y_train = keras.utils.to_categorical(y_train, nclasses)
-		y_test = keras.utils.to_categorical(y_test, nclasses)
+        y_train = keras.utils.to_categorical(y_train, nclasses)
+        y_test = keras.utils.to_categorical(y_test, nclasses)
 
         return x_train, y_train, x_test, y_test
 

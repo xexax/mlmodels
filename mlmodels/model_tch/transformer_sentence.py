@@ -348,7 +348,7 @@ if __name__ == '__main__':
     test_path = os.getcwd() + "/mytest/"
 
     ### Local fixed params
-    test(pars_choice="json")
+    # test(pars_choice="json")
     test(pars_choice="test01")
 
     ### Local json file
