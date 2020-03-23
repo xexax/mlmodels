@@ -1,16 +1,16 @@
 tensorflow<2.0
 keras<2.4.0
 #torch==1.4.0+cpu
-mxnet
 numpy
 
 pytorch-transformers
 #transformers==2.4.1  ### for MacOS
 transformers==2.3.0 #### due to sentence transformers
 
+
 gluonts==0.4.2
 autogluon==0.0.5
-
+mxnet
 
 optuna<1.2.0
 deepctr
