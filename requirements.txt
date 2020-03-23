@@ -14,8 +14,7 @@ mxnet==1.6.0
 gluonts==0.4.2
 autogluon==0.0.5
 lightgbm==2.3.0
-## Required for gluon_prophet
-fbprophet
+
 
 ############################
 optuna<1.2.0
