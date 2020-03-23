@@ -25,13 +25,15 @@ import numpy as np
 import pandas as pd
 
 VERBOSE = False
-MODEL_URI = "model_XXXX/yyy.py"
+MODEL_URI =  Path(os.path.abspath(__file__)).parent.name + "." + os.path.basename(__file__).replace(".py", "")
+
 
 ####################################################################################################
 ######## Logs, root path
 from mlmodels.util import os_package_root_path, log
 
 
+import sklearn
 from sklearn.metrics import accuracy_score
 
 from sklearn.linear_model import *
