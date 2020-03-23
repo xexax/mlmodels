@@ -49,7 +49,7 @@ def _config_process(data_path, config_mode="test"):
 
 
 # Dataaset
-def get_dataset(data_pars, **kw):
+def get_dataset(data_pars):
     ##check whether dataset is of kind train or test
     data_path = data_pars['train_data_path'] if data_pars['train'] else data_pars['test_data_path']
 
