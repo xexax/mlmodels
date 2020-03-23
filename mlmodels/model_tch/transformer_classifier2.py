@@ -51,7 +51,7 @@ logger = logging.getLogger(__name__)
 
 
 
-fromm mlmodels.util import os_package_root_path, log, path_norm
+from mlmodels.util import os_package_root_path, log, path_norm
 
 
 

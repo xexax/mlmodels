@@ -58,18 +58,18 @@ def get_params(choice="", data_path="dataset/timeseries/", config_mode="test", *
     if choice == "test01":
         log("#### Path params   #####################################################")
         data_path, out_path, model_path = path_local_setup( __file__, sublevel=1,
-                                                           out_folder="/ztest/gluon_ffn/", 
+                                                           out_folder="ztest/gluon_ffn/", 
                                                            data_path=data_path)
 
 
-        train_data_path = data_path + "GLUON-GLUON-train.csv"
+        train_data_path = data_path + "GLUON-train.csv"
         test_data_path = data_path + "GLUON-test.csv"
         start = pd.Timestamp("01-01-1750", freq='1H')
 
         data_pars = {"train_data_path": train_data_path, 
                      "test_data_path": test_data_path, 
                      "train": False,
-                     'prediction_length': 48, 'freq': '1H', "start": start, "num_series": 245,
+                     'prediction_length': 48, 'freq': '1H', "start": start, "num_series": 37,
                      "save_fig": "./series.png","modelpath":model_path}
 
 

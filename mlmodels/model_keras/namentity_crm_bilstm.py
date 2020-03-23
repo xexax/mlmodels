@@ -183,16 +183,15 @@ def get_dataset(data_pars=None, **kw):
         },
 
     """
-   if data_pars.get('mode') == "test_repo"  :
+    if data_pars.get('mode') == "test_repo":
      """
        df = run_process( d['loader'], d['loader_pars'])
        Xtuple = run_process( d['processor'], d['loader_pars'])
        return Xtuple
-
      """ 
      return _preprocess_test()
-  else :
-     pass
+    else :
+        pass
 
 
 

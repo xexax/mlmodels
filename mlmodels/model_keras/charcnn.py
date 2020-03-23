@@ -13,6 +13,7 @@ Check parameters template in models_config.json
 """
 import os
 from keras.callbacks import EarlyStopping
+from mlmodels.util import os_package_root_path, logg, norm_path
 
 
 
@@ -201,7 +202,7 @@ def get_params(param_pars={}, **kw):
         }
 
         data_pars = {
-            "train": true,
+            "train": True,
             "alphabet": "abcdefghijklmnopqrstuvwxyz0123456789-,;.!?:'\"/\\|_@#$%^&*~`+-=<>()[]{}",
             "alphabet_size": 69,
             "input_size": 1014,
