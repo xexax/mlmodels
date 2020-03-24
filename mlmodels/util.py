@@ -442,6 +442,7 @@ class Model_empty(object):
 
 
 def load_tch(load_pars  ):
+  import torch
   path, filename= load_pars['path'] , load_pars['filename'] 
 
   path = path + "/" + filename if "." not in path else path
@@ -450,7 +451,8 @@ def load_tch(load_pars  ):
   return model
 
 
-def save_tch(model=None, optimizer=None, save_pars):
+def save_tch(model=None, optimizer=None, save_pars=None):
+  import torch
   path, filename= save_pars['path'] , save_pars['filename'] 
 
   if kw.get('save_state') is not None :
@@ -488,7 +490,7 @@ def save_gluon(model, path, filename="model"):
 def load_keras(load_pars):
   from keras.models import load_model
    
-  path, filename= os.path.absolute( save_pars['path']  + "/../", os.path.basename(  save_pars['path'] ) )
+  path, filename= os.path.absolute( load_pars['path']  + "/../", os.path.basename( load_pars['path'] ) )
 
   path = path + "/" + filename if ".h5" not in path else path
   model = Model_empty()
@@ -497,7 +499,7 @@ def load_keras(load_pars):
 
 
 def save_keras(model=None, session=None, save_pars = None, ):
-  path, filename= os.path.absolute( save_pars['path']  + "/../", os.path.basename(  save_pars['path'] )
+  path, filename= os.path.absolute( save_pars['path']  + "/../", os.path.basename(  save_pars['path'] ))
   model.model.save(path + f"/{filename}" ) 
 
 
