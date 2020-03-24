@@ -93,7 +93,7 @@ from sklearn.model_selection import train_test_split
 
 
 # import optuna.integration.lightgbm as lgb
-from lightgbm import LGBModel
+from lightgbm import LGBMModel
 
 
 
@@ -103,7 +103,7 @@ MODEL_URI = Path(os.path.abspath(__file__)).parent.name + "." + os.path.basename
 
 ####################################################################################################
 ######## Logs, root path
-from mlmodels.util import os_package_root_path, log
+from mlmodels.util import os_package_root_path, log, path_norm
 
 
 
@@ -132,7 +132,7 @@ class Model(object):
             self.model = None
         else :
           
-          self.model =  LGBModel(**model_pars)
+          self.model =  LGBMModel(**model_pars)
 
 
 
@@ -241,7 +241,7 @@ def get_dataset(data_pars=None, **kw):
 
     else:
         Xtest, ytest = None, None
-        return None, NOne, Xtest, ytest
+        return None, None, Xtest, ytest
 
 
 
