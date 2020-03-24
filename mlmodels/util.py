@@ -56,13 +56,6 @@ def os_folder_copy(src, dst):
 
 
 
-def get_recursive_files(folderPath, ext='/*model*/*.py'):
-  import glob
-  files = glob.glob( folderPath + ext, recursive=True) 
-  return files
-
-
-
 def model_get_list(folder=None, block_list=[]):
   # Get all the model.py into folder  
   folder = os_package_root_path(__file__) if folder is None else folder
