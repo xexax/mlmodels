@@ -402,14 +402,16 @@ def save(model=None, session=None, save_pars=None):
 
 
 
-def load_tf(path="", filename=""):
+def load_tf(load_pars=""):
   """
   https://www.mlflow.org/docs/latest/python_api/mlflow.tensorflow.html#
 
  """
   import mlflow
   import tensorflow as tf
-  
+
+  path, filename = load_pars['path'], load_pars['path'] 
+   
   model_uri = path + "/" + filename
   tf_graph = tf.Graph()
   tf_sess = tf.Session(graph=tf_graph)
@@ -424,11 +426,10 @@ def load_tf(path="", filename=""):
 
 
 
-def save_tf(model=None, sess=None, file_path="tf_model.pkt"):
+def save_tf(model=None, sess=None, save_pars= None):
   import tensorflow as tf
   saver = tf.compat.v1.train.Saver()
-  return saver.save(sess, file_path)
-
+  return saver.save(sess, save_pars['path'])
 
 
 

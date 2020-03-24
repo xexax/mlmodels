@@ -176,15 +176,14 @@ def reset_model():
 def save(model, session=None, save_pars={}):
     from mlmodels.util import save_tf
     print(save_pars)
-    save_tf(session, save_pars['path'])
+    save_tf(model, session, save_pars)
      
 
 
 def load(load_pars={}):
     from mlmodels.util import load_tf
     print(load_pars)
-    input_tensors, output_tensors =  load_tf(load_pars['path'], 
-                                            filename=load_pars['model_uri'])
+    input_tensors, output_tensors =  load_tf(load_pars)
     return input_tensors, output_tensors
 
 
