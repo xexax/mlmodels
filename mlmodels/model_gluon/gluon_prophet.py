@@ -49,14 +49,14 @@ def get_params(choice="", data_path="dataset/", config_mode="test", **kw):
         from mlmodels.util import path_local_setup
         log("#### Path params   ################################################")
         data_path, out_path, model_path = path_local_setup( __file__, sublevel=1,
-                                                           out_folder="/ztest/gluon_phrophet/", 
+                                                           out_folder="ztest/gluon_phrophet/", 
                                                            data_path=data_path)
-
-        train_data_path = data_path + "GLUON-GLUON-train.csv"
+        train_data_path = data_path + "GLUON-train.csv"
         test_data_path = data_path + "GLUON-test.csv"
         start = pd.Timestamp("01-01-1750", freq='1H')
-        data_pars = {"train_data_path": train_data_path, "test_data_path": test_data_path, "train": False,
-                     'prediction_length': 48, 'freq': '1H', "start": start, "num_series": 245,
+        data_pars = {"train_data_path": train_data_path, "test_data_path": test_data_path, 
+                     "train": False,
+                     "prediction_length": 48, "freq": '1H', "start": start, "num_series": 37,
                      "save_fig": "./series.png","modelpath":model_path}
 
         log("## Model params   ################################################")
@@ -71,21 +71,31 @@ def get_params(choice="", data_path="dataset/", config_mode="test", **kw):
 
 
 ########################################################################################################################
-def test(data_path="dataset/"):
+def test(data_path="dataset/", choice=""):
     ### Local test
 
     log("#### Loading params   ##############################################")
-    model_pars, data_pars, compute_pars, out_pars = get_params(choice=0, data_path=data_path)
+    model_pars, data_pars, compute_pars, out_pars = get_params(choice=choice, data_path=data_path)
 
 
     log("#### Loading dataset   #############################################")
-    gluont_ds = get_dataset(**data_pars)
+    gluont_ds = get_dataset(data_pars)
 
 
     log("#### Model init, fit   ###########################################")
-    model = Model(model_pars, compute_pars)
-    #model=m.model    ### WE WORK WITH THE CLASS (not the attribute GLUON )
-    model=fit(model, data_pars, model_pars, compute_pars)
+###
+    from mlmodels.models import module_load_full, fit, predict
+    module, model = module_load_full("model_gluon.gluon_prophet", model_pars, data_pars, compute_pars)
+    print(module, model)
+
+    # model=m.model    ### WE WORK WITH THE CLASS (not the attribute GLUON )
+    model = fit(module, model, data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)
+
+###
+    # model = Model(model_pars, compute_pars)
+    # #model=m.model    ### WE WORK WITH THE CLASS (not the attribute GLUON )
+    # # Requires sess as 2nd aprametetr
+    # model=fit(model, None, data_pars, model_pars, compute_pars)
 
     log("#### save the trained model  #############################################")
     save(model, data_pars["modelpath"])

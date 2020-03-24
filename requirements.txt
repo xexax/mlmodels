@@ -10,13 +10,14 @@ numpy
 pytorch-transformers
 ###transformers==2.4.1 #### fix issue #23 could not run on macos
 transformers==2.3.0 #### due to sentence transformers
-sentence-transformers
+#sentence-transformers
 
 ############################
 mxnet==1.6.0
 gluonts==0.4.2
 autogluon==0.0.5
 lightgbm==2.3.0
+
 
 ############################
 optuna<1.2.0

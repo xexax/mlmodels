@@ -248,6 +248,7 @@ def get_params(param_pars=None, **kw):
         data_pars = {"data_path": data_path, "forecast_length": 5, "backcast_length": 10}
 
         device = torch.device('cpu')
+
         model_pars = {"stack_types": [NBeatsNet.GENERIC_BLOCK, NBeatsNet.GENERIC_BLOCK],
                       "device": device,
                       "nb_blocks_per_stack": 3, "forecast_length": 5, "backcast_length": 10,
