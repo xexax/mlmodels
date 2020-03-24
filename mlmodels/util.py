@@ -402,14 +402,7 @@ def save(model=None, session=None, save_pars=None):
 
 
 
-
-
-
-  
-
-
-
-def load_tf(path, filename):
+def load_tf(path="", filename=""):
   """
   https://www.mlflow.org/docs/latest/python_api/mlflow.tensorflow.html#
 
@@ -430,19 +423,45 @@ def load_tf(path, filename):
   return input_tensors, output_tensors
 
 
-def save_tf(sess, file_path):
+
+def save_tf(model=None, sess=None, file_path="tf_model.pkt"):
   import tensorflow as tf
   saver = tf.compat.v1.train.Saver()
   return saver.save(sess, file_path)
 
 
 
-def load_tch(path, filename="model"):
-  return 1
 
 
-def save_tch(model, path, filename="model"):
-  return 1
+class Model_empty(object):
+    def __init__(self, model_pars=None, data_pars=None, compute_pars=None
+                       ):
+              ### Model Structure        ################################
+              self.model = None
+
+
+
+def load_tch(load_pars  ):
+  path, filename= load_pars['path'] , load_pars['filename'] 
+
+  path = path + "/" + filename if "." not in path else path
+  model = Model_empty()
+  model.model = torch.load(path)
+  return model
+
+
+def save_tch(model=None, optimizer=None, save_pars):
+  path, filename= save_pars['path'] , save_pars['filename'] 
+
+  if kw.get('save_state') is not None :
+    torch.save({
+              'model_state_dict': model.model.state_dict(),
+              'optimizer_state_dict': optimizer.state_dict(),
+              }, path + f"/{filename}" ) 
+
+  else :
+    torch.save(model.model, path + f"/{filename}" ) 
+
 
 
 
@@ -466,13 +485,21 @@ def save_gluon(model, path, filename="model"):
 
 
 
+def load_keras(load_pars):
+  from keras.models import load_model
+   
+  path, filename= os.path.absolute( save_pars['path']  + "/../", os.path.basename(  save_pars['path'] ) )
 
-def load_keras(path, filename="model"):
-  return 1
+  path = path + "/" + filename if ".h5" not in path else path
+  model = Model_empty()
+  model.model = load_model(path)
+  return model
 
 
-def save_keras(model, path, filename="model"):
-  return 1
+def save_keras(model=None, session=None, save_pars = None, ):
+  path, filename= os.path.absolute( save_pars['path']  + "/../", os.path.basename(  save_pars['path'] )
+  model.model.save(path + f"/{filename}" ) 
+
 
 
 
