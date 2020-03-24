@@ -261,7 +261,7 @@ def get_params(param_pars=None, **kw):
 
         out_pars = {"out_path": out_path + "/"}
 
-    return model_pars, data_pars, compute_pars, out_pars
+        return model_pars, data_pars, compute_pars, out_pars
 
 
 
@@ -272,7 +272,7 @@ def test(data_path="dataset/milk.csv"):
     ###loading the command line arguments
 
     log("#### Loading params   #######################################")
-    param_pars = { "choice" : 0, "data_path" : "dataset/", "config_mode" : "test" }
+    param_pars = { "choice" : 0, "data_path" : "dataset/", "config_mode" : "test01" }
     model_pars, data_pars, compute_pars, out_pars = get_params(param_pars)
 
 

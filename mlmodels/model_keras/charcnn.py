@@ -17,9 +17,6 @@ from mlmodels.util import os_package_root_path, log, path_norm
 
 
 
-######## Logs
-from mlmodels.util import os_package_root_path, log
-
 
 
 #### Import EXISTING model and re-map to mlmodels

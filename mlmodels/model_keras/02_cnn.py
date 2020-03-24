@@ -115,7 +115,7 @@ def get_dataset( data_params, **kw):
         y_test = keras.utils.to_categorical(y_test, nclasses)
 
         return x_train, y_train, x_test, y_test
-
+  
 
 def fit(model, data_pars=None, model_pars=None, compute_pars=None, out_pars=None,session=None, **kwargs):
 	# def fit(self,batch_size,epochs):
@@ -123,7 +123,7 @@ def fit(model, data_pars=None, model_pars=None, compute_pars=None, out_pars=None
         x_train, y_train, x_test, ytest = get_dataset(data_pars)
 
 		mtmp =model.model.fit(x_train, y_train,
-		                      batch_size=batch_size,	epochs=epochs,verbose=1, validation_data=(x_test, y_test))
+		                      batch_size=batch_size,epochs=epochs,verbose=1, validation_data=(x_test, y_test))
 	    model.model = mtmp
 	    return model
 

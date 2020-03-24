@@ -344,25 +344,33 @@ def save(model=None, session=None, save_pars=None):
         save_keras(model, session, os.path.join(path, name))
 
 
-def load_tf(path="", filename=""):
-    """
-    https://www.mlflow.org/docs/latest/python_api/mlflow.tensorflow.html#
+def load_tf(load_pars=""):
+  """
+  https://www.mlflow.org/docs/latest/python_api/mlflow.tensorflow.html#
 
-   """
-    import mlflow
-    import tensorflow as tf
+ """
+  import mlflow
+  import tensorflow as tf
 
-    model_uri = path + "/" + filename
-    tf_graph = tf.Graph()
-    tf_sess = tf.Session(graph=tf_graph)
-    with tf_graph.as_default():
-        signature_def = mlflow.tensorflow.load_model(model_uri=model_uri,
-                                                     tf_sess=tf_sess)
-        input_tensors = [tf_graph.get_tensor_by_name(input_signature.name)
-                         for _, input_signature in signature_def.inputs.items()]
-        output_tensors = [tf_graph.get_tensor_by_name(output_signature.name)
-                          for _, output_signature in signature_def.outputs.items()]
-    return input_tensors, output_tensors
+  path, filename = load_pars['path'], load_pars['path'] 
+   
+  model_uri = path + "/" + filename
+  tf_graph = tf.Graph()
+  tf_sess = tf.Session(graph=tf_graph)
+  with tf_graph.as_default():
+    signature_def = mlflow.tensorflow.load_model(model_uri=model_uri,
+                                                 tf_sess=tf_sess)
+    input_tensors = [tf_graph.get_tensor_by_name(input_signature.name)
+                     for _, input_signature in signature_def.inputs.items()]
+    output_tensors = [tf_graph.get_tensor_by_name(output_signature.name)
+                      for _, output_signature in signature_def.outputs.items()]
+  return input_tensors, output_tensors
+
+
+def save_tf(model=None, sess=None, save_pars= None):
+  import tensorflow as tf
+  saver = tf.compat.v1.train.Saver()
+  return saver.save(sess, save_pars['path'])
 
 
 def save_tf(model=None, sess=None, file_path="tf_model.pkt"):
