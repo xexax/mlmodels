@@ -310,15 +310,38 @@ def env_conda_build(env_pars=None) :
 
 
 def env_pip_requirement(env_pars=None) :
+   from time import sleep
    if env_pars is None :
-     env_pars = { 'name' : "test" , 'file_requirement': 'requirements.txt'  }
+     env_pars = { 'name' : "test" , 'requirement': 'requirements.txt'  }
 
+
+   root_path = os_package_root_path(__file__)
    p = env_pars
-   cmd = f"source activate {p['name']} "
-   cmd = cmd + f"  && pip install -r  {p['file_requirement']}"
+   # cmd = f"source activate {p['name']}  &&  "
+   cmd = "" 
+   cmd = cmd + f"  pip install -r  {root_path}/{p['requirement']} "
 
-   print(cmd)
+   print("Installing ", cmd)
    os.system(cmd)
+   sleep(60)
+
+
+def env_pip_check(env_pars=None) :
+  from importlib import import_module
+
+  if env_pars is None :
+    env_pars = { 'name' : "test" , 'requirement': 'requirements.txt', "import" : [ 'tensorflow', 'sklearn' ]  }
+
+  flag = 0
+  try :
+    for f in env_pars['import'] :
+       import_module(f)
+  except :
+    flag = 1
+
+  if flag :
+     env_pip_requirement(env_pars) 
+
 
 
 

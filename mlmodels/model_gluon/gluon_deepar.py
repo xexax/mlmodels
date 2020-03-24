@@ -4,8 +4,12 @@ Gluon
 
 """
 import os
-
 import pandas as pd
+
+from mlmodels.util import env_pip_check
+env_pip_check({"requirement": "pip/requirements_tabular.txt", 
+               "import":   ["gluonts", "mxnet"] }) 
+
 
 from gluonts.model.deepar import DeepAREstimator
 from gluonts.trainer import Trainer
