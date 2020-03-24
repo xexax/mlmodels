@@ -380,6 +380,35 @@ def tf_deprecation() :
 
 
 
+
+def load(load_pars):
+      p = load_pars
+
+      if  "model_keras" in p['model_uri'] :
+          path = os.path.abspath( p['path'] + "/../")
+          name = os.path.basename(p['path']) if ".h5" in p['path'] else "model.h5"
+          return load_keras( path ,  name    )
+     
+
+ 
+def save(model=None, session=None, save_pars):
+   p = save_pars
+
+   if  "model_keras" in p['model_uri'] :
+       path = os.path.abspath( p['path'] + "/../")
+       name = os.path.basename(p['path']) if ".h5" in p['path'] else "model.h5"
+       save_keras( model, session, os.path.join( path,  name)    )
+  
+
+
+
+
+
+
+  
+
+
+
 def load_tf(path, filename):
   """
   https://www.mlflow.org/docs/latest/python_api/mlflow.tensorflow.html#
