@@ -211,6 +211,7 @@ def optim_skopt(model_uri="model_tf.1_lstm.py",
 
     
     """
+    import skopt, optuna
     save_path     = out_pars['save_path']
     log_path      = out_pars['log_path']
     ntrials       = compute_pars['ntrials']

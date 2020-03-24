@@ -163,10 +163,10 @@ def get_params(param_pars={}, **kw):
 
 
         data_pars ={
-            "path"            : 
-            "path_type"   :  "local/absolute/web"
+            "path"            :  "",
+            "path_type"   :  "local/absolute/web",
 
-            "data_type"   :   "text" / "recommender"  / "timeseries" /"image"
+            "data_type"   :   "text" / "recommender"  / "timeseries" /"image",
             "data_split"  : {"istrain" :  1   , "split_size" : 0.5, "randomseed" : 1   },
 
             "data_loader"      :   "mlmodels.data.pd_reader",
@@ -187,6 +187,8 @@ def get_params(param_pars={}, **kw):
 
     else:
         raise Exception(f"Not support choice {choice} yet")
+
+
 
 
 
