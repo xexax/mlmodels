@@ -13,7 +13,7 @@ Check parameters template in models_config.json
 """
 import os
 from keras.callbacks import EarlyStopping
-from mlmodels.util import os_package_root_path, logg, norm_path
+from mlmodels.util import os_package_root_path, log, path_norm
 
 
 
@@ -110,13 +110,13 @@ def reset_model():
 def save(model=None, session=None, save_pars={}):
     from mlmodels.util import save_keras
     print(save_pars)
-    save_keras(session, save_pars['path'])
+    save_keras(model, session, save_pars=save_pars)
 
 
 def load(load_pars={}):
     from mlmodels.util import load_keras
     print(load_pars)
-    model0 = load_keras(load_pars['path'])
+    model0 = load_keras(load_pars)
 
     model = Model()
     model.model = model0
@@ -207,8 +207,8 @@ def get_params(param_pars={}, **kw):
             "alphabet_size": 69,
             "input_size": 1014,
             "num_of_classes": 4,
-            "train_data_source": norm_path( "/dataset/text/ag_news_csv/train.csv") ,
-            "val_data_source": norm_path("dataset/text/ag_news_csv/test.csv")
+            "train_data_source": path_norm("dataset/text/ag_news_csv/train.csv") ,
+            "val_data_source": path_norm("dataset/text/ag_news_csv/test.csv")
         }
 
 
@@ -218,7 +218,7 @@ def get_params(param_pars={}, **kw):
         }
 
         out_pars = {
-            "path":  norm_path( "ztest/ml_keras/charcnn/"),
+            "path":  path_norm( "ztest/ml_keras/charcnn/charcnn.h5"),
             "data_type": "pandas",
             "size": [
                 0,
@@ -256,7 +256,7 @@ def test(data_path="dataset/", pars_choice="json", config_mode="test"):
     model = Model(model_pars, data_pars, compute_pars)
     model, session = fit(model, data_pars, compute_pars, out_pars)
 
- 
+
     log("#### Predict   #####################################################")
     data_pars["train"] = 0
     ypred = predict(model, session, data_pars, compute_pars, out_pars)
@@ -284,25 +284,25 @@ if __name__ == '__main__':
     ### Local fixed params
     test(pars_choice="test01")
 
-    ### Local json file
-    test(pars_choice="json", data_path= f"{root_path}/model_keras/charcnn.json")
-
-    ####    test_module(model_uri="model_xxxx/yyyy.py", param_pars=None)
-    from mlmodels.models import test_module
-
-    param_pars = {'choice': "json", 'config_mode': 'test', 'data_path': "model_keras/charcnn.json"}
-    test_module(model_uri=MODEL_URI, param_pars=param_pars)
-
-    ##### get of get_params
-    # choice      = pp['choice']
-    # config_mode = pp['config_mode']
-    # data_path   = pp['data_path']
-
-    ####    test_api(model_uri="model_xxxx/yyyy.py", param_pars=None)
-    from mlmodels.models import test_api
-
-    param_pars = {'choice': "json", 'config_mode': 'test', 'data_path': "model_keras/charcnn.json"}
-    test_api(model_uri=MODEL_URI, param_pars=param_pars)
+    # ### Local json file
+    # test(pars_choice="json", data_path= f"{root_path}/model_keras/charcnn.json")
+    #
+    # ####    test_module(model_uri="model_xxxx/yyyy.py", param_pars=None)
+    # from mlmodels.models import test_module
+    #
+    # param_pars = {'choice': "json", 'config_mode': 'test', 'data_path': "model_keras/charcnn.json"}
+    # test_module(model_uri=MODEL_URI, param_pars=param_pars)
+    #
+    # #### get of get_params
+    # # choice      = pp['choice']
+    # # config_mode = pp['config_mode']
+    # # data_path   = pp['data_path']
+    #
+    # ####    test_api(model_uri="model_xxxx/yyyy.py", param_pars=None)
+    # from mlmodels.models import test_api
+    #
+    # param_pars = {'choice': "json", 'config_mode': 'test', 'data_path': "model_keras/charcnn.json"}
+    # test_api(model_uri=MODEL_URI, param_pars=param_pars)
 
 
 
