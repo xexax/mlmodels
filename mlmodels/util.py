@@ -391,7 +391,7 @@ def load(load_pars):
      
 
  
-def save(model=None, session=None, save_pars):
+def save(model=None, session=None, save_pars=None):
    p = save_pars
 
    if  "model_keras" in p['model_uri'] :
