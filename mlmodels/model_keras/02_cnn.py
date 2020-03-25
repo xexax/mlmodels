@@ -85,7 +85,7 @@ class Model(object) :
 def get_dataset( data_params, **kw):
     if choice == 0 :
         log("#### Path params   ################################################")
-        data_path = os_package_root_path(__file__, sublevel=1, path_add=data_path)
+        data_path = os_package_root_path(__file__, sublevel=0, path_add=data_path)
         out_path = os.getcwd() + "/keras_deepAR/"
         os.makedirs(out_path, exist_ok=True)
         log(data_path, out_path)
@@ -149,7 +149,7 @@ def metrics(ypred, data_pars, compute_pars=None, out_pars=None, **kwargs):
 def get_params(choice=0, data_path="dataset/", **kw) :
     if choice == 0 :
         log("#### Path params   ################################################")
-        data_path = os_package_root_path(__file__, sublevel=1, path_add=data_path)
+        data_path = os_package_root_path(__file__, sublevel=0, path_add=data_path)
         out_path = os.getcwd() + "/keras_deepAR/"
         os.makedirs(out_path, exist_ok=True)
         log(data_path, out_path)

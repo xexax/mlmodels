@@ -31,8 +31,8 @@ class Model(object):
 
 
 ########################################################################################################################
-def path_setup(out_folder="", sublevel=1, data_path="dataset/"):
-    data_path = os_package_root_path(__file__, sublevel=sublevel, path_add=data_path)
+def path_setup(out_folder="", sublevel=0, data_path="dataset/"):
+    data_path = os_package_root_path(path_add=data_path)
     out_path = os.getcwd() + "/" + out_folder
     os.makedirs(out_path, exist_ok=True)
     model_path = out_path + "/model_gluon_automl/"
@@ -84,7 +84,7 @@ def get_params(choice="", data_path="dataset/", config_mode="test", **kw):
 
     if choice == "test01":
         log("#### Path params   #################################################")
-        data_path, out_path, model_path = path_setup(out_folder="", sublevel=1,
+        data_path, out_path, model_path = path_setup(out_folder="", sublevel=0,
                                                      data_path="dataset/")
 
         data_pars = {"train": True, "uri_type": "amazon_aws", "dt_name": "Inc"}

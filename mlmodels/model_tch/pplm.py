@@ -23,12 +23,12 @@ from mlmodels.model_tch.raw.pplm.run_pplm_discrim_train import train_discriminat
 VERBOSE = False
 
 ####################################################################################################
-from mlmodels.util import os_package_root_path, logg, norm_path
+from mlmodels.util import os_package_root_path, log, path_norm
 
 
 
-def path_setup(out_folder="", sublevel=1, data_path="dataset/"):
-    data_path = os_package_root_path(__file__, sublevel=sublevel, path_add=data_path)
+def path_setup(out_folder="", sublevel=0, data_path="dataset/"):
+    data_path = os_package_root_path( path_add=data_path)
     out_path = os.getcwd() + "/" + out_folder
     os.makedirs(out_path, exist_ok=True)
     model_path = out_path + "/model/"

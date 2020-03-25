@@ -372,9 +372,9 @@ def load(out_pars={}):
 
 
 ########################################################################################################################
-def path_setup(out_folder="", sublevel=1, data_path="dataset/"):
+def path_setup(out_folder="", sublevel=0, data_path="dataset/"):
     #### Relative path
-    data_path = os_package_root_path(__file__, sublevel=sublevel, path_add=data_path) 
+    data_path = os_package_root_path( path_add=data_path)
     out_path = os.getcwd() + "/" + out_folder
     os.makedirs(out_path, exist_ok=True)
     log(data_path, out_path)

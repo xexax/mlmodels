@@ -48,7 +48,7 @@ def get_params(choice="", data_path="dataset/", config_mode="test", **kw):
     if choice == "test01":
         from mlmodels.util import path_local_setup
         log("#### Path params   ################################################")
-        data_path, out_path, model_path = path_local_setup( __file__, sublevel=1,
+        data_path, out_path, model_path = path_local_setup( __file__, sublevel=0,
                                                            out_folder="ztest/gluon_phrophet/", 
                                                            data_path=data_path)
         train_data_path = data_path + "GLUON-train.csv"

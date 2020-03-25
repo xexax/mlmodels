@@ -89,7 +89,7 @@ def get_recursive_files(folderPath, ext='/*model*/*.py'):
     return files
 
 
-def path_local_setup(current_file=None, out_folder="", sublevel=1, data_path="dataset/"):
+def path_local_setup(current_file=None, out_folder="", sublevel=0, data_path="dataset/"):
     """
       mlmodels/dataset/
       mlmodels/ztest/  :  in gitgnore !!

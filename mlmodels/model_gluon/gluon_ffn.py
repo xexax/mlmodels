@@ -57,7 +57,7 @@ def get_params(choice="", data_path="dataset/timeseries/", config_mode="test", *
 
     if choice == "test01":
         log("#### Path params   #####################################################")
-        data_path, out_path, model_path = path_local_setup( __file__, sublevel=1,
+        data_path, out_path, model_path = path_local_setup( __file__, sublevel=0,
                                                            out_folder="ztest/gluon_ffn/", 
                                                            data_path=data_path)
 

@@ -167,7 +167,7 @@ def get_dataset(data_pars=None, **kw):
         return None, None, Xtest, ytest
 
 
-def path_setup(out_folder="ztest", sublevel=1, data_path="dataset/"):
+def path_setup(out_folder="ztest", sublevel=0, data_path="dataset/"):
     data_path = os_package_root_path(__file__, sublevel=sublevel, path_add=data_path)
     out_path = os.getcwd() + "/" + out_folder
     os.makedirs(out_path, exist_ok=True)
@@ -193,7 +193,7 @@ def get_params(param_pars={}, **kw):
 
     if choice == "test01":
         log("#### Path params   ##########################################")
-        data_path, out_path, model_path = path_setup(out_folder="/ztest/", sublevel=1,
+        data_path, out_path, model_path = path_setup(out_folder="/ztest/", sublevel=0,
                                                      data_path="dataset/")
         data_pars = {'mode': 'test', 'path': data_path, 'data_type' : 'pandas' }
         model_pars = {"model_name":  "RandomForestClassifier", "max_depth" : 4 , "random_state":0}
