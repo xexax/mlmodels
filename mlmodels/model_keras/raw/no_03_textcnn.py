@@ -260,7 +260,7 @@ class Model:
       model.compile(self.model_pars["optimization"], 'categorical_crossentropy', metrics=['accuracy'])
       return model
 
-def fit(model, Xtrain, ytrain, compute_pars={}, **kw):
+def fit(model, Xtrain, ytrain, compute_pars=None, **kw):
   """
   :param model:    Class model
   :param data_pars:  dict of
@@ -275,7 +275,7 @@ def fit(model, Xtrain, ytrain, compute_pars={}, **kw):
 
   return model
 
-def metrics(ytrue, ypred, data_pars={}, out_pars={}, **kw):
+def metrics(ytrue, ypred, data_pars=None, out_pars=None, **kw):
     """
        Return metrics 
     """
@@ -286,7 +286,7 @@ def metrics(ytrue, ypred, data_pars={}, out_pars={}, **kw):
      
     return ddict
 
-def predict(model, Xtest, ytest, data_pars={}, out_pars={}, compute_pars={}, **kw):
+def predict(model, Xtest, ytest, data_pars=None, out_pars=None, compute_pars=None, **kw):
      
   ##### Get Data ###############################################
   

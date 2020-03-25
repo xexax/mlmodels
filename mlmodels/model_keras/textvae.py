@@ -174,7 +174,7 @@ class Model:
             self.model.summary()
 
 
-def fit(model, data_pars={}, compute_pars={}, out_pars={}, **kw):
+def fit(model, data_pars=None, compute_pars=None, out_pars=None, **kw):
     """
     """
     batch_size = compute_pars['batch_size']
@@ -206,7 +206,7 @@ def fit(model, data_pars={}, compute_pars={}, out_pars={}, **kw):
     return model, sess
 
 
-def fit_metrics(model, data_pars={}, compute_pars={}, out_pars={}, **kw):
+def fit_metrics(model, data_pars=None, compute_pars=None, out_pars=None, **kw):
     """
        Return metrics of the model when fitted.
     """
@@ -215,7 +215,7 @@ def fit_metrics(model, data_pars={}, compute_pars={}, out_pars={}, **kw):
     return ddict
 
 
-def predict(model, sess=None, data_pars={}, compute_pars={}, out_pars={}, **kw):
+def predict(model, sess=None, data_pars=None, compute_pars=None, out_pars=None, **kw):
     ##### Get Data ###############################################
     sentence1 = ['where can i find a book on machine learning']
 

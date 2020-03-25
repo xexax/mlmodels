@@ -81,7 +81,7 @@ class Model:
             self.model = model
 
 
-def fit(model, data_pars={}, compute_pars={}, out_pars={}, **kw):
+def fit(model, data_pars=None, compute_pars=None, out_pars=None, **kw):
     """
     """
 
@@ -111,7 +111,7 @@ def fit(model, data_pars={}, compute_pars={}, out_pars={}, **kw):
     return model, sess
 
 
-def fit_metrics(model, data_pars={}, compute_pars={}, out_pars={}, **kw):
+def fit_metrics(model, data_pars=None, compute_pars=None, out_pars=None, **kw):
     """
        Return metrics ofw the model when fitted.
     """
@@ -120,7 +120,7 @@ def fit_metrics(model, data_pars={}, compute_pars={}, out_pars={}, **kw):
     return history.history
 
 
-def predict(model, sess=None, data_pars=None, out_pars=None, compute_pars={}, **kw):
+def predict(model, sess=None, data_pars=None, out_pars=None, compute_pars=None, **kw):
     ##### Get Data ###############################################
     data_pars['train'] = False
     _, Xtrain, ytrain, Xtest, ytest = get_dataset(data_pars)

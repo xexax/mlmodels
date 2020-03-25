@@ -84,7 +84,7 @@ class Model:
 
 
 
-def fit(model, data_pars={}, compute_pars={}, out_pars={},   **kw):
+def fit(model, data_pars=None, compute_pars=None, out_pars=None,   **kw):
   """
 
   :param model:    Class model
@@ -106,7 +106,7 @@ def fit(model, data_pars={}, compute_pars={}, out_pars={},   **kw):
 
     
 
-def predict(model, sess=None, data_pars={}, out_pars={}, compute_pars={}, **kw):
+def predict(model, sess=None, data_pars=None, compute_pars=None, out_pars=None, **kw):
   ##### Get Data ###############################################
   Xpred, ypred = None, None
 
@@ -153,7 +153,7 @@ def get_params(param_pars=None, **kw):
     data_path   = param_pars['data_path']
 
     if choice == "json":
-       data_path = path_normalize(data_path)
+       data_path = path_norm(data_path)
        cf = json.load(open(data_path, mode='r'))
        cf = cf[config_mode]
        return cf['model_pars'], cf['data_pars'], cf['compute_pars'], cf['out_pars']

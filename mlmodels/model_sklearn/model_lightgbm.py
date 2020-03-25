@@ -138,7 +138,7 @@ class Model(object):
 
 
 
-def fit(model, data_pars={}, compute_pars={}, out_pars={}, **kw):
+def fit(model, data_pars=None, compute_pars=None, out_pars=None, **kw):
     """
     X (array-like or sparse matrix of shape = [n_samples, n_features]) – Input feature matrix.
 y (array-like of shape = [n_samples]) – The target values (class labels in classification, real numbers in regression).
@@ -164,7 +164,7 @@ Requires at least one evaluation data. If True, the eval metric on the eval set 
 
 
 
-def fit_metrics(model, data_pars={}, compute_pars={}, out_pars={}, **kw):
+def fit_metrics(model, data_pars=None, compute_pars=None, out_pars=None, **kw):
     """
        Return metrics of the model when fitted.
     """
@@ -173,7 +173,7 @@ def fit_metrics(model, data_pars={}, compute_pars={}, out_pars={}, **kw):
     return ddict
 
 
-def predict(model, sess=None, data_pars={}, compute_pars={}, out_pars={}, **kw):
+def predict(model, sess=None, data_pars=None, compute_pars=None, out_pars=None, **kw):
     ##### Get Data ###############################################
     data_pars['train'] = False
     _, _, Xpred, ypred = get_dataset(data_pars)

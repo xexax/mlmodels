@@ -63,7 +63,7 @@ class Model(object):
 
 
 
-def fit(model, data_pars={}, compute_pars={}, out_pars={}, **kw):
+def fit(model, data_pars=None, compute_pars=None, out_pars=None, **kw):
     """
     """
     sess = None  # Session type for compute
@@ -73,7 +73,7 @@ def fit(model, data_pars={}, compute_pars={}, out_pars={}, **kw):
 
 
 
-def fit_metrics(model, data_pars={}, compute_pars={}, out_pars={}, **kw):
+def fit_metrics(model, data_pars=None, compute_pars=None, out_pars=None, **kw):
     from sklearn.metrics import roc_auc_score
     """
        Return metrics of the model when fitted.
@@ -93,7 +93,7 @@ def fit_metrics(model, data_pars={}, compute_pars={}, out_pars={}, **kw):
     return ddict
 
 
-def predict(model, sess=None, data_pars={}, compute_pars={}, out_pars={}, **kw):
+def predict(model, sess=None, data_pars=None, compute_pars=None, out_pars=None, **kw):
     ##### Get Data ###############################################
     data_pars['train'] = False
     _, _, Xpred, ypred = get_dataset(data_pars)

@@ -123,7 +123,7 @@ def get_dataset(data_pars=None, **kw):
     return dataset
 
 
-def fit(model, data_pars={}, model_pars={}, compute_pars={}, out_pars={}, *args, **kw):
+def fit(model, data_pars=None, model_pars={}, compute_pars=None, out_pars=None, *args, **kw):
     tb_writer        = SummaryWriter()
     torch.manual_seed(1)
     random_indices = torch.randperm(len(train_dataset))[:args['num_samples']]
@@ -224,7 +224,7 @@ def fit(model, data_pars={}, model_pars={}, compute_pars={}, out_pars={}, *args,
 
 
 
-def predict(model, sess=None, data_pars={}, out_pars={}, compute_pars={}, **kw):
+def predict(model, sess=None, data_pars=None, out_pars=None, compute_pars=None, **kw):
     ##  Model is class
     ## load test dataset
     pass
@@ -359,7 +359,7 @@ def save(model, out_pars):
 
 
 
-def load(out_pars={}):
+def load(out_pars=None):
     if not os.path.exists(path):
         print("model file do not exist!")
         return None

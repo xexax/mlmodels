@@ -146,7 +146,7 @@ class Model:
             self.fit_metrics = {"train": {}, "test": {}}    #### metrics during training
 
 
-def fit(model, data_pars={}, model_pars={}, compute_pars={}, out_pars={}, *args, **kw):
+def fit(model, data_pars=None, model_pars={}, compute_pars=None, out_pars=None, *args, **kw):
     """
 
   :param model:    Class model
@@ -199,7 +199,7 @@ def fit_metrics(model, **kw):
     return ddict
 
 
-def predict(model, sess=None, data_pars={}, out_pars={}, compute_pars={}, **kw):
+def predict(model, sess=None, data_pars=None, out_pars=None, compute_pars=None, **kw):
     ##### Get Data ###############################################
     reader = get_dataset(data_pars)
     train_fname = 'train.gz' if data_pars["train_type"].lower() == 'nli' else 'sts-train.csv'
@@ -223,7 +223,7 @@ def save(model, out_pars):
     return torch.save(model.model, out_pars['modelpath'])
 
 
-def load(out_pars={}):
+def load(out_pars=None):
     model = Model(skip_create=True)
     model.model = torch.load(out_pars['modelpath'])
     return model   

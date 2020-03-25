@@ -119,7 +119,7 @@ class Model:
 
 
 
-def fit(model, data_pars, out_pars=None, compute_pars={}, **kwargs):
+def fit(model, data_pars, out_pars=None, compute_pars=None, **kwargs):
   df = get_dataset(data_pars)
   print(df.head(5))
   msample = df.shape[0]
@@ -279,7 +279,7 @@ def test(data_path="dataset/GOOG-year.csv", out_path="", reset=True):
   print(module, model)
   
   log("############ Model fit   ##################################")
-  sess = fit(model, module, data_pars=data_pars, compute_pars={}, out_pars=out_pars)
+  sess = fit(model, module, data_pars=data_pars, compute_pars=None, out_pars=out_pars)
   print("fit success", sess)
   
   log("############ Prediction##########################")
