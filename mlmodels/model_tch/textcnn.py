@@ -22,7 +22,7 @@ import os
 import json
 import shutil
 from pathlib import Path
-
+from time import sleep
 
 
 from mlmodels.util import os_package_root_path, log, path_norm, get_model_uri
@@ -130,11 +130,19 @@ def clean_str(string):
 
 def create_tabular_dataset(path_train, path_valid, 
                            lang='en', pretrained_emb='glove.6B.300d'):
-    spacy_en = spacy.load(lang, disable=[
+
+    try :
+      spacy_en = spacy.load(lang, disable=[
         'tagger', 'parser', 'ner', 'textcat'
         'entity_ruler', 'sentencizer', 
         'merge_noun_chunks', 'merge_entities',
         'merge_subtokens'])
+
+    except :
+       log( f"Download {lang}")
+       os.system( f"python -m spacy download {lang}")
+       sleep(60)
+
 
     def tokenizer(text):
         return [tok.text for tok in spacy_en.tokenizer(text)]

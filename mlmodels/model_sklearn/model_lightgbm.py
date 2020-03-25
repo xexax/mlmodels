@@ -193,16 +193,16 @@ def reset_model():
     pass
 
 
-def save(model=None, session=None, save_pars={}):
+def save(model=None, session=None, save_pars=None):
     from mlmodels.util import save_pkl
     print(save_pars)
-    save_pkl(model, session, save_pars['path'])
+    save_pkl(model, session, save_pars)
 
 
-def load(load_pars={}):
+def load(load_pars=None):
     from mlmodels.util import load_pkl
     print(load_pars)
-    model0 = load_pkl(load_pars['path'])
+    model0 = load_pkl(load_pars)
 
     model = Model()
     model.model = model0
