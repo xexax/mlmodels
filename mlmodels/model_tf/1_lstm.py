@@ -33,11 +33,14 @@ class Model:
         epoch         = model_pars.get('epoch', 5)
         learning_rate = model_pars.get('learning_rate', 0.001)
         num_layers    = model_pars.get('num_layers', 2)
-        size          = model_pars.get('size', None)
         size_layer    = model_pars.get('size_layer', 128)
-        output_size   = model_pars.get('output_size', None)
         forget_bias   = model_pars.get('forget_bias', 0.1)
         timestep      = model_pars.get('timestep', 5)
+
+         #### Depends on input data !!!!!
+        size          = model_pars.get('size', None)
+        output_size   = model_pars.get('output_size', None)
+
 
         self.epoch = epoch
         self.stats = {"loss": 0.0,
@@ -70,7 +73,7 @@ class Model:
         self.optimizer = tf.compat.v1.train.AdamOptimizer(learning_rate).minimize(self.cost)
 
 
-def fit(model, compute_pars=None, data_pars=None, out_pars=None, **kwarg):
+def fit(model, data_pars=None, compute_pars=None,  out_pars=None, **kwarg):
     df = get_dataset(data_pars)
     print(df.head(5))
     msample = df.shape[0]
@@ -130,7 +133,7 @@ def metrics(model, sess=None, data_pars=None, compute_pars=None, out_pars=None):
     return model.stats
 
 
-def predict(model, sess=None, compute_pars=None, data_pars=None, out_pars=None,
+def predict(model, sess=None, data_pars=None,  compute_pars=None, out_pars=None,
             get_hidden_state=False, init_value=None):
     df = get_dataset(data_pars)
     print(df, flush=True)
@@ -247,8 +250,9 @@ def get_params(param_pars={}, **kw):
         model_path = os.path.join(out_path , "model")
 
 
-        model_pars   = {"learning_rate": 0.001, "num_layers": 1, "size": None, "size_layer": 128,
-                      "output_size": None, "timestep": 4, "epoch": 2, }
+        model_pars   = {"learning_rate": 0.001, "num_layers": 1, "size": 6, "size_layer": 128,
+                      "output_size": None, "timestep": 4, "epoch": 2,
+                        "output_size" : 6 }
 
         data_pars    = {"data_path": data_path, "data_type": "pandas"}
         out_pars     = {"path": data_path}
@@ -266,6 +270,8 @@ def test(data_path="dataset/", pars_choice="json", config_mode="test"):
     log("#### Loading params   ##############################################")
     param_pars = {"choice":pars_choice,  "data_path":data_path,  "config_mode": config_mode}
     model_pars, data_pars, compute_pars, out_pars = get_params(param_pars)
+    log( model_pars, data_pars, compute_pars, out_pars )
+
 
     log("#### Loading dataset   #############################################")
     Xtuple = get_dataset(data_pars)
@@ -274,16 +280,12 @@ def test(data_path="dataset/", pars_choice="json", config_mode="test"):
     log("#### Model init, fit   #############################################")
     session = None
     model = Model(model_pars, data_pars, compute_pars)
-    model, session = fit(model, data_pars, compute_pars, out_pars)
-
-
-    log("#### save the trained model  #######################################")
-    save(model, session,  save_pars= out_pars)
+    model, session = fit(model, data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)
 
 
     log("#### Predict   #####################################################")
     data_pars["train"] = 0
-    ypred = predict(model, session, data_pars, compute_pars, out_pars)
+    ypred = predict(model, session, data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)
 
 
     log("#### metrics   #####################################################")
@@ -295,7 +297,7 @@ def test(data_path="dataset/", pars_choice="json", config_mode="test"):
 
 
     log("#### Save/Load   ###################################################")
-    save(model, None, out_pars)
+    save(model, session, out_pars)
     # model2, session = load(out_pars)
     #     ypred = predict(model2, data_pars, compute_pars, out_pars)
     #     metrics_val = metrics(model2, ypred, data_pars, compute_pars, out_pars)
