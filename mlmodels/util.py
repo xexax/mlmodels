@@ -397,7 +397,7 @@ def save(model=None, session=None, save_pars=None):
    if  "model_keras" in p['model_uri'] :
        path = os.path.abspath( p['path'] + "/../")
        name = os.path.basename(p['path']) if ".h5" in p['path'] else "model.h5"
-       save_keras( model, session, os.path.join( path,  name)    )
+       save_keras( model, session, os.path.join( path,  name))
   
 
 
@@ -450,7 +450,7 @@ def load_tch(load_pars  ):
   return model
 
 
-def save_tch(model=None, optimizer=None, save_pars):
+def save_tch(model=None, optimizer=None, save_pars=None):
   path, filename= save_pars['path'] , save_pars['filename'] 
 
   if kw.get('save_state') is not None :
@@ -497,7 +497,8 @@ def load_keras(load_pars):
 
 
 def save_keras(model=None, session=None, save_pars = None, ):
-  path, filename= os.path.absolute( save_pars['path']  + "/../", os.path.basename(  save_pars['path'] )
+  path, filename= os.path.absolute( save_pars['path']  \
+                                  + "/../", os.path.basename(save_pars['path']))
   model.model.save(path + f"/{filename}" ) 
 
 
