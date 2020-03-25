@@ -94,8 +94,7 @@ def fit(model, data_pars=None, compute_pars=None, out_pars=None, **kw):
 
 def fit_simple(net, optimiser, data_generator, on_save_callback, device, data_pars, out_pars, max_grad_steps=500):
     print('--- fiting ---')
-    # initial_grad_step = load({net, optimiser})
-    initial_grad_step = load( {"checkpoint_name" : out_pars['model_checkpoint'] } )
+    initial_grad_step = load_checkpoint(net, optimiser)
 
     for grad_step, (x, target) in enumerate(data_generator):
         grad_step += initial_grad_step
@@ -109,7 +108,7 @@ def fit_simple(net, optimiser, data_generator, on_save_callback, device, data_pa
         print(f'grad_step = {str(grad_step).zfill(6)}, loss = {loss.item():.6f}')
         if grad_step % 100 == 0 or (grad_step < 100 and grad_step % 100 == 0):
             with torch.no_grad():
-                save(net, optimiser, grad_step)
+                save_checkpoint(net, optimiser, grad_step)
                 if on_save_callback is not None:
                     on_save_callback(net, x, target, grad_step, data_pars)
 
@@ -192,12 +191,8 @@ def plot_predict(x_test, y_test, p, data_pars, compute_pars, out_pars):
 
 ###############################################################################################################
 # save and load model helper function
-# def save(model, optimiser, grad_step, CHECKPOINT_NAME="mycheckpoint"):
 
-def save(model, session, save_pars):
-    optimiser = session
-    grad_step = save_pars['grad_step']
-    CHECKPOINT_NAME = save_pars['checkpoint_name']
+def save_checkpoint(model, optimiser, grad_step, CHECKPOINT_NAME="mycheckpoint"):
     torch.save({
         'grad_step': grad_step,
         'model_state_dict': model.state_dict(),
@@ -205,15 +200,7 @@ def save(model, session, save_pars):
     }, CHECKPOINT_NAME)
 
 
-
-# def load(model, optimiser, CHECKPOINT_NAME='nbeats-fiting-checkpoint.th'):
-def load(load_pars):
-    model = None
-    session = None
-
-    CHECKPOINT_NAME = load_pars['checkpoint_name']
-    optimiser = session
-
+def load_checkpoint(model, optimiser, CHECKPOINT_NAME='nbeats-fiting-checkpoint.th'):
     if os.path.exists(CHECKPOINT_NAME):
         checkpoint = torch.load(CHECKPOINT_NAME)
         model.load_state_dict(checkpoint['model_state_dict'])
@@ -222,6 +209,38 @@ def load(load_pars):
         print(f'Restored checkpoint from {CHECKPOINT_NAME}.')
         return grad_step
     return 0
+
+
+
+
+def save(model, session, save_pars):
+        optimiser = session
+        grad_step = save_pars['grad_step']
+        CHECKPOINT_NAME = save_pars['checkpoint_name']
+        torch.save({
+            'grad_step': grad_step,
+            'model_state_dict': model.state_dict(),
+            'optimizer_state_dict': optimiser.state_dict(),
+        }, CHECKPOINT_NAME)
+
+
+    # def load(model, optimiser, CHECKPOINT_NAME='nbeats-fiting-checkpoint.th'):
+def load(load_pars):
+        model = None
+        session = None
+
+        CHECKPOINT_NAME = load_pars['checkpoint_name']
+        optimiser = session
+
+        if os.path.exists(CHECKPOINT_NAME):
+            checkpoint = torch.load(CHECKPOINT_NAME)
+            model.load_state_dict(checkpoint['model_state_dict'])
+            optimiser.load_state_dict(checkpoint['optimizer_state_dict'])
+            grad_step = checkpoint['grad_step']
+            print(f'Restored checkpoint from {CHECKPOINT_NAME}.')
+            return grad_step
+        return 0
+
 
 
 #############################################################################################################
@@ -243,9 +262,9 @@ def get_params(param_pars, **kw):
     if choice == "test01":
         log("#### Path params   ########################################################")
         data_path  = path_norm( "dataset/timeseries/milk.csv"  )   
-        out_path   = path_norm( "/ztest/model_tch/nbeats/" )   
+        out_path   = path_norm( "ztest/model_tch/nbeats/" )   
         model_path = os.path.join(out_path , "model")
-        print(data_path)  
+        print(data_path, out_path)  
 
         data_pars = {"data_path": data_path, "forecast_length": 5, "backcast_length": 10}
 
@@ -287,7 +306,7 @@ def test(data_path="dataset/milk.csv"):
     model = NBeatsNet(**model_pars)
 
     log("#### Model fit   ############################################")
-    model, optimiser = fit(model, data_pars, compute_pars)
+    model, optimiser = fit(model, data_pars, compute_pars, out_pars)
 
     log("#### Predict    #############################################")
     ypred = predict(model, data_pars, compute_pars, out_pars)
