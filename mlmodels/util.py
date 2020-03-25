@@ -434,8 +434,11 @@ def load_tf(load_pars=""):
 
 def save_tf(model=None, sess=None, save_pars= None):
   import tensorflow as tf
+  path, filename = os_path_split(save_pars['path'])
+  os.makedirs(path, exist_ok=True)
+
   saver = tf.compat.v1.train.Saver()
-  return saver.save(sess, save_pars['path'])
+  return saver.save(sess, path)
 
 
 
@@ -451,46 +454,49 @@ def load_tch(load_pars):
 
 def save_tch(model=None, optimizer=None, save_pars=None):
     import torch
-    path, filename = save_pars['path'], save_pars['filename']
+    path, filename = os_path_split(save_pars['path'])
+    os.makedirs(path, exist_ok=True)
 
-    if kw.get('save_state') is not None:
+    if save_pars.get('save_state') is not None:
         torch.save({
             'model_state_dict': model.model.state_dict(),
             'optimizer_state_dict': optimizer.state_dict(),
-        }, path + f"/{filename}")
+        }, f"{path}/{filename}" )
 
     else:
-        torch.save(model.model, path + f"/{filename}")
+        torch.save(model.model, f"{path}/{filename}")
 
 
-def save2(model, session, save_pars):
-            optimiser = session
-            grad_step = save_pars['grad_step']
-            CHECKPOINT_NAME = save_pars['checkpoint_name']
-            torch.save({
-                'grad_step': grad_step,
-                'model_state_dict': model.state_dict(),
-                'optimizer_state_dict': optimiser.state_dict(),
-            }, CHECKPOINT_NAME)
+def save_tch_checkpoint(model, session, save_pars):
+    import torch
+    optimiser = session
+    grad_step = save_pars['grad_step']
+    CHECKPOINT_NAME = save_pars['checkpoint_name']
+    torch.save({
+        'grad_step': grad_step,
+        'model_state_dict': model.state_dict(),
+        'optimizer_state_dict': optimiser.state_dict(),
+    }, CHECKPOINT_NAME)
 
 
 
 # def load(model, optimiser, CHECKPOINT_NAME='nbeats-fiting-checkpoint.th'):
-def load2(load_pars):
-            model = None
-            session = None
+def load_tch_checkpoint(load_pars):
+    import torch
+    model = None
+    session = None
 
-            CHECKPOINT_NAME = load_pars['checkpoint_name']
-            optimiser = session
+    CHECKPOINT_NAME = load_pars['checkpoint_name']
+    optimiser = session
 
-            if os.path.exists(CHECKPOINT_NAME):
-                checkpoint = torch.load(CHECKPOINT_NAME)
-                model.load_state_dict(checkpoint['model_state_dict'])
-                optimiser.load_state_dict(checkpoint['optimizer_state_dict'])
-                grad_step = checkpoint['grad_step']
-                print(f'Restored checkpoint from {CHECKPOINT_NAME}.')
-                return grad_step
-            return 0
+    if os.path.exists(CHECKPOINT_NAME):
+        checkpoint = torch.load(CHECKPOINT_NAME)
+        model.load_state_dict(checkpoint['model_state_dict'])
+        optimiser.load_state_dict(checkpoint['optimizer_state_dict'])
+        grad_step = checkpoint['grad_step']
+        print(f'Restored checkpoint from {CHECKPOINT_NAME}.')
+        return grad_step
+    return 0
 
 
 
@@ -501,13 +507,16 @@ def load_pkl(load_pars):
 
 def save_pkl(model=None, save_pars=None):
   import cloudpickle as pickle
-  return pickle.dump(model, open( save_pars['path'], mode='wb') )
+  path, filename = os_path_split(save_pars['path'])
+  os.makedirs(path, exist_ok=True)
+  return pickle.dump(model, open( f"{path}/{filename}" , mode='wb') )
 
 
 
 def load_keras(load_pars):
     from keras.models import load_model
     path, filename = os_path_split(load_pars['path']  )
+
     path_file = path + "/" + filename if ".h5" not in path else path
     model = Model_empty()
     model.model = load_model(path_file)
