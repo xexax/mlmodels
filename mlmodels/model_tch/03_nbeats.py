@@ -79,7 +79,7 @@ def fit(model, data_pars=None, compute_pars=None, out_pars=None, **kw):
     backcast_length = data_pars["backcast_length"]
     batch_size = compute_pars["batch_size"]  # greater than 4 for viz
     disable_plot = compute_pars["disable_plot"]
-`
+
     ### Get Data
     x_train, y_train, x_test, y_test, _ = get_dataset(**data_pars)
     data_gen = data_generator(x_train, y_train, batch_size)
