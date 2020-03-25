@@ -12,7 +12,7 @@ import tensorflow as tf
 from sklearn.preprocessing import MinMaxScaler
 
 ####################################################################################################
-from mlmodels.util import os_package_root_path, log, params_json_load
+from mlmodels.util import os_package_root_path, log, params_json_load, path_norm
 
 
 
@@ -299,7 +299,7 @@ def test(data_path="dataset/", pars_choice="json", config_mode="test"):
     # model2, session = load(out_pars)
     #     ypred = predict(model2, data_pars, compute_pars, out_pars)
     #     metrics_val = metrics(model2, ypred, data_pars, compute_pars, out_pars)
-    print(model2)
+    # print(model2)
 
 
 

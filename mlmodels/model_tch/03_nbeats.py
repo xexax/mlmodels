@@ -79,7 +79,7 @@ def fit(model, data_pars=None, compute_pars=None, out_pars=None, **kw):
     backcast_length = data_pars["backcast_length"]
     batch_size = compute_pars["batch_size"]  # greater than 4 for viz
     disable_plot = compute_pars["disable_plot"]
-
+`
     ### Get Data
     x_train, y_train, x_test, y_test, _ = get_dataset(**data_pars)
     data_gen = data_generator(x_train, y_train, batch_size)
@@ -88,13 +88,15 @@ def fit(model, data_pars=None, compute_pars=None, out_pars=None, **kw):
     optimiser = optim.Adam(model.parameters())
 
     ### fit model
-    net, optimiser = fit_simple(model, optimiser, data_gen, plot_model, device, data_pars)
+    net, optimiser = fit_simple(model, optimiser, data_gen, plot_model, device, data_pars, out_pars)
     return net, optimiser
 
 
-def fit_simple(net, optimiser, data_generator, on_save_callback, device, data_pars, max_grad_steps=500):
+def fit_simple(net, optimiser, data_generator, on_save_callback, device, data_pars, out_pars, max_grad_steps=500):
     print('--- fiting ---')
-    initial_grad_step = load(net, optimiser)
+    # initial_grad_step = load({net, optimiser})
+    initial_grad_step = load( {"checkpoint_name" : out_pars['model_checkpoint'] } )
+
     for grad_step, (x, target) in enumerate(data_generator):
         grad_step += initial_grad_step
         optimiser.zero_grad()
@@ -240,7 +242,7 @@ def get_params(param_pars, **kw):
 
     if choice == "test01":
         log("#### Path params   ########################################################")
-        data_path  = path_norm( "/dataset/timeseries/milk.csv"  )   
+        data_path  = path_norm( "dataset/timeseries/milk.csv"  )   
         out_path   = path_norm( "/ztest/model_tch/nbeats/" )   
         model_path = os.path.join(out_path , "model")
         print(data_path)  
@@ -259,7 +261,8 @@ def get_params(param_pars, **kw):
                         "result_path": 'n_beats_test{}.png',
                         "model_path": "mycheckpoint"}
 
-        out_pars = {"out_path": out_path + "/"}
+        out_pars = {"out_path": out_path + "/", 
+                    "model_checkpoint" : out_path +"/model_checkpoint/"}
 
         return model_pars, data_pars, compute_pars, out_pars
 
