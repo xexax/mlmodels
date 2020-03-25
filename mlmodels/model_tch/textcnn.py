@@ -21,10 +21,14 @@ import spacy
 import os
 import json
 import shutil
+from pathlib import Path
 
 
 
-from mlmodels.util import os_package_root_path, log, path_norm
+from mlmodels.util import os_package_root_path, log, path_norm, get_model_uri
+MODEL_URI = get_model_uri(__file__)
+
+
 
 
 ###########################################################################################################
@@ -256,7 +260,7 @@ def get_params(param_pars=None, **kw):
     if choice == "test01":
         log("#### Path params   ##########################################")
         data_path  = path_norm( "dataset/text/imdb.csv"  )   
-        out_path   = path_norm( "/ztest/model_keras/charcnn/" )   
+        out_path   = path_norm( "ztest/model_tch/textcnn/" )
         model_path = os.path.join(out_path , "model")
 
         data_pars= {
@@ -281,12 +285,12 @@ def get_params(param_pars=None, **kw):
         compute_pars= {
             "learning_rate": 0.001,
             "epochs": 2,
-            "checkpointdir": "/tmp"
+            "checkpointdir": out_path + "/checkpoint/"
         }
 
         out_pars= {
-            "train_path": "/tmp/IMDB_train.csv",
-            "valid_path": "/tmp/IMDB_valid.csv",
+            "train_path": "dataset/recommender/IMDB_train.csv",
+            "valid_path": "dataset/recommender/IMDB_valid.csv",
             "checkpointdir": "/tmp"
         }
         
@@ -345,8 +349,8 @@ def fit(model, sess=None, data_pars=None, compute_pars=None,
 
 def get_dataset(data_pars=None, out_pars=None, **kwargs):
     device = _get_device()
-    path = os.path.join(
-        os_package_root_path(__file__, 1), data_pars['data_path'])
+    path = path_norm( data_pars['data_path'])
+
     frac = data_pars['frac']
     lang = data_pars['lang']
     pretrained_emb = data_pars['pretrained_emb']

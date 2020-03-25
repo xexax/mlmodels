@@ -265,7 +265,7 @@ def get_params(param_pars={}, **kw):
 
     if choice == "json":
         data_path = path_norm(data_path)
-        cf = json.load(open(data_path, mode='rb'))
+        cf = json.load(open(data_path, mode='r'))
         cf = cf[config_mode]
         return cf['model_pars'], cf['data_pars'], cf['compute_pars'], cf['out_pars']
 
@@ -273,7 +273,7 @@ def get_params(param_pars={}, **kw):
     if choice == "test01":
         log("#### Path params   ##########################################")
         data_path  = path_norm( "dataset/text/ner_dataset.csv"  )   
-        out_path   = path_norm( "/ztest/model_keras/crf_bilstm/" )   
+        out_path   = path_norm( "ztest/model_keras/crf_bilstm/" )
         model_path = os.path.join(out_path , "model")
 
 
@@ -335,18 +335,18 @@ def test(data_path="dataset/", pars_choice="json", config_mode="test"):
 if __name__ == '__main__':
     VERBOSE = True
     test_path = os.getcwd() + "/mytest/"
-    root_path = os_package_root_path(__file__, 1)
+    root_path = os_package_root_path(__file__, 0)
 
     ### Local fixed params
     # test(pars_choice="test01")
 
     ### Local json file
-    test(pars_choice="json", data_path=f"{root_path}/model_keras/namentity_crm_bilstm.json")
+    test(pars_choice="json", data_path=f"model_keras/namentity_crm_bilstm.json")
 
     ####    test_module(model_uri="model_xxxx/yyyy.py", param_pars=None)
     from mlmodels.models import test_module
 
-    param_pars = {'choice': "json", 'config_mode': 'test', 'data_path': f"{root_path}/model_keras/namentity_crm_bilstm.json"}
+    param_pars = {'choice': "json", 'config_mode': 'test', 'data_path': f"model_keras/namentity_crm_bilstm.json"}
     test_module(model_uri=MODEL_URI, param_pars=param_pars)
 
     ##### get of get_params
@@ -357,7 +357,7 @@ if __name__ == '__main__':
     ####    test_api(model_uri="model_xxxx/yyyy.py", param_pars=None)
     from mlmodels.models import test_api
 
-    param_pars = {'choice': "json", 'config_mode': 'test', 'data_path': f"{root_path}/model_keras/namentity_crm_bilstm.json"}
+    param_pars = {'choice': "json", 'config_mode': 'test', 'data_path': f"model_keras/namentity_crm_bilstm.json"}
     test_api(model_uri=MODEL_URI, param_pars=param_pars)
 
 """

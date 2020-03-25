@@ -124,6 +124,9 @@ def get_recursive_files3(folderPath, ext):
 
 
 
+def get_model_uri(file):
+  return Path(os.path.abspath(file)).parent.name + "." + os.path.basename(file).replace(".py", "")
+
 
 
 def get_recursive_files(folderPath, ext='/*model*/*.py'):
