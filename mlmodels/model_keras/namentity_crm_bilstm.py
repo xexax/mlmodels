@@ -139,19 +139,16 @@ def reset_model():
     pass
 
 
-def save(model=None, session=None, save_pars={}):
+def save(model=None, session=None, save_pars=None):
     from mlmodels.util import save_keras
     print(save_pars)
-    save_keras(session, save_pars['path'])
+    save_keras(model, session, save_pars)
 
 
-def load(load_pars={}):
+def load(load_pars):
     from mlmodels.util import load_keras
     print(load_pars)
-    model0 = load_keras(load_pars['path'])
-
-    model = Model()
-    model.model = model0
+    model = load_keras(load_pars)
     session = None
     return model, session
 
@@ -269,7 +266,7 @@ def get_params(param_pars={}, **kw):
 
     if choice == "json":
         data_path = path_norm(data_path)
-        cf = json.load(open(data_path, mode='r'))
+        cf = json.load(open(data_path, mode='rb'))
         cf = cf[config_mode]
         return cf['model_pars'], cf['data_pars'], cf['compute_pars'], cf['out_pars']
 

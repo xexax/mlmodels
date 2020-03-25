@@ -312,11 +312,7 @@ def env_build(model_uri, env_pars):
 
 
 ####################################################################################################
-####################################################################################################
-
-
-####################################################################################################
-########## TF specific #############################################################################
+###########  Utils #########################################################################################
 def tf_deprecation():
     try:
         from tensorflow.python.util import deprecation
@@ -324,6 +320,22 @@ def tf_deprecation():
         print("Deprecaton set to False")
     except:
         pass
+
+
+
+
+####################################################################################################
+########## TF specific #############################################################################
+class Model_empty(object):
+    def __init__(self, model_pars=None, data_pars=None, compute_pars=None
+                 ):
+        ### Model Structure        ################################
+        self.model = None
+
+
+def os_path_split(path) :
+  return Path( path ).parent, Path( path ).name 
+
 
 
 def load(load_pars):
@@ -343,9 +355,6 @@ def save(model=None, session=None, save_pars=None):
         name = os.path.basename(p['path']) if ".h5" in p['path'] else "model.h5"
         save_keras(model, session, os.path.join(path, name))
 
-
-def os_path_split(path) :
-  return Path( path ).parent, os.path.basename( path ) 
 
 
 def load_tf(load_pars=""):
@@ -378,13 +387,6 @@ def save_tf(model=None, sess=None, save_pars= None):
 
 
 
-class Model_empty(object):
-    def __init__(self, model_pars=None, data_pars=None, compute_pars=None
-                 ):
-        ### Model Structure        ################################
-        self.model = None
-
-
 def load_tch(load_pars):
     import torch
     path, filename = load_pars['path'], load_pars['filename']
@@ -409,36 +411,43 @@ def save_tch(model=None, optimizer=None, save_pars=None):
         torch.save(model.model, path + f"/{filename}")
 
 
-def load_pkl(path, filename="model"):
-    return 1
+
+def load_pkl(load_pars):
+    import cloudpickle as pickle
+    return pickle.load(open( load_pars['path'], mode='rb') )
 
 
-def save_pkl(model, path, filename="model"):
-    return 1
+def save_pkl(model=None, save_pars):
+  import cloudpickle as pickle
+  return pickle.dump(model, open( load_pars['path'], mode='wb') )
+
+
+
+def load_keras(load_pars):
+    from keras.models import load_model
+    path, filename = os_path_split(save_pars['path']  )
+    path_file = path + "/" + filename if ".h5" not in path else path
+    model = Model_empty()
+    model.model = load_model(path_file)
+    return model
+
+
+def save_keras(model=None, session=None, save_pars=None, ):
+    path, filename = os_path_split(save_pars['path']  )
+    os.makedirs(path, exist_ok=True)
+    model.model.save(str(Path(path) / filename))
+
+
 
 
 def load_gluon(path, filename="model"):
     return 1
 
-
 def save_gluon(model, path, filename="model"):
     return 1
 
 
-def load_keras(load_pars):
-    from keras.models import load_model
-    path, filename = os.path.abspath(load_pars['path'] + "/../"), Path(load_pars['path']).name
-    path = path + "/" + filename if ".h5" not in path else path
-    model = Model_empty()
-    model.model = load_model(path)
-    return model
 
-
-def save_keras(model=None, session=None, save_pars=None, ):
-    path, filename = os.path.abspath(save_pars['path'] + "/../"), Path(save_pars['path']).name
-    if not os.path.exists(path):
-        os.makedirs(path, exist_ok=True)
-    model.model.save(str(Path(path) / filename))
 
 
 ####################################################################################################

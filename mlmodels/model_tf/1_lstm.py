@@ -238,18 +238,17 @@ def get_params(param_pars={}, **kw):
        cf = params_json_load(data_path) 
        #  cf['model_pars'], cf['data_pars'], cf['compute_pars'], cf['out_pars']
        return cf
-       #cf = json.load(open(data_path, mode='r'))
-       #cf = cf[config_mode]
-       #return cf['model_pars'], cf['data_pars'], cf['compute_pars'], cf['out_pars']
 
 
-    if choice == "test":
-        data_path = os_package_root_path(__file__, sublevel=1, path_add=data_path)
+    if choice == "test01":
         log("############# Data, Params preparation   #################")        
+        data_path  = path_norm( "dataset/timeseries/GOOG-year.csv"  )   
+        out_path   = path_norm( "/ztest/model_tf/1_lstm/" )   
+        model_path = os.path.join(out_path , "model")
+
 
         model_pars   = {"learning_rate": 0.001, "num_layers": 1, "size": None, "size_layer": 128,
                       "output_size": None, "timestep": 4, "epoch": 2, }
-
 
         data_pars    = {"data_path": data_path, "data_type": "pandas"}
         out_pars     = {"path": data_path}
@@ -261,47 +260,55 @@ def get_params(param_pars={}, **kw):
 
 
 ####################################################################################################
-def test(data_path="dataset/timeseries/GOOG-year.csv", pars_choice="test", config_mode="test"):
-    """
-       Using mlmodels package method
-       :param data_path:
-       :param pars_choice:
+def test(data_path="dataset/", pars_choice="json", config_mode="test"):
+    ### Local test
 
-    """
     log("#### Loading params   ##############################################")
-    model_pars, data_pars, compute_pars, out_pars = get_params({ "choice": pars_choice,
-                                                                 "data_path": data_path,
-                                                                 "config_mode": config_mode,
-                                                                })
-    print(model_pars, data_pars, compute_pars, out_pars)
+    param_pars = {"choice":pars_choice,  "data_path":data_path,  "config_mode": config_mode}
+    model_pars, data_pars, compute_pars, out_pars = get_params(param_pars)
 
     log("#### Loading dataset   #############################################")
-    dataset = get_dataset(data_pars)
-    model_pars["size"] = dataset.shape[1]
-    model_pars["output_size"] = dataset.shape[1]
+    Xtuple = get_dataset(data_pars)
 
 
-    log("############ Model preparation   #########################")
-    from mlmodels.models import module_load_full
-    module, model = module_load_full("model_tf.1_lstm", model_pars)
-    print(module, model)
+    log("#### Model init, fit   #############################################")
+    session = None
+    model = Model(model_pars, data_pars, compute_pars)
+    model, session = fit(model, data_pars, compute_pars, out_pars)
 
 
-    log("############ Model fit   ##################################")
-    model, sess = fit(model, data_pars=data_pars, out_pars=out_pars, compute_pars=compute_pars)
-    print("fit success", sess)
+    log("#### save the trained model  #######################################")
+    save(model, session,  save_pars= out_pars)
 
-    log("############ Prediction##########################")
-    preds = predict(model, sess, data_pars=data_pars, out_pars=out_pars, compute_pars=compute_pars)
-    print(preds)
 
-    reset_model()
+    log("#### Predict   #####################################################")
+    data_pars["train"] = 0
+    ypred = predict(model, session, data_pars, compute_pars, out_pars)
+
+
+    log("#### metrics   #####################################################")
+    metrics_val = fit_metrics(model, data_pars, compute_pars, out_pars)
+    print(metrics_val)
+
+
+    log("#### Plot   ########################################################")
+
+
+    log("#### Save/Load   ###################################################")
+    save(model, None, out_pars)
+    # model2, session = load(out_pars)
+    #     ypred = predict(model2, data_pars, compute_pars, out_pars)
+    #     metrics_val = metrics(model2, ypred, data_pars, compute_pars, out_pars)
+    print(model2)
+
+
+
 
 
 
 if __name__ == "__main__":
     print("start")
-    test(data_path="dataset/timeseries/GOOG-year.csv", pars_choice="test", config_mode="test")
+    test(data_path="", pars_choice="test01", config_mode="test")
 
 
 
