@@ -109,24 +109,25 @@ def path_local_setup(current_file=None, out_folder="", sublevel=1, data_path="da
 
 
 def path_norm(path=""):
-    if len(path) == 0:
-        path = os_package_root_path(__file__, 0)
+    root = os_package_root_path(__file__, 0)
 
+    if len(path) == 0:
+        path = root
 
     elif path.startswith("model_") or path.startswith("/model_"):
-        path = os.path.join(os_package_root_path(__file__, 0), path)
+        path = os.path.join(root, path)
 
 
     elif path.startswith("dataset") or path.startswith("/dataset"):
-        path = os.path.join(os_package_root_path(__file__, 0), path)
+        path = os.path.join(root, path)
 
 
     elif path.startswith("template") or path.startswith("/template"):
-        path = os.path.join(os_package_root_path(__file__, 0), path)
+        path = os.path.join(root, path)
 
 
     elif path.startswith("ztest") or path.startswith("/ztest"):
-        path = os.path.join(os_package_root_path(__file__, 0), path)
+        path = os.path.join(root, path)
 
     return path
 
@@ -139,17 +140,28 @@ def os_module_path():
     return parent_dir
 
 
-def os_package_root_path(filepath, sublevel=0, path_add=""):
+def os_package_root_path(filepath="", sublevel=0, path_add=""):
     """
        get the module package root folder
     """
     from pathlib import Path
-    path = Path(os.path.realpath(filepath)).parent
+    import mlmodels, os, inspect 
+
+    path = Path(inspect.getfile(mlmodels)).parent
+    print( path )
+
+    # path = Path(os.path.realpath(filepath)).parent
     for i in range(1, sublevel + 1):
         path = path.parent
 
     path = os.path.join(path.absolute(), path_add)
     return path
+
+
+
+os_package_root_path(filepath="", sublevel=0, path_add="")
+
+
 
 
 def os_file_current_path():
@@ -409,6 +421,36 @@ def save_tch(model=None, optimizer=None, save_pars=None):
 
     else:
         torch.save(model.model, path + f"/{filename}")
+
+
+def save2(model, session, save_pars):
+            optimiser = session
+            grad_step = save_pars['grad_step']
+            CHECKPOINT_NAME = save_pars['checkpoint_name']
+            torch.save({
+                'grad_step': grad_step,
+                'model_state_dict': model.state_dict(),
+                'optimizer_state_dict': optimiser.state_dict(),
+            }, CHECKPOINT_NAME)
+
+
+
+# def load(model, optimiser, CHECKPOINT_NAME='nbeats-fiting-checkpoint.th'):
+def load2(load_pars):
+            model = None
+            session = None
+
+            CHECKPOINT_NAME = load_pars['checkpoint_name']
+            optimiser = session
+
+            if os.path.exists(CHECKPOINT_NAME):
+                checkpoint = torch.load(CHECKPOINT_NAME)
+                model.load_state_dict(checkpoint['model_state_dict'])
+                optimiser.load_state_dict(checkpoint['optimizer_state_dict'])
+                grad_step = checkpoint['grad_step']
+                print(f'Restored checkpoint from {CHECKPOINT_NAME}.')
+                return grad_step
+            return 0
 
 
 

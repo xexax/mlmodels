@@ -223,7 +223,7 @@ def load(load_pars):
 
 
 #############################################################################################################
-def get_params(param_pars=None, **kw):
+def get_params(param_pars, **kw):
     import json
     pp = param_pars
     choice = pp['choice']
@@ -240,10 +240,10 @@ def get_params(param_pars=None, **kw):
 
     if choice == "test01":
         log("#### Path params   ########################################################")
-        data_path  = path_norm( "/dataset/timeseries/"  )   
+        data_path  = path_norm( "/dataset/timeseries/milk.csv"  )   
         out_path   = path_norm( "/ztest/model_tch/nbeats/" )   
         model_path = os.path.join(out_path , "model")
-
+        print(data_path)  
 
         data_pars = {"data_path": data_path, "forecast_length": 5, "backcast_length": 10}
 
@@ -272,7 +272,7 @@ def test(data_path="dataset/milk.csv"):
     ###loading the command line arguments
 
     log("#### Loading params   #######################################")
-    param_pars = { "choice" : 0, "data_path" : "dataset/", "config_mode" : "test01" }
+    param_pars = { "choice" : "test01", "data_path" : "dataset/", "config_mode" : "test01" }
     model_pars, data_pars, compute_pars, out_pars = get_params(param_pars)
 
 
