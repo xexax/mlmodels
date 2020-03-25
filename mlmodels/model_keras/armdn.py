@@ -1,13 +1,15 @@
 import pandas as pd
 import os
 import numpy as np
-import mdn
 import math
+import tensorflow as tf
 import keras.regularizers as reg
 import matplotlib.pyplot as plt
+import mdn
 from keras.models import Sequential
 from keras import Model
-from keras.layers import Dense, Dropout, Input, LSTM, Concatenate
+from keras import layers
+from keras.layers import Dense, Dropout, Input, LSTM, Concatenate, Layer
 from keras.callbacks import History, EarlyStopping
 from keras.models import model_from_json
 from keras.regularizers import l2 
@@ -18,9 +20,8 @@ from keras.constraints import max_norm
 from keras.utils.vis_utils import plot_model
 from sklearn.model_selection import KFold
 from matplotlib.pyplot import figure
-from google.colab import files
 
-class MDN(layers.Layer):
+class MDN(Layer):
     """A Mixture Density Network Layer for Keras.
     This layer has a few tricks to avoid NaNs in the loss function when training:
         - Activation for variances is ELU + 1 + 1e-8 (to avoid very small values)
@@ -33,9 +34,9 @@ class MDN(layers.Layer):
         self.output_dim = output_dimension
         self.num_mix = num_mixtures
         with tf.name_scope('MDN'):
-            self.mdn_mus = layers.Dense(self.num_mix * self.output_dim, name='mdn_mus')  # mix*output vals, no activation
-            self.mdn_sigmas = layers.Dense(self.num_mix * self.output_dim, activation=elu_plus_one_plus_epsilon, name='mdn_sigmas')  # mix*output vals exp activation
-            self.mdn_pi = layers.Dense(self.num_mix, name='mdn_pi')  # mix vals, logits
+            self.mdn_mus = Dense(self.num_mix * self.output_dim, name='mdn_mus')  # mix*output vals, no activation
+            self.mdn_sigmas = Dense(self.num_mix * self.output_dim, activation=elu_plus_one_plus_epsilon, name='mdn_sigmas')  # mix*output vals exp activation
+            self.mdn_pi = Dense(self.num_mix, name='mdn_pi')  # mix vals, logits
         super(MDN, self).__init__(**kwargs)
 
     def build(self, input_shape):
@@ -200,27 +201,37 @@ class Model:
     # 	               metrics= compute_pars['metrics'])
 
     lstm_h_list = model_pars["lstm_h_list"]
-    OUTPUT_DIMS = model_pars["output_dims"]
+    OUTPUT_DIMS = model_pars["timesteps"]
     N_MIXES = model_pars["n_mixes"]
     learning_rate = model_pars["lr"]
-
+    dense_neuron = model_pars["dense_neuron"]
+    timesteps = model_pars["timesteps"]
+    last_lstm_neuron = model_pars["last_lstm_neuron"]
+    print("creating model....")
     model = Sequential()
     for ind, hidden in enumerate(lstm_h_list):
-    model.add(layers.LSTM(units=hidden, return_sequences=True, name=f"LSTM_{ind+1}", 
+        model.add(LSTM(units=hidden, return_sequences=True, name=f"LSTM_{ind+1}", 
                     input_shape=(timesteps, 1), 
                     recurrent_regularizer=reg.l1_l2(l1=0.01, l2=0.01)))
-    model.add(layers.Dense(dense_neuron, input_shape=(-1, lstm_h_list[-1]), 
+    model.add(LSTM(units=last_lstm_neuron, return_sequences=False, 
+                    name=f"LSTM_{len(lstm_h_list) + 1}", input_shape=(timesteps, 1)
+                    , recurrent_regularizer=reg.l1_l2(l1=0.01, l2=0.01)))
+    model.add(Dense(dense_neuron, input_shape=(-1, lstm_h_list[-1]), 
                     activation='relu'))
-    model.add(MDN(OUTPUT_DIMS, N_MIXES))
+    model.add(mdn.MDN(OUTPUT_DIMS, N_MIXES))
     adam = Adam(lr=learning_rate, beta_1=0.9, beta_2=0.999, epsilon=1e-08, 
                 decay=0.0)
-    model.compile(loss=get_mixture_loss_func(OUTPUT_DIMS, N_MIXES),
-                optimizer=adam)
+    model.compile(loss=mdn.get_mixture_loss_func(OUTPUT_DIMS, N_MIXES), 
+                    optimizer=adam)
     self.model = model
+    print("Model created, use model.summary() for model sructure")
+
 
 def get_dataset(data_pars=None, **kw):
-    path = pd.read_csv("../dataset/timeseries/milk.csv")
-    df = pd.read_csv("../dataset/timeseries/milk.csv")
+    path = os.path.abspath(os.getcwd()) + data_pars["path"]
+    df = pd.read_csv(path)
+    return df
+
 
 def fit(model, data_pars={}, compute_pars={}, out_pars={},   **kw):
     """
@@ -242,5 +253,4 @@ def fit(model, data_pars={}, compute_pars={}, out_pars={},   **kw):
     return model, sess
 
 if __name__ == "__main__":
-    df = pd.read_csv("../dataset/timeseries/milk.csv")
-
+    pass
