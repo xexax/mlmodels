@@ -18,7 +18,7 @@ import mlmodels
 
 
 ####################################################################################################
-from mlmodels.util import get_recursive_files, log, os_package_root_path, model_get_list
+from mlmodels.util import get_recursive_files, log, os_package_root_path, model_get_list, os_get_file
 
 
 
@@ -58,6 +58,22 @@ def test_import() :
     print(mlmodels)
 
 
+    from importlib import import_module
+
+    block_list = ["raw"]
+
+    file_list = os_get_file(folder=None, block_list=[], pattern= r"/*.py")
+    for f in file_list  :
+        try :
+            f = f.replace("\\", ".").replace(".py", "")
+            import_module(f)
+            print(f)
+        except Exception as e:
+            print(f, e)
+
+
+
+
 def test_all():
   print("os.getcwd", os.getcwd())
 
@@ -79,7 +95,7 @@ def test_list(str_list):
   print( "os.getcwd", os.getcwd() )
   print("############Check model ################################")
   path  = mlmodels.__path__[0]
-  mlist = str_lis.split(",")
+  mlist = str_list.split(",")
   test_list =[   f"python {path}/{model}"  for model in  mlist ]  
    
   for cmd in test_list :
@@ -170,24 +186,23 @@ def cli_load_arguments(config_file= None):
 
 
 def main():
-  test_all()
-
-
-
-
-
-if __name__ == "__main__":
   arg = cli_load_arguments()
   print(arg.do)
 
 
-  if ".py" in arg.do   :  #list all models in the repo                    
+  if ".py" in arg.do   :  #list all models in the repo
     test_list(  [  arg.do ])
 
 
   else :
     globals()[arg.do]()
 
+
+
+
+
+if __name__ == "__main__":
+   main()
   
 
 

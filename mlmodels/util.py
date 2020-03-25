@@ -48,6 +48,35 @@ def os_folder_copy(src, dst):
             shutil.copyfile(os.path.join(root, file), os.path.join(dest_path, file))
 
 
+
+def os_get_file(folder=None, block_list=[], pattern=r'*.py'):
+    # Get all the model.py into folder
+    folder = os_package_root_path() if folder is None else folder
+    # print(folder)
+    module_names = get_recursive_files3(folder, pattern)
+    print(module_names)
+
+
+    NO_LIST = []
+    NO_LIST = NO_LIST + block_list
+
+    list_select = []
+    for t in module_names:
+        t = t.replace(folder, "").replace("\\", ".").replace(".py", "")
+
+        flag = False
+        for x in NO_LIST:
+            if x in t: flag = True
+
+        if not flag:
+            list_select.append(t)
+
+    return list_select
+
+
+
+
+
 def model_get_list(folder=None, block_list=[]):
     # Get all the model.py into folder
     folder = os_package_root_path(__file__) if folder is None else folder
@@ -78,9 +107,23 @@ def get_recursive_files2(folderPath, ext):
         if os.path.isdir(os.path.join(folderPath, file)):
             outFiles += get_recursive_files(os.path.join(folderPath, file), ext)
         elif re.match(ext, file):
-            outFiles.append(file)
+            outFiles.append( folderPath + "/" + file)
 
     return outFiles
+
+
+def get_recursive_files3(folderPath, ext):
+    results = os.listdir(folderPath)
+    outFiles = []
+    for file in results:
+        if os.path.isdir(os.path.join(folderPath, file)):
+            outFiles += get_recursive_files(os.path.join(folderPath, file), ext)
+        elif re.match(ext, file):
+            outFiles.append(file)
+    return outFiles
+
+
+
 
 
 def get_recursive_files(folderPath, ext='/*model*/*.py'):
@@ -458,13 +501,13 @@ def load_pkl(load_pars):
 
 def save_pkl(model=None, save_pars=None):
   import cloudpickle as pickle
-  return pickle.dump(model, open( load_pars['path'], mode='wb') )
+  return pickle.dump(model, open( save_pars['path'], mode='wb') )
 
 
 
 def load_keras(load_pars):
     from keras.models import load_model
-    path, filename = os_path_split(save_pars['path']  )
+    path, filename = os_path_split(load_pars['path']  )
     path_file = path + "/" + filename if ".h5" not in path else path
     model = Model_empty()
     model.model = load_model(path_file)
