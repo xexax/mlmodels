@@ -462,7 +462,7 @@ def cli_load_arguments(config_file=None):
     add("--folder", default=None, help="folder ")
 
 
-    add("--init", default=".", help=".")
+    add("--init", default="", help=".")
 
     ##### model pars
     add("--model_uri", default="model_tf/1_lstm.py", help=".")

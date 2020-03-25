@@ -70,7 +70,7 @@ class Model:
         self.optimizer = tf.compat.v1.train.AdamOptimizer(learning_rate).minimize(self.cost)
 
 
-def fit(model, sess=None, compute_pars=None, data_pars=None, out_pars=None, **kwarg):
+def fit(model, compute_pars=None, data_pars=None, out_pars=None, **kwarg):
     df = get_dataset(data_pars)
     print(df.head(5))
     msample = df.shape[0]

@@ -91,11 +91,11 @@ def test_all():
     os.system( cmd )
 
 
-def test_list(str_list):
+def test_list(mlist):
   print( "os.getcwd", os.getcwd() )
   print("############Check model ################################")
   path  = mlmodels.__path__[0]
-  mlist = str_list.split(",")
+  #mlist = str_list.split(",")
   test_list =[   f"python {path}/{model}"  for model in  mlist ]  
    
   for cmd in test_list :
@@ -191,7 +191,8 @@ def main():
 
 
   if ".py" in arg.do   :  #list all models in the repo
-    test_list(  [  arg.do ])
+    s = arg.do
+    test_list(  s.split(",") )
 
 
   else :
