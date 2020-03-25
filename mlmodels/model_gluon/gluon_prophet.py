@@ -27,7 +27,7 @@ VERBOSE = False
 ########################################################################################################################
 #### Model defintion
 class Model(object) :
-    def __init__(self, model_pars=None, compute_pars=None) :
+    def __init__(self, model_pars=None, data_pars=None, compute_pars=None) :
         ## Empty model for Seaialization
         if model_pars is None and compute_pars is None :
             self.model = None

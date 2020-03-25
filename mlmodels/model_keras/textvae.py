@@ -296,7 +296,7 @@ def get_params(param_pars={}, **kw):
         log("#### Path params   ###################################################")
         data_path  = path_norm("dataset/text/quora/train.csv")
         glove_path = path_norm("dataset/text/glove/glove.6B.50d.txt")    #Big file
-        out_path   = path_norm("/ztest/model_keras/textvae/")
+        out_path   = path_norm("ztest/model_keras/textvae/")
 
         data_pars  = {"MAX_SEQUENCE_LENGTH": 15, "train_data_path": data_path, "glove_embedding": glove_path}
 

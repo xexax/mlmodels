@@ -119,19 +119,18 @@ def reset_model():
 def save(model=None, session=None, save_pars={}):
     from mlmodels.util import save_keras
     print(save_pars)
-    save_keras(session, save_pars['path'])
+    save_keras(model, session, save_pars)
      
 
 
 def load(load_pars={}):
     from mlmodels.util import load_keras
     print(load_pars)
-    model0 =  load_keras(load_pars['path'])
+    model0 =  load_keras(load_pars)
 
     model = Model()
     model.model = model0
-    session = None
-    return model, session
+    return model, None
 
 
 
