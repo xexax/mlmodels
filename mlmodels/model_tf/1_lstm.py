@@ -30,6 +30,8 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '1'  # **** change the warning level ****
 ####################################################################################################
 class Model:
     def __init__(self, model_pars=None, data_pars=None, compute_pars=None, **kwargs):
+        tf.reset_default_graph()
+
         epoch         = model_pars.get('epoch', 5)
         learning_rate = model_pars.get('learning_rate', 0.001)
         num_layers    = model_pars.get('num_layers', 2)
@@ -264,7 +266,7 @@ def get_params(param_pars={}, **kw):
 
 
 ####################################################################################################
-def test(data_path="dataset/", pars_choice="json", config_mode="test"):
+def test(data_path="dataset/", pars_choice="test01", config_mode="test"):
     ### Local test
 
     log("#### Loading params   ##############################################")
@@ -277,9 +279,11 @@ def test(data_path="dataset/", pars_choice="json", config_mode="test"):
     Xtuple = get_dataset(data_pars)
 
 
-    log("#### Model init, fit   #############################################")
+    log("#### Model init  #############################################")
     session = None
     model = Model(model_pars, data_pars, compute_pars)
+
+    log("#### Model fit   #############################################")
     model, session = fit(model, data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)
 
 

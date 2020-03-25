@@ -386,7 +386,7 @@ class Model_empty(object):
 
 
 def os_path_split(path) :
-  return Path( path ).parent, Path( path ).name 
+  return str(Path( path ).parent), str(Path( path ).name)
 
 
 

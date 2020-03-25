@@ -224,7 +224,7 @@ def test_global(modelname):
     try:
         module = module_load(modelname, verbose=1)
         print(module)
-        module.test_global()
+        module.test()
         del module
     except Exception as e:
         print("Failed", e)
@@ -500,13 +500,20 @@ def main():
     if arg.do == "model_list":  # list all models in the repo
         l = config_model_list(arg.folder)
 
+
     if arg.do == "testall":
         # test_all() # tot test all te modules inside model_tf
         test_all(folder=None)
 
+
     if arg.do == "test":
+        param_pars = {"choice": "test01", "data_path": "", "config_mode": "test"}
+        test_module(arg.model_uri, param_pars=param_pars)  # '1_lstm'
+
         test(arg.model_uri)  # '1_lstm'
+        # test_api(arg.model_uri)  # '1_lstm'
         test_global(arg.model_uri)  # '1_lstm'
+
 
     if arg.do == "fit":
         model_p, data_p, compute_p, out_p = config_get_pars(arg.config_file, arg.config_mode)
