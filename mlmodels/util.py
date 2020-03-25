@@ -154,22 +154,22 @@ def path_local_setup(current_file=None, out_folder="", sublevel=0, data_path="da
 def path_norm(path=""):
     root = os_package_root_path(__file__, 0)
 
-    if len(path) == 0:
+    if len(path) == 0 or path is None:
         path = root
 
-    elif path.startswith("model_") or path.startswith("/model_"):
+    elif path.startswith("model_") or path.startswith("//model_"):
         path = os.path.join(root, path)
 
 
-    elif path.startswith("dataset") or path.startswith("/dataset"):
+    elif path.startswith("dataset") or path.startswith("//dataset"):
         path = os.path.join(root, path)
 
 
-    elif path.startswith("template") or path.startswith("/template"):
+    elif path.startswith("template") or path.startswith("//template"):
         path = os.path.join(root, path)
 
 
-    elif path.startswith("ztest") or path.startswith("/ztest"):
+    elif path.startswith("ztest") or path.startswith("//ztest"):
         path = os.path.join(root, path)
 
     return path
@@ -199,9 +199,6 @@ def os_package_root_path(filepath="", sublevel=0, path_add=""):
 
     path = os.path.join(path.absolute(), path_add)
     return path
-
-
-
 
 
 def os_file_current_path():
@@ -364,7 +361,7 @@ def env_build(model_uri, env_pars):
 
 
 ####################################################################################################
-###########  Utils #########################################################################################
+########## TF specific #############################################################################
 def tf_deprecation():
     try:
         from tensorflow.python.util import deprecation
@@ -377,7 +374,8 @@ def tf_deprecation():
 
 
 ####################################################################################################
-########## TF specific #############################################################################
+###########  Utils #################################################################################
+
 class Model_empty(object):
     def __init__(self, model_pars=None, data_pars=None, compute_pars=None
                  ):
@@ -467,30 +465,24 @@ def save_tch(model=None, optimizer=None, save_pars=None):
         torch.save(model.model, f"{path}/{filename}")
 
 
-def save_tch_checkpoint(model, session, save_pars):
+def save_tch_checkpoint(model, optimiser, save_pars):
     import torch
-    optimiser = session
-    grad_step = save_pars['grad_step']
-    CHECKPOINT_NAME = save_pars['checkpoint_name']
+    path = save_pars['checkpoint_name']
     torch.save({
-        'grad_step': grad_step,
+        'grad_step': save_pars["grad_step"],
         'model_state_dict': model.state_dict(),
         'optimizer_state_dict': optimiser.state_dict(),
-    }, CHECKPOINT_NAME)
+    }, path )
 
 
 
 # def load(model, optimiser, CHECKPOINT_NAME='nbeats-fiting-checkpoint.th'):
-def load_tch_checkpoint(load_pars):
+def load_tch_checkpoint(model, optimiser, load_pars):
     import torch
-    model = None
-    session = None
-
     CHECKPOINT_NAME = load_pars['checkpoint_name']
-    optimiser = session
-
     if os.path.exists(CHECKPOINT_NAME):
         checkpoint = torch.load(CHECKPOINT_NAME)
+
         model.load_state_dict(checkpoint['model_state_dict'])
         optimiser.load_state_dict(checkpoint['optimizer_state_dict'])
         grad_step = checkpoint['grad_step']
