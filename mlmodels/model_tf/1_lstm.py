@@ -173,14 +173,14 @@ def reset_model():
     tf.compat.v1.reset_default_graph()
 
 
-def save(model, session=None, save_pars={}):
+def save(model, session=None, save_pars=None):
     from mlmodels.util import save_tf
     print(save_pars)
     save_tf(model, session, save_pars)
      
 
 
-def load(load_pars={}):
+def load(load_pars=None):
     from mlmodels.util import load_tf
     print(load_pars)
     input_tensors, output_tensors =  load_tf(load_pars)

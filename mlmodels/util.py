@@ -344,6 +344,10 @@ def save(model=None, session=None, save_pars=None):
         save_keras(model, session, os.path.join(path, name))
 
 
+def os_path_split(path) :
+  return Path( path ).parent, os.path.basename( path ) 
+
+
 def load_tf(load_pars=""):
   """
   https://www.mlflow.org/docs/latest/python_api/mlflow.tensorflow.html#
@@ -352,7 +356,7 @@ def load_tf(load_pars=""):
   import mlflow
   import tensorflow as tf
 
-  path, filename = load_pars['path'], load_pars['path'] 
+  path, filename = os_path_split( load_pars['path'] ) 
    
   model_uri = path + "/" + filename
   tf_graph = tf.Graph()
@@ -372,11 +376,6 @@ def save_tf(model=None, sess=None, save_pars= None):
   saver = tf.compat.v1.train.Saver()
   return saver.save(sess, save_pars['path'])
 
-
-def save_tf(model=None, sess=None, file_path="tf_model.pkt"):
-    import tensorflow as tf
-    saver = tf.compat.v1.train.Saver()
-    return saver.save(sess, file_path)
 
 
 class Model_empty(object):
