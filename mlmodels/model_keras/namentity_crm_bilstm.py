@@ -154,7 +154,7 @@ def load(load_pars):
 
 
 ####################################################################################################
-def get_dataset(data_pars=None, **kw):
+def get_dataset(data_pars, **kw):
     """
         "data_pars": {
               "train": true,
@@ -186,15 +186,14 @@ def get_dataset(data_pars=None, **kw):
        Xtuple = run_process( d['processor'], d['loader_pars'])
        return Xtuple
      """ 
-     return _preprocess_test()
+     return _preprocess_test(data_pars)
     else :
-        pass
+        raise Exception(f"Not support dataset yet")
 
 
 
 
-
-def _preprocess_test(data_pars=None, **kw):
+def _preprocess_test(data_pars, **kw):
     """
 
     """
@@ -203,7 +202,7 @@ def _preprocess_test(data_pars=None, **kw):
     from keras.utils import to_categorical
 
 
-    df = pd.read_csv(data_pars['data_path'], encoding="ISO-8859-1")
+    df = pd.read_csv(data_pars['path'], encoding="ISO-8859-1")
     df = df[:50]  # quick test
     df = df.fillna(method='ffill')
 

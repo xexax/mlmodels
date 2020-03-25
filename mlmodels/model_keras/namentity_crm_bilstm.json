@@ -6,7 +6,7 @@
 		},
 		"data_pars": {
 			  "train": true,
-		   	  "test_mode" : "repo_unit",
+		   	  "mode" : "test_repo",
 
               "path"            : "dataset/text/ner_dataset.csv",
               "location_type"   :  "repo",
@@ -14,7 +14,7 @@
 
 
               "data_loader" :  "mlmodels.data:import_data_fromfile",
-              "data_loader_pars" :  {"size" : 50, },
+              "data_loader_pars" :  {"size" : 50 },
 
 
               "data_processor" : "mlmodels.model_keras.prepocess:process",

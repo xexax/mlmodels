@@ -417,7 +417,7 @@ def load_pkl(load_pars):
     return pickle.load(open( load_pars['path'], mode='rb') )
 
 
-def save_pkl(model=None, save_pars):
+def save_pkl(model=None, save_pars=None):
   import cloudpickle as pickle
   return pickle.dump(model, open( load_pars['path'], mode='wb') )
 
@@ -440,10 +440,10 @@ def save_keras(model=None, session=None, save_pars=None, ):
 
 
 
-def load_gluon(path, filename="model"):
+def load_gluon( load_pars):
     return 1
 
-def save_gluon(model, path, filename="model"):
+def save_gluon(model=None, session=None, save_pars=None):
     return 1
 
 
