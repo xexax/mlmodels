@@ -214,7 +214,7 @@ def get_dataset(data_pars=None):
 
     """
     print(data_pars)
-    filename = data_pars["data_path"]  #
+    filename = path_norm( data_pars["data_path"])  #
 
     ##### Specific   ######################################################
     df = pd.read_csv(filename)
@@ -246,17 +246,17 @@ def get_params(param_pars={}, **kw):
     if choice == "test01":
         log("############# Data, Params preparation   #################")        
         data_path  = path_norm( "dataset/timeseries/GOOG-year.csv"  )   
-        out_path   = path_norm( "/ztest/model_tf/1_lstm/" )   
+        out_path   = path_norm( "ztest/model_tf/1_lstm/" )
         model_path = os.path.join(out_path , "model")
 
 
         model_pars   = {"learning_rate": 0.001, "num_layers": 1, "size": 6, "size_layer": 128,
-                      "output_size": None, "timestep": 4, "epoch": 2,
-                        "output_size" : 6 }
+                         "timestep": 4, "epoch": 2,
+                         "output_size" : 6 }
 
         data_pars    = {"data_path": data_path, "data_type": "pandas"}
-        out_pars     = {"path": data_path}
         compute_pars = {}
+        out_pars     = {"path": out_path, "model_path": model_path}
 
         return model_pars, data_pars, compute_pars, out_pars
     else:
