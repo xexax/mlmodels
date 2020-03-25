@@ -132,12 +132,8 @@ def get_recursive_files(folderPath, ext='/*model*/*.py'):
     return files
 
 
+"""
 def path_local_setup(current_file=None, out_folder="", sublevel=0, data_path="dataset/"):
-    """
-      mlmodels/dataset/
-      mlmodels/ztest/  :  in gitgnore !!
-
-    """
     root = os_package_root_path(__file__, sublevel=0, path_add="")
 
     out_path = path_norm(out_folder)
@@ -149,6 +145,7 @@ def path_local_setup(current_file=None, out_folder="", sublevel=0, data_path="da
 
     log(data_path, out_path, model_path)
     return data_path, out_path, model_path
+"""
 
 
 def path_norm(path=""):
@@ -156,6 +153,17 @@ def path_norm(path=""):
 
     if len(path) == 0 or path is None:
         path = root
+
+    tag_list = [ "model_", "//model_",  "dataset", "template", "ztest"  ]
+
+
+    for t in tag_list :
+        if path.startswith(t) :
+            path = os.path.join(root, path)
+            return path
+    return path
+
+    """
 
     elif path.startswith("model_") or path.startswith("//model_"):
         path = os.path.join(root, path)
@@ -171,17 +179,17 @@ def path_norm(path=""):
 
     elif path.startswith("ztest") or path.startswith("//ztest"):
         path = os.path.join(root, path)
-
     return path
+    """
 
-
+"""
 def os_module_path():
     import inspect
     current_dir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
     parent_dir = os.path.dirname(current_dir)
     # sys.path.insert(0, parent_dir)
     return parent_dir
-
+"""
 
 def os_package_root_path(filepath="", sublevel=0, path_add=""):
     """

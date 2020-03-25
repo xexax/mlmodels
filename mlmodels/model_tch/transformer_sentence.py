@@ -112,6 +112,7 @@ from mlmodels.util import os_package_root_path, log, path_norm, to_namespace
 
 
 ####################################################################################################
+"""
 def os_module_path():
     current_dir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
     parent_dir = os.path.dirname(current_dir)
@@ -123,7 +124,7 @@ def os_file_path(data_path):
     from pathlib import Path
     data_path = os.path.join(Path(__file__).parent.parent.absolute(), data_path)
     return data_path
-
+"""
 
 
 ####################################################################################################
