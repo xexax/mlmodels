@@ -488,7 +488,7 @@ def save_gluon(model, path, filename="model"):
 def load_keras(load_pars):
   from keras.models import load_model
    
-  path, filename= os.path.absolute( save_pars['path']  + "/../", os.path.basename(  save_pars['path'] ) )
+  path, filename= os.path.absolute( save_pars['path']  + "/../", os.path.basename(save_pars['path']))
 
   path = path + "/" + filename if ".h5" not in path else path
   model = Model_empty()
@@ -496,9 +496,10 @@ def load_keras(load_pars):
   return model
 
 
-def save_keras(model=None, session=None, save_pars = None, ):
-  path, filename= os.path.absolute( save_pars['path']  \
-                                  + "/../", os.path.basename(save_pars['path']))
+def save_keras(model=None, session=None, save_pars = None):
+  
+  path, filename= os.path.abspath(save_pars['path']) \
+                  + "/../", os.path.basename(save_pars['path'])
   model.model.save(path + f"/{filename}" ) 
 
 
