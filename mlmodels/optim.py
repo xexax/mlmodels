@@ -55,12 +55,12 @@ def optim(model_uri="model_tf.1_lstm.py",
     ----------
     Returns : None
     """
-    if compute_pars["engine"] == "optuna" :
+    if hypermodel_pars["engine_pars"]['name'] == "optuna" :
         return optim_optuna(model_uri,  hypermodel_pars, 
                             model_pars, data_pars, compute_pars,
                             out_pars)
 
-    if compute_pars["engine"] == "skopt" :
+    if hypermodel_pars["engine_pars"]['name'] == "skopt" :
         return optim_skopt(model_uri,  hypermodel_pars, 
                             model_pars, data_pars, compute_pars,
                             out_pars)
@@ -120,6 +120,8 @@ def optim_optuna(model_uri="model_tf.1_lstm.py",
     def objective(trial):
         log("check", module, data_pars)
         for t,p  in hypermodel_pars.items():
+
+            if t == 'engine_pars' : continue  ##Skip 
             # type, init, range[0,1]
             x = p['type']
             if   x=='log_uniform':       pres = trial.suggest_loguniform(t,p['range'][0], p['range'][1])
