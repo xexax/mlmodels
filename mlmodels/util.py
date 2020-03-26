@@ -4,6 +4,14 @@ import re
 
 # import toml
 from pathlib import Path
+import json
+
+
+"""
+from mlmodels.util import (os_package_root_path, log, path_norm
+    config_load_root, config_path_pretrained, config_path_dataset, config_set
+    )
+"""
 
 
 ####################################################################################################
@@ -226,9 +234,18 @@ def config_path_pretrained():
 
 
 def config_path_dataset():
-        ddict = config_load_root()
-        return ddict['dataset']
+    ddict = config_load_root()
+    return ddict['dataset']
 
+
+def config_set(ddict2):
+    ddict = config_load_root()
+
+    for k,x in ddict2.items():
+      ddict[k] = x
+
+    json.dump(ddict, open(ddict, mode='w'))
+   
 
 
 def params_json_load(path, config_mode="test"):
@@ -246,6 +263,7 @@ def params_json_load(path, config_mode="test"):
             log("error in json, cannot load ", t)
 
     return tuple(list_pars)
+
 
 
 def load_config(args, config_file, config_mode, verbose=0):
@@ -507,19 +525,23 @@ def save_keras(model=None, session=None, save_pars=None, ):
 
 
 
-def save_gluonts(model, path):
+def save_gluonts(model=None, session=None, save_pars=None):
+    path = save_pars['path']
     os.makedirs(path, exist_ok=True)
     model.model.serialize(Path(path))
 
 
 
-def load_gluonts(path):
+def load_gluonts(load_pars=None):
     from gluonts.model.predictor import Predictor
-    predictor_deserialized = Predictor.deserialize(Path(path))
+    predictor_deserialized = Predictor.deserialize(Path( load_pars['path'] ))
 
     model = Model_empty()
     model.model = predictor_deserialized
     return model
+
+
+
 
 
 
