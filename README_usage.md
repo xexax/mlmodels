@@ -430,6 +430,59 @@ roc_auc_score(y, ypred)
 
 ---
 
+### Using LightGBM for Titanic Problem from json file ([Example notebook](mlmodels/example/model_lightgbm.ipynb), [JSON file](mlmodels/dataset/json/lightgbm_titanic.json))
+
+#### Import library and functions
+```python
+# import library
+import mlmodels
+from mlmodels.models import module_load
+import json
+```
+
+#### Load model and data definitions from json
+```python
+# Model defination
+model_uri    = "model_sklearn.model_lightgbm.py"
+module        =  module_load( model_uri= model_uri)
+
+# Path to JSON
+data_path = '../dataset/json/lightgbm_titanic.json'  
+
+# Model Parameters
+pars = json.load(open( data_path , mode='r'))
+for key, pdict in  pars.items() :
+  globals()[key] = pdict   
+
+model_pars      = test['model_pars']
+data_pars       = test['data_pars']
+compute_pars    = test['compute_pars']
+out_pars        = test['out_pars']
+```
+
+
+#### Load Parameters and Train
+```python
+model = module.Model(model_pars, data_pars, compute_pars) # create model instance
+model, session = module.fit(model, data_pars, compute_pars, out_pars) # fit model
+```
+
+
+#### Check inference
+```python
+ypred       = module.predict(model,  data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)     # get predictions
+ypred
+```
+
+#### Check metrics
+```python
+metrics_val = module.fit_metrics(model, data_pars, compute_pars, out_pars)
+metrics_val 
+```
+
+---
+
+
 
 
 
