@@ -1,5 +1,6 @@
 name: test_fast_linux
 
+###  https://github.com/arita37/awesome-actions#static-analysis
 
 on:
   push:
