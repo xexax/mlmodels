@@ -14,6 +14,9 @@ def download_data(data_pars):
   download_data({"from_path" :  "tabular",  
                         "out_path" :  path_norm("ztest/dataset/text/") } )
 
+  Open URL
+     https://www.dropbox.com/sh/d2n3hgsq2ycpmjf/AAAoFh0aO9RqwwROksGgasIha?dl=0
+     
 
   """
   from cli_code.cli_download import Downloader
