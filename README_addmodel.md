@@ -26,14 +26,19 @@ https://github.com/arita37/mlmodels/blob/dev/README_index_doc.txt
      Template
         https://github.com/arita37/mlmodels/blob/dev/mlmodels/template/model_xxx.py
 
-     Please re-use existing code.
+     Please re-use existing   
+            https://github.com/arita37/mlmodels/blob/dev/mlmodels/util.py
+            from mlmodels.util import    ...
+            
+            
 
 
 5) Create   yyyy.json , following this template :
    https://github.com/arita37/mlmodels/blob/dev/mlmodels/template/models_config.json
 
 
-6) Run on your local machie
+6) Run on your local machine
+    cd yourfolder
     python model_XXXX/yyyy.py  
 
 
