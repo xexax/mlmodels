@@ -93,7 +93,7 @@ from sklearn.model_selection import train_test_split
 
 
 # import optuna.integration.lightgbm as lgb
-from lightgbm import LGBModel
+from lightgbm import LGBMModel
 
 
 
@@ -103,7 +103,7 @@ MODEL_URI = Path(os.path.abspath(__file__)).parent.name + "." + os.path.basename
 
 ####################################################################################################
 ######## Logs, root path
-from mlmodels.util import os_package_root_path, log
+from mlmodels.util import os_package_root_path, log, path_norm
 
 
 
@@ -132,13 +132,13 @@ class Model(object):
             self.model = None
         else :
           
-          self.model =  LGBModel(**model_pars)
+          self.model =  LGBMModel(**model_pars)
 
 
 
 
 
-def fit(model, data_pars={}, compute_pars={}, out_pars={}, **kw):
+def fit(model, data_pars=None, compute_pars=None, out_pars=None, **kw):
     """
     X (array-like or sparse matrix of shape = [n_samples, n_features]) – Input feature matrix.
 y (array-like of shape = [n_samples]) – The target values (class labels in classification, real numbers in regression).
@@ -164,7 +164,7 @@ Requires at least one evaluation data. If True, the eval metric on the eval set 
 
 
 
-def fit_metrics(model, data_pars={}, compute_pars={}, out_pars={}, **kw):
+def fit_metrics(model, data_pars=None, compute_pars=None, out_pars=None, **kw):
     """
        Return metrics of the model when fitted.
     """
@@ -173,7 +173,7 @@ def fit_metrics(model, data_pars={}, compute_pars={}, out_pars={}, **kw):
     return ddict
 
 
-def predict(model, sess=None, data_pars={}, compute_pars={}, out_pars={}, **kw):
+def predict(model, sess=None, data_pars=None, compute_pars=None, out_pars=None, **kw):
     ##### Get Data ###############################################
     data_pars['train'] = False
     _, _, Xpred, ypred = get_dataset(data_pars)
@@ -193,16 +193,16 @@ def reset_model():
     pass
 
 
-def save(model=None, session=None, save_pars={}):
+def save(model=None, session=None, save_pars=None):
     from mlmodels.util import save_pkl
     print(save_pars)
-    save_pkl(model, session, save_pars['path'])
+    save_pkl(model, session, save_pars)
 
 
-def load(load_pars={}):
+def load(load_pars=None):
     from mlmodels.util import load_pkl
     print(load_pars)
-    model0 = load_pkl(load_pars['path'])
+    model0 = load_pkl(load_pars)
 
     model = Model()
     model.model = model0
@@ -241,7 +241,7 @@ def get_dataset(data_pars=None, **kw):
 
     else:
         Xtest, ytest = None, None
-        return None, NOne, Xtest, ytest
+        return None, None, Xtest, ytest
 
 
 
@@ -262,13 +262,13 @@ def get_params(param_pars={}, **kw):
     if choice == "test01":
         log("#### Path params   ##########################################")
         data_path  = path_norm( "dataset/tabular/titanic_train_preprocessed.csv"  )   
-        out_path   = path_norm( "/ztest/model_sklearn/lightgbm`/" )   
-        model_path = os.path.join(out_path , "model")
+        out_path   = path_norm( "ztest/model_sklearn/model_lightgbm/" )
+        model_path = os.path.join(out_path , "model.pkl")
 
         data_pars = {'mode': 'test', 'path': data_path, 'data_type' : 'pandas' }
         model_pars = {"objective":  "regression", "max_depth" : 4 , "random_state":0}
         compute_pars = {}
-        out_pars = {'path' : out_path}
+        out_pars = {'path' : out_path, "model_path": model_path}
 
         return model_pars, data_pars, compute_pars, out_pars
 
@@ -305,8 +305,9 @@ def test(data_path="dataset/", pars_choice="json", config_mode="test"):
     log("#### Plot   ########################################################")
 
     log("#### Save/Load   ###################################################")
-    save(model, session, out_pars)
-    model2, session = load(out_pars)
+    save_pars = {"path" : out_pars['model_path'] }
+    save(model, session, save_pars)
+    model2, session = load( save_pars)
     #     ypred = predict(model2, data_pars, compute_pars, out_pars)
     #     metrics_val = metrics(model2, ypred, data_pars, compute_pars, out_pars)
     print(model2.model)

@@ -104,7 +104,7 @@ def get_dataset(data_params) :
     return train_loader, test_loader
 
 
-def fit(model, data_pars, compute_pars={}, out_pars=None,  **kwargs):
+def fit(model, data_pars, compute_pars=None, out_pars=None,  **kwargs):
     train_loader, test_loader = get_dataset(data_params)
 
     args = to_namepace(compute_params)

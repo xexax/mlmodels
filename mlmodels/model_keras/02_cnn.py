@@ -85,7 +85,7 @@ class Model(object) :
 def get_dataset( data_params, **kw):
     if choice == 0 :
         log("#### Path params   ################################################")
-        data_path = os_package_root_path(__file__, sublevel=1, path_add=data_path)
+        data_path = os_package_root_path(__file__, sublevel=0, path_add=data_path)
         out_path = os.getcwd() + "/keras_deepAR/"
         os.makedirs(out_path, exist_ok=True)
         log(data_path, out_path)
@@ -115,15 +115,14 @@ def get_dataset( data_params, **kw):
         y_test = keras.utils.to_categorical(y_test, nclasses)
 
         return x_train, y_train, x_test, y_test
-
+  
 
 def fit(model, data_pars=None, model_pars=None, compute_pars=None, out_pars=None,session=None, **kwargs):
 	# def fit(self,batch_size,epochs):
         data_pars['istrain'] = 1
         x_train, y_train, x_test, ytest = get_dataset(data_pars)
 
-		mtmp =model.model.fit(x_train, y_train,
-		                      batch_size=batch_size,	epochs=epochs,verbose=1, validation_data=(x_test, y_test))
+		mtmp =model.model.fit(x_train, y_train,batch_size=batch_size,epochs=epochs,verbose=1, validation_data=(x_test, y_test))
 	    model.model = mtmp
 	    return model
 
@@ -150,7 +149,7 @@ def metrics(ypred, data_pars, compute_pars=None, out_pars=None, **kwargs):
 def get_params(choice=0, data_path="dataset/", **kw) :
     if choice == 0 :
         log("#### Path params   ################################################")
-        data_path = os_package_root_path(__file__, sublevel=1, path_add=data_path)
+        data_path = os_package_root_path(__file__, sublevel=0, path_add=data_path)
         out_path = os.getcwd() + "/keras_deepAR/"
         os.makedirs(out_path, exist_ok=True)
         log(data_path, out_path)

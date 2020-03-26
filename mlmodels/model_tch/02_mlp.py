@@ -1,11 +1,15 @@
-from __future__ import print_function
+
+
+
 
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 import torch.utils.data.distributed
 
-from torchvision import datasets, transforms
+
+
+# from torchvision import datasets, transforms
 
 
 class Model(nn.Module):

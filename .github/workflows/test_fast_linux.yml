@@ -1,5 +1,6 @@
 name: test_fast_linux
 
+###  https://github.com/arita37/awesome-actions#static-analysis
 
 on:
   push:
@@ -59,8 +60,9 @@ jobs:
 
 
     - name: Repo Check
-      run: python -c "import mlmodels,os ; print(mlmodels); print(os)"
-
+      run: |
+           python -c "import mlmodels,os ; print(mlmodels); print(os)"
+           ml_test --do test_import
 
 
     ########  Test running 
