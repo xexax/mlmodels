@@ -113,14 +113,14 @@ https://github.com/arita37/mlmodels/actions
 
 
 #######################################################################################
-## ② Usage in Jupyter
+## Usage in Jupyter
 
 https://github.com/arita37/mlmodels/blob/dev/README_usage.md
 
 
 
 #######################################################################################
-## ③ CLI tools: package provide below tools
+## CLI tools: 
 
 https://github.com/arita37/mlmodels/blob/dev/README_usage_CLI.md
 
@@ -131,20 +131,27 @@ https://github.com/arita37/mlmodels/blob/dev/README_usage_CLI.md
 
   ```
 
+
+####################################################################################
+## Model List
+
+https://github.com/arita37/mlmodels/blob/dev/README_model_list.md
+
+
+
+
 #######################################################################################
-## ② How to add a new model
+## How to add a new model
 
 https://github.com/arita37/mlmodels/blob/dev/README_addmodel.md
 
 
  
-   
+  
+#######################################################################################
+## Index of functions/methods
 
-####################################################################################
-### ⑤ Model List
-
-https://github.com/arita37/mlmodels/blob/dev/README_model_list.md
-
+https://github.com/arita37/mlmodels/blob/dev/README_index_doc.txt
 
 
 
