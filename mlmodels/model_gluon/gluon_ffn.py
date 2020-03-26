@@ -48,28 +48,27 @@ class Model(object) :
 
 
 
-########################################################################################################################
-def get_params(choice="", data_path="dataset/", config_mode="test", **kw):
+def get_params(choice="", data_path="dataset/timeseries/", config_mode="test", **kw):
+    from mlmodels.util import path_local_setup
+
     if choice == "json":
        return _config_process(data_path, config_mode=config_mode)
 
 
     if choice == "test01":
         log("#### Path params   #####################################################")
-        data_path = os_package_root_path(__file__, sublevel=1, path_add=data_path)
-        out_path = os.getcwd() + "/model_gluon_ffn/"
-        os.makedirs(out_path, exist_ok=True)
-
-        model_path = os.getcwd() + "/model_gluon/model_ffn/"
-        os.makedirs(model_path, exist_ok=True)
-        log(data_path, out_path,model_path)
+        data_path, out_path, model_path = path_local_setup( __file__, sublevel=1,
+                                                           out_folder="/ztest/gluon_ffn/", 
+                                                           data_path=data_path)
 
 
         train_data_path = data_path + "GLUON-GLUON-train.csv"
         test_data_path = data_path + "GLUON-test.csv"
         start = pd.Timestamp("01-01-1750", freq='1H')
 
-        data_pars = {"train_data_path": train_data_path, "test_data_path": test_data_path, "train": False,
+        data_pars = {"train_data_path": train_data_path, 
+                     "test_data_path": test_data_path, 
+                     "train": False,
                      'prediction_length': 48, 'freq': '1H', "start": start, "num_series": 245,
                      "save_fig": "./series.png","modelpath":model_path}
 
@@ -82,8 +81,7 @@ def get_params(choice="", data_path="dataset/", config_mode="test", **kw):
         compute_pars = {"ctx":"cpu","epochs":5,"learning_rate":1e-3,"hybridize":False,
                       "num_batches_per_epoch":100,'num_samples':100}
 
-        outpath=out_path+"result"
-
+        outpath = out_path+"result"
         out_pars = {"outpath": outpath, "plot_prob": True, "quantiles": [0.1, 0.5, 0.9]}
 
     return model_pars, data_pars, compute_pars, out_pars
@@ -91,48 +89,7 @@ def get_params(choice="", data_path="dataset/", config_mode="test", **kw):
 
 
 
-def test2(data_path="dataset/", out_path="GLUON/gluon.png", reset=True):
-    ###loading the command line arguments
-    # arg = load_arguments()
-
-    log("#### Loading params   ##############################################")
-    model_pars, data_pars, compute_pars, out_pars = get_params(choice="test01", data_path=data_path)
-    model_uri = "model_gluon/gluon_ffn.py"
-
-
-    log("#### Loading dataset   #############################################")
-    gluont_ds = get_dataset(**data_pars)
-
-
-    log("#### Model init, fit   ###########################################")
-    from mlmodels.models import module_load_full, fit, predict
-    module, model = module_load_full(model_uri, model_pars)
-    print(module, model)
-
-    model= fit(model, None, data_pars, model_pars, compute_pars)
-
-    log("#### save the trained model  ######################################")
-    save(model, data_pars["modelpath"])
-
-
-    log("#### Predict   ###################################################")
-    ypred = predict(model, data_pars, compute_pars, out_pars)
-    print(ypred)
-
-
-    log("###Get  metrics   ################################################")
-    metrics_val = metrics(model, data_pars, compute_pars, out_pars)
-
-
-    log("#### Plot   ######################################################")
-    forecast_entry = ypred["forecast"][0]
-    ts_entry = ypred["tss"][0]
-    plot_prob_forecasts(ts_entry, forecast_entry)
-    plot_predict(out_pars)
-
-
-
-
+########################################################################################################################
 def test(data_path="dataset/", choice="test01"):
     ### Local test
 
@@ -172,5 +129,8 @@ def test(data_path="dataset/", choice="test01"):
                         
 if __name__ == '__main__':
     VERBOSE=True
-    test(data_path="dataset/", choice="test01")
+    test(data_path="dataset/timeseries/", choice="test01")
     # test(data_path="dataset/", choice="json")
+
+
+

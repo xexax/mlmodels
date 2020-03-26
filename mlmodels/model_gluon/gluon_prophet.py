@@ -46,15 +46,11 @@ def get_params(choice="", data_path="dataset/", config_mode="test", **kw):
 
 
     if choice == "test01":
+        from mlmodels.util import path_local_setup
         log("#### Path params   ################################################")
-        data_path = os_package_root_path(__file__, sublevel=1, path_add=data_path)
-        out_path = os.getcwd() + "/GLUON_prophet/"
-        os.makedirs(out_path, exist_ok=True)
-
-        model_path = os.getcwd() + "/GLUON/model_prophet/"
-        os.makedirs(model_path, exist_ok=True)
-        log(data_path, out_path, model_path)
-
+        data_path, out_path, model_path = path_local_setup( __file__, sublevel=1,
+                                                           out_folder="/ztest/gluon_phrophet/", 
+                                                           data_path=data_path)
 
         train_data_path = data_path + "GLUON-GLUON-train.csv"
         test_data_path = data_path + "GLUON-test.csv"
@@ -75,42 +71,6 @@ def get_params(choice="", data_path="dataset/", config_mode="test", **kw):
 
 
 ########################################################################################################################
-def test2(data_path="dataset/", out_path="GLUON/gluon.png", reset=True):
-    ###loading the command line arguments
-    # arg = load_arguments()
-
-    log("#### Loading params   ##############################################")
-    model_pars, data_pars, compute_pars, out_pars = get_params(choice=0, data_path=data_path)
-    model_uri = "model_gluon/gluon_deepar.py"
-
-    log("#### Loading dataset   #############################################")
-    gluont_ds = get_dataset(**data_pars)
-
-    log("#### Model init, fit   ###########################################")
-    from mlmodels.models import module_load_full, fit, predict
-    module, model = module_load_full(model_uri, model_pars)
-    print(module, model)
-
-    model = fit(model, None, data_pars, model_pars, compute_pars)
-
-    log("#### save the trained model  #############################################")
-    save(model, data_pars["modelpath"])
-
-
-    log("#### Predict   ###################################################")
-    ypred = predict(model, data_pars, compute_pars, out_pars)
-    print(ypred)
-
-    log("###Get  metrics   ################################################")
-    metrics_val = metrics(model, data_pars, compute_pars, out_pars)
-
-
-    log("#### Plot   ######################################################")
-    plot_prob_forecasts(ypred, metrics_val, out_pars)
-    plot_predict(ypred, metrics_val, out_pars)
-
-
-
 def test(data_path="dataset/"):
     ### Local test
 
@@ -148,4 +108,4 @@ def test(data_path="dataset/"):
 
 if __name__ == '__main__':
     VERBOSE = True
-    test(data_path="dataset/" , choice="test01" )
+    test(data_path="dataset/timeseries/" , choice="test01" )

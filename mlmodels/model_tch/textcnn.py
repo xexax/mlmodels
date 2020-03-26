@@ -24,6 +24,9 @@ import shutil
 
 
 
+from mlmodels.util import os_package_root_path, log, path_norm
+
+
 ###########################################################################################################
 ###########################################################################################################
 def _train(m, device, train_itr, optimizer, epoch, max_epoch):
@@ -77,18 +80,6 @@ def _valid(m, device, test_itr):
 def _get_device():
     # use GPU if it is available
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
-def os_package_root_path(filepath, sublevel=0, path_add=""):
-    """
-       get the module package root folder
-    """
-    from pathlib import Path
-    path = Path(filepath).parent
-    for i in range(1, sublevel + 1):
-        path = path.parent
-
-    path = os.path.join(path.absolute(), path_add)
-    return path
 
 
 def get_config_file():
@@ -198,6 +189,7 @@ def create_data_iterator(tr_batch_size, val_batch_size, tabular_train,
 class TextCNN(nn.Module):
 
     def __init__(self, model_pars=None, **kwargs):
+        print(model_pars)
         kernel_wins = [int(x) for x in model_pars["kernel_height"]]
         super(TextCNN, self).__init__()
         # load pretrained embedding in embedding layer.
@@ -243,17 +235,61 @@ Model = TextCNN
 # functions #
 #############
 
-def get_params(choice="json", data_path=None, config_mode="test", **kw):
+
+
+def get_params(param_pars=None, **kw):
+    import json
+    pp = param_pars
+    choice = pp['choice']
+    config_mode = pp['config_mode']
+    data_path = pp['data_path']
+
+
     if choice == "json":
-        if data_path is None:
-            path = get_config_file()
-        with open(path, 'r') as f:
-            config = json.load(f)
-        config = config.get(config_mode)
-        model_pars = config.get('model_pars', dict())
-        data_pars = config.get('data_pars', dict())
-        compute_pars = config.get('compute_pars', dict())
-        out_pars = config.get('out_pars', dict())
+        data_path = path_norm(data_path) 
+        with open(data_path, 'rb') as f:
+            cf = json.load(f)
+        cf = cf[config_mode]
+        return cf['model_pars'], cf['data_pars'], cf['compute_pars'], cf['out_pars']
+
+
+    if choice == "test01":
+        log("#### Path params   ##########################################")
+        data_path  = path_norm( "dataset/text/imdb.csv"  )   
+        out_path   = path_norm( "/ztest/model_keras/charcnn/" )   
+        model_path = os.path.join(out_path , "model")
+
+        data_pars= {
+			"data_path": "dataset/recommender/IMDB_sample.txt",
+            "split_if_exists": True,
+			"frac": 0.7,
+            "lang": "en",
+            "pretrained_emb": "glove.6B.300d",
+            "batch_size": 64,
+            "val_batch_size": 64
+		}
+
+
+        model_pars= {
+            "dim_channel": 100,
+            "kernel_height": [3,4,5],
+            "dropout_rate": 0.5,
+            "num_class": 2
+		}
+
+
+        compute_pars= {
+            "learning_rate": 0.001,
+            "epochs": 2,
+            "checkpointdir": "/tmp"
+        }
+
+        out_pars= {
+            "train_path": "/tmp/IMDB_train.csv",
+            "valid_path": "/tmp/IMDB_valid.csv",
+            "checkpointdir": "/tmp"
+        }
+        
         return model_pars, data_pars, compute_pars, out_pars
 
 
@@ -351,7 +387,8 @@ def load(path):
 ###########################################################################################################
 def test():
     print("\n####### Getting params... ####################\n")
-    model_pars, data_pars, compute_pars, out_pars = get_params(test=True)
+    param_pars = { "choice" : "test01", "data_path" : "model_tch/textcnn.json", "config_mode" : "test" }
+    model_pars, data_pars, compute_pars, out_pars = get_params( param_pars )
     
 
     print("\n####### Creating model... ####################\n")
@@ -373,10 +410,6 @@ def test():
     print("\n####### Test predict... #####################")
     print(predict(model, data_pars, compute_pars, out_pars))
 
-
-
-def test2():
-    pass
 
 
 

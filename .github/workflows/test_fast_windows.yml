@@ -9,6 +9,7 @@ on:
 jobs:
   build:
 
+
     runs-on: windows-latest 
 
     steps:
@@ -24,13 +25,13 @@ jobs:
       
 
       
-    - uses: actions/cache@v1
-      id: cache
-      with:
-        path: ~/.cache/pip
-        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements_wi.txt') }}
-        restore-keys: |
-          ${{ runner.os }}-pip-
+    #- uses: actions/cache@v1
+    #  id: cache
+    #  with:
+    #    path: ~/.cache/pip
+    #    key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements_wi.txt') }}
+    #    restore-keys: |
+    #      ${{ runner.os }}-pip-
           
 
 
@@ -38,7 +39,7 @@ jobs:
       id: cache-pipenv
       uses: actions/cache@v1
       with:
-        path: ~/.local/share/virtualenvs
+        path: /opt/hostedtoolcache/Python/
         key: ${{ runner.os }}-pipenv-${{ hashFiles('**/requirements_wi.txt') }}
 
 
@@ -47,15 +48,24 @@ jobs:
       if: steps.cache-pipenv.outputs.cache-hit != 'true'
       run:  |
         pip install  numpy<1.17.0
-        pip install torch==0.4.1 -f https://download.pytorch.org/whl/torch_stable.html
+        # pip install torch==0.4.1 -f https://download.pytorch.org/whl/torch_stable.html
+        pip install torch==1.0.1 -f https://download.pytorch.org/whl/torch_stable.html
 
+
+
+    - name: Install repo requirements
+      if: steps.cache-pipenv.outputs.cache-hit != 'true'
+      run: |
+           pip install -r requirements_wi.txt
+           pip install -r requirements_fake.txt
 
 
     - name: Install repo
-      if: steps.cache-pipenv.outputs.cache-hit != 'true'
-      run: pip install -e .  -r requirements_wi.txt
+      run: pip install -e .  -r requirements_wi.txt  --no-deps
 
 
+    - name: Repo Check
+      run: python -c "import mlmodels,os ; print(mlmodels); print(os)"
 
 
 

@@ -64,7 +64,6 @@ def import_data_fromfile(**kw):
 
 
 
-
 def import_data_dask(**kw):
   extension = kw['path'].split(".")[-1]
 
@@ -78,3 +77,59 @@ def import_data_dask(**kw):
        df = dd.read_pickle(m["data_path"])
     else: raise Exception(f"Not support extension {extension}")
   return df
+
+
+
+
+
+
+
+
+
+def os_package_root_path(filepath, sublevel=0, path_add=""):
+    """
+       get the module package root folder
+    """
+    from pathlib import Path
+    path = Path(os.path.realpath(filepath)).parent
+    for i in range(1, sublevel + 1):
+        path = path.parent
+
+    path = os.path.join(path.absolute(), path_add)
+    return path
+
+
+
+
+
+def get_dataset(data_pars) : 
+  """
+    path:
+    is_local  : Local to the repo 
+    data_type:
+    train : 1/0
+    data_source :  ams
+  """
+  dd = data_pars
+
+  if not d.get('is_local') is None :
+      dd['path'] = os_package_root_path(__file__, sublevel=0, dd['path'] )
+
+
+  if dd['train'] :
+     df = pd.read_csv(path) 
+
+
+
+     ### Donwload from external
+
+
+     ## Get from csv, local 
+
+
+     ## Get from csv, external
+
+
+     ### Get from external tool
+
+

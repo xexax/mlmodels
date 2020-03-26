@@ -23,7 +23,9 @@ from mlmodels.model_tch.raw.pplm.run_pplm_discrim_train import train_discriminat
 VERBOSE = False
 
 ####################################################################################################
-from mlmodels.util import os_package_root_path, log
+from mlmodels.util import os_package_root_path, logg, norm_path
+
+
 
 def path_setup(out_folder="", sublevel=1, data_path="dataset/"):
     data_path = os_package_root_path(__file__, sublevel=sublevel, path_add=data_path)
@@ -144,28 +146,38 @@ def get_dataset(data_pars=None, **kw):
 
 
 
-def get_params(choice="", data_path="dataset/", config_mode="test", **kw):
+def get_params(param_pars=None, **kw):
     import json
-    if choice == "json":
-        with open(data_path, encoding='utf-8') as config_f:
-            config = json.load(config_f)
-            c      = config[config_mode]
+    choice      = param_pars['choice']
+    config_mode = param_pars['config_mode']
+    data_path   = param_pars['data_path']
 
-        model_pars, data_pars  = c[ "model_pars" ], c[ "data_pars" ]
-        compute_pars, out_pars = c[ "compute_pars" ], c[ "out_pars" ]
-        return model_pars, data_pars, compute_pars, out_pars
+    if choice == "json":
+       data_path = path_normalize(data_path)
+       cf = json.load(open(data_path, mode='r'))
+       cf = cf[config_mode]
+       return cf['model_pars'], cf['data_pars'], cf['compute_pars'], cf['out_pars']
 
 
     if choice == "test01":
         log("#### Path params   ##########################################")
-        data_path, out_path, model_path = path_setup(out_folder="", sublevel=1,
-                                                     data_path="dataset/")
-        data_pars    = {}
-        model_pars   = {}
-        compute_pars = {}
-        out_pars     = {}
+        data_path  = path_norm( "dataset/text/imdb.csv"  )   
+        out_path   = path_norm( "/ztest/model_tch/pplm/" )   
+        model_path = os.path.join(out_path , "model")
 
-    return model_pars, data_pars, compute_pars, out_pars
+
+        data_pars = {"path": data_path, "train": 1, "maxlen": 400, "max_features": 10, }
+
+        model_pars = {"maxlen": 400, "max_features": 10, "embedding_dims": 50,
+                      }
+        compute_pars = {"engine": "adam", "loss": "binary_crossentropy", "metrics": ["accuracy"],
+                        "batch_size": 32, "epochs": 1
+                        }
+
+        out_pars = {"path": out_path, "model_path": model_path}
+
+        return model_pars, data_pars, compute_pars, out_pars
+
 
 
 
