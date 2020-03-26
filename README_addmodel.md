@@ -4,10 +4,10 @@
 
 ```
 
-0) Read the readme.md
+0) Read the readme.md and Install mlmodels on Linux
 
 
-0) Look at examplea :
+0) Look at examples :
 https://github.com/arita37/mlmodels/blob/dev/mlmodels/model_keras/textcnn.py
 https://github.com/arita37/mlmodels/blob/dev/mlmodels/model_tch/transformer_sentence.py
 https://github.com/arita37/mlmodels/blob/dev/README_index_doc.txt
@@ -18,34 +18,38 @@ https://github.com/arita37/mlmodels/blob/dev/README_index_doc.txt
    https://github.com/Kunena/Kunena-Forum/wiki/Create-a-new-branch-with-git-and-manage-branches
 
 
-2) Copy paste the original repo model into :
-   /model_XXXX/raw/repo_original_copy/
-
-
 3) Create  model_XXXX/yyyyy.py   
-https://github.com/arita37/mlmodels/blob/dev/mlmodels/model_keras/textcnn.py
-https://github.com/arita37/mlmodels/blob/dev/mlmodels/model_tch/transformer_sentence.py
-https://github.com/arita37/mlmodels/blob/dev/README_index_doc.txt
+     https://github.com/arita37/mlmodels/blob/dev/mlmodels/model_keras/textcnn.py
+     https://github.com/arita37/mlmodels/blob/dev/mlmodels/model_tch/transformer_sentence.py
+     https://github.com/arita37/mlmodels/blob/dev/README_index_doc.txt
 
-  Template
-     https://github.com/arita37/mlmodels/blob/dev/mlmodels/template/model_xxx.py
+     Template
+        https://github.com/arita37/mlmodels/blob/dev/mlmodels/template/model_xxx.py
+
+     Please re-use existing code.
 
 
 5) Create   yyyy.json , following this template :
    https://github.com/arita37/mlmodels/blob/dev/mlmodels/template/models_config.json
 
 
-6) Run :
+6) Run on your local machie
     python model_XXXX/yyyy.py  
 
 
 7) Change this file with your model name AND Branch name:
     https://github.com/arita37/mlmodels/blob/dev/.github/workflows/test_specific_model.yml
-    Test will run on server for your model...
 
-
-8) Commit and check Github Actions :
+     Test will run on server for your model...
      https://github.com/arita37/mlmodels/actions
+
+
+8)  Change this one to your model name
+    https://github.com/arita37/mlmodels/blob/f8b58f527e50bdb43e0bfe39e0e6afd3abf8a9e5/.github/workflows/test_pullrequest.yml#L61
+
+
+9)  Do Pull Request to dev Branch !
+
 
 
 
