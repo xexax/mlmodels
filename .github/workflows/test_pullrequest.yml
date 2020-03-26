@@ -32,7 +32,7 @@ jobs:
 
     - name: Install numpy
       if: steps.cache-pipenv.outputs.cache-hit != 'true'
-      run: pip install numpy
+      run: pip install numpy, black
       
     - name: Install repo requirements
       if: steps.cache-pipenv.outputs.cache-hit != 'true'
@@ -51,6 +51,9 @@ jobs:
 
     ########  Test running 
     ##### Please change BELOW to your model name  
+    - name: black
+      run: black -l 120  --py36 --check --fast  .
+
     - name: ml_optim
       run: ml_optim
 
