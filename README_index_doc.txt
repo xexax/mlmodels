@@ -2,6 +2,7 @@ mlmodels\data.py
 ----------------methods----------------
 
 ---------------functions---------------
+download_data(data_pars,   )
 get_dataset(data_pars,   )
 import_data(  )
 import_data_dask(  **kw)
@@ -96,21 +97,23 @@ to_namespace.__init__(self, adict,   )
 to_namespace.get(self, key,   )
 
 ---------------functions---------------
+config_load_root(  )
+config_path_dataset(  )
+config_path_pretrained(  )
+config_set(ddict2,   )
 env_build(model_uri, env_pars,   )
 env_conda_build( env_pars=None,  )
 env_pip_check( env_pars=None,  )
 env_pip_requirement( env_pars=None,  )
 get_model_uri(file,   )
-get_pretrained_path(  )
 get_recursive_files(folderPath,  ext='/*model*/*.py',  )
 get_recursive_files2(folderPath, ext,   )
 get_recursive_files3(folderPath, ext,   )
 load(load_pars,   )
 load_config(args, config_file, config_mode,  verbose=0,  )
-load_gluon(load_pars,   )
+load_gluonts( load_pars=None,  )
 load_keras(load_pars,   )
 load_pkl(load_pars,   )
-load_root_config(  )
 load_tch(load_pars,   )
 load_tch_checkpoint(model, optimiser, load_pars,   )
 load_tf( load_pars="",  )
@@ -124,7 +127,7 @@ os_path_split(path,   )
 params_json_load(path,  config_mode="test",  )
 path_norm( path="",  )
 save( model=None, session=None, save_pars=None,  )
-save_gluon( model=None, session=None, save_pars=None,  )
+save_gluonts( model=None, session=None, save_pars=None,  )
 save_keras( model=None, session=None, save_pars=None,  )
 save_pkl( model=None, save_pars=None,  )
 save_tch( model=None, optimizer=None, save_pars=None,  )
@@ -842,8 +845,14 @@ Model_empty.__init__(self,  model_pars=None, compute_pars=None,  )
 
 ---------------functions---------------
 _config_process(data_path,  config_mode="test",  )
+fit(model,  sess=None, data_pars=None, model_pars=None, compute_pars=None, out_pars=None, session=None,  **kwargs)
+get_dataset(data_pars,   )
+load(path,   )
+metrics(ypred, data_pars,  compute_pars=None, out_pars=None,  **kwargs)
 plot_predict(item_metrics,  out_pars=None,  )
 plot_prob_forecasts(ypred,  out_pars=None,  )
+predict(model,  sess=None, data_pars=None, compute_pars=None, out_pars=None,  **kwargs)
+save(model, path,   )
 
 
 mlmodels\model_gluon\util_autogluon.py
@@ -2183,6 +2192,16 @@ mlmodels\model_tch\torchhub.py
 ----------------methods----------------
 
 ---------------functions---------------
+_get_device(  )
+_train(m, device, train_itr, criterion, optimizer, epoch, max_epoch,   )
+_valid(m, device, test_itr, criterion,   )
+fit(model,  compute_pars=None, out_pars=None,  **kwargs)
+get_cnn_model( model='resnet18', num_classes=1000, pretrained=False,  )
+get_config_file(  )
+load(path,   )
+predict(model,   )
+save(model, path,   )
+test(  )
 
 
 mlmodels\model_tch\transformer_classifier.py
