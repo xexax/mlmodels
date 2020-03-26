@@ -15,8 +15,8 @@ from gluonts.model.predictor import Predictor
 VERBOSE = False
 
 
-
 from mlmodels.util import os_package_root_path, log
+
 
 
 ####################################################################################################
@@ -33,7 +33,7 @@ def _config_process(data_path, config_mode="test"):
 
 
     # Model fit
-    def fit(model, sess=None, data_pars=None, model_pars=None, compute_pars=None, out_pars=None, session=None, **kwargs):
+def fit(model, sess=None, data_pars=None, model_pars=None, compute_pars=None, out_pars=None, session=None, **kwargs):
         ##loading dataset
         """
           Classe Model --> model,   model.model contains thte sub-model
@@ -46,7 +46,7 @@ def _config_process(data_path, config_mode="test"):
 
 
     # Model predict
-    def predict(model, sess=None, data_pars=None, compute_pars=None, out_pars=None, **kwargs):
+def predict(model, sess=None, data_pars=None, compute_pars=None, out_pars=None, **kwargs):
         ##  Model is class
         ## load test dataset
         data_pars['train'] = False
@@ -76,8 +76,7 @@ def _config_process(data_path, config_mode="test"):
         return dd
 
 
-
-    def metrics(ypred, data_pars, compute_pars=None, out_pars=None, **kwargs):
+def metrics(ypred, data_pars, compute_pars=None, out_pars=None, **kwargs):
         ## load test dataset
         data_pars['train'] = False
         test_ds = get_dataset(data_pars)
@@ -92,57 +91,57 @@ def _config_process(data_path, config_mode="test"):
         return metrics_dict, item_metrics
 
 
-        ###############################################################################################################
-        # save and load model helper function
-        class Model_empty(object):
-            def __init__(self, model_pars=None, compute_pars=None):
-                ## Empty model for Seaialization
-                self.model = None
 
-
-        def save(model, path):
-            if os.path.exists(path):
-                model.model.serialize(Path(path))
-
-
-        def load(path):
-            if os.path.exists(path):
-                predictor_deserialized = Predictor.deserialize(Path(path))
-
-            model = Model_empty()
-            model.model = predictor_deserialized
-            #### Add back the model parameters...
-
-            return model
+###############################################################################################################
+# save and load model helper function
+class Model_empty(object):
+    def __init__(self, model_pars=None, compute_pars=None):
+        ## Empty model for Seaialization
+        self.model = None
 
 
 
+def save(model, path):
+    if os.path.exists(path):
+        model.model.serialize(Path(path))
 
 
 
-        # Dataaset
-        def get_dataset(data_pars):
-            ##check whether dataset is of kind train or test
-            data_path = data_pars['train_data_path'] if data_pars['train'] else data_pars['test_data_path']
+def load(path):
+    if os.path.exists(path):
+        predictor_deserialized = Predictor.deserialize(Path(path))
 
-            #### read from csv file
-            if data_pars.get("uri_type") == "pickle":
-                data_set = pd.read_pickle(data_path)
-            else:
-                data_set = pd.read_csv(data_path)
+    model = Model_empty()
+    model.model = predictor_deserialized
+    #### Add back the model parameters...
 
-            ### convert to gluont format
-            gluonts_ds = ListDataset([{FieldName.TARGET: data_set.iloc[i].values, FieldName.START: data_pars['start']}
-                                      for i in range(data_pars['num_series'])], freq=data_pars['freq'])
+    return model
 
-            if VERBOSE:
-                entry = next(iter(gluonts_ds))
-                train_series = to_pandas(entry)
-                train_series.plot()
-                save_fig = data_pars['save_fig']
-                # plt.savefig(save_fig)
 
-            return gluonts_ds
+# Dataaset
+def get_dataset(data_pars):
+    ##check whether dataset is of kind train or test
+    data_path = data_pars['train_data_path'] if data_pars['train'] else data_pars['test_data_path']
+
+    #### read from csv file
+    if data_pars.get("uri_type") == "pickle":
+        data_set = pd.read_pickle(data_path)
+    else:
+        data_set = pd.read_csv(data_path)
+
+    ### convert to gluont format
+    gluonts_ds = ListDataset([{FieldName.TARGET: data_set.iloc[i].values, FieldName.START: data_pars['start']}
+                              for i in range(data_pars['num_series'])], freq=data_pars['freq'])
+
+    if VERBOSE:
+        entry = next(iter(gluonts_ds))
+        train_series = to_pandas(entry)
+        train_series.plot()
+        save_fig = data_pars['save_fig']
+        # plt.savefig(save_fig)
+
+    return gluonts_ds
+
 
 
 
