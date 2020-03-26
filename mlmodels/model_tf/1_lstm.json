@@ -4,11 +4,12 @@
 		"model_pars": {
 			"learning_rate": 0.001,
 			"num_layers": 1,
-			"size": 6,
 			"size_layer": 128,
-			"output_size": 6,
 			"timestep": 4,
-			"epoch": 2
+			"epoch": 2,
+
+			"size": 6,
+			"output_size": 6
 		},
 
 		"data_pars": {
