@@ -1,6 +1,5 @@
 name:  test_pullrequest
 
-
 on:
   pull_request:
     branches:
@@ -13,14 +12,11 @@ jobs:
 
     steps:
     - uses: actions/checkout@v1
-
-
    
     - name: Set up Python 3.6.*
       uses: actions/setup-python@v1
       with:
         python-version: 3.6.*
-
       
     - name: Install pipenv
       uses: dschep/install-pipenv-action@v1
@@ -32,7 +28,6 @@ jobs:
       with:
         path: /opt/hostedtoolcache/Python/
         key: ${{ runner.os }}-venv-mlmodels-${{ hashFiles('**/requirements.txt') }}
-
 
 
     - name: Install numpy
@@ -56,6 +51,12 @@ jobs:
 
     ########  Test running 
     ##### Please change BELOW to your model name  
+    - name: ml_optim
+      run: ml_optim
+
+    - name: ml_models
+      run: ml_models
+
     - name: ml_test
       run: ml_test  --do model_tf/1_lstm.py
       
