@@ -30,15 +30,6 @@ def log(*s, n=0, m=1):
 
 
 ####################################################################################################
-"""
-def os_package_root_path(add_path="",n=0):
-  from pathlib import Path
-  add_path = os.path.join(Path(__file__).parent.absolute(), add_path)
-  # print("os_package_root_path,check", add_path)
-  return add_path
-"""
-
-
 def os_folder_copy(src, dst):
     """Copy a directory structure overwriting existing files"""
     import shutil
@@ -378,7 +369,6 @@ def tf_deprecation():
 
 ####################################################################################################
 ###########  Utils #################################################################################
-
 class Model_empty(object):
     def __init__(self, model_pars=None, data_pars=None, compute_pars=None
                  ):
