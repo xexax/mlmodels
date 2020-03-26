@@ -62,7 +62,7 @@ class Model:
                                                    finetuning_task=model_pars['task_name'])
         self.tokenizer = tokenizer_class.from_pretrained(model_pars['model_name'])
 
-        self.model = model_class.from_pretrained(model_pars['model_name'])
+        self.model = model_class.from_pretrained(model_pars['model_name'],cache_dir=model_pars.cache_dir )
         self.model.to(device)
  
 

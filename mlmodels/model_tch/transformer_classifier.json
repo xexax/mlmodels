@@ -20,7 +20,8 @@
              "fp16": false, 
              "fp16_opt_level": "O1",
             "max_seq_length": 128, 
-            "output_mode": "classification"
+			"output_mode": "classification",
+			"cache_dir": "./models/"
 
 		},
 
