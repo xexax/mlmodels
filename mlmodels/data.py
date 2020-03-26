@@ -28,7 +28,6 @@ def download_data(data_pars):
      ,"tabular" : "https://www.dropbox.com/sh/d2n3hgsq2ycpmjf/AAAxZkJTGSumLADzj3B5wbA0a/dataset/tabular?dl=1&subfolder_nav_tracking=1"
      ,"pretrained" : "https://www.dropbox.com/sh/d2n3hgsq2ycpmjf/AACL3LHW1USWrvsV5hipw27ia/model_pretrained?dl=1&subfolder_nav_tracking=1"
 
-
   }
 
   url = urlmap[folder]
@@ -107,8 +106,6 @@ def import_data_fromfile(**kw):
    if ".pkl" in m['data_path']   :
        df = pd.read_pickle(m["data_path"], **kw)
        return df
-
-
 
 
 
