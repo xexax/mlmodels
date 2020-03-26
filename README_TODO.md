@@ -5,7 +5,10 @@ TODO
 ```
 
 
+Moved here
 
+
+https://github.com/arita37/mlmodels/issues
 
 
 
@@ -19,17 +22,6 @@ model_artifact : pre-trained model
 model_code : model code 
 log_path : path of the logs 
 working_path : path where logs, ... stored.
-
-
-ml_models --do setup --json_file myconfig.json
-
-Create dataset readme.md timseries text tabular recommender
-
-get_dataset(data_uri="", data_type= "pandas" )
-
-
-
-
 
 
 List of potential models
@@ -51,6 +43,8 @@ http://nlp_architect.nervanasys.com/absa_solution.html
 
 https://github.com/golsun/SpaceFusion
 
+
+
 ```
 
 ### Renormalize signature
@@ -59,15 +53,6 @@ https://github.com/golsun/SpaceFusion
     
      get_dataset(data_pars:str)  : 
     
-
-    
-     save(model, path:str)    : save the model
-     load(path:str)           : load the trained model
-
-
-
-
-
 
 ###  data pre-process and data visualization utils such as 
     https://course.fast.ai/datasets
