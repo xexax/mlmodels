@@ -15,6 +15,7 @@ https://github.com/arita37/mlmodels/blob/dev/README_index_doc.txt
 
 
 1) Create a branch from DEV branch called : feat_XXXXX
+   https://github.com/Kunena/Kunena-Forum/wiki/Create-a-new-branch-with-git-and-manage-branches
 
 
 2) Copy paste the original repo model into :
@@ -22,9 +23,11 @@ https://github.com/arita37/mlmodels/blob/dev/README_index_doc.txt
 
 
 3) Create  model_XXXX/yyyyy.py   
+https://github.com/arita37/mlmodels/blob/dev/mlmodels/model_keras/textcnn.py
+https://github.com/arita37/mlmodels/blob/dev/mlmodels/model_tch/transformer_sentence.py
+https://github.com/arita37/mlmodels/blob/dev/README_index_doc.txt
 
-
-4) Update  yyyyyy.py to match 
+  Template
      https://github.com/arita37/mlmodels/blob/dev/mlmodels/template/model_xxx.py
 
 
