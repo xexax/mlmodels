@@ -198,7 +198,7 @@ def fit(model, data_pars=None, compute_pars=None, out_pars=None, **kwargs):
     epochs        = compute_pars["epochs"]
     criterion     = nn.CrossEntropyLoss()
     device        = _get_device()
-    model.to(device)
+    model0.to(device)
     train_loss    = []
     train_acc     = []
     test_loss     = []
