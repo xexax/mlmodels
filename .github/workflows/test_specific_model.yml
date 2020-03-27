@@ -5,7 +5,7 @@ on:
   push:
     branches: 
       ##### Please change BELOW to your branch name
-      - feat_XXX
+      - torchhub
  
 jobs:
   build:
