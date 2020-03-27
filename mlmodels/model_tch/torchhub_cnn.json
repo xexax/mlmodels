@@ -6,7 +6,6 @@
              },
 
             "model_pars": {
-                "repo_uri" : "pytorch/vision",
                 "model": "resnet18",
                 "num_classes": 1000,
                 "pretrained": 0,  "_comment": "0: False, 1: True",
@@ -20,7 +19,7 @@
 
             "data_pars" :{
                 "dataset": "MNIST",
-                "data_path": "dataset/vision/",
+                "data_path": "../data",
                 "train_batch_size": 4,
                 "test_batch_size": 1
             },
@@ -28,13 +27,12 @@
 
             "compute_pars": {
                 "distributed": "mpi",
-                "epochs": 1,
-                "learning_rate": 0.001,
-
-                "max_batch_sample" : 1
+                "epochs": 10,
+                "learning_rate": 0.001
             },
             "out_pars": {
-                "checkpointdir": "ztest/model_tch/torchhub_resnet18/checkpoints/"
+                "checkpointdir": "checkpoints",
+                "save_model_path": "saved_model"
             }
         },
     
