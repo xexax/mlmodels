@@ -15,7 +15,7 @@
 
 
 *  Colab demo :
-  https://colab.research.google.com/drive/1PFSRN5JpiOTt7W3YV8BsT4PG8mCOofo1
+https://colab.research.google.com/drive/1sYbrXNZh9nTeizS-AuCA8RSu94B_B-RF
 
 
 ## Model List :
@@ -105,8 +105,7 @@ Install as editable package (ONLY dev branch), in Linux
 
 
     ### Check this Colab for install :
-    https://colab.research.google.com/drive/1PFSRN5JpiOTt7W3YV8BsT4PG8mCOofo1
-
+https://colab.research.google.com/drive/1sYbrXNZh9nTeizS-AuCA8RSu94B_B-RF
 
     ##### Initialize
     Will copy template, dataset, example to your folder
