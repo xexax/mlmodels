@@ -20,7 +20,7 @@
 
 ## Model List :
 
-Time Series:
+### Time Series:
 Nbeats: 2019, Time Series NNetwork,  https://arxiv.org/abs/1905.10437
 
 Amazon Deep AR: 2019, Time Series NNetwork,  https://arxiv.org/abs/1905.10437
@@ -33,7 +33,8 @@ LSTM prediction
 
 
 
-NLP :
+### NLP :
+
 Sentence Transformers :  2019, Embedding of full sentences using BERT,  https://arxiv.org/pdf/1908.10084.pdf
 
 Transformers Classifier : Using Transformer for Text Classification, https://arxiv.org/abs/1905.05583
@@ -45,14 +46,14 @@ TextCNN Keras : 2016, Text CNN Classifier, https://arxiv.org/abs/1801.06287
 charCNN Keras : Text Character Classifier,
 
 
-TABULAR :
+### TABULAR :
 AutoML Gluon  :  2020, AutoML in Gluon, MxNet using LightGBM, CatBoost
 
-All sklearn models :
+All sklearn models, LighGBM
 
 
 
-VISION :
+###VISION :
 Torch Vision Models (pre-trained) :  
         alexnet, densenet121, densenet169, densenet201,
         densenet161, inception_v3, resnet18, resnet34, resnet50, resnet101, resnet152,
