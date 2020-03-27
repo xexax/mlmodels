@@ -90,15 +90,27 @@ def get_config_file():
         'config', 'model_tch', 'Imagecnn.json')
 
 
+def get_dataset_mnist_torch(data_pars):
+    train_loader = torch.utils.data.DataLoader( datasets.MNIST(data_pars['data_path'], train=True, download=True,
+                    transform=transforms.Compose([
+                        transforms.Grayscale(num_output_channels=3),
+                        transforms.ToTensor(),
+                        transforms.Normalize((0.1307,), (0.3081,))
+                    ])),
+        batch_size=data_pars['train_batch_size'], shuffle=True)
+
+    valid_loader = torch.utils.data.DataLoader( datasets.MNIST(data_pars['data_path'], train=False,
+                    transform=transforms.Compose([
+                        transforms.Grayscale(num_output_channels=3),
+                        transforms.ToTensor(),
+                        transforms.Normalize((0.1307,), (0.3081,))
+                    ])),
+        batch_size=data_pars['test_batch_size'], shuffle=True)
+    return train_loader, valid_loader  
+
 
 ###########################################################################################################
 ###########################################################################################################
-
- 
-#############
-# functions #
-#############
-
 class Model:
     def __init__(self, model_pars=None, data_pars=None, compute_pars=None, out_pars=None):
         ### Model Structure        ################################
@@ -161,27 +173,16 @@ def get_params(param_pars=None, **kw):
         raise Exception(f"Not support choice {choice} yet")
 
 
-def get_dataset(data_pars=None, **kw):
+
+
+
+def get_dataset(=None, **kw):
     data_path        = data_pars['data_path']
     train_batch_size = data_pars['train_batch_size']
     test_batch_size  = data_pars['test_batch_size']
 
     if data_pars['dataset'] == 'MNIST':
-        train_loader = torch.utils.data.DataLoader( datasets.MNIST(data_pars['data_path'], train=True, download=True,
-                        transform=transforms.Compose([
-                            transforms.Grayscale(num_output_channels=3),
-                            transforms.ToTensor(),
-                            transforms.Normalize((0.1307,), (0.3081,))
-                        ])),
-            batch_size=data_pars['train_batch_size'], shuffle=True)
-
-        valid_loader = torch.utils.data.DataLoader( datasets.MNIST(data_pars['data_path'], train=False,
-                        transform=transforms.Compose([
-                            transforms.Grayscale(num_output_channels=3),
-                            transforms.ToTensor(),
-                            transforms.Normalize((0.1307,), (0.3081,))
-                        ])),
-            batch_size=data_pars['test_batch_size'], shuffle=True)
+        train_loader, valid_loader  = get_dataset_mnist_torch(data_pars)
         return train_loader, valid_loader  
 
     else:
@@ -216,7 +217,7 @@ def fit(model, data_pars=None, compute_pars=None, out_pars=None, **kwargs):
         if ts_acc > best_test_acc:
             best_test_acc = ts_acc
             #save paras(snapshot)
-            print("model saves at {}% accuracy".format(best_test_acc))
+            print( f"model saves at {best_test_acc} accuracy")
 
             os.makedirs(out_pars["checkpointdir"], exist_ok=True)
             torch.save(model.state_dict(),
@@ -257,7 +258,7 @@ def test(data_path="dataset/", pars_choice="json", config_mode="test"):
     log("#### Loading params   ##############################################")
     param_pars = {"choice":pars_choice,  "data_path":data_path,  "config_mode": config_mode}
     model_pars, data_pars, compute_pars, out_pars = get_params(param_pars)
-
+    log(  data_pars, out_pars )
 
     log("#### Loading dataset   #############################################")
     xtuple = get_dataset(data_pars)
