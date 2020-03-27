@@ -193,7 +193,7 @@ def get_dataset(data_pars=None, **kw):
 
 
 def fit(model, data_pars=None, compute_pars=None, out_pars=None, **kwargs):
-    model         = model.model
+    model0        = model.model
     lr            = compute_pars['learning_rate']
     epochs        = compute_pars["epochs"]
     criterion     = nn.CrossEntropyLoss()
@@ -205,35 +205,35 @@ def fit(model, data_pars=None, compute_pars=None, out_pars=None, **kwargs):
     test_acc      = []
     best_test_acc = -1
 
-    optimizer     = optim.Adam(model.parameters(), lr=lr)
+    optimizer     = optim.Adam(model0.parameters(), lr=lr)
     train_iter, valid_iter = get_dataset(data_pars)
 
     imax_train = compute_pars.get('max_batch_sample', len(train_iter) )
     imax_valid = compute_pars.get('max_batch_sample', len(valid_iter) )
 
+    os.makedirs(out_pars["checkpointdir"], exist_ok=True)
+    
     for epoch in range(1, epochs + 1):
         #train loss
-
-        tr_loss, tr_acc = _train(model, device, train_iter, criterion, optimizer, epoch, epochs, imax=imax_train)
+        tr_loss, tr_acc = _train(model0, device, train_iter, criterion, optimizer, epoch, epochs, imax=imax_train)
         print( f'Train Epoch: {epoch} \t Loss: {tr_loss} \t Accuracy: {tr_acc}')
 
 
-        ts_loss, ts_acc = _valid(model, device, valid_iter, criterion, imax=imax_valid)
+        ts_loss, ts_acc = _valid(model0, device, valid_iter, criterion, imax=imax_valid)
         print( f'Train Epoch: {epoch} \t Loss: {ts_loss} \t Accuracy: {ts_acc}')
 
         if ts_acc > best_test_acc:
             best_test_acc = ts_acc
             #save paras(snapshot)
             print( f"model saves at {best_test_acc} accuracy")
-
-            os.makedirs(out_pars["checkpointdir"], exist_ok=True)
-            torch.save(model.state_dict(),
-                       os.path.join(out_pars["checkpointdir"],  "best_accuracy"))
+            torch.save(model0.state_dict(), os.path.join(out_pars["checkpointdir"],  "best_accuracy"))
 
         train_loss.append(tr_loss)
         train_acc.append(tr_acc)
         test_loss.append(ts_loss)
         test_acc.append(ts_acc)
+
+    model.model = model0
     return model, None
 
 
