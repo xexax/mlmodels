@@ -7,14 +7,15 @@ image: kavis131995/gitpod_mlmodels
 ports:
 - port: 8080
   onOpen: open-preview
+  
 tasks:
 - init: >
     #pyenv install 3.6.10  &&
     #pyenv local 3.6.10   &&  
     #python3 -m pip install numpy==1.17.5 &&
     #python3 -m pip install -r requirements.txt &&
-    #conda activate py36 && python3 -m pip install -r requirements_fake.txt &&
-    #conda activate py36 && python3 -m pip install -e . 
+    #conda activate py36 && pip install -r requirements_fake.txt &&
+    #conda activate py36 && pip install -e . -r requirements.txt
 
   command: >
     python -c "import mlmodels; print(mlmodels)"
