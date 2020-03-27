@@ -1,6 +1,49 @@
 
-## Steps to follow
 
+
+
+
+
+## Steps to follow to add a new Colab notebook /Jupyter notbbok :
+
+```
+
+0) Read the readme.md and Install mlmodels on Linux
+    https://github.com/arita37/mlmodels/blob/dev/README_usage.md
+
+
+0) Look at examples :
+    https://github.com/arita37/mlmodels/tree/dev/mlmodels/example
+
+
+
+1) Create a branch from DEV branch called : feat_XXXXX
+   https://github.com/Kunena/Kunena-Forum/wiki/Create-a-new-branch-with-git-and-manage-branches
+
+
+
+2) Create your Jupyter Notebook.           
+            
+
+3) Create  mymodel.json here mlmodels/example/
+
+
+
+4) Run on your local machine
+ 
+
+
+9)  Do Pull Request to dev Branch !
+
+
+
+
+```
+
+
+
+
+## Steps to follow to add a new model :
 
 ```
 
@@ -31,8 +74,6 @@ https://github.com/arita37/mlmodels/blob/dev/README_index_doc.txt
             from mlmodels.util import    ...
             
             
-
-
 5) Create   yyyy.json , following this template :
    https://github.com/arita37/mlmodels/blob/dev/mlmodels/template/models_config.json
 

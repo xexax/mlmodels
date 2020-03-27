@@ -149,6 +149,12 @@ def path_norm(path=""):
     return path
 
 
+def path_norm_dict(ddict):
+    for k,v in ddict.items():
+        if "path" in k :
+            ddict[k] = path_norm(v)
+    return ddict
+
 
 """
 def os_module_path():

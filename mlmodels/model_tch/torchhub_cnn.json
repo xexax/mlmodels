@@ -1,48 +1,42 @@
 {
-	"test": {
+        "test": {
 
-		"model_pars": {
-            "dim_channel": 100,
-            "kernel_height": [3,4,5],
-            "dropout_rate": 0.5,
-            "num_class": 2
-		},
+              "hypermodel_pars":   {
+              "learning_rate": {"type": "log_uniform", "init": 0.01,  "range" : [0.001, 0.1] }
+             },
 
-		"data_pars": {
-			"data_path": "dataset/IMDB_sample.txt",
-            "split_if_exists": true,
-			"frac": 0.7,
-            "lang": "en",
-            "pretrained_emb": "glove.6B.300d",
-            "batch_size": 64,
-            "val_batch_size": 64
-		},
+            "model_pars": {
+                "model": "resnet18",
+                "num_classes": 1000,
+                "pretrained": 0,  "_comment": "0: False, 1: True",
+                "num_layers": 1,
+                "size": 6,
+                "size_layer": 128,
+                "output_size": 6,
+                "timestep": 4,
+                "epoch": 2
+            },
 
-        "compute_pars": {
-            "learning_rate": 0.001,
-            "epochs": 2,
-            "checkpointdir": "/tmp",
-            "train_batch_size": 4,
-            "test_batch_size": 1
+            "data_pars" :{
+                "dataset": "MNIST",
+                "data_path": "dataset/vision/",
+                "train_batch_size": 4,
+                "test_batch_size": 1
+            },
+
+
+            "compute_pars": {
+                "distributed": "mpi",
+                "epochs": 10,
+                "learning_rate": 0.001
+            },
+            "out_pars": {
+                "checkpointdir": "ztest/model_tch/torchhub_resnet18/checkpoints/"
+            }
         },
-
-        "out_pars": {
-            "train_path": "/tmp/IMDB_train.csv",
-            "valid_path": "/tmp/IMDB_valid.csv",
-            "checkpointdir": "/tmp"
+    
+        "prod": {
+            "model_pars": {},
+            "data_pars": {}
         }
-	},
-
-
-	"prod": {
-
-		"model_pars": {},
-
-		"data_pars": {}
-
-
-	}
-
-
-
-}
+    }
