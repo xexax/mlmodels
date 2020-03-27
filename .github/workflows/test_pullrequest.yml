@@ -50,6 +50,7 @@ jobs:
 
 
     ########  Test running 
+    ##### Please change BELOW to your model name  
     #- name: black
     #  run: black -l 120  --py36 --check --fast  .
 
