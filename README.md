@@ -15,25 +15,56 @@
 
 
 *  Colab demo :
-  https://colab.research.google.com/drive/1PFSRN5JpiOTt7W3YV8BsT4PG8mCOofo1
+https://colab.research.google.com/drive/1sYbrXNZh9nTeizS-AuCA8RSu94B_B-RF
 
 
 ## Model List :
 
+### Time Series:
 Nbeats: 2019, Time Series NNetwork,  https://arxiv.org/abs/1905.10437
 
 Amazon Deep AR: 2019, Time Series NNetwork,  https://arxiv.org/abs/1905.10437
 
+Facebook Prophet 2017, Time Series prediction,
+
+ARMDN Advanced Time series Prediction :  2019, Associative and Recurrent Mixture Density Networks for time series.
+
+LSTM prediction 
+
+
+
+### NLP :
 
 Sentence Transformers :  2019, Embedding of full sentences using BERT,  https://arxiv.org/pdf/1908.10084.pdf
 
 Transformers Classifier : Using Transformer for Text Classification, https://arxiv.org/abs/1905.05583
 
-TextCNN : 2016, Text CNN Classifier, https://arxiv.org/abs/1801.06287
+TextCNN Pytorch : 2016, Text CNN Classifier, https://arxiv.org/abs/1801.06287
 
-AutoML Gluon  :  2020, AutoML in Gluon, MxNet
+TextCNN Keras : 2016, Text CNN Classifier, https://arxiv.org/abs/1801.06287
 
-A lot more :
+charCNN Keras : Text Character Classifier,
+
+
+### TABULAR :
+AutoML Gluon  :  2020, AutoML in Gluon, MxNet using LightGBM, CatBoost
+
+All sklearn models, LighGBM
+
+
+
+### VISION :
+  Vision Models (pre-trained) :  
+        alexnet, densenet121, densenet169, densenet201,
+        densenet161, inception_v3, resnet18, resnet34, resnet50, resnet101, resnet152,
+        resnext50_32x4d, resnext101_32x8d, wide_resnet50_2, wide_resnet101_2, squeezenet1_0,
+        squeezenet1_1, vgg11, vgg13, vgg16, vgg19, vgg11_bn, vgg13_bn, vgg16_bn, vgg19_bn,
+        googlenet, shufflenet_v2_x0_5, shufflenet_v2_x1_0, mobilenet_v2"
+
+
+A lot more...
+
+
 ......
 
 
@@ -74,8 +105,7 @@ Install as editable package (ONLY dev branch), in Linux
 
 
     ### Check this Colab for install :
-    https://colab.research.google.com/drive/1PFSRN5JpiOTt7W3YV8BsT4PG8mCOofo1
-
+https://colab.research.google.com/drive/1sYbrXNZh9nTeizS-AuCA8RSu94B_B-RF
 
     ##### Initialize
     Will copy template, dataset, example to your folder
@@ -527,66 +557,7 @@ roc_auc_score(y, ypred)
 ---
 ---
 
-### Using hyper-params (optuna) for Titanic Problem from json file ([Example notebook](example/sklearn_titanic_randomForest_example2.ipynb), [JSON file](mlmodels/dataset/json/hyper_titanic_randomForest.json))
 
-#### Import library and functions
-```python
-# import library
-import mlmodels
-```
-
-#### Load model and data definitions from json
-```python
-from mlmodels.models import module_load
-from mlmodels.optim import optim
-import json
-
-###  hypermodel_pars, model_pars, ....
-data_path = '../mlmodels/dataset/json/hyper_titanic_randomForest.json'  
-pars = json.load(open( data_path , mode='r'))
-for key, pdict in  pars.items() :
-  print(key)
-  globals()[key] = pdict   
-
-
-model_uri    = "model_sklearn.sklearn.py"
-module       =  module_load( model_uri= model_uri )                      
-
-model_pars_update = optim(
-    model_uri       = model_uri,
-    hypermodel_pars = hypermodel_pars,
-    model_pars      = model_pars,
-    data_pars       = data_pars,
-    compute_pars    = compute_pars,
-    out_pars        = out_pars
-)
-
-```
-
-
-#### Load Parameters and Train
-```python
-model         =  module.Model(model_pars=model_pars_update, data_pars=data_pars, compute_pars=compute_pars)             # Create Model instance
-model, sess   =  module.fit(model, data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)          # fit the model
-```
-
-
-#### Check inference
-```python
-ypred       = module.predict(model,  data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)     # predict pipeline
-ypred
-```
-
-#### Check metrics
-```python
-import pandas as pd
-from sklearn.metrics import roc_auc_score
-
-y = pd.read_csv('../mlmodels/dataset/tabular/titanic_train_preprocessed.csv')['Survived'].values
-roc_auc_score(y, ypred)
-```
-
----
 
 
 
