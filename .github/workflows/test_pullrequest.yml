@@ -34,10 +34,16 @@ jobs:
       if: steps.cache-pipenv.outputs.cache-hit != 'true'
       run: pip install numpy black
       
-    - name: Install repo requirements
+    - name: Install repo requirements 1
       if: steps.cache-pipenv.outputs.cache-hit != 'true'
       run:  |
         pip install -r requirements.txt
+
+
+
+    - name: Install repo requirements   2
+      if: steps.cache-pipenv.outputs.cache-hit != 'true'
+      run:  |
         pip install -r requirements_fake.txt
 
 
