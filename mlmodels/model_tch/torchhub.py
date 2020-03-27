@@ -250,8 +250,10 @@ def fit_metrics(model, data_pars=None, compute_pars=None, out_pars=None):
     pass
 
 
-def save(model, path):
-    return torch.save(model, path)
+def save(model, session, out_pars):
+    model0 = model.model
+    path   = out_pars["checkpointdir"] + out_pars["save_model_path"]
+    return torch.save(model0, path)
 
 
 def load(path):

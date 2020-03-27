@@ -31,7 +31,8 @@
                 "learning_rate": 0.001
             },
             "out_pars": {
-                "checkpointdir": "checkpoints"
+                "checkpointdir": "checkpoints",
+                "save_model_path": "saved_model"
             }
         },
     
