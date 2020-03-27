@@ -425,6 +425,8 @@ def load_tf(load_pars=""):
 def save_tf(model=None, sess=None, save_pars= None):
   import tensorflow as tf
   saver = tf.compat.v1.train.Saver()
+  if not os.path.exists(save_pars['path']):
+      os.makedirs(save_pars['path'], exist_ok=True)
   return saver.save(sess, os.path.join(save_pars['path'], "model"))
 
 
