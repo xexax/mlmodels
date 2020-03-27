@@ -5,7 +5,7 @@ on:
   push:
     branches: 
       ##### Please change BELOW to your branch name
-      - feat_XXX
+      - keras_armdn
  
 jobs:
   build:
@@ -58,6 +58,6 @@ jobs:
     ########  Test running 
     ##### Please change BELOW to your model name  
     - name: ml_test
-      run: ml_test  --do model_tf/1_lstm.py
+      run: ml_test  --do model_keras/armdn.py
       
          

@@ -60,6 +60,8 @@ jobs:
     - name: ml_models
       run: ml_models
 
+
+    ##### Please change BELOW to your model name  
     - name: ml_test
       run: ml_test  --do model_tf/1_lstm.py
       
