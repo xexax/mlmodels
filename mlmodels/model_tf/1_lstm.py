@@ -82,7 +82,7 @@ def fit(model, data_pars=None, compute_pars=None,  out_pars=None, **kwarg):
     nlog_freq = compute_pars.get("nlog_freq", 100)
 
     ######################################################################
-    sess = tf.compat.v1.InteractiveSession()
+    sess = tf.compat.v1.Session()
     sess.run(tf.compat.v1.global_variables_initializer())
     for i in range(model.epoch):
         total_loss = 0.0
@@ -188,8 +188,7 @@ def save(model, session=None, save_pars=None):
 def load(load_pars=None):
     from mlmodels.util import load_tf
     print(load_pars)
-    input_tensors, output_tensors =  load_tf(load_pars)
-    return input_tensors, output_tensors
+    return load_tf(load_pars)
 
 
 
@@ -302,7 +301,7 @@ def test(data_path="dataset/", pars_choice="test01", config_mode="test"):
 
     log("#### Save/Load   ###################################################")
     save(model, session, out_pars)
-    # model2, session = load(out_pars)
+    session = load(out_pars)
     #     ypred = predict(model2, data_pars, compute_pars, out_pars)
     #     metrics_val = metrics(model2, ypred, data_pars, compute_pars, out_pars)
     # print(model2)

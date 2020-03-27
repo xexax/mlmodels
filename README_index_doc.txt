@@ -56,8 +56,7 @@ mlmodels\optim.py
 cli_load_arguments( config_file=None,  )
 main(  )
 optim( model_uri="model_tf.1_lstm.py", hypermodel_pars={}, model_pars={}, data_pars={}, compute_pars={}, out_pars={},  )
-optim_optuna( model_uri="model_tf.1_lstm.py", hypermodel_pars={}, model_pars={}, data_pars={}, compute_pars={"method" : "normal/prune", 'ntrials': 2, "metric_target": "loss" }, out_pars={},  )
-optim_skopt( model_uri="model_tf.1_lstm.py", hypermodel_pars={}, model_pars={}, data_pars={}, compute_pars={"method" : "normal/prune", 'ntrials': 2, "metric_target": "loss" }, out_pars={},  )
+optim_optuna( model_uri="model_tf.1_lstm.py", hypermodel_pars={"engine" :{},  )
 post_process_best(model, model_uri, model_pars_update, data_pars, compute_pars, out_pars,   )
 test_all(  )
 test_fast( ntrials=2,  )
@@ -126,6 +125,7 @@ os_package_root_path( filepath="", sublevel=0, path_add="",  )
 os_path_split(path,   )
 params_json_load(path,  config_mode="test",  )
 path_norm( path="",  )
+path_norm_dict(ddict,   )
 save( model=None, session=None, save_pars=None,  )
 save_gluonts( model=None, session=None, save_pars=None,  )
 save_keras( model=None, session=None, save_pars=None,  )
@@ -911,6 +911,23 @@ os_package_root_path(filepath,  sublevel=0, path_add="",  )
 predict(model, data_pars,  compute_pars=None, out_pars=None,  **kwargs)
 test( data_path="dataset/",  )
 test2( data_path="dataset/", out_path="keras/keras.png", reset=True,  )
+
+
+mlmodels\model_keras\armdn.py
+----------------methods----------------
+Model.__init__(self,  model_pars=None, data_pars=None, compute_pars=None,  )
+
+---------------functions---------------
+fit( model=None, data_pars={}, compute_pars={}, out_pars={},  **kw)
+get_dataset( data_pars=None,  **kw)
+get_dataset(data_params,   )
+get_params( choice=0, data_path="dataset/",  **kw)
+load( load_pars={},  )
+log( n=0, m=1,  *s)
+os_package_root_path(filepath,  sublevel=0, path_add="",  )
+predict( model=None, model_pars=None, data_pars=None,  **kwargs)
+save( model=None, session=None, save_pars={},  )
+test( data_path="dataset/",  )
 
 
 mlmodels\model_keras\charcnn.py
@@ -2190,18 +2207,21 @@ test(  )
 
 mlmodels\model_tch\torchhub.py
 ----------------methods----------------
+Model.__init__(self,  model_pars=None, data_pars=None, compute_pars=None, out_pars=None,  )
 
 ---------------functions---------------
 _get_device(  )
 _train(m, device, train_itr, criterion, optimizer, epoch, max_epoch,   )
 _valid(m, device, test_itr, criterion,   )
-fit(model,  compute_pars=None, out_pars=None,  **kwargs)
-get_cnn_model( model='resnet18', num_classes=1000, pretrained=False,  )
+fit(model,  data_pars=None, compute_pars=None, out_pars=None,  **kwargs)
+fit_metrics(model,  data_pars=None, compute_pars=None, out_pars=None,  )
 get_config_file(  )
+get_dataset( data_pars=None,  **kw)
+get_params( param_pars=None,  **kw)
 load(path,   )
-predict(model,   )
+predict(model,  session=None, data_pars=None, compute_pars=None, out_pars=None,  )
 save(model, path,   )
-test(  )
+test( data_path="dataset/", pars_choice="json", config_mode="test",  )
 
 
 mlmodels\model_tch\transformer_classifier.py
@@ -10707,91 +10727,4 @@ predict(model, sess,  data_pars=None, out_pars=None, compute_pars=None, get_hidd
 reset_model(  )
 test( data_path="dataset/GOOG-year.csv", out_path="", reset=True,  )
 test2( data_path="dataset/GOOG-year.csv",  )
-
-
-mlmodels\ztest\current\template\00_template_keras.py
-----------------methods----------------
-Model.__init__(self,  model_pars=None, data_pars=None, compute_pars=None,  **kwargs)
-Model_empty.__init__(self,  model_pars=None, compute_pars=None,  )
-
----------------functions---------------
-_preprocess_XXXX(df,   **kw)
-fit(model,  session=None, data_pars=None, model_pars=None, compute_pars=None, out_pars=None,  **kwargs)
-get_dataset(  **kw)
-get_params( choice=0, data_path="dataset/",  **kw)
-load(path,   )
-log( n=0, m=1,  *s)
-metrics(ypred, data_pars,  compute_pars=None, out_pars=None,  **kwargs)
-os_package_root_path(filepath,  sublevel=0, path_add="",  )
-path_setup( out_folder="", sublevel=0, data_path="dataset/",  )
-predict(model, data_pars,  compute_pars=None, out_pars=None,  **kwargs)
-reset_model(  )
-save(model, path,   )
-test( data_path="dataset/", pars_choice=0,  )
-
-
-mlmodels\ztest\current\template\model_xxx.py
-----------------methods----------------
-
----------------functions---------------
-fit(model,  data_pars=None, compute_pars=None, out_pars=None,  **kw)
-fit_metrics(model,  data_pars=None, compute_pars=None, out_pars=None,  **kw)
-get_dataset( data_pars=None,  **kw)
-get_params( param_pars={},  **kw)
-load( load_pars={},  )
-predict(model,  sess=None, data_pars=None, compute_pars=None, out_pars=None,  **kw)
-reset_model(  )
-save( model=None, session=None, save_pars={},  )
-test( data_path="dataset/", pars_choice="json", config_mode="test",  )
-
-
-mlmodels\ztest\current\template\zarchive\gluonts_model.py
-----------------methods----------------
-Model.__init__(self,  model_pars=None, compute_pars=None,  )
-
----------------functions---------------
-get_params( choice=0, data_path="dataset/",  **kw)
-test( data_path="dataset/",  )
-test2( data_path="dataset/", out_path="GLUON/gluon.png", reset=True,  )
-
-
-mlmodels\ztest\current\template\zarchive\model_tf_sequential.py
-----------------methods----------------
-
----------------functions---------------
-fit(model, data_pars,  out_pars=None, compute_pars=None,  **kwargs)
-get_dataset( data_pars=None,  )
-get_pars( choice="test",  **kwargs)
-log( n=0, m=1,  *s)
-metrics(model,  sess=None, data_pars=None, out_pars=None,  )
-os_file_path(data_path,   )
-os_module_path(  )
-os_package_root_path(filepath,  sublevel=0, path_add="",  )
-predict(model, sess,  data_pars=None, out_pars=None, compute_pars=None, get_hidden_state=False, init_value=None,  )
-reset_model(  )
-test( data_path="dataset/GOOG-year.csv", out_path="", reset=True,  )
-test2( data_path="dataset/GOOG-year.csv",  )
-
-
-mlmodels\ztest\zdocs\adress_na_handling.py
-----------------methods----------------
-
----------------functions---------------
-col_getnumpy_indice(colall, colcat,   )
-np_find_indice(v, x,   )
-
-
-mlmodels\ztest\zdocs\api_design.py
-----------------methods----------------
-
----------------functions---------------
-
-
-mlmodels\ztest\zdocs\cli_predict.py
-----------------methods----------------
-
----------------functions---------------
-data_load(file_input,   )
-load_arguments(  )
-log(  *argv)
 
