@@ -28,6 +28,7 @@
 
             "compute_pars": {
                 "distributed": "mpi",
+                "max_batch_sample": 10,
                 "epochs": 10,
                 "learning_rate": 0.001
             },

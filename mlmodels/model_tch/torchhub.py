@@ -36,7 +36,6 @@ def _train(m, device, train_itr, criterion, optimizer, epoch, max_epoch, imax=1)
     corrects, train_loss = 0.0,0.0
 
     for i,batch in enumerate(train_itr):
-        print(i)
         if i >= imax: break
 
         image, target = batch[0], batch[1]
@@ -62,7 +61,6 @@ def _valid(m, device, test_itr, criterion, imax=1):
     m.eval()
     corrects, test_loss = 0.0,0.0
     for i,batch in enumerate(test_itr):
-        print(i)
         if i >= imax: break
         
         image, target = batch[0], batch[1]
