@@ -1,39 +1,24 @@
 
-
-
-
-
-
-## Steps to follow to add a new Colab notebook /Jupyter notbbok :
+# Steps to add a new Colab notebook /Jupyter notbbok :
 
 ```
 
 0) Read the readme.md and Install mlmodels on Linux
     https://github.com/arita37/mlmodels/blob/dev/README_usage.md
-
-
-0) Look at examples :
     https://github.com/arita37/mlmodels/tree/dev/mlmodels/example
 
 
-
-1) Create a branch from DEV branch called : feat_XXXXX
+1) Create a branch from DEV branch called : notebook_
    https://github.com/Kunena/Kunena-Forum/wiki/Create-a-new-branch-with-git-and-manage-branches
 
 
-
-2) Create your Jupyter Notebook.           
+2) Create your Jupyter Notebook in  mlmodels/example/           
             
 
-3) Create  mymodel.json here mlmodels/example/
+3) Create  mymodel.json in  mlmodels/example/
 
-
-
-4) Run on your local machine
  
-
-
-9)  Do Pull Request to dev Branch !
+4)  Do Pull Request to dev Branch !
 
 
 
@@ -43,17 +28,15 @@
 
 
 
-## Steps to follow to add a new model :
+# Steps  to add a new model :
 
 ```
 
 0) Read the readme.md and Install mlmodels on Linux
 
 
-0) Look at examples :
-https://github.com/arita37/mlmodels/blob/dev/mlmodels/model_keras/textcnn.py
-https://github.com/arita37/mlmodels/blob/dev/mlmodels/model_tch/transformer_sentence.py
-https://github.com/arita37/mlmodels/blob/dev/README_index_doc.txt
+0) Look at example :
+   https://github.com/arita37/mlmodels/blob/dev/mlmodels/model_keras/textcnn.py
 
 
 
@@ -61,7 +44,18 @@ https://github.com/arita37/mlmodels/blob/dev/README_index_doc.txt
    https://github.com/Kunena/Kunena-Forum/wiki/Create-a-new-branch-with-git-and-manage-branches
 
 
-3) Create  model_XXXX/yyyyy.py   
+2) Change this file with your MODEL_NAME AND BRANCH NAME:
+     .github/workflows/test_specific_model.yml
+
+   Change only with your MODEL_NAME
+     .github/workflows/test_pullrequest.yml#L61
+
+
+     Test will run on server for your model AFTER each commit.
+     https://github.com/arita37/mlmodels/actions
+
+
+3) Create  mlmodels/model_XXXX/yyyyy.py   
      https://github.com/arita37/mlmodels/blob/dev/mlmodels/model_keras/textcnn.py
      https://github.com/arita37/mlmodels/blob/dev/mlmodels/model_tch/transformer_sentence.py
      https://github.com/arita37/mlmodels/blob/dev/README_index_doc.txt
@@ -69,32 +63,24 @@ https://github.com/arita37/mlmodels/blob/dev/README_index_doc.txt
      Template
         https://github.com/arita37/mlmodels/blob/dev/mlmodels/template/model_xxx.py
 
-     Please re-use existing   
+     Please re-use existing functions
             https://github.com/arita37/mlmodels/blob/dev/mlmodels/util.py
             from mlmodels.util import    ...
             
             
-5) Create   yyyy.json , following this template :
+4) Create  mlmodels/model_XXXX/yyyy.json , following this template :
    https://github.com/arita37/mlmodels/blob/dev/mlmodels/template/models_config.json
 
 
-6) Run on your local machine
-    cd yourfolder
+
+5) Run/Test on your local machine
+    cd mlmodels
     python model_XXXX/yyyy.py  
 
 
-7) Change this file with your model name AND Branch name:
-    https://github.com/arita37/mlmodels/blob/dev/.github/workflows/test_specific_model.yml
-
-     Test will run on server for your model...
-     https://github.com/arita37/mlmodels/actions
+6)  Do Pull Request to dev Branch !
 
 
-8)  Change this one to your model name
-    https://github.com/arita37/mlmodels/blob/f8b58f527e50bdb43e0bfe39e0e6afd3abf8a9e5/.github/workflows/test_pullrequest.yml#L61
-
-
-9)  Do Pull Request to dev Branch !
 
 
 
@@ -103,11 +89,7 @@ https://github.com/arita37/mlmodels/blob/dev/README_index_doc.txt
 
 
 
-
-
-
-
-## ② How to add a new model
+# How to add a new model
 ### Source code structure as below
 - `docs`: documentation
 - `mlmodels`: interface wrapper for pytorch, keras, gluon, tf, transformer NLP for train, hyper-params searchi.
