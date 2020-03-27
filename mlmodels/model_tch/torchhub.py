@@ -118,8 +118,6 @@ class Model:
             self.model = None
             return self
 
-        else:
-            self.model = None
 
         m = model_pars 
         _model      = m['model']
@@ -176,7 +174,7 @@ def get_params(param_pars=None, **kw):
 
 
 
-def get_dataset(=None, **kw):
+def get_dataset(data_pars=None, **kw):
     data_path        = data_pars['data_path']
     train_batch_size = data_pars['train_batch_size']
     test_batch_size  = data_pars['test_batch_size']
@@ -235,8 +233,8 @@ def predict(model, session=None, data_pars=None, compute_pars=None, out_pars=Non
     _, valid_iter = get_dataset(data_pars=data_pars)
     device = _get_device()
     x_test = next(iter(valid_iter))[0].to(device)
-    return model(x_test).detach().cpu().numpy()
-
+    ypred  = model(x_test).detach().cpu().numpy()
+    return ypred
 
 def fit_metrics(model, data_pars=None, compute_pars=None, out_pars=None):
     pass
