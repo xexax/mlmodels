@@ -125,19 +125,20 @@ def log(*s, n=0, m=1):
 
 
 def get_dataset(data_params):
+    pred_length = data_params["prediction_length"]
     df = pd.read_csv(data_params["train_data_path"])
-    x_train = df["milk_production_pounds"].iloc[:-12]
+    x_train = df["milk_production_pounds"].iloc[:-pred_length]
     x_train = x_train.values.reshape(-1,
                                      data_params["prediction_length"],
                                      1)
-    y_train = df["milk_production_pounds"].iloc[:-12].shift().fillna(0)
+    y_train = df["milk_production_pounds"].iloc[:-pred_length].shift().fillna(0)
     y_train = y_train.values.reshape(-1, data_params["prediction_length"],
                                      1)
-    x_test = df.iloc[-12:]["milk_production_pounds"]
+    x_test = df.iloc[-pred_length:]["milk_production_pounds"]
     x_test = x_test.values.reshape(-1,
                                    data_params["prediction_length"],
                                    1)
-    y_test = df.iloc[-12:]["milk_production_pounds"].shift().fillna(0)
+    y_test = df.iloc[-pred_length:]["milk_production_pounds"].shift().fillna(0)
     y_test = y_test.values.reshape(-1,
                                    data_params["prediction_length"],
                                    1)
@@ -176,25 +177,28 @@ def predict(model=None, model_pars=None, data_pars=None, **kwargs):
 
 def test(data_path="dataset/"):
     log("#### Loading params   ##############################################")
-    model_pars, data_pars,
-    compute_pars, out_pars = get_params(choice=0, data_path=ata_path)
+    model_pars, data_pars,\
+    compute_pars, out_pars = get_params(choice=0, data_path=data_path)
     log("#### Model init, fit   #############################################")
     model = Model(model_pars=model_pars, data_pars=data_pars,
                   compute_pars=compute_pars)
     log("### Model created ###")
     log(model.model.summary())
     fit(model=model, data_pars=data_pars, compute_pars=compute_pars)
+    pred_length = data_pars["prediction_length"]
     # for prediction
     df = pd.read_csv(data_pars["train_data_path"])
-    x_test = df.iloc[-12:]["milk_production_pounds"]
+    x_test = df.iloc[-pred_length:]["milk_production_pounds"]
     x_test = x_test.values.reshape(-1, data_pars["prediction_length"], 1)
-    y_test = df.iloc[-12:]["milk_production_pounds"].shift()
+    y_test = df.iloc[-pred_length:]["milk_production_pounds"].shift()
     y_test = y_test.values.reshape(-1, data_pars["prediction_length"], 1)
 
     log("#### Predict   ####")
     y_pred = predict(model=model, model_pars=model_pars,
                      data_pars=data_pars, x_test=x_test)
 
+    path = out_pars["outpath"]
+    os.makedirs(path, exist_ok=True)
     plt.plot(y_test.reshape(-1, 1), "blue", label="actual", alpha=0.7)
     plt.plot(y_pred, "red", label="predicted", alpha=0.7)
     plt.xlabel("Month")
