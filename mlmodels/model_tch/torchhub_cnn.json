@@ -29,7 +29,9 @@
             "compute_pars": {
                 "distributed": "mpi",
                 "epochs": 1,
-                "learning_rate": 0.001
+                "learning_rate": 0.001,
+
+                "max_batch_sample" : 1
             },
             "out_pars": {
                 "checkpointdir": "ztest/model_tch/torchhub_resnet18/checkpoints/"

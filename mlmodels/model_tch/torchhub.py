@@ -31,12 +31,14 @@ MODEL_URI = get_model_uri(__file__)
 
 ###########################################################################################################
 ###########################################################################################################
-def _train(m, device, train_itr, criterion, optimizer, epoch, max_epoch):
+def _train(m, device, train_itr, criterion, optimizer, epoch, max_epoch, imax=1):
     m.train()
     corrects, train_loss = 0.0,0.0
+
     for i,batch in enumerate(train_itr):
         print(i)
-        if i == 10: break
+        if i >= imax: break
+
         image, target = batch[0], batch[1]
         image, target = image.to(device), target.to(device)
         optimizer.zero_grad()
@@ -56,12 +58,13 @@ def _train(m, device, train_itr, criterion, optimizer, epoch, max_epoch):
   
     return train_loss, accuracy
     
-def _valid(m, device, test_itr, criterion):
+def _valid(m, device, test_itr, criterion, imax=1):
     m.eval()
     corrects, test_loss = 0.0,0.0
     for i,batch in enumerate(test_itr):
         print(i)
-        if i == 10: break
+        if i >= imax: break
+        
         image, target = batch[0], batch[1]
         image, target = image.to(device), target.to(device)
         
@@ -204,12 +207,18 @@ def fit(model, data_pars=None, compute_pars=None, out_pars=None, **kwargs):
 
     optimizer     = optim.Adam(model.parameters(), lr=lr)
     train_iter, valid_iter = get_dataset(data_pars)
+
+    imax_train = compute_pars.get('max_batch_sample', len(train_iter) )
+    imax_valid = compute_pars.get('max_batch_sample', len(valid_iter) )
+
     for epoch in range(1, epochs + 1):
         #train loss
-        tr_loss, tr_acc = _train(model, device, train_iter, criterion, optimizer, epoch, epochs)
+
+        tr_loss, tr_acc = _train(model, device, train_iter, criterion, optimizer, epoch, epochs, imax=imax_train)
         print( f'Train Epoch: {epoch} \t Loss: {tr_loss} \t Accuracy: {tr_acc}')
 
-        ts_loss, ts_acc = _valid(model, device, valid_iter, criterion)
+
+        ts_loss, ts_acc = _valid(model, device, valid_iter, criterion, imax=imax_valid)
         print( f'Train Epoch: {epoch} \t Loss: {ts_loss} \t Accuracy: {ts_acc}')
 
         if ts_acc > best_test_acc:
