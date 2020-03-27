@@ -53,8 +53,8 @@ All sklearn models, LighGBM
 
 
 
-###VISION :
-Torch Vision Models (pre-trained) :  
+### VISION :
+  Vision Models (pre-trained) :  
         alexnet, densenet121, densenet169, densenet201,
         densenet161, inception_v3, resnet18, resnet34, resnet50, resnet101, resnet152,
         resnext50_32x4d, resnext101_32x8d, wide_resnet50_2, wide_resnet101_2, squeezenet1_0,
