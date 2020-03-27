@@ -3,12 +3,14 @@ git+https://www.github.com/keras-team/keras-contrib.git
 mlflow==1.7.1
 
 
-## Required for gluon_prophet
+## Required for gluon_FB prophet
 fbprophet==0.6
+convertdate>=2.1.2
 
 
 ### Computer Vision
 torchvision==0.4.0
+Pillow<7.0   ##Issue
 
 
 ### transformers
@@ -56,8 +58,5 @@ gensim
 
 #### Distributed training
 # horovod==0.16.2   #### Issues with OPEN MPI
-
-
-
 
 

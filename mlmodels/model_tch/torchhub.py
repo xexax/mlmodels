@@ -1,3 +1,16 @@
+# -*- coding: utf-8 -*-
+"""
+
+
+https://colab.research.google.com/github/pytorch/pytorch.github.io/blob/master/assets/hub/facebookresearch_pytorch-gan-zoo_pgan.ipynb
+
+https://github.com/pytorch/pytorch/blob/98362d11ffe81ca48748f6b0e1e417cb81ba5998/torch/hub.py#L330
+
+
+
+
+"""
+
 import os, json
 
 
@@ -96,9 +109,11 @@ class Model:
         else:
             self.model = None
 
-        _model      = model_pars['model']
-        num_classes = model_pars['num_classes']
-        pretrained  = bool(model_pars['pretrained'])
+        m = model_pars 
+        _model      = m['model']
+        num_classes = m['num_classes']
+
+
         assert _model in ['alexnet', 'densenet121', 'densenet169', 'densenet201', 'densenet161', 
         'inception_v3', 'resnet18', 'resnet34', 'resnet50', 'resnet101', 'resnet152', 
         'resnext50_32x4d', 'resnext101_32x8d', 'wide_resnet50_2', 'wide_resnet101_2',
@@ -113,7 +128,11 @@ class Model:
         googlenet, shufflenet_v2_x0_5, shufflenet_v2_x1_0, mobilenet_v2"
 
 
-        self.model = hub.load('pytorch/vision', _model, pretrained=pretrained)
+        self.model = hub.load( m['repo_uri'], _model, 
+                               model_name = m.get("model_name", m['model']),
+                               pretrained = bool( m.get('pretrained', True)),
+                               useGPU     = m.get('use_gpu',False)
+                             ) 
 
         if num_classes != 1000:
             fc_in_features = self.model.fc.in_features
@@ -134,7 +153,7 @@ def get_params(param_pars=None, **kw):
 
         ####Normalize path  : add /models/dataset/
         cf['data_pars'] = path_norm_dict(cf['data_pars'])
-        cf['out_pars'] = path_norm_dict(cf['out_pars'])
+        cf['out_pars']  = path_norm_dict(cf['out_pars'])
 
         return cf['model_pars'], cf['data_pars'], cf['compute_pars'], cf['out_pars']
 
@@ -163,10 +182,12 @@ def get_dataset(data_pars=None, **kw):
                             transforms.Normalize((0.1307,), (0.3081,))
                         ])),
             batch_size=data_pars['test_batch_size'], shuffle=True)
+        return train_loader, valid_loader  
+
     else:
-        print("Dataloader not implemented")
+        raise Exception("Dataloader not implemented")
         exit
-    return train_loader, valid_loader
+
 
 
 def fit(model, data_pars=None, compute_pars=None, out_pars=None, **kwargs):
@@ -271,3 +292,46 @@ def test(data_path="dataset/", pars_choice="json", config_mode="test"):
 
 if __name__ == "__main__":
     test(data_path="dataset/json/Imagecnn.json", pars_choice="json", config_mode="test")
+
+
+
+
+
+
+
+
+
+
+
+"""
+
+
+import torch
+use_gpu = True if torch.cuda.is_available() else False
+
+# trained on high-quality celebrity faces "celebA" dataset
+# this model outputs 512 x 512 pixel images
+model = torch.hub.load('facebookresearch/pytorch_GAN_zoo:hub',
+                       'PGAN', model_name='celebAHQ-512',
+                       pretrained=True, useGPU=use_gpu)
+# this model outputs 256 x 256 pixel images
+# model = torch.hub.load('facebookresearch/pytorch_GAN_zoo:hub',
+#                        'PGAN', model_name='celebAHQ-256',
+#                        pretrained=True, useGPU=use_gpu)
+
+
+
+
+num_images = 4
+noise, _ = model.buildNoiseData(num_images)
+with torch.no_grad():
+    generated_images = model.test(noise)
+
+# let's plot these images using torchvision and matplotlib
+import matplotlib.pyplot as plt
+import torchvision
+grid = torchvision.utils.make_grid(generated_images.clamp(min=-1, max=1), scale_each=True, normalize=True)
+plt.imshow(grid.permute(1, 2, 0).cpu().numpy())
+# plt.show()
+
+"""
