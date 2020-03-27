@@ -239,10 +239,11 @@ def fit(model, data_pars=None, compute_pars=None, out_pars=None, **kwargs):
 
 def predict(model, session=None, data_pars=None, compute_pars=None, out_pars=None):
     # get a batch of data
+    model0 = model.model
     _, valid_iter = get_dataset(data_pars=data_pars)
     device = _get_device()
     x_test = next(iter(valid_iter))[0].to(device)
-    ypred  = model(x_test).detach().cpu().numpy()
+    ypred  = model0(x_test).detach().cpu().numpy()
     return ypred
 
 def fit_metrics(model, data_pars=None, compute_pars=None, out_pars=None):
