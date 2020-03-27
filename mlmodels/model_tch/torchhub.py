@@ -291,7 +291,7 @@ def test(data_path="dataset/", pars_choice="json", config_mode="test"):
 
 
 if __name__ == "__main__":
-    test(data_path="dataset/json/Imagecnn.json", pars_choice="json", config_mode="test")
+    test(data_path="model_tch/imagecnn.json", pars_choice="json", config_mode="test")
 
 
 
