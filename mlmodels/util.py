@@ -387,16 +387,16 @@ def load(load_pars):
     if "model_keras" in p['model_uri']:
         path = os.path.abspath(p['path'] + "/../")
         name = os.path.basename(p['path']) if ".h5" in p['path'] else "model.h5"
-        return load_keras(path, name)
+        return load_keras(load_pars)
 
 
 def save(model=None, session=None, save_pars=None):
     p = save_pars
+   if  "model_keras" in p['model_uri'] :
+       path = os.path.abspath( p['path'] + "/../")
+       name = os.path.basename(p['path']) if ".h5" in p['path'] else "model.h5"
+       save_keras( model, session, save_pars)
 
-    if "model_keras" in p['model_uri']:
-        path = os.path.abspath(p['path'] + "/../")
-        name = os.path.basename(p['path']) if ".h5" in p['path'] else "model.h5"
-        save_keras(model, session, os.path.join(path, name))
 
 
 
