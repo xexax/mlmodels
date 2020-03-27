@@ -51,8 +51,8 @@ jobs:
 
     ########  Test running 
     ##### Please change BELOW to your model name  
-    - name: black
-      run: black -l 120  --py36 --check --fast  .
+    #- name: black
+    #  run: black -l 120  --py36 --check --fast  .
 
     - name: ml_optim
       run: ml_optim
