@@ -99,7 +99,7 @@ def get_params(choice=0, data_path="dataset/", **kw):
         out_path = os.getcwd() + "/keras_armdn/"
         os.makedirs(out_path, exist_ok=True)
         log(data_path, out_path)
-        train_data_path = data_path + "timeseries/milk.csv"
+        train_data_path = data_path 
         data_pars = {"train_data_path": train_data_path,
                      "train": False,
                      "prediction_length": 12,
@@ -111,7 +111,7 @@ def get_params(choice=0, data_path="dataset/", **kw):
                       "dense_neuron": 10,
                       }
         compute_pars = {"batch_size": 32, "clip_gradient": 100, "ctx": None,
-                        "epochs": 5000, "learning_rate": 0.05,
+                        "epochs": 1000, "learning_rate": 0.05,
                         "patience": 50
                         }
         outpath = out_path + "result"
@@ -172,7 +172,7 @@ def predict(model=None, model_pars=None, data_pars=None, **kwargs):
     return y_samples.reshape(-1, 1)
 
 
-def test(data_path="dataset/"):
+def test(data_path="dataset/timeseries/milk.csv"):
     log("#### Loading params   ##############################################")
     model_pars, data_pars,\
                           compute_pars, out_pars = get_params(choice=0,
