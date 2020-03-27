@@ -12,7 +12,7 @@ import tensorflow as tf
 from sklearn.preprocessing import MinMaxScaler
 
 ####################################################################################################
-from mlmodels.util import log, params_json_load, path_norm
+from mlmodels.util import os_package_root_path, log, params_json_load, path_norm
 
 simplefilter(action='ignore', category=FutureWarning)
 simplefilter(action='ignore', category=DeprecationWarning)
@@ -188,19 +188,12 @@ def get_dataset(data_pars=None):
               "path"            : "dataset/text/ner_dataset.csv",
               "location_type"   :  "repo",
               "data_type"   :   "text",
-
-
               "data_loader" :  "pandas.read_csv",
               "data_loader_pars" :  {""},
-
-
               "data_preprocessor" : "mlmodels.model_keras.prepocess:process",
-              "data_preprocessor_pars" : "mlmodels.model_keras.prepocess:process",              
-
+              "data_preprocessor_pars" : "mlmodels.model_keras.prepocess:process",
               "size" : [0,1,2],
-              "output_size": [0, 6]  
-
-
+              "output_size": [0, 6]
     """
     print(data_pars)
     filename = path_norm(data_pars["data_path"])  #
@@ -219,6 +212,7 @@ def get_dataset(data_pars=None):
 
 
 def get_params(param_pars={}, **kw):
+    import json
     pp = param_pars
     choice = pp['choice']
     config_mode = pp['config_mode']
@@ -232,7 +226,7 @@ def get_params(param_pars={}, **kw):
     if choice == "test01":
         log("############# Data, Params preparation   #################")
         data_path = path_norm("dataset/timeseries/GOOG-year.csv")
-        out_path = path_norm("ztest/model_tf/1_lstm/model_1_lstm")
+        out_path = path_norm("ztest/model_tf/1_lstm/")
         model_path = os.path.join(out_path, "model")
 
         model_pars = {"learning_rate": 0.001, "num_layers": 1, "size": 6, "size_layer": 128,
@@ -280,11 +274,12 @@ def test(data_path="dataset/", pars_choice="test01", config_mode="test"):
     log("#### Save/Load   ###################################################")
     save(model, session, out_pars)
     session = load(out_pars)
-    # ypred = predict(model, session, data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)
-    # metrics_val = metrics(model, ypred, data_pars, compute_pars, out_pars)
-    # print(metrics_val)
+    #     ypred = predict(model2, data_pars, compute_pars, out_pars)
+    #     metrics_val = metrics(model2, ypred, data_pars, compute_pars, out_pars)
+    # print(model2)
 
 
 if __name__ == "__main__":
     print("start")
     test(data_path="", pars_choice="test01", config_mode="test")
+

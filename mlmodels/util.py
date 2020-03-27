@@ -415,8 +415,8 @@ def load_tf(load_pars=""):
   tf_graph = tf.Graph()
   tf_sess = tf.Session(graph=tf_graph)
   with tf_graph.as_default():
-    new_saver = tf.train.import_meta_graph(f"{load_pars['path']}.meta")
-    new_saver.restore(tf_sess, tf.train.latest_checkpoint(str(Path(load_pars['path']).parent)))
+    new_saver = tf.train.import_meta_graph(f"{load_pars['model_path']}.meta")
+    new_saver.restore(tf_sess, tf.train.latest_checkpoint(str(Path(load_pars['model_path']).parent)))
 
   return tf_sess
 
@@ -424,7 +424,7 @@ def load_tf(load_pars=""):
 def save_tf(model=None, sess=None, save_pars= None):
   import tensorflow as tf
   saver = tf.compat.v1.train.Saver()
-  return saver.save(sess, save_pars['path'])
+  return saver.save(sess, save_pars['model_path'])
 
 
 
