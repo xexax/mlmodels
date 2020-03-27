@@ -57,7 +57,7 @@ def os_package_root_path(filepath, sublevel=0, path_add=""):
   return path
 
 
-# print("check", os_package_root_path(__file__, sublevel=1) )
+# print("check", os_package_root_path(__file__, sublevel=0) )
 
 
 def log(*s, n=0, m=1):
@@ -119,7 +119,7 @@ class Model:
 
 
 
-def fit(model, data_pars, out_pars=None, compute_pars={}, **kwargs):
+def fit(model, data_pars, out_pars=None, compute_pars=None, **kwargs):
   df = get_dataset(data_pars)
   print(df.head(5))
   msample = df.shape[0]
@@ -262,7 +262,7 @@ def test(data_path="dataset/GOOG-year.csv", out_path="", reset=True):
        from ../../model_tf
 
     """
-  data_path = os_package_root_path(__file__, sublevel=1, path_add=data_path)
+  data_path = os_package_root_path(__file__, sublevel=0, path_add=data_path)
   print(data_path)
   
   log("############# Data, Params preparation   #################")
@@ -279,7 +279,7 @@ def test(data_path="dataset/GOOG-year.csv", out_path="", reset=True):
   print(module, model)
   
   log("############ Model fit   ##################################")
-  sess = fit(model, module, data_pars=data_pars, compute_pars={}, out_pars=out_pars)
+  sess = fit(model, module, data_pars=data_pars, compute_pars=None, out_pars=out_pars)
   print("fit success", sess)
   
   log("############ Prediction##########################")
@@ -293,7 +293,7 @@ def test2(data_path="dataset/GOOG-year.csv"):
       Using this file methods
     """
   #### path to local package roots
-  data_path = os_package_root_path(__file__, sublevel=1, path_add=data_path)
+  data_path = os_package_root_path(__file__, sublevel=0, path_add=data_path)
   print(data_path)
   
   data_pars = {"data_path": data_path, "data_type": "pandas"}

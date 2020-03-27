@@ -7,12 +7,16 @@ mlflow==1.7.1
 fbprophet==0.6
 
 
+### Computer Vision
+torchvision==0.4.0
+
 
 ### transformers
 pytorch-transformers
 ###transformers==2.4.1 #### fix issue #23 could not run on macos
 transformers==2.3.0 #### due to sentence transformers
 sentence-transformers==0.2.4
+tensorboardX
 
 
 ############################
@@ -37,6 +41,11 @@ boto3==1.9.187
 toml
 setuptools==45.2.0
 python-dateutil==2.8.0
+
+
+###Utils
+cli_code
+
 
 #### NLP
 torchtext

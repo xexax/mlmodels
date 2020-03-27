@@ -4,6 +4,7 @@ name:  test_custom_model
 on:
   push:
     branches: 
+      ##### Please change BELOW to your branch name
       - feat_XXX
  
 jobs:
@@ -26,15 +27,6 @@ jobs:
       uses: dschep/install-pipenv-action@v1
 
             
-    #- uses: actions/cache@v1
-    #  id: cache
-    #  with:
-    #    path: ~/.cache/pip
-    #    key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
-    #    restore-keys: |
-    #      ${{ runner.os }}-pip-
-   
-  
     - name: Cache pipenv virtualenv
       id: cache-pipenv
       uses: actions/cache@v1
@@ -64,15 +56,8 @@ jobs:
 
 
     ########  Test running 
+    ##### Please change BELOW to your model name  
     - name: ml_test
       run: ml_test  --do model_tf/1_lstm.py
       
          
-
-
-
-# https://ianwhitestone.work/AWS-Serverless-Deployments-With-Github-Actions/
-#
-#
-#
-#

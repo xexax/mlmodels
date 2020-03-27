@@ -224,7 +224,7 @@ def test_global(modelname):
     try:
         module = module_load(modelname, verbose=1)
         print(module)
-        module.test_global()
+        module.test()
         del module
     except Exception as e:
         print("Failed", e)
@@ -387,7 +387,7 @@ def config_init(to_path="."):
       config_init("model_tf.1_lstm", to_folder="ztest/")
     """
     import shutil
-    os_root = os_package_root_path(__file__)
+    os_root = os_package_root_path()
 
     to_path = os_root + "/ztest/current/"  if to_path == "."  else to_path
     log("Working Folder", to_path)
@@ -407,12 +407,13 @@ def config_init(to_path="."):
     #print("config file", path_config)
 
     os.makedirs(path_user + "/.mlmodels/" , exist_ok=True)
-    ddict = { "model_trained" : to_path + "/model_trained/"  }
+    ddict = { "model_trained" : to_path + "/model_trained/",   
+              "dataset"       : to_path + "/dataset/",     }
     log("Config values", ddict)
     json.dump( ddict, open(path_config, mode="w") )
 
 
-    from mlmodels.util import get_pretrained_path
+    from mlmodels.util import config_path_pretrained, config_path_dataset
     log("Config path",  get_pretrained_path() )
 
 
@@ -462,7 +463,7 @@ def cli_load_arguments(config_file=None):
     add("--folder", default=None, help="folder ")
 
 
-    add("--init", default=".", help=".")
+    add("--init", default="", help=".")
 
     ##### model pars
     add("--model_uri", default="model_tf/1_lstm.py", help=".")
@@ -500,13 +501,20 @@ def main():
     if arg.do == "model_list":  # list all models in the repo
         l = config_model_list(arg.folder)
 
+
     if arg.do == "testall":
         # test_all() # tot test all te modules inside model_tf
         test_all(folder=None)
 
+
     if arg.do == "test":
+        param_pars = {"choice": "test01", "data_path": "", "config_mode": "test"}
+        test_module(arg.model_uri, param_pars=param_pars)  # '1_lstm'
+
         test(arg.model_uri)  # '1_lstm'
+        # test_api(arg.model_uri)  # '1_lstm'
         test_global(arg.model_uri)  # '1_lstm'
+
 
     if arg.do == "fit":
         model_p, data_p, compute_p, out_p = config_get_pars(arg.config_file, arg.config_mode)
