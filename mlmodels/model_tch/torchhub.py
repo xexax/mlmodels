@@ -142,9 +142,9 @@ class Model:
 
 
         self.model = hub.load( m['repo_uri'], _model, 
-                               model_name = m.get("model_name", m['model']),
+                               # model_name = m.get("model_name", m['model']),
                                pretrained = bool( m.get('pretrained', True)),
-                               useGPU     = m.get('use_gpu',False)
+                               # useGPU     = m.get('use_gpu',False)
                              ) 
 
         if num_classes != 1000:
