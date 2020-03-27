@@ -1,7 +1,7 @@
 {
 	"test": {
         "data_pars": {"mode": "test",
-                      "path": "../dataset/tabular/titanic_train_preprocessed.csv", 
+                      "path": "dataset/tabular/titanic_train_preprocessed.csv", 
                       "data_type" : "pandas" 
                     },
 
@@ -10,10 +10,10 @@
                        "random_state":0
                     },
 
-        "compute_pars": {},
+        "compute_pars": {  "lightgbm_pars" :{}},
 
-        "out_pars":  {"save_path": "../ztest/", 
-                      "log_path": "../ztest/"
+        "out_pars":  {"save_path": "ztest/model_sklearn/lightgbm/", 
+                      "log_path": "ztest/model_sklearn/lightgbm/"
                     }
     }
 }
