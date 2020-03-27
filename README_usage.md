@@ -186,7 +186,7 @@ ypred       = module.predict(model,  data_pars=data_pars, compute_pars=compute_p
 
 ---
 
-### Using json config file for input ([Example notebook](example/1_lstm_json.ipynb), [JSON file](mlmodels/dataset/json/1_lstm.json))
+### Using json config file for input ([Example notebook](example/1_lstm_json.ipynb), [JSON file](mlmodels/example/1_lstm.json))
 
 #### Import library and functions
 ```python
@@ -205,7 +205,7 @@ module        =  module_load( model_uri= model_uri )                           #
 model_pars, data_pars, compute_pars, out_pars = module.get_params(param_pars={
     'choice':'json',
     'config_mode':'test',
-    'data_path':'../mlmodels/dataset/json/1_lstm.json'
+    'data_path':'../mlmodels/example/1_lstm.json'
 })
 ```
 
@@ -222,7 +222,7 @@ ypred       = module.predict(model, sess=sess,  data_pars=data_pars, compute_par
 
 ---
 
-### Using Scikit-learn's SVM for Titanic Problem from json file ([Example notebook](example/sklearn_titanic_svm.ipynb), [JSON file](mlmodels/dataset/json/sklearn_titanic_svm.json))
+### Using Scikit-learn's SVM for Titanic Problem from json file ([Example notebook](example/sklearn_titanic_svm.ipynb), [JSON file](mlmodels/example/sklearn_titanic_svm.json))
 
 #### Import library and functions
 ```python
@@ -241,7 +241,7 @@ module        =  module_load( model_uri= model_uri )                           #
 model_pars, data_pars, compute_pars, out_pars = module.get_params(param_pars={
     'choice':'json',
     'config_mode':'test',
-    'data_path':'../mlmodels/dataset/json/sklearn_titanic_svm.json'
+    'data_path':'../mlmodels/example/sklearn_titanic_svm.json'
 })
 ```
 
@@ -270,7 +270,7 @@ roc_auc_score(y, ypred)
 
 ---
 
-### Using Scikit-learn's Random Forest for Titanic Problem from json file ([Example notebook](example/sklearn_titanic_randomForest.ipynb), [JSON file](mlmodels/dataset/json/sklearn_titanic_randomForest.json))
+### Using Scikit-learn's Random Forest for Titanic Problem from json file ([Example notebook](example/sklearn_titanic_randomForest.ipynb), [JSON file](mlmodels/example/sklearn_titanic_randomForest.json))
 
 #### Import library and functions
 ```python
@@ -289,7 +289,7 @@ module        =  module_load( model_uri= model_uri )                           #
 model_pars, data_pars, compute_pars, out_pars = module.get_params(param_pars={
     'choice':'json',
     'config_mode':'test',
-    'data_path':'../mlmodels/dataset/json/sklearn_titanic_randomForest.json'
+    'data_path':'../mlmodels/example/sklearn_titanic_randomForest.json'
 })
 ```
 
@@ -318,7 +318,7 @@ roc_auc_score(y, ypred)
 
 ---
 
-### Using Autogluon for Titanic Problem from json file ([Example notebook](example/gluon_automl_titanic.ipynb), [JSON file](mlmodels/dataset/json/gluon_automl.json))
+### Using Autogluon for Titanic Problem from json file ([Example notebook](example/gluon_automl_titanic.ipynb), [JSON file](mlmodels/example/gluon_automl.json))
 
 #### Import library and functions
 ```python
@@ -337,7 +337,7 @@ module        =  module_load( model_uri= model_uri )                           #
 model_pars, data_pars, compute_pars, out_pars = module.get_params(
     choice='json',
     config_mode= 'test',
-    data_path= '../mlmodels/dataset/json/gluon_automl.json'
+    data_path= '../mlmodels/example/gluon_automl.json'
 )
 ```
 
@@ -369,7 +369,7 @@ roc_auc_score(y, ypred)
 ---
 ---
 
-### Using hyper-params (optuna) for Titanic Problem from json file ([Example notebook](example/sklearn_titanic_randomForest_example2.ipynb), [JSON file](mlmodels/dataset/json/hyper_titanic_randomForest.json))
+### Using hyper-params (optuna) for Titanic Problem from json file ([Example notebook](example/sklearn_titanic_randomForest_example2.ipynb), [JSON file](mlmodels/example/hyper_titanic_randomForest.json))
 
 #### Import library and functions
 ```python
@@ -384,7 +384,7 @@ from mlmodels.optim import optim
 import json
 
 ###  hypermodel_pars, model_pars, ....
-data_path = '../mlmodels/dataset/json/hyper_titanic_randomForest.json'  
+data_path = '../mlmodels/example/hyper_titanic_randomForest.json'  
 pars = json.load(open( data_path , mode='r'))
 for key, pdict in  pars.items() :
   print(key)
@@ -430,13 +430,14 @@ roc_auc_score(y, ypred)
 
 ---
 
-### Using LightGBM for Titanic Problem from json file ([Example notebook](mlmodels/example/model_lightgbm.ipynb), [JSON file](mlmodels/dataset/json/lightgbm_titanic.json))
+### Using LightGBM for Titanic Problem from json file ([Example notebook](mlmodels/example/model_lightgbm.ipynb), [JSON file](mlmodels/example/lightgbm_titanic.json))
 
 #### Import library and functions
 ```python
 # import library
 import mlmodels
 from mlmodels.models import module_load
+from mlmodels.util import path_norm_dict, path_norm
 import json
 ```
 
@@ -452,7 +453,7 @@ data_path = '../dataset/json/lightgbm_titanic.json'
 # Model Parameters
 pars = json.load(open( data_path , mode='r'))
 for key, pdict in  pars.items() :
-  globals()[key] = pdict   
+  globals()[key] = path_norm_dict( pdict   )   ###Normalize path
 
 model_pars      = test['model_pars']
 data_pars       = test['data_pars']
