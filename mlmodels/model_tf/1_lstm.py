@@ -188,12 +188,19 @@ def get_dataset(data_pars=None):
               "path"            : "dataset/text/ner_dataset.csv",
               "location_type"   :  "repo",
               "data_type"   :   "text",
+
+
               "data_loader" :  "pandas.read_csv",
               "data_loader_pars" :  {""},
+
+
               "data_preprocessor" : "mlmodels.model_keras.prepocess:process",
               "data_preprocessor_pars" : "mlmodels.model_keras.prepocess:process",
+
               "size" : [0,1,2],
               "output_size": [0, 6]
+
+
     """
     print(data_pars)
     filename = path_norm(data_pars["data_path"])  #
@@ -282,6 +289,8 @@ def test(data_path="dataset/", pars_choice="test01", config_mode="test"):
 if __name__ == "__main__":
     print("start")
     test(data_path="", pars_choice="test01", config_mode="test")
+
+
 
 
 
