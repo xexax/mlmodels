@@ -10,7 +10,7 @@ cd D:\_devs\Python01\gitdev\cli_code\cli_code\cli_doc_auto
 python main.py /_devs/Python01/gitdev/mlmodels/mlmodels/ ^
 -vvv ^
 --tab 4 ^
---out D:/_devs/Python01/gitdev/mlmodels/README_index_doc.txt
+--out D:/_devs/Python01/gitdev/mlmodels/README_index_doc.html
 
                                                                                                                                  
 
