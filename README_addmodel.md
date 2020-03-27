@@ -12,10 +12,10 @@
    https://github.com/Kunena/Kunena-Forum/wiki/Create-a-new-branch-with-git-and-manage-branches
 
 
-2) Create your Jupyter Notebook in  mlmodels/example/           
+2) Create Jupyter Notebook in  mlmodels/example/           
             
 
-3) Create  mymodel.json in  mlmodels/example/
+3) Create mymodel.json in  mlmodels/example/
 
  
 4)  Do Pull Request to dev Branch !
@@ -34,8 +34,6 @@
 
 0) Read the readme.md and Install mlmodels on Linux
 
-
-0) Look at example :
    https://github.com/arita37/mlmodels/blob/dev/mlmodels/model_keras/textcnn.py
 
 
@@ -45,13 +43,13 @@
 
 
 2) Change this file with your MODEL_NAME AND BRANCH NAME:
-     .github/workflows/test_specific_model.yml
+     GITHUB URL/ .github/workflows/test_specific_model.yml
 
    Change only with your MODEL_NAME
-     .github/workflows/test_pullrequest.yml#L61
+     GITHUB URL/ .github/workflows/test_pullrequest.yml#L61
 
 
-     Test will run on server for your model AFTER each commit.
+     Test will run on GITHUB server for your model AFTER each commit.
      https://github.com/arita37/mlmodels/actions
 
 
@@ -78,7 +76,12 @@
     python model_XXXX/yyyy.py  
 
 
-6)  Do Pull Request to dev Branch !
+6) Add Basic example of code here  :
+    https://github.com/arita37/mlmodels/blob/dev/README_usage.md
+
+
+
+7)  Do Pull Request to dev Branch !
 
 
 
