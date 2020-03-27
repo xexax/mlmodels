@@ -256,7 +256,8 @@ def save(model, session, out_pars):
     return torch.save(model0, path)
 
 
-def load(path):
+def load(out_pars):
+    path = out_pars["checkpointdir"] + out_pars["save_model_path"]
     return torch.load(path)
 
 
