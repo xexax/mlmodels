@@ -1,7 +1,7 @@
 {
-  "dev" :{  },
+  "test_all" :{  "block_model_list":  ["model_tch.transformer_sentence" ] },
 
-  "master" :{}
+  "test_01" :{}
 
 
 }

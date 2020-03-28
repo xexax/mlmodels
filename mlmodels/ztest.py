@@ -82,8 +82,20 @@ def test_all():
   model_list = model_get_list(folder=None, block_list=[])
   print(model_list)
 
+
+  ## Block list
+  cfg = json.load(open(root + "config/test_config.json", mode='r'))['test_all']
+  block_list = cfg['block_model_list']
+  model_list = [ t for t in model_list if t not in block_list]
+  print(model_list)
+
+
   path = path.replace("\\", "//")  
   test_list =[ f"python {path}/"  + t.replace(".","//").replace("//py", ".py") for t in model_list ] 
+
+
+
+
 
   for cmd in test_list :
     print("\n\n\n", flush=True)

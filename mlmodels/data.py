@@ -8,6 +8,40 @@ from mlmodels.util import os_package_root_path, path_norm
 
 """
 
+Dataset from pytorch Vision
+https://pytorch.org/docs/master/torchvision/datasets.html#fashion-mnist
+
+
+
+Dataset from Torch Text
+https://pytorch.org/text/datasets.html
+
+
+
+All dataset
+https://en.wikipedia.org/wiki/List_of_datasets_for_machine-learning_research
+
+
+
+
+Time series
+https://gluon-ts.mxnet.io/api/gluonts/gluonts.dataset.repository.datasets.html
+
+
+https://github.com/zalandoresearch/fashion-mnist
+
+
+
+
+
+####LudWig
+
+https://blog.dominodatalab.com/a-practitioners-guide-to-deep-learning-with-ludwig/
+
+
+
+
+
 
 class CustomDatasetFromCSV(Dataset):
     def __init__(self, csv_path, height, width, transforms=None):
@@ -46,9 +80,10 @@ if __name__ == "__main__":
     custom_mnist_from_csv = \
         CustomDatasetFromCSV('../data/mnist_in_csv.csv', 28, 28, transformations)
         
-
-
 """
+
+
+
 
 
 def download_data(data_pars):
@@ -63,9 +98,6 @@ def download_data(data_pars):
    import_data 
 
    preprocess_data
-
-
-
 
   download_data({"from_path" :  "tabular",  
                         "out_path" :  path_norm("ztest/dataset/text/") } )
