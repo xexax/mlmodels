@@ -1,10 +1,10 @@
-name:  test_custom_model
+name:  test_charcnn_zhang
 
 
 on:
   push:
     branches: 
-      - feat_XXX
+      - featre_charcnn_zhang
  
 jobs:
   build:
@@ -65,7 +65,7 @@ jobs:
 
     ########  Test running 
     - name: ml_test
-      run: ml_test  --do model_tf/1_lstm.py
+      run: ml_test  --do model_keras/charcnn_zhang.py
       
          
 
