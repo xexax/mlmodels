@@ -374,26 +374,26 @@ roc_auc_score(y, ypred)
 #### Import library and functions
 ```python
 # import library
-import mlmodels
-```
-
-#### Load model and data definitions from json
-```python
 from mlmodels.models import module_load
 from mlmodels.optim import optim
-import json
+from mlmodels.util import params_json_load
+
+
+#### Load model and data definitions from json
 
 ###  hypermodel_pars, model_pars, ....
-data_path = '../mlmodels/example/hyper_titanic_randomForest.json'  
-pars = json.load(open( data_path , mode='r'))
-for key, pdict in  pars.items() :
-  print(key)
-  globals()[key] = pdict   
+model_uri   = "model_sklearn.sklearn.py"
+config_path = path_norm( 'example/hyper_titanic_randomForest.json'  )
+config_mode = "test"  ### test/prod
 
 
-model_uri    = "model_sklearn.sklearn.py"
-module       =  module_load( model_uri= model_uri )                      
 
+#### Model Parameters
+hypermodel_pars, model_pars, data_pars, compute_pars, out_pars = params_json_load(config_path, config_mode= config_mode)
+print( hypermodel_pars, model_pars, data_pars, compute_pars, out_pars)
+
+
+module            =  module_load( model_uri= model_uri )                      
 model_pars_update = optim(
     model_uri       = model_uri,
     hypermodel_pars = hypermodel_pars,
@@ -403,30 +403,27 @@ model_pars_update = optim(
     out_pars        = out_pars
 )
 
-```
-
 
 #### Load Parameters and Train
-```python
-model         =  module.Model(model_pars=model_pars_update, data_pars=data_pars, compute_pars=compute_pars)             # Create Model instance
-model, sess   =  module.fit(model, data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)          # fit the model
-```
-
+model         =  module.Model(model_pars=model_pars_update, data_pars=data_pars, compute_pars=compute_pars)y
+model, sess   =  module.fit(model, data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)
 
 #### Check inference
-```python
-ypred       = module.predict(model,  data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)     # predict pipeline
+ypred         = module.predict(model,  data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)     # predict pipeline
 ypred
-```
+
 
 #### Check metrics
-```python
 import pandas as pd
 from sklearn.metrics import roc_auc_score
 
-y = pd.read_csv('../mlmodels/dataset/tabular/titanic_train_preprocessed.csv')['Survived'].values
+y = pd.read_csv( path_norm('dataset/tabular/titanic_train_preprocessed.csv') )
+y = y['Survived'].values
 roc_auc_score(y, ypred)
+
+
 ```
+
 
 ---
 
