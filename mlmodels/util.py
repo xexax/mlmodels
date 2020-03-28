@@ -498,13 +498,17 @@ def save_pkl(model=None, save_pars=None):
 
 
 
-def load_keras(load_pars):
+def load_keras(load_pars, custom_pars=None):
     from keras.models import load_model
     path, filename = os_path_split(load_pars['path']  )
-
     path_file = path + "/" + filename if ".h5" not in path else path
     model = Model_empty()
-    model.model = load_model(path_file)
+    if custom_pars:
+        model.model = load_model(path_file, 
+                             custom_objects={"MDN": custom_pars["MDN"],
+                                             "loss_func": custom_pars["loss"]})
+    else:
+        model.model = load_model(path_file)
     return model
 
 
@@ -512,7 +516,6 @@ def save_keras(model=None, session=None, save_pars=None, ):
     path, filename = os_path_split(save_pars['path']  )
     os.makedirs(path, exist_ok=True)
     model.model.save(str(Path(path) / filename))
-
 
 
 def save_gluonts(model=None, session=None, save_pars=None):
