@@ -490,7 +490,7 @@ def load_pkl(load_pars):
     return pickle.load(open( load_pars['path'], mode='rb') )
 
 
-def save_pkl(model=None, save_pars=None):
+def save_pkl(model=None, session=None, save_pars=None):
   import cloudpickle as pickle
   path, filename = os_path_split(save_pars['path'])
   os.makedirs(path, exist_ok=True)
