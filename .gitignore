@@ -132,3 +132,5 @@ example/dask*
 example/dataset
 example/exp
 /functions.json
+.idea
+/classes.json
