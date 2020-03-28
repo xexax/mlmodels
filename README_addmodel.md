@@ -1,3 +1,13 @@
+# Documentation
+
+Functions/Methods
+https://github.com/arita37/mlmodels/blob/dev/README_index_doc.py
+
+
+Code source
+https://sourcegraph.com/search?q=repo:%5Egithub%5C.com/arita37/mlmodels%24+os_package&patternType=literal
+
+
 
 # Steps to add a new Colab notebook /Jupyter notbbok :
 
