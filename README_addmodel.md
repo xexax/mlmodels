@@ -27,68 +27,83 @@
 
 
 
-
+___________________________________________________________________________________________
 # Steps  to add a new model :
 
-```
 
-0) Read the readme.md and Install mlmodels on Linux
-
-   https://github.com/arita37/mlmodels/blob/dev/mlmodels/model_keras/textcnn.py
+### 0) Read the examples :
 
 
+  https://github.com/arita37/mlmodels/issues/102
 
-1) Create a branch from DEV branch called : feat_XXXXX
-   https://github.com/Kunena/Kunena-Forum/wiki/Create-a-new-branch-with-git-and-manage-branches
+  https://github.com/arita37/mlmodels/pull/100
 
 
-2) Change this file with your MODEL_NAME AND BRANCH NAME:
-     GITHUB URL/ .github/workflows/test_specific_model.yml
+
+    
+### 1) Create a branch from DEV branch called : keras_modelXXX
+  
+
+
+### 2) Change this file with your MODEL_NAME AND BRANCH NAME:
+  GITHUB URL/ .github/workflows/test_specific_model.yml
 
    Change only with your MODEL_NAME
-     GITHUB URL/ .github/workflows/test_pullrequest.yml#L61
+  GITHUB URL/ .github/workflows/test_pullrequest.yml#L61
 
 
      Test will run on GITHUB server for your model AFTER each commit.
-     https://github.com/arita37/mlmodels/actions
-
-
-3) Create  mlmodels/model_XXXX/yyyyy.py   
-     https://github.com/arita37/mlmodels/blob/dev/mlmodels/model_keras/textcnn.py
-     https://github.com/arita37/mlmodels/blob/dev/mlmodels/model_tch/transformer_sentence.py
-     https://github.com/arita37/mlmodels/blob/dev/README_index_doc.txt
-
-     Template
-        https://github.com/arita37/mlmodels/blob/dev/mlmodels/template/model_xxx.py
-
-     Please re-use existing functions
-            https://github.com/arita37/mlmodels/blob/dev/mlmodels/util.py
-            from mlmodels.util import    ...
-            
-            
-4) Create  mlmodels/model_XXXX/yyyy.json , following this template :
-   https://github.com/arita37/mlmodels/blob/dev/mlmodels/template/models_config.json
+  
+  https://github.com/arita37/mlmodels/actions
 
 
 
-5) Run/Test on your local machine
+### 3) Create  mlmodels/model_XXXX/yyyyy.py   
+  https://github.com/arita37/mlmodels/blob/dev/mlmodels/model_keras/textcnn.py
+  
+  https://github.com/arita37/mlmodels/blob/dev/mlmodels/model_tch/transformer_sentence.py
+  https://github.com/arita37/mlmodels/blob/dev/README_index_doc.txt
+
+  Template
+  https://github.com/arita37/mlmodels/blob/dev/mlmodels/template/model_xxx.py
+
+  Please re-use existing functions
+  https://github.com/arita37/mlmodels/blob/dev/mlmodels/util.py
+  
+     from mlmodels.util import os_package_root_path, log, 
+                            path_norm, get_model_uri, path_norm_dict
+
+     ### Use path_norm to normalize your path.
+     data_path = path_norm("dataset/text/myfile.txt") -->   PATH.../mlmodels/dataset/text/myfile.txt
+
+
+
+
+
+### 4) Create  mlmodels/model_XXXX/yyyy.json , following this template :
+  
+  https://github.com/arita37/mlmodels/blob/dev/mlmodels/template/models_config.json
+
+
+
+### 5) Run/Test on your local machine
     cd mlmodels
     python model_XXXX/yyyy.py  
 
 
-6) Add Basic example of code here  :
-    https://github.com/arita37/mlmodels/blob/dev/README_usage.md
+### 6) Add Basic example of code here  :
+
+ https://github.com/arita37/mlmodels/blob/dev/README_usage.md
 
 
 
-7)  Do Pull Request to dev Branch !
+### 7)  Do Pull Request to dev Branch !
 
 
 
 
+___________________________________________________________________________________________
 
-
-```
 
 
 

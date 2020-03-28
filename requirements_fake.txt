@@ -60,9 +60,13 @@ gensim
 # horovod==0.16.2   #### Issues with OPEN MPI
 
 
-
-
 #### For ARMDN 
 tensorflow_probability<=0.7.0
 keras-mdn-layer<=0.2.1
+
+
+
+
+
+
 

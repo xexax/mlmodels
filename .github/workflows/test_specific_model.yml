@@ -1,11 +1,10 @@
-name:  test_custom_model
-
+name:  test_charcnn_zhang
 
 on:
   push:
     branches: 
-      ##### Please change BELOW to your branch name
-      - keras_armdn
+      - featre_charcnn_zhang
+
  
 jobs:
   build:
@@ -40,11 +39,17 @@ jobs:
       if: steps.cache-pipenv.outputs.cache-hit != 'true'
       run: pip install numpy
       
-    - name: Install repo requirements
+    - name: Install repo requirements  1
       if: steps.cache-pipenv.outputs.cache-hit != 'true'
       run:  |
         pip install -r requirements.txt
+
+
+    - name: Install repo requirements   2
+      if: steps.cache-pipenv.outputs.cache-hit != 'true'
+      run:  |
         pip install -r requirements_fake.txt
+
 
 
     - name: Install repo
@@ -58,6 +63,7 @@ jobs:
     ########  Test running 
     ##### Please change BELOW to your model name  
     - name: ml_test
-      run: ml_test  --do model_keras/armdn.py
+      run: ml_test  --do model_keras/charcnn_zhang.py
+
       
          

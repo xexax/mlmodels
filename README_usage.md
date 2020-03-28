@@ -486,4 +486,51 @@ metrics_val
 
 
 
+### Using Vision CNN RESNET18 for MNIST dataset  ([Example notebook](mlmodels/example/model_restnet18.ipynb), [JSON file](mlmodels/model_tch/torchhub_cnn.json))
+
+
+
+```python
+# import library
+import mlmodels
+from mlmodels.models import module_load
+from mlmodels.util import path_norm_dict, path_norm, params_json_load
+import json
+
+
+#### Model URI and Config JSON
+model_uri   = "model_tch.torchhub.py"
+config_path = path_norm( 'model_tch/torchhub_cnn.json'  )
+config_mode = "test"  ### test/prod
+
+
+
+
+
+#### Model Parameters
+hypermodel_pars, model_pars, data_pars, compute_pars, out_pars = params_json_load(config_path, config_mode= config_mode)
+print( hypermodel_pars, model_pars, data_pars, compute_pars, out_pars)
+
+
+#### Setup Model 
+module         = module_load( model_uri)
+model          = module.Model(model_pars, data_pars, compute_pars) 
+`
+#### Fit
+model, session = module.fit(model, data_pars, compute_pars, out_pars)           #### fit model
+metrics_val    = module.fit_metrics(model, data_pars, compute_pars, out_pars)   #### Check fit metrics
+print(metrics_val)
+
+
+#### Inference
+ypred          = module.predict(model, session, data_pars, compute_pars, out_pars)   
+print(ypred)
+
+
+
+
+```
+
+---
+
 

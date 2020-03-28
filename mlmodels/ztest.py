@@ -3,6 +3,7 @@ import copy
 import math
 import os
 from collections import Counter, OrderedDict
+import json
 
 import numpy as np
 import pandas as pd
@@ -16,9 +17,8 @@ import pandas as pd
 ####################################################################################################
 import mlmodels
 
-
-####################################################################################################
 from mlmodels.util import get_recursive_files, log, os_package_root_path, model_get_list, os_get_file
+
 
 
 
@@ -73,7 +73,6 @@ def test_import() :
 
 
 
-
 def test_all():
   print("os.getcwd", os.getcwd())
 
@@ -82,13 +81,25 @@ def test_all():
   model_list = model_get_list(folder=None, block_list=[])
   print(model_list)
 
+
+  ## Block list
+  root = os_package_root_path()
+  cfg = json.load(open(root + "config/test_config.json", mode='r'))['test_all']
+  block_list = cfg['block_model_list']
+  model_list = [ t for t in model_list if t not in block_list]
+  print("Used", model_list)
+
+
   path = path.replace("\\", "//")  
   test_list =[ f"python {path}/"  + t.replace(".","//").replace("//py", ".py") for t in model_list ] 
+
 
   for cmd in test_list :
     print("\n\n\n", flush=True)
     print(cmd, flush=True)
     os.system( cmd )
+
+
 
 
 def test_list(mlist):
