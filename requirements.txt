@@ -1,23 +1,11 @@
-torch==1.0.1
-tensorflow<2.0
+torch==1.2.0
+#torch==1.0.1
+tensorflow==1.15.2
 keras<2.4.0
 numpy
-
-### transformers
-pytorch-transformers
-###transformers==2.4.1 #### fix issue #23 could not run on macos
-transformers==2.3.0 #### due to sentence transformers
-sentence-transformers
-
-############################
-mxnet==1.6.0
-gluonts==0.4.2
-autogluon==0.0.5
-lightgbm==2.3.0
-
-############################
 optuna<1.2.0
-deepctr
+
+
 
 ############################
 pandas<1.0
@@ -31,15 +19,11 @@ toml
 setuptools==45.2.0
 python-dateutil==2.8.0
 
-#### NLP
-torchtext
-nltk
-spacy
-gensim 
+
+#### Utils
+cli_code
 
 
-#### Distributed training
-# horovod==0.16.2   #### Issues with OPEN MPI
 
 
 

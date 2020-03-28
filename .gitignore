@@ -5,7 +5,7 @@ __pycache__/
 zsublime*
 ztest/
 mlmodels/ztest/*
-
+.idea/*
 
 
 # C extensions
@@ -131,3 +131,4 @@ venv.bak/
 example/dask*
 example/dataset
 example/exp
+/functions.json

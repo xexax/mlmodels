@@ -58,7 +58,7 @@ logger = logging.getLogger(__name__)
 
 
 
-fromm mlmodels.util import os_package_root_path, log, path_norm
+from mlmodels.util import os_package_root_path, log, path_norm
 
 
 
@@ -354,7 +354,7 @@ def fit_metrics(model, tokenizer, model_pars,data_pars, out_pars, compute_pars, 
 
     
 
-# def predict(model, sess=None, data_pars={}, out_pars={}, compute_pars={}, **kw):
+# def predict(model, sess=None, data_pars=None, out_pars=None, compute_pars=None, **kw):
 #   ##### Get Data ###############################################
 #   data_pars['train'] = False
 #   Xpred, ypred = get_dataset(data_pars)

@@ -293,7 +293,7 @@ def reset_model():
 
 
 ########################################################################################################################
-def path_setup(out_folder="", sublevel=1, data_path="dataset/"):
+def path_setup(out_folder="", sublevel=0, data_path="dataset/"):
     #### Relative path
     data_path = os_package_root_path(__file__, sublevel=sublevel, path_add=data_path)
     out_path = os.getcwd() + "/" + out_folder
@@ -332,7 +332,7 @@ def get_params(choice="", data_path="dataset/", config_mode="test", **kw):
         log("#### Path params   ###################################################")
         data_path, out_path = path_setup(out_folder="/deepctr_test/", data_path=data_path)
 
-        train_data_path = data_path + "criteo_sample.txt"
+        train_data_path = data_path + "recommender/criteo_sample.txt"
         data_pars = {"train_data_path": train_data_path, "dataset_type": "criteo", "test_size": 0.2}
 
         log("#### Model params   #################################################")
@@ -345,7 +345,7 @@ def get_params(choice="", data_path="dataset/", config_mode="test", **kw):
         log("#### Path params   ##################################################")
         data_path, out_path = path_setup(out_folder="/deepctr_test/", data_path=data_path)
 
-        train_data_path = data_path + "criteo_sample.txt"
+        train_data_path = data_path + "recommender/criteo_sample.txt"
         data_pars = {"train_data_path": train_data_path, "hash_feature": True,
                      "dataset_type": "criteo", "test_size": 0.2}
 

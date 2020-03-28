@@ -46,7 +46,7 @@ def os_module_path():
   current_dir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe()))) 
   return current_dir
 
-def path_setup(out_folder="", sublevel=1, data_path="dataset/"):
+def path_setup(out_folder="", sublevel=0, data_path="dataset/"):
     current_dir= os_module_path()
     data_path = os.path.join(current_dir, data_path)
     out_path = os.path.join(current_dir, out_folder)
@@ -71,7 +71,7 @@ def get_params(choice="", data_path="./dataset/", config_mode="test", **kw):
 
     if choice == "test01":
         log("#### Path params   #################")
-        data_path, out_path, model_path = path_setup(out_folder="output/", sublevel=1,
+        data_path, out_path, model_path = path_setup(out_folder="output/", sublevel=0,
                                                      data_path=data_path)
        
         positive_data_file_path = os.path.join(data_path,"rt-polaritydata/rt-polarity.pos")
@@ -260,7 +260,7 @@ class Model:
       model.compile(self.model_pars["optimization"], 'categorical_crossentropy', metrics=['accuracy'])
       return model
 
-def fit(model, Xtrain, ytrain, compute_pars={}, **kw):
+def fit(model, Xtrain, ytrain, compute_pars=None, **kw):
   """
   :param model:    Class model
   :param data_pars:  dict of
@@ -275,7 +275,7 @@ def fit(model, Xtrain, ytrain, compute_pars={}, **kw):
 
   return model
 
-def metrics(ytrue, ypred, data_pars={}, out_pars={}, **kw):
+def metrics(ytrue, ypred, data_pars=None, out_pars=None, **kw):
     """
        Return metrics 
     """
@@ -286,7 +286,7 @@ def metrics(ytrue, ypred, data_pars={}, out_pars={}, **kw):
      
     return ddict
 
-def predict(model, Xtest, ytest, data_pars={}, out_pars={}, compute_pars={}, **kw):
+def predict(model, Xtest, ytest, data_pars=None, out_pars=None, compute_pars=None, **kw):
      
   ##### Get Data ###############################################
   

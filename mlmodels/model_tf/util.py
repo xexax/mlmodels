@@ -54,7 +54,7 @@ def os_package_root_path(filepath, sublevel=0, path_add=""):
     return path
 
 
-# print("check", os_package_root_path(__file__, sublevel=1) )
+# print("check", os_package_root_path(__file__, sublevel=0) )
 
 
 def batch_invert_permutation(permutations):

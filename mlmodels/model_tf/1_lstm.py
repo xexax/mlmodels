@@ -12,7 +12,7 @@ import tensorflow as tf
 from sklearn.preprocessing import MinMaxScaler
 
 ####################################################################################################
-from mlmodels.util import os_package_root_path, log, params_json_load
+from mlmodels.util import os_package_root_path, log, params_json_load, path_norm
 
 
 
@@ -30,14 +30,19 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '1'  # **** change the warning level ****
 ####################################################################################################
 class Model:
     def __init__(self, model_pars=None, data_pars=None, compute_pars=None, **kwargs):
+        tf.reset_default_graph()
+
         epoch         = model_pars.get('epoch', 5)
         learning_rate = model_pars.get('learning_rate', 0.001)
         num_layers    = model_pars.get('num_layers', 2)
-        size          = model_pars.get('size', None)
         size_layer    = model_pars.get('size_layer', 128)
-        output_size   = model_pars.get('output_size', None)
         forget_bias   = model_pars.get('forget_bias', 0.1)
         timestep      = model_pars.get('timestep', 5)
+
+         #### Depends on input data !!!!!
+        size          = model_pars.get('size', None)
+        output_size   = model_pars.get('output_size', None)
+
 
         self.epoch = epoch
         self.stats = {"loss": 0.0,
@@ -70,14 +75,15 @@ class Model:
         self.optimizer = tf.compat.v1.train.AdamOptimizer(learning_rate).minimize(self.cost)
 
 
-def fit(model, sess=None, compute_pars=None, data_pars=None, out_pars=None, **kwarg):
+def fit(model, data_pars=None, compute_pars=None,  out_pars=None, **kwarg):
     df = get_dataset(data_pars)
     print(df.head(5))
     msample = df.shape[0]
     nlog_freq = compute_pars.get("nlog_freq", 100)
 
     ######################################################################
-    sess = tf.compat.v1.InteractiveSession()
+    # sess = tf.compat.v1.InteractiveSession()
+    sess = tf.compat.v1.Session()
     sess.run(tf.compat.v1.global_variables_initializer())
     for i in range(model.epoch):
         total_loss = 0.0
@@ -130,7 +136,7 @@ def metrics(model, sess=None, data_pars=None, compute_pars=None, out_pars=None):
     return model.stats
 
 
-def predict(model, sess=None, compute_pars=None, data_pars=None, out_pars=None,
+def predict(model, sess=None, data_pars=None,  compute_pars=None, out_pars=None,
             get_hidden_state=False, init_value=None):
     df = get_dataset(data_pars)
     print(df, flush=True)
@@ -173,19 +179,20 @@ def reset_model():
     tf.compat.v1.reset_default_graph()
 
 
-def save(model, session=None, save_pars={}):
+def save(model, session=None, save_pars=None):
     from mlmodels.util import save_tf
     print(save_pars)
-    save_tf(session, save_pars['path'])
+    save_tf(model, session, save_pars)
      
 
 
-def load(load_pars={}):
+def load(load_pars=None):
     from mlmodels.util import load_tf
     print(load_pars)
-    input_tensors, output_tensors =  load_tf(load_pars['path'], 
-                                            filename=load_pars['model_uri'])
-    return input_tensors, output_tensors
+    return load_tf(load_pars)
+
+
+
 
 
 
@@ -212,7 +219,7 @@ def get_dataset(data_pars=None):
 
     """
     print(data_pars)
-    filename = data_pars["data_path"]  #
+    filename = path_norm( data_pars["data_path"])  #
 
     ##### Specific   ######################################################
     df = pd.read_csv(filename)
@@ -239,22 +246,22 @@ def get_params(param_pars={}, **kw):
        cf = params_json_load(data_path) 
        #  cf['model_pars'], cf['data_pars'], cf['compute_pars'], cf['out_pars']
        return cf
-       #cf = json.load(open(data_path, mode='r'))
-       #cf = cf[config_mode]
-       #return cf['model_pars'], cf['data_pars'], cf['compute_pars'], cf['out_pars']
 
 
-    if choice == "test":
-        data_path = os_package_root_path(__file__, sublevel=1, path_add=data_path)
+    if choice == "test01":
         log("############# Data, Params preparation   #################")        
+        data_path  = path_norm( "dataset/timeseries/GOOG-year.csv"  )   
+        out_path   = path_norm( "ztest/model_tf/1_lstm/" )
+        model_path = os.path.join(out_path , "model")
 
-        model_pars   = {"learning_rate": 0.001, "num_layers": 1, "size": None, "size_layer": 128,
-                      "output_size": None, "timestep": 4, "epoch": 2, }
 
+        model_pars   = {"learning_rate": 0.001, "num_layers": 1, "size": 6, "size_layer": 128,
+                         "timestep": 4, "epoch": 2,
+                         "output_size" : 6 }
 
         data_pars    = {"data_path": data_path, "data_type": "pandas"}
-        out_pars     = {"path": data_path}
         compute_pars = {}
+        out_pars     = {"path": out_path, "model_path": model_path}
 
         return model_pars, data_pars, compute_pars, out_pars
     else:
@@ -262,47 +269,55 @@ def get_params(param_pars={}, **kw):
 
 
 ####################################################################################################
-def test(data_path="dataset/timeseries/GOOG-year.csv", pars_choice="test", config_mode="test"):
-    """
-       Using mlmodels package method
-       :param data_path:
-       :param pars_choice:
+def test(data_path="dataset/", pars_choice="test01", config_mode="test"):
+    ### Local test
 
-    """
     log("#### Loading params   ##############################################")
-    model_pars, data_pars, compute_pars, out_pars = get_params({ "choice": pars_choice,
-                                                                 "data_path": data_path,
-                                                                 "config_mode": config_mode,
-                                                                })
-    print(model_pars, data_pars, compute_pars, out_pars)
+    param_pars = {"choice":pars_choice,  "data_path":data_path,  "config_mode": config_mode}
+    model_pars, data_pars, compute_pars, out_pars = get_params(param_pars)
+    log( model_pars, data_pars, compute_pars, out_pars )
+
 
     log("#### Loading dataset   #############################################")
-    dataset = get_dataset(data_pars)
-    model_pars["size"] = dataset.shape[1]
-    model_pars["output_size"] = dataset.shape[1]
+    Xtuple = get_dataset(data_pars)
 
 
-    log("############ Model preparation   #########################")
-    from mlmodels.models import module_load_full
-    module, model = module_load_full("model_tf.1_lstm", model_pars)
-    print(module, model)
+    log("#### Model init  #############################################")
+    session = None
+    model = Model(model_pars, data_pars, compute_pars)
+
+    log("#### Model fit   #############################################")
+    model, session = fit(model, data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)
 
 
-    log("############ Model fit   ##################################")
-    model, sess = fit(model, data_pars=data_pars, out_pars=out_pars, compute_pars=compute_pars)
-    print("fit success", sess)
+    log("#### Predict   #####################################################")
+    data_pars["train"] = 0
+    ypred = predict(model, session, data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)
 
-    log("############ Prediction##########################")
-    preds = predict(model, sess, data_pars=data_pars, out_pars=out_pars, compute_pars=compute_pars)
-    print(preds)
 
-    reset_model()
+    log("#### metrics   #####################################################")
+    metrics_val = fit_metrics(model, data_pars, compute_pars, out_pars)
+    print(metrics_val)
+
+
+    log("#### Plot   ########################################################")
+
+
+    log("#### Save/Load   ###################################################")
+    save(model, session, out_pars)
+    session = load(out_pars)
+    #     ypred = predict(model2, data_pars, compute_pars, out_pars)
+    #     metrics_val = metrics(model2, ypred, data_pars, compute_pars, out_pars)
+    # print(model2)
+
+
+
 
 
 
 if __name__ == "__main__":
     print("start")
-    test(data_path="dataset/timeseries/GOOG-year.csv", pars_choice="test", config_mode="test")
+    test(data_path="", pars_choice="test01", config_mode="test")
 
 
 

@@ -81,7 +81,7 @@ class Model:
             self.model = model
 
 
-def fit(model, data_pars={}, compute_pars={}, out_pars={}, **kw):
+def fit(model, data_pars=None, compute_pars=None, out_pars=None, **kw):
     """
     """
 
@@ -111,7 +111,7 @@ def fit(model, data_pars={}, compute_pars={}, out_pars={}, **kw):
     return model, sess
 
 
-def fit_metrics(model, data_pars={}, compute_pars={}, out_pars={}, **kw):
+def fit_metrics(model, data_pars=None, compute_pars=None, out_pars=None, **kw):
     """
        Return metrics ofw the model when fitted.
     """
@@ -120,7 +120,7 @@ def fit_metrics(model, data_pars={}, compute_pars={}, out_pars={}, **kw):
     return history.history
 
 
-def predict(model, sess=None, data_pars=None, out_pars=None, compute_pars={}, **kw):
+def predict(model, sess=None, data_pars=None, out_pars=None, compute_pars=None, **kw):
     ##### Get Data ###############################################
     data_pars['train'] = False
     _, Xtrain, ytrain, Xtest, ytest = get_dataset(data_pars)
@@ -139,25 +139,22 @@ def reset_model():
     pass
 
 
-def save(model=None, session=None, save_pars={}):
+def save(model=None, session=None, save_pars=None):
     from mlmodels.util import save_keras
     print(save_pars)
-    save_keras(session, save_pars['path'])
+    save_keras(model, session, save_pars)
 
 
-def load(load_pars={}):
+def load(load_pars):
     from mlmodels.util import load_keras
     print(load_pars)
-    model0 = load_keras(load_pars['path'])
-
-    model = Model()
-    model.model = model0
+    model = load_keras(load_pars)
     session = None
     return model, session
 
 
 ####################################################################################################
-def get_dataset(data_pars=None, **kw):
+def get_dataset(data_pars, **kw):
     """
         "data_pars": {
               "train": true,
@@ -183,22 +180,20 @@ def get_dataset(data_pars=None, **kw):
         },
 
     """
-   if data_pars.get('mode') == "test_repo"  :
+    if data_pars.get('mode') == "test_repo":
      """
        df = run_process( d['loader'], d['loader_pars'])
        Xtuple = run_process( d['processor'], d['loader_pars'])
        return Xtuple
-
      """ 
-     return _preprocess_test()
-  else :
-     pass
+     return _preprocess_test(data_pars)
+    else :
+        raise Exception(f"Not support dataset yet")
 
 
 
 
-
-def _preprocess_test(data_pars=None, **kw):
+def _preprocess_test(data_pars, **kw):
     """
 
     """
@@ -207,7 +202,7 @@ def _preprocess_test(data_pars=None, **kw):
     from keras.utils import to_categorical
 
 
-    df = pd.read_csv(data_pars['data_path'], encoding="ISO-8859-1")
+    df = pd.read_csv(data_pars['path'], encoding="ISO-8859-1")
     df = df[:50]  # quick test
     df = df.fillna(method='ffill')
 
@@ -269,7 +264,7 @@ def get_params(param_pars={}, **kw):
     data_path = pp['data_path']
 
     if choice == "json":
-        data_path = path_normalize(data_path)
+        data_path = path_norm(data_path)
         cf = json.load(open(data_path, mode='r'))
         cf = cf[config_mode]
         return cf['model_pars'], cf['data_pars'], cf['compute_pars'], cf['out_pars']
@@ -278,7 +273,7 @@ def get_params(param_pars={}, **kw):
     if choice == "test01":
         log("#### Path params   ##########################################")
         data_path  = path_norm( "dataset/text/ner_dataset.csv"  )   
-        out_path   = path_norm( "/ztest/model_keras/crf_bilstm/" )   
+        out_path   = path_norm( "ztest/model_keras/crf_bilstm/" )
         model_path = os.path.join(out_path , "model")
 
 
@@ -292,6 +287,8 @@ def get_params(param_pars={}, **kw):
                         }
 
         out_pars = {"path": out_path, "model_path": model_path}
+
+        log(data_pars, out_pars)
 
         return model_pars, data_pars, compute_pars, out_pars
 
@@ -340,18 +337,18 @@ def test(data_path="dataset/", pars_choice="json", config_mode="test"):
 if __name__ == '__main__':
     VERBOSE = True
     test_path = os.getcwd() + "/mytest/"
-    root_path = os_package_root_path(__file__, 1)
+    root_path = os_package_root_path(__file__, 0)
 
     ### Local fixed params
     # test(pars_choice="test01")
 
     ### Local json file
-    test(pars_choice="json", data_path=f"{root_path}/model_keras/namentity_crm_bilstm.json")
+    test(pars_choice="json", data_path=f"model_keras/namentity_crm_bilstm.json")
 
     ####    test_module(model_uri="model_xxxx/yyyy.py", param_pars=None)
     from mlmodels.models import test_module
 
-    param_pars = {'choice': "json", 'config_mode': 'test', 'data_path': f"{root_path}/model_keras/namentity_crm_bilstm.json"}
+    param_pars = {'choice': "json", 'config_mode': 'test', 'data_path': f"model_keras/namentity_crm_bilstm.json"}
     test_module(model_uri=MODEL_URI, param_pars=param_pars)
 
     ##### get of get_params
@@ -362,7 +359,7 @@ if __name__ == '__main__':
     ####    test_api(model_uri="model_xxxx/yyyy.py", param_pars=None)
     from mlmodels.models import test_api
 
-    param_pars = {'choice': "json", 'config_mode': 'test', 'data_path': f"{root_path}/model_keras/namentity_crm_bilstm.json"}
+    param_pars = {'choice': "json", 'config_mode': 'test', 'data_path': f"model_keras/namentity_crm_bilstm.json"}
     test_api(model_uri=MODEL_URI, param_pars=param_pars)
 
 """
