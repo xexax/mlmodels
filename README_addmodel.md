@@ -24,21 +24,16 @@
 
 
 ```
-
-
-
-
 # Steps  to add a new model :
 
 ```
 
-0) Read the readme.md and Install mlmodels on Linux
+0) Read this one :
 
-   https://github.com/arita37/mlmodels/blob/dev/mlmodels/model_keras/textcnn.py
+   https://github.com/arita37/mlmodels/issues/102
 
 
-
-1) Create a branch from DEV branch called : feat_XXXXX
+1) Create a branch from DEV branch called : keras_MYDMODEL
    https://github.com/Kunena/Kunena-Forum/wiki/Create-a-new-branch-with-git-and-manage-branches
 
 
@@ -55,13 +50,17 @@
 
 3) Create  mlmodels/model_XXXX/yyyyy.py   
      https://github.com/arita37/mlmodels/blob/dev/mlmodels/model_keras/textcnn.py
+     
      https://github.com/arita37/mlmodels/blob/dev/mlmodels/model_tch/transformer_sentence.py
-     https://github.com/arita37/mlmodels/blob/dev/README_index_doc.txt
+     
+     https://github.com/arita37/mlmodels/blob/dev/mlmodels/model_keras/charcnn_zhang.py
+     
+     
 
      Template
         https://github.com/arita37/mlmodels/blob/dev/mlmodels/template/model_xxx.py
 
-     Please re-use existing functions
+     **Please re-use existing functions**
             https://github.com/arita37/mlmodels/blob/dev/mlmodels/util.py
             from mlmodels.util import    ...
             
