@@ -45,11 +45,12 @@ ________________________________________________________________________________
   
 
 
-### 2) Change this file with your MODEL_NAME AND BRANCH NAME:
-  GITHUB URL/ .github/workflows/test_specific_model.yml
+### 2) Change this file with your MODEL_NAME AND BRANCH NAME  ( Your Branch test  ):
+  https://github.com/arita37/mlmodels/blob/dev/.github/workflows/test_specific_model.yml
 
-   Change only with your MODEL_NAME
-  GITHUB URL/ .github/workflows/test_pullrequest.yml#L61
+
+   Change only with your MODEL_NAME  (PULL Request)
+  https://github.com/arita37/mlmodels/blob/dev/.github/workflows/test_pullrequest.yml
 
 
      Test will run on GITHUB server for your model AFTER each commit.
