@@ -103,7 +103,8 @@ def get_params(choice=0, data_path="dataset/", **kw):
         data_pars = {"train_data_path": train_data_path,
                      "train": False,
                      "prediction_length": 12,
-                     "save_fig": "./series.png"}
+                     "col_Xinput": ["milk_production_pounds"],
+                     "col_ytarget": "milk_production_pounds"}
         log("#### Model params ####")
         model_pars = {"lstm_h_list": [300, 200, 24], "last_lstm_neuron": 12,
                       "timesteps": 12, "dropout_rate": 0.1, "n_mixes": 3,
@@ -125,22 +126,19 @@ def log(*s, n=0, m=1):
 
 
 def get_dataset(data_params):
+    pred_length = data_params["prediction_length"]
+    features =  data_params["col_Xinput"]
+    target = data_params["col_ytarget"]
+    feat_len = len(features)
     df = pd.read_csv(data_params["train_data_path"])
-    x_train = df["milk_production_pounds"].iloc[:-12]
-    x_train = x_train.values.reshape(-1,
-                                     data_params["prediction_length"],
-                                     1)
-    y_train = df["milk_production_pounds"].iloc[:-12].shift().fillna(0)
-    y_train = y_train.values.reshape(-1, data_params["prediction_length"],
-                                     1)
-    x_test = df.iloc[-12:]["milk_production_pounds"]
-    x_test = x_test.values.reshape(-1,
-                                   data_params["prediction_length"],
-                                   1)
-    y_test = df.iloc[-12:]["milk_production_pounds"].shift().fillna(0)
-    y_test = y_test.values.reshape(-1,
-                                   data_params["prediction_length"],
-                                   1)
+    x_train = df[features].iloc[:-pred_length]
+    x_train = x_train.values.reshape(-1, pred_length, feat_len)
+    y_train = df[features].iloc[:-pred_length].shift().fillna(0)
+    y_train = y_train.values.reshape(-1, pred_length, 1)
+    x_test = df.iloc[-pred_length:][target]
+    x_test = x_test.values.reshape(-1,pred_length, feat_len)
+    y_test = df.iloc[-pred_length:][target].shift().fillna(0)
+    y_test = y_test.values.reshape(-1, pred_length, 1)
     return x_train, y_train, x_test, y_test
 
 
@@ -176,25 +174,32 @@ def predict(model=None, model_pars=None, data_pars=None, **kwargs):
 
 def test(data_path="dataset/"):
     log("#### Loading params   ##############################################")
-    model_pars, data_pars,
-    compute_pars, out_pars = get_params(choice=0, data_path=ata_path)
+    model_pars, data_pars,\
+                          compute_pars, out_pars = get_params(choice=0,
+                                                              data_path=data_path)
     log("#### Model init, fit   #############################################")
     model = Model(model_pars=model_pars, data_pars=data_pars,
                   compute_pars=compute_pars)
     log("### Model created ###")
     log(model.model.summary())
     fit(model=model, data_pars=data_pars, compute_pars=compute_pars)
-    # for prediction
-    df = pd.read_csv(data_pars["train_data_path"])
-    x_test = df.iloc[-12:]["milk_production_pounds"]
-    x_test = x_test.values.reshape(-1, data_pars["prediction_length"], 1)
-    y_test = df.iloc[-12:]["milk_production_pounds"].shift()
-    y_test = y_test.values.reshape(-1, data_pars["prediction_length"], 1)
+    pred_length = data_pars["prediction_length"]
 
+    # for prediction
+    features =  data_pars["col_Xinput"]
+    target = data_pars["col_ytarget"]
+    feat_len = len(features)
+    pred_length = data_pars["prediction_length"]
+    df = pd.read_csv(data_pars["train_data_path"])
+    x_test = df.iloc[-pred_length:][features]
+    x_test = x_test.values.reshape(-1, pred_length, feat_len)
+    y_test = df.iloc[-pred_length:][target].shift().fillna(0)
+    y_test = y_test.values.reshape(-1, pred_length, 1)
     log("#### Predict   ####")
     y_pred = predict(model=model, model_pars=model_pars,
                      data_pars=data_pars, x_test=x_test)
-
+    path = out_pars["outpath"]
+    os.makedirs(path, exist_ok=True)
     plt.plot(y_test.reshape(-1, 1), "blue", label="actual", alpha=0.7)
     plt.plot(y_pred, "red", label="predicted", alpha=0.7)
     plt.xlabel("Month")
