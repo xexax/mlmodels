@@ -1,6 +1,7 @@
 # Documentation
 
 Functions/Methods
+
 https://github.com/arita37/mlmodels/blob/dev/README_index_doc.py
 
 
@@ -77,10 +78,11 @@ ________________________________________________________________________________
   https://github.com/arita37/mlmodels/blob/dev/mlmodels/model_keras/textcnn.py
   
   https://github.com/arita37/mlmodels/blob/dev/mlmodels/model_tch/transformer_sentence.py
-  https://github.com/arita37/mlmodels/blob/dev/README_index_doc.txt
+
 
   Template
   https://github.com/arita37/mlmodels/blob/dev/mlmodels/template/model_xxx.py
+
 
   Please re-use existing functions
   https://github.com/arita37/mlmodels/blob/dev/mlmodels/util.py
