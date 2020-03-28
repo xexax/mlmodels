@@ -20,7 +20,8 @@
              "fp16": false, 
              "fp16_opt_level": "O1",
             "max_seq_length": 128, 
-            "output_mode": "classification"
+			"output_mode": "classification",
+			"cache_dir": "mlmodels/ztest/"
 
 		},
 
@@ -33,7 +34,7 @@
 			"output_size": [0, 6],
 			"train": "True",
             "output_dir": "./data/",
-            "cache_dir": "./cache/"
+            "cache_dir": "mlmodels/ztest/"
 		},
 
 
