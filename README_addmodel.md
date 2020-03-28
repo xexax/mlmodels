@@ -31,7 +31,7 @@
 # Steps  to add a new model :
 
 
-### 0) Read the readme.md and Install mlmodels on Linux
+### 0) Read the examples :
 
 
   https://github.com/arita37/mlmodels/issues/102
@@ -39,19 +39,23 @@
   https://github.com/arita37/mlmodels/pull/100
 
 
+
     
 ### 1) Create a branch from DEV branch called : keras_modelXXX
   
 
+
 ### 2) Change this file with your MODEL_NAME AND BRANCH NAME:
-     GITHUB URL/ .github/workflows/test_specific_model.yml
+  GITHUB URL/ .github/workflows/test_specific_model.yml
 
    Change only with your MODEL_NAME
-     GITHUB URL/ .github/workflows/test_pullrequest.yml#L61
+  GITHUB URL/ .github/workflows/test_pullrequest.yml#L61
 
 
      Test will run on GITHUB server for your model AFTER each commit.
-     https://github.com/arita37/mlmodels/actions
+  
+  https://github.com/arita37/mlmodels/actions
+
 
 
 ### 3) Create  mlmodels/model_XXXX/yyyyy.py   
