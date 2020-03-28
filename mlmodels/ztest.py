@@ -83,6 +83,7 @@ def test_all():
 
 
   ## Block list
+  root = os_package_root_path()
   cfg = json.load(open(root + "config/test_config.json", mode='r'))['test_all']
   block_list = cfg['block_model_list']
   model_list = [ t for t in model_list if t not in block_list]
