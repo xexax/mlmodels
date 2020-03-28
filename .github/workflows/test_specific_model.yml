@@ -1,10 +1,9 @@
-name:  test_custom_model
+name:  test_charcnn_zhang
 
 on:
   push:
     branches: 
-      ##### Please change BELOW to your branch name
-      - keras_armdn
+      - featre_charcnn_zhang
 
  
 jobs:
@@ -64,6 +63,7 @@ jobs:
     ########  Test running 
     ##### Please change BELOW to your model name  
     - name: ml_test
-      run: ml_test  --do model_keras/armdn.py
+      run: ml_test  --do model_keras/charcnn_zhang.py
+
       
          
