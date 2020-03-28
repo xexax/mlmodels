@@ -34,17 +34,14 @@
 ### 0) Read the readme.md and Install mlmodels on Linux
 
 
-    https://github.com/arita37/mlmodels/issues/102
+  https://github.com/arita37/mlmodels/issues/102
 
-    https://github.com/arita37/mlmodels/pull/100
+  https://github.com/arita37/mlmodels/pull/100
 
 
     
-
-
-### 1) Create a branch from DEV branch called : feat_XXXXX
-   https://github.com/Kunena/Kunena-Forum/wiki/Create-a-new-branch-with-git-and-manage-branches
-
+### 1) Create a branch from DEV branch called : keras_modelXXX
+  
 
 ### 2) Change this file with your MODEL_NAME AND BRANCH NAME:
      GITHUB URL/ .github/workflows/test_specific_model.yml
@@ -58,20 +55,29 @@
 
 
 ### 3) Create  mlmodels/model_XXXX/yyyyy.py   
-     https://github.com/arita37/mlmodels/blob/dev/mlmodels/model_keras/textcnn.py
-     https://github.com/arita37/mlmodels/blob/dev/mlmodels/model_tch/transformer_sentence.py
-     https://github.com/arita37/mlmodels/blob/dev/README_index_doc.txt
+  https://github.com/arita37/mlmodels/blob/dev/mlmodels/model_keras/textcnn.py
+  
+  https://github.com/arita37/mlmodels/blob/dev/mlmodels/model_tch/transformer_sentence.py
+  https://github.com/arita37/mlmodels/blob/dev/README_index_doc.txt
 
-     Template
-        https://github.com/arita37/mlmodels/blob/dev/mlmodels/template/model_xxx.py
+  Template
+  
 
-     Please re-use existing functions
-            https://github.com/arita37/mlmodels/blob/dev/mlmodels/util.py
-            from mlmodels.util import    ...
-            
-            
+  https://github.com/arita37/mlmodels/blob/dev/mlmodels/template/model_xxx.py
+
+  Please re-use existing functions
+  https://github.com/arita37/mlmodels/blob/dev/mlmodels/util.py
+  
+  from mlmodels.util import os_package_root_path, log, 
+                            path_norm, get_model_uri, path_norm_dict
+  MODEL_URI = get_model_uri(__file__)
+
+
+
+
 ### 4) Create  mlmodels/model_XXXX/yyyy.json , following this template :
-   https://github.com/arita37/mlmodels/blob/dev/mlmodels/template/models_config.json
+  
+  https://github.com/arita37/mlmodels/blob/dev/mlmodels/template/models_config.json
 
 
 
@@ -81,7 +87,8 @@
 
 
 ### 6) Add Basic example of code here  :
-    https://github.com/arita37/mlmodels/blob/dev/README_usage.md
+
+ https://github.com/arita37/mlmodels/blob/dev/README_usage.md
 
 
 
