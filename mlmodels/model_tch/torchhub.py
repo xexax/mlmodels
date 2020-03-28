@@ -36,7 +36,6 @@ def _train(m, device, train_itr, criterion, optimizer, epoch, max_epoch, imax=1)
     corrects, train_loss = 0.0,0.0
 
     for i,batch in enumerate(train_itr):
-        print(i)
         if i >= imax: break
 
         image, target = batch[0], batch[1]
@@ -62,7 +61,6 @@ def _valid(m, device, test_itr, criterion, imax=1):
     m.eval()
     corrects, test_loss = 0.0,0.0
     for i,batch in enumerate(test_itr):
-        print(i)
         if i >= imax: break
         
         image, target = batch[0], batch[1]
@@ -198,7 +196,7 @@ def fit(model, data_pars=None, compute_pars=None, out_pars=None, **kwargs):
     epochs        = compute_pars["epochs"]
     criterion     = nn.CrossEntropyLoss()
     device        = _get_device()
-    model.to(device)
+    model0.to(device)
     train_loss    = []
     train_acc     = []
     test_loss     = []
@@ -239,21 +237,25 @@ def fit(model, data_pars=None, compute_pars=None, out_pars=None, **kwargs):
 
 def predict(model, session=None, data_pars=None, compute_pars=None, out_pars=None):
     # get a batch of data
+    model0 = model.model
     _, valid_iter = get_dataset(data_pars=data_pars)
     device = _get_device()
     x_test = next(iter(valid_iter))[0].to(device)
-    ypred  = model(x_test).detach().cpu().numpy()
+    ypred  = model0(x_test).detach().cpu().numpy()
     return ypred
 
 def fit_metrics(model, data_pars=None, compute_pars=None, out_pars=None):
     pass
 
 
-def save(model, path):
-    return torch.save(model, path)
+def save(model, session, out_pars):
+    model0 = model.model
+    path   = out_pars["checkpointdir"] + out_pars["save_model_path"]
+    return torch.save(model0, path)
 
 
-def load(path):
+def load(out_pars):
+    path = out_pars["checkpointdir"] + out_pars["save_model_path"]
     return torch.load(path)
 
 
