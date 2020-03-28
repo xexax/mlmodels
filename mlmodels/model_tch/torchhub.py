@@ -1,3 +1,16 @@
+# -*- coding: utf-8 -*-
+"""
+
+
+https://colab.research.google.com/github/pytorch/pytorch.github.io/blob/master/assets/hub/facebookresearch_pytorch-gan-zoo_pgan.ipynb
+
+https://github.com/pytorch/pytorch/blob/98362d11ffe81ca48748f6b0e1e417cb81ba5998/torch/hub.py#L330
+
+
+
+
+"""
+
 import os, json
 
 
@@ -18,12 +31,14 @@ MODEL_URI = get_model_uri(__file__)
 
 ###########################################################################################################
 ###########################################################################################################
-def _train(m, device, train_itr, criterion, optimizer, epoch, max_epoch):
+def _train(m, device, train_itr, criterion, optimizer, epoch, max_epoch, imax=1):
     m.train()
     corrects, train_loss = 0.0,0.0
+
     for i,batch in enumerate(train_itr):
         print(i)
-        if i == 10: break
+        if i >= imax: break
+
         image, target = batch[0], batch[1]
         image, target = image.to(device), target.to(device)
         optimizer.zero_grad()
@@ -43,12 +58,13 @@ def _train(m, device, train_itr, criterion, optimizer, epoch, max_epoch):
   
     return train_loss, accuracy
     
-def _valid(m, device, test_itr, criterion):
+def _valid(m, device, test_itr, criterion, imax=1):
     m.eval()
     corrects, test_loss = 0.0,0.0
     for i,batch in enumerate(test_itr):
         print(i)
-        if i == 10: break
+        if i >= imax: break
+        
         image, target = batch[0], batch[1]
         image, target = image.to(device), target.to(device)
         
@@ -77,15 +93,27 @@ def get_config_file():
         'config', 'model_tch', 'Imagecnn.json')
 
 
+def get_dataset_mnist_torch(data_pars):
+    train_loader = torch.utils.data.DataLoader( datasets.MNIST(data_pars['data_path'], train=True, download=True,
+                    transform=transforms.Compose([
+                        transforms.Grayscale(num_output_channels=3),
+                        transforms.ToTensor(),
+                        transforms.Normalize((0.1307,), (0.3081,))
+                    ])),
+        batch_size=data_pars['train_batch_size'], shuffle=True)
+
+    valid_loader = torch.utils.data.DataLoader( datasets.MNIST(data_pars['data_path'], train=False,
+                    transform=transforms.Compose([
+                        transforms.Grayscale(num_output_channels=3),
+                        transforms.ToTensor(),
+                        transforms.Normalize((0.1307,), (0.3081,))
+                    ])),
+        batch_size=data_pars['test_batch_size'], shuffle=True)
+    return train_loader, valid_loader  
+
 
 ###########################################################################################################
 ###########################################################################################################
-
- 
-#############
-# functions #
-#############
-
 class Model:
     def __init__(self, model_pars=None, data_pars=None, compute_pars=None, out_pars=None):
         ### Model Structure        ################################
@@ -93,12 +121,12 @@ class Model:
             self.model = None
             return self
 
-        else:
-            self.model = None
 
-        _model      = model_pars['model']
-        num_classes = model_pars['num_classes']
-        pretrained  = bool(model_pars['pretrained'])
+        m = model_pars 
+        _model      = m['model']
+        num_classes = m['num_classes']
+
+
         assert _model in ['alexnet', 'densenet121', 'densenet169', 'densenet201', 'densenet161', 
         'inception_v3', 'resnet18', 'resnet34', 'resnet50', 'resnet101', 'resnet152', 
         'resnext50_32x4d', 'resnext101_32x8d', 'wide_resnet50_2', 'wide_resnet101_2',
@@ -113,7 +141,11 @@ class Model:
         googlenet, shufflenet_v2_x0_5, shufflenet_v2_x1_0, mobilenet_v2"
 
 
-        self.model = hub.load('pytorch/vision', _model, pretrained=pretrained)
+        self.model = hub.load( m['repo_uri'], _model, 
+                               # model_name = m.get("model_name", m['model']),
+                               pretrained = bool( m.get('pretrained', True)),
+                               # useGPU     = m.get('use_gpu',False)
+                             ) 
 
         if num_classes != 1000:
             fc_in_features = self.model.fc.in_features
@@ -134,12 +166,15 @@ def get_params(param_pars=None, **kw):
 
         ####Normalize path  : add /models/dataset/
         cf['data_pars'] = path_norm_dict(cf['data_pars'])
-        cf['out_pars'] = path_norm_dict(cf['out_pars'])
+        cf['out_pars']  = path_norm_dict(cf['out_pars'])
 
         return cf['model_pars'], cf['data_pars'], cf['compute_pars'], cf['out_pars']
 
     else:
         raise Exception(f"Not support choice {choice} yet")
+
+
+
 
 
 def get_dataset(data_pars=None, **kw):
@@ -148,29 +183,17 @@ def get_dataset(data_pars=None, **kw):
     test_batch_size  = data_pars['test_batch_size']
 
     if data_pars['dataset'] == 'MNIST':
-        train_loader = torch.utils.data.DataLoader( datasets.MNIST(data_pars['data_path'], train=True, download=True,
-                        transform=transforms.Compose([
-                            transforms.Grayscale(num_output_channels=3),
-                            transforms.ToTensor(),
-                            transforms.Normalize((0.1307,), (0.3081,))
-                        ])),
-            batch_size=data_pars['train_batch_size'], shuffle=True)
+        train_loader, valid_loader  = get_dataset_mnist_torch(data_pars)
+        return train_loader, valid_loader  
 
-        valid_loader = torch.utils.data.DataLoader( datasets.MNIST(data_pars['data_path'], train=False,
-                        transform=transforms.Compose([
-                            transforms.Grayscale(num_output_channels=3),
-                            transforms.ToTensor(),
-                            transforms.Normalize((0.1307,), (0.3081,))
-                        ])),
-            batch_size=data_pars['test_batch_size'], shuffle=True)
     else:
-        print("Dataloader not implemented")
+        raise Exception("Dataloader not implemented")
         exit
-    return train_loader, valid_loader
+
 
 
 def fit(model, data_pars=None, compute_pars=None, out_pars=None, **kwargs):
-    model         = model.model
+    model0        = model.model
     lr            = compute_pars['learning_rate']
     epochs        = compute_pars["epochs"]
     criterion     = nn.CrossEntropyLoss()
@@ -182,29 +205,35 @@ def fit(model, data_pars=None, compute_pars=None, out_pars=None, **kwargs):
     test_acc      = []
     best_test_acc = -1
 
-    optimizer     = optim.Adam(model.parameters(), lr=lr)
+    optimizer     = optim.Adam(model0.parameters(), lr=lr)
     train_iter, valid_iter = get_dataset(data_pars)
+
+    imax_train = compute_pars.get('max_batch_sample', len(train_iter) )
+    imax_valid = compute_pars.get('max_batch_sample', len(valid_iter) )
+
+    os.makedirs(out_pars["checkpointdir"], exist_ok=True)
+    
     for epoch in range(1, epochs + 1):
         #train loss
-        tr_loss, tr_acc = _train(model, device, train_iter, criterion, optimizer, epoch, epochs)
+        tr_loss, tr_acc = _train(model0, device, train_iter, criterion, optimizer, epoch, epochs, imax=imax_train)
         print( f'Train Epoch: {epoch} \t Loss: {tr_loss} \t Accuracy: {tr_acc}')
 
-        ts_loss, ts_acc = _valid(model, device, valid_iter, criterion)
+
+        ts_loss, ts_acc = _valid(model0, device, valid_iter, criterion, imax=imax_valid)
         print( f'Train Epoch: {epoch} \t Loss: {ts_loss} \t Accuracy: {ts_acc}')
 
         if ts_acc > best_test_acc:
             best_test_acc = ts_acc
             #save paras(snapshot)
-            print("model saves at {}% accuracy".format(best_test_acc))
-
-            os.makedirs(out_pars["checkpointdir"], exist_ok=True)
-            torch.save(model.state_dict(),
-                       os.path.join(out_pars["checkpointdir"],  "best_accuracy"))
+            print( f"model saves at {best_test_acc} accuracy")
+            torch.save(model0.state_dict(), os.path.join(out_pars["checkpointdir"],  "best_accuracy"))
 
         train_loss.append(tr_loss)
         train_acc.append(tr_acc)
         test_loss.append(ts_loss)
         test_acc.append(ts_acc)
+
+    model.model = model0
     return model, None
 
 
@@ -213,8 +242,8 @@ def predict(model, session=None, data_pars=None, compute_pars=None, out_pars=Non
     _, valid_iter = get_dataset(data_pars=data_pars)
     device = _get_device()
     x_test = next(iter(valid_iter))[0].to(device)
-    return model(x_test).detach().cpu().numpy()
-
+    ypred  = model(x_test).detach().cpu().numpy()
+    return ypred
 
 def fit_metrics(model, data_pars=None, compute_pars=None, out_pars=None):
     pass
@@ -236,7 +265,7 @@ def test(data_path="dataset/", pars_choice="json", config_mode="test"):
     log("#### Loading params   ##############################################")
     param_pars = {"choice":pars_choice,  "data_path":data_path,  "config_mode": config_mode}
     model_pars, data_pars, compute_pars, out_pars = get_params(param_pars)
-
+    log(  data_pars, out_pars )
 
     log("#### Loading dataset   #############################################")
     xtuple = get_dataset(data_pars)
@@ -270,4 +299,47 @@ def test(data_path="dataset/", pars_choice="json", config_mode="test"):
 
 
 if __name__ == "__main__":
-    test(data_path="dataset/json/Imagecnn.json", pars_choice="json", config_mode="test")
+    test(data_path="model_tch/torchhub_cnn.json", pars_choice="json", config_mode="test")
+
+
+
+
+
+
+
+
+
+
+
+"""
+
+
+import torch
+use_gpu = True if torch.cuda.is_available() else False
+
+# trained on high-quality celebrity faces "celebA" dataset
+# this model outputs 512 x 512 pixel images
+model = torch.hub.load('facebookresearch/pytorch_GAN_zoo:hub',
+                       'PGAN', model_name='celebAHQ-512',
+                       pretrained=True, useGPU=use_gpu)
+# this model outputs 256 x 256 pixel images
+# model = torch.hub.load('facebookresearch/pytorch_GAN_zoo:hub',
+#                        'PGAN', model_name='celebAHQ-256',
+#                        pretrained=True, useGPU=use_gpu)
+
+
+
+
+num_images = 4
+noise, _ = model.buildNoiseData(num_images)
+with torch.no_grad():
+    generated_images = model.test(noise)
+
+# let's plot these images using torchvision and matplotlib
+import matplotlib.pyplot as plt
+import torchvision
+grid = torchvision.utils.make_grid(generated_images.clamp(min=-1, max=1), scale_each=True, normalize=True)
+plt.imshow(grid.permute(1, 2, 0).cpu().numpy())
+# plt.show()
+
+"""

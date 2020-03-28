@@ -6,6 +6,7 @@
              },
 
             "model_pars": {
+                "repo_uri" : "pytorch/vision",
                 "model": "resnet18",
                 "num_classes": 1000,
                 "pretrained": 0,  "_comment": "0: False, 1: True",
@@ -27,8 +28,10 @@
 
             "compute_pars": {
                 "distributed": "mpi",
-                "epochs": 10,
-                "learning_rate": 0.001
+                "epochs": 1,
+                "learning_rate": 0.001,
+
+                "max_batch_sample" : 1
             },
             "out_pars": {
                 "checkpointdir": "ztest/model_tch/torchhub_resnet18/checkpoints/"

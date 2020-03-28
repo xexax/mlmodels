@@ -69,6 +69,6 @@ jobs:
 
     ##### Please change BELOW to your model name  
     - name: ml_test
-      run: ml_test  --do model_tf/1_lstm.py
+      run: ml_test  --do model_tch/torchhub.py
       
          
