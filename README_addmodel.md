@@ -65,16 +65,17 @@ ________________________________________________________________________________
   https://github.com/arita37/mlmodels/blob/dev/README_index_doc.txt
 
   Template
-  
-
   https://github.com/arita37/mlmodels/blob/dev/mlmodels/template/model_xxx.py
 
   Please re-use existing functions
   https://github.com/arita37/mlmodels/blob/dev/mlmodels/util.py
   
-  from mlmodels.util import os_package_root_path, log, 
+     from mlmodels.util import os_package_root_path, log, 
                             path_norm, get_model_uri, path_norm_dict
-  MODEL_URI = get_model_uri(__file__)
+
+     ### Use path_norm to normalize your path.
+     data_path = path_norm("dataset/text/myfile.txt") -->   PATH.../mlmodels/dataset/text/myfile.txt
+
 
 
 
