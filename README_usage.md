@@ -530,7 +530,75 @@ print(ypred)
 
 
 ```
-
 ---
+
+
+
+### Using ARMDN Time Series : Ass for MNIST dataset  ([Example notebook](mlmodels/example/model_timeseries_armdn.ipynb), [JSON file](mlmodels/model_keras/armdn.json))
+
+
+
+```python
+# import library
+import mlmodels
+from mlmodels.models import module_load
+from mlmodels.util import path_norm_dict, path_norm, params_json_load
+import json
+
+
+#### Model URI and Config JSON
+model_uri   = "model_keras.ardmn.py"
+config_path = path_norm( 'model_keras/ardmn.json'  )
+config_mode = "test"  ### test/prod
+
+
+
+
+#### Model Parameters
+hypermodel_pars, model_pars, data_pars, compute_pars, out_pars = params_json_load(config_path, config_mode= config_mode)
+print( hypermodel_pars, model_pars, data_pars, compute_pars, out_pars)
+
+
+#### Setup Model 
+module         = module_load( model_uri)
+model          = module.Model(model_pars, data_pars, compute_pars) 
+`
+#### Fit
+model, session = module.fit(model, data_pars, compute_pars, out_pars)           #### fit model
+metrics_val    = module.fit_metrics(model, data_pars, compute_pars, out_pars)   #### Check fit metrics
+print(metrics_val)
+
+
+#### Inference
+ypred          = module.predict(model, session, data_pars, compute_pars, out_pars)   
+print(ypred)
+
+
+
+#### Save/Load
+module.save(model, save_pars ={ 'path': out_pars['path'] +"/model/"})
+
+model2 = module.load(load_pars ={ 'path': out_pars['path'] +"/model/"})
+
+
+
+```
+---
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
