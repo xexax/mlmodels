@@ -6,6 +6,7 @@ import tensorflow as tf
 import keras.regularizers as reg
 import matplotlib.pyplot as plt
 import mdn
+import json
 from keras.models import Sequential
 from keras import Model
 from keras import layers
@@ -17,6 +18,9 @@ from keras.optimizers import Adam
 from keras import backend as Keras
 from mlmodels.util import save_keras, load_keras
 
+from mlmodels.util import (os_package_root_path, log, path_norm, get_model_uri,
+                           config_path_pretrained, config_path_dataset, os_path_split)
+from mlmodels.data import (download_data, import_data)
 
 # Less Keras warnings
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
@@ -77,29 +81,44 @@ def os_package_root_path(filepath, sublevel=0, path_add=""):
 def save(model=None, session=None, save_pars={}):
     path = save_pars["outpath"]
     os.makedirs(path, exist_ok=True)
-    log("### Model saved at ######")
-    log(path)
-    model.model.save(path + "/armdn.h5")
+    save_keras(model, session, {"path": path + "/armdn.h5"})
 
 
-def load(load_pars={}):
-    print(load_pars)
-    model0 = load_keras(load_pars['path'])
-    model = Model()
+def load(load_pars={}, **kw):
+    path = load_pars["outpath"]
+    model_pars = kw["model_pars"]
+    compute_pars = kw["compute_pars"]
+    data_pars = kw["data_pars"]
+    custom_pars = {"MDN": mdn.MDN, 
+                   "loss": mdn.get_mixture_loss_func(model_pars["timesteps"], 
+                                                     model_pars["n_mixes"])}
+    model0 = load_keras({"path": path + "/armdn.h5"}, custom_pars)
+    model = Model(model_pars=model_pars, data_pars=data_pars,
+                  compute_pars=compute_pars)
     model.model = model0
     session = None
     return model, session
 
 
-def get_params(choice=0, data_path="dataset/", **kw):
-    if choice == 0:
+def get_params(param_pars={}, **kw):
+    data_path = "dataset/"
+    json_path = os.path.abspath(os.path.dirname(__file__)) + \
+                "/armdn.json"
+    config_mode = param_pars["config_mode"]
+    if param_pars["choice"] == "json":
+       data_path = path_norm(data_path)
+       cf = json.load(open(json_path, mode='r'))
+       cf = cf[config_mode]
+       return cf['model_pars'], cf['data_pars'], cf['compute_pars'], cf['out_pars']
+    if param_pars["choice"] == "test0":
         log("#### Path params   ##########################################")
         data_path = os_package_root_path(__file__, sublevel=1,
                                          path_add=data_path)
         out_path = os.getcwd() + "/keras_armdn/"
         os.makedirs(out_path, exist_ok=True)
         log(data_path, out_path)
-        train_data_path = data_path 
+        train_data_path = data_path + "timeseries/milk.csv"
+        log("#### Data params ####")
         data_pars = {"train_data_path": train_data_path,
                      "train": False,
                      "prediction_length": 12,
@@ -110,8 +129,9 @@ def get_params(choice=0, data_path="dataset/", **kw):
                       "timesteps": 12, "dropout_rate": 0.1, "n_mixes": 3,
                       "dense_neuron": 10,
                       }
+        log("#### Compute params ####")
         compute_pars = {"batch_size": 32, "clip_gradient": 100, "ctx": None,
-                        "epochs": 1000, "learning_rate": 0.05,
+                        "epochs": 10, "learning_rate": 0.05,
                         "patience": 50
                         }
         outpath = out_path + "result"
@@ -123,6 +143,15 @@ def log(*s, n=0, m=1):
     sspace = "#" * n
     sjump = "\n" * m
     print(sjump, sspace, s, sspace, flush=True)
+
+
+def reset_model():
+    pass
+
+
+def fit_metrics(model, data_pars=None, compute_pars=None, out_pars=None, **kw):
+    ddict = {}
+    return ddict
 
 
 def get_dataset(data_params):
@@ -172,11 +201,14 @@ def predict(model=None, model_pars=None, data_pars=None, **kwargs):
     return y_samples.reshape(-1, 1)
 
 
-def test(data_path="dataset/timeseries/milk.csv"):
+def test(data_path="dataset/", pars_choice="test0", config_mode="test"):
+    path = data_path + "timeseries/milk.csv"
     log("#### Loading params   ##############################################")
+    param_pars = {"choice": pars_choice, "config_mode": config_mode}
     model_pars, data_pars,\
-                          compute_pars, out_pars = get_params(choice=0,
-                                                              data_path=data_path)
+                          compute_pars, out_pars = get_params(param_pars,
+                                                              data_path=path)
+    
     log("#### Model init, fit   #############################################")
     model = Model(model_pars=model_pars, data_pars=data_pars,
                   compute_pars=compute_pars)
@@ -205,10 +237,15 @@ def test(data_path="dataset/timeseries/milk.csv"):
     plt.xlabel("Month")
     plt.xlabel("milk demand")
     plt.legend(loc="upper left")
-    plt.savefig(out_pars["outpath"] + "/armdn_out.png", dpi=100)
+    log("### plot saved at ###")
+    log(out_pars["outpath"] + "/armdn_out.png")
+    plt.savefig(out_pars["outpath"] + "armdn_out.png", dpi=100)
     save(model=model, session=None, save_pars=out_pars)
-
-
+    log("### Loading model ###")
+    load_pars = out_pars
+    model2 = load(load_pars=out_pars, model_pars=model_pars, 
+         data_pars=data_pars, compute_pars=compute_pars)
+    
 if __name__ == "__main__":
     VERBOSE = True
     test()
