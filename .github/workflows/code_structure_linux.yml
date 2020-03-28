@@ -1,76 +1,59 @@
-name:  code_structure_linux
-
+name: code_structure_linux
 
 on:
   push:
-    branches: 
+    branches:
       - dev
- 
+
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v1
+      - uses: actions/checkout@v1
 
+      - name: Set up Python 3.6.*
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.6.*
 
-   
-    - name: Set up Python 3.6.*
-      uses: actions/setup-python@v1
-      with:
-        python-version: 3.6.*
+      - name: Install pipenv
+        uses: dschep/install-pipenv-action@v1
 
-      
-    - name: Install pipenv
-      uses: dschep/install-pipenv-action@v1
+      #- uses: actions/cache@v1
+      #  id: cache
+      #  with:
+      #    path: ~/.cache/pip
+      #    key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+      #    restore-keys: |
+      #      ${{ runner.os }}-pip-
 
-            
-    #- uses: actions/cache@v1
-    #  id: cache
-    #  with:
-    #    path: ~/.cache/pip
-    #    key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
-    #    restore-keys: |
-    #      ${{ runner.os }}-pip-
-   
-  
-    - name: Cache pipenv virtualenv
-      id: cache-pipenv
-      uses: actions/cache@v1
-      with:
-        path: /opt/hostedtoolcache/Python/
-        key: ${{ runner.os }}-venv-mlmodels-${{ hashFiles('**/requirements.txt') }}
+      - name: Cache pipenv virtualenv
+        id: cache-pipenv
+        uses: actions/cache@v1
+        with:
+          path: /opt/hostedtoolcache/Python/
+          key: ${{ runner.os }}-venv-mlmodels-${{ hashFiles('**/requirements.txt') }}
 
+      - name: Install numpy
+        if: steps.cache-pipenv.outputs.cache-hit != 'true'
+        run: pip install numpy
 
+      - name: Install repo requirements
+        if: steps.cache-pipenv.outputs.cache-hit != 'true'
+        run: |
+          pip install -r requirements.txt
+          pip install -r requirements_fake.txt
 
-    - name: Install numpy
-      if: steps.cache-pipenv.outputs.cache-hit != 'true'
-      run: pip install numpy
-      
-    - name: Install repo requirements
-      if: steps.cache-pipenv.outputs.cache-hit != 'true'
-      run:  |
-        pip install -r requirements.txt
-        pip install -r requirements_fake.txt
+      - name: Install repo
+        run: pip install -e . -r requirements.txt   --no-deps
 
+      - name: repo path
+        run: python -c "import mlmodels,os, sklearn, tensorflow, torch ; print(mlmodels, os, sklearn, tensorflow, torch)"
 
-    - name: Install repo
-      run: pip install -e . -r requirements.txt   --no-deps
-
-
-    - name: repo path
-      run: python -c "import mlmodels,os, sklearn, tensorflow, torch ; print(mlmodels, os, sklearn, tensorflow, torch)"
-
-
-    ########  Test running 
-    - name: ml_test
-      run: ml_test  --do test_all
-      
-         
-
-
-
+      ########  Test running
+      - name: ml_test
+        run: ml_test  --do test_all
 # https://ianwhitestone.work/AWS-Serverless-Deployments-With-Github-Actions/
 #
 #
