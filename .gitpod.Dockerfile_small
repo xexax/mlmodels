@@ -9,12 +9,9 @@ RUN apt-get update && apt-get install -y \
 #### Install DROPBOX Drive , https://www.ostechnix.com/dbxfs-mount-dropbox-folder-locally-as-virtual-file-system-in-linux/
 RUN sudo apt install libfuse2
 
-RUN pip3 install dbxfs
 
 
 USER gitpod
-
-
 ####   https://hub.docker.com/r/continuumio/miniconda3/dockerfile
 ##### Use Mini conda
 RUN wget --quiet https://repo.anaconda.com/miniconda/Miniconda3-4.5.11-Linux-x86_64.sh -O ~/miniconda.sh && \
