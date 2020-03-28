@@ -1,7 +1,8 @@
 {
-   "ALL_TEST" : {   "block_model" : [  
-        "model_tch/transformers_sentence.py"
-    ]
+   "test_all" : {   "block_models" : [  
+                                     "model_tch/transformers_sentence.py"
+                                    ]
+                }                     
 
 
 }
