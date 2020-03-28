@@ -10,7 +10,6 @@ https://github.com/pytorch/pytorch/blob/98362d11ffe81ca48748f6b0e1e417cb81ba5998
 
 
 """
-
 import os, json
 
 
@@ -248,15 +247,15 @@ def fit_metrics(model, data_pars=None, compute_pars=None, out_pars=None):
     pass
 
 
-def save(model, session, out_pars):
-    model0 = model.model
-    path   = out_pars["checkpointdir"] + out_pars["save_model_path"]
-    return torch.save(model0, path)
+def save(model, session, save_pars):
+    from mlmodels.util import save_tch
+    save_tch(model, save_pars)
 
 
-def load(out_pars):
-    path = out_pars["checkpointdir"] + out_pars["save_model_path"]
-    return torch.load(path)
+def load(load_pars):
+    from mlmodels.util import load_tch
+    load_tch(model, load_pars)
+
 
 
 ###########################################################################################################
@@ -292,8 +291,9 @@ def test(data_path="dataset/", pars_choice="json", config_mode="test"):
 
 
     log("#### Save/Load   ###################################################")
-    save(model, session, out_pars)
-    model2 = load( out_pars )
+    save_pars = { "path": out_pars +"/model/"  }
+    save(model, session, save_pars)
+    model2 = load( save_pars )
     #     ypred = predict(model2, data_pars, compute_pars, out_pars)
     #     metrics_val = metrics(model2, ypred, data_pars, compute_pars, out_pars)
     print(model2)
