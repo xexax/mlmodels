@@ -73,7 +73,6 @@ def test_import() :
 
 
 
-
 def test_all():
   print("os.getcwd", os.getcwd())
 
@@ -87,20 +86,19 @@ def test_all():
   cfg = json.load(open(root + "config/test_config.json", mode='r'))['test_all']
   block_list = cfg['block_model_list']
   model_list = [ t for t in model_list if t not in block_list]
-  print(model_list)
+  print("Used", model_list)
 
 
   path = path.replace("\\", "//")  
   test_list =[ f"python {path}/"  + t.replace(".","//").replace("//py", ".py") for t in model_list ] 
 
 
-
-
-
   for cmd in test_list :
     print("\n\n\n", flush=True)
     print(cmd, flush=True)
     os.system( cmd )
+
+
 
 
 def test_list(mlist):
