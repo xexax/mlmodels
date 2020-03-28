@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import pandas as pd
 import os
 import numpy as np
@@ -110,6 +111,9 @@ def get_params(param_pars={}, **kw):
        cf = json.load(open(json_path, mode='r'))
        cf = cf[config_mode]
        return cf['model_pars'], cf['data_pars'], cf['compute_pars'], cf['out_pars']
+
+
+
     if param_pars["choice"] == "test0":
         log("#### Path params   ##########################################")
         data_path = os_package_root_path(__file__, sublevel=1,
@@ -139,12 +143,6 @@ def get_params(param_pars={}, **kw):
     return model_pars, data_pars, compute_pars, out_pars
 
 
-def log(*s, n=0, m=1):
-    sspace = "#" * n
-    sjump = "\n" * m
-    print(sjump, sspace, s, sspace, flush=True)
-
-
 def reset_model():
     pass
 
@@ -171,7 +169,7 @@ def get_dataset(data_params):
     return x_train, y_train, x_test, y_test
 
 
-def fit(model=None, data_pars={}, compute_pars={}, out_pars={},   **kw):
+def fit(model=None, session=None, data_pars={}, compute_pars={}, out_pars={},   **kw):
     """
     """
     batch_size = compute_pars['batch_size']
@@ -192,13 +190,43 @@ def fit(model=None, data_pars={}, compute_pars={}, out_pars={},   **kw):
     return model
 
 
-def predict(model=None, model_pars=None, data_pars=None, **kwargs):
+def predict(model=None, session=None, model_pars=None, data_pars=None, **kwargs):
     pred = model.model.predict(kwargs["x_test"])
 
     y_samples = np.apply_along_axis(mdn.sample_from_output, 1, pred,
                                     data_pars["prediction_length"],
                                     model_pars["n_mixes"], temp=1.0)
     return y_samples.reshape(-1, 1)
+
+
+
+
+def plot(model=None, session=None, model_pars=None, data_pars=None, **kwargs):
+    # for prediction
+    features =  data_pars["col_Xinput"]
+    target = data_pars["col_ytarget"]
+    feat_len = len(features)
+    pred_length = data_pars["prediction_length"]
+
+    df = pd.read_csv(data_pars["train_data_path"])
+    
+    x_test = df.iloc[-pred_length:][features]
+    x_test = x_test.values.reshape(-1, pred_length, feat_len)
+    y_test = df.iloc[-pred_length:][target].shift().fillna(0)
+    y_test = y_test.values.reshape(-1, pred_length, 1)
+
+    path = out_pars["outpath"]
+    os.makedirs(path, exist_ok=True)
+    plt.plot(y_test.reshape(-1, 1), "blue", label="actual", alpha=0.7)
+    plt.plot(y_pred, "red", label="predicted", alpha=0.7)
+    plt.xlabel("Month")
+    plt.xlabel("milk demand")
+    plt.legend(loc="upper left")
+    log("### plot saved at ###")
+    log(out_pars["outpath"] + "/armdn_out.png")
+    plt.savefig(out_pars["outpath"] + "armdn_out.png", dpi=100)
+
+
 
 
 def test(data_path="dataset/", pars_choice="test0", config_mode="test"):
@@ -212,40 +240,64 @@ def test(data_path="dataset/", pars_choice="test0", config_mode="test"):
     log("#### Model init, fit   #############################################")
     model = Model(model_pars=model_pars, data_pars=data_pars,
                   compute_pars=compute_pars)
+
+
     log("### Model created ###")
     log(model.model.summary())
     fit(model=model, data_pars=data_pars, compute_pars=compute_pars)
     pred_length = data_pars["prediction_length"]
 
-    # for prediction
-    features =  data_pars["col_Xinput"]
-    target = data_pars["col_ytarget"]
-    feat_len = len(features)
-    pred_length = data_pars["prediction_length"]
-    df = pd.read_csv(data_pars["train_data_path"])
-    x_test = df.iloc[-pred_length:][features]
-    x_test = x_test.values.reshape(-1, pred_length, feat_len)
-    y_test = df.iloc[-pred_length:][target].shift().fillna(0)
-    y_test = y_test.values.reshape(-1, pred_length, 1)
+
+
+
+
     log("#### Predict   ####")
     y_pred = predict(model=model, model_pars=model_pars,
                      data_pars=data_pars, x_test=x_test)
-    path = out_pars["outpath"]
-    os.makedirs(path, exist_ok=True)
-    plt.plot(y_test.reshape(-1, 1), "blue", label="actual", alpha=0.7)
-    plt.plot(y_pred, "red", label="predicted", alpha=0.7)
-    plt.xlabel("Month")
-    plt.xlabel("milk demand")
-    plt.legend(loc="upper left")
-    log("### plot saved at ###")
-    log(out_pars["outpath"] + "/armdn_out.png")
-    plt.savefig(out_pars["outpath"] + "armdn_out.png", dpi=100)
+
+
+
+
     save(model=model, session=None, save_pars=out_pars)
     log("### Loading model ###")
     load_pars = out_pars
     model2 = load(load_pars=out_pars, model_pars=model_pars, 
          data_pars=data_pars, compute_pars=compute_pars)
     
+
 if __name__ == "__main__":
     VERBOSE = True
     test()
+
+
+
+#####################################################################################################
+DESCRIPTION = """
+
+
+https://arxiv.org/abs/1803.03800
+
+
+
+ARMDN: Associative and Recurrent Mixture Density Networks for eRetail Demand Forecasting
+
+Srayanta Mukherjee, Devashish Shankar, Atin Ghosh, Nilam Tathawadekar, Pramod Kompalli, Sunita Sarawagi, Krishnendu Chaudhury
+(Submitted on 10 Mar 2018 (v1), last revised 16 Mar 2018 (this version, v2))
+Accurate demand forecasts can help on-line retail organizations better plan their supply-chain processes. 
+The challenge, however, is the large number of associative factors that result in large, non-stationary shifts in demand, 
+which traditional time series and regression approaches fail to model. In this paper, we propose a Neural Network architecture called AR-MDN,
+ that simultaneously models associative factors, time-series trends and the variance in the demand. We first identify several causal features and use a combination of feature embeddings, MLP and LSTM to represent them. We then model the output density as a learned mixture of Gaussian distributions. The AR-MDN can be trained end-to-end without the need for additional supervision. We experiment on a dataset of an year's worth of data over tens-of-thousands of products from Flipkart. The proposed architecture yields a significant improvement in forecasting accuracy when compared with existing alternatives
+
+
+
+
+
+
+
+
+
+
+
+
+"""
+

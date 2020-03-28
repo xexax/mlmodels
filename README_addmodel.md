@@ -4,9 +4,6 @@ Functions/Methods
 https://github.com/arita37/mlmodels/blob/dev/README_index_doc.py
 
 
-Code source
-https://sourcegraph.com/search?q=repo:%5Egithub%5C.com/arita37/mlmodels%24+os_package&patternType=literal
-
 
 
 # Steps to add a new Colab notebook /Jupyter notbbok :
@@ -19,7 +16,6 @@ https://sourcegraph.com/search?q=repo:%5Egithub%5C.com/arita37/mlmodels%24+os_pa
 
 
 1) Create a branch from DEV branch called : notebook_
-   https://github.com/Kunena/Kunena-Forum/wiki/Create-a-new-branch-with-git-and-manage-branches
 
 
 2) Create Jupyter Notebook in  mlmodels/example/           
@@ -41,8 +37,16 @@ ________________________________________________________________________________
 # Steps  to add a new model :
 
 
-### 0) Read the examples :
+### Coding Style
+  Line = 110 characters
+  Loose PEP8, "Pretty Code is better than strict PEP8"
+  Please re-use existing functions :
 
+
+
+
+
+### 0) Read the examples :
 
   https://github.com/arita37/mlmodels/issues/102
 
