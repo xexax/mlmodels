@@ -92,9 +92,11 @@ ________________________________________________________________________________
     python model_XXXX/yyyy.py  
 
 
-### 6) Add Basic example of code here  :
 
- https://github.com/arita37/mlmodels/blob/dev/README_usage.md
+
+### 6) Check on Github your runs
+
+https://github.com/arita37/mlmodels/actions?query=workflow%3Atest_custom_model
 
 
 
