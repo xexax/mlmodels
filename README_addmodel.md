@@ -24,20 +24,29 @@
 
 
 ```
+
+
+
+
 # Steps  to add a new model :
 
-```
 
-0) Read this one :
-
-   https://github.com/arita37/mlmodels/issues/102
+### 0) Read the readme.md and Install mlmodels on Linux
 
 
-1) Create a branch from DEV branch called : keras_MYDMODEL
+    https://github.com/arita37/mlmodels/issues/102
+
+    https://github.com/arita37/mlmodels/pull/100
+
+
+    
+
+
+### 1) Create a branch from DEV branch called : feat_XXXXX
    https://github.com/Kunena/Kunena-Forum/wiki/Create-a-new-branch-with-git-and-manage-branches
 
 
-2) Change this file with your MODEL_NAME AND BRANCH NAME:
+### 2) Change this file with your MODEL_NAME AND BRANCH NAME:
      GITHUB URL/ .github/workflows/test_specific_model.yml
 
    Change only with your MODEL_NAME
@@ -48,39 +57,35 @@
      https://github.com/arita37/mlmodels/actions
 
 
-3) Create  mlmodels/model_XXXX/yyyyy.py   
+### 3) Create  mlmodels/model_XXXX/yyyyy.py   
      https://github.com/arita37/mlmodels/blob/dev/mlmodels/model_keras/textcnn.py
-     
      https://github.com/arita37/mlmodels/blob/dev/mlmodels/model_tch/transformer_sentence.py
-     
-     https://github.com/arita37/mlmodels/blob/dev/mlmodels/model_keras/charcnn_zhang.py
-     
-     
+     https://github.com/arita37/mlmodels/blob/dev/README_index_doc.txt
 
      Template
         https://github.com/arita37/mlmodels/blob/dev/mlmodels/template/model_xxx.py
 
-     **Please re-use existing functions**
+     Please re-use existing functions
             https://github.com/arita37/mlmodels/blob/dev/mlmodels/util.py
             from mlmodels.util import    ...
             
             
-4) Create  mlmodels/model_XXXX/yyyy.json , following this template :
+### 4) Create  mlmodels/model_XXXX/yyyy.json , following this template :
    https://github.com/arita37/mlmodels/blob/dev/mlmodels/template/models_config.json
 
 
 
-5) Run/Test on your local machine
+### 5) Run/Test on your local machine
     cd mlmodels
     python model_XXXX/yyyy.py  
 
 
-6) Add Basic example of code here  :
+### 6) Add Basic example of code here  :
     https://github.com/arita37/mlmodels/blob/dev/README_usage.md
 
 
 
-7)  Do Pull Request to dev Branch !
+### 7)  Do Pull Request to dev Branch !
 
 
 
@@ -305,8 +310,6 @@ optim.py
 
 
    #####################################################################################
-
-
 
 
 

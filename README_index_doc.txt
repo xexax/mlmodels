@@ -946,6 +946,22 @@ save( model=None, session=None, save_pars={},  )
 test( data_path="dataset/", pars_choice="json", config_mode="test",  )
 
 
+mlmodels\model_keras\charcnn_zhang.py
+----------------methods----------------
+Model.__init__(self,  model_pars=None, data_pars=None, compute_pars=None,  )
+
+---------------functions---------------
+fit(model,  data_pars={}, compute_pars={}, out_pars={},  **kw)
+fit_metrics(model,  data_pars={}, compute_pars={}, out_pars={},  **kw)
+get_dataset( data_pars=None,  **kw)
+get_params( param_pars={},  **kw)
+load( load_pars={},  )
+predict(model,  sess=None, data_pars={}, out_pars={}, compute_pars={},  **kw)
+reset_model(  )
+save( model=None, session=None, save_pars={},  )
+test( data_path="dataset/", pars_choice="json", config_mode="test",  )
+
+
 mlmodels\model_keras\namentity_crm_bilstm.py
 ----------------methods----------------
 Model.__init__(self,  model_pars=None, data_pars=None, compute_pars=None,  **kwargs)
@@ -2211,16 +2227,17 @@ Model.__init__(self,  model_pars=None, data_pars=None, compute_pars=None, out_pa
 
 ---------------functions---------------
 _get_device(  )
-_train(m, device, train_itr, criterion, optimizer, epoch, max_epoch,   )
-_valid(m, device, test_itr, criterion,   )
+_train(m, device, train_itr, criterion, optimizer, epoch, max_epoch,  imax=1,  )
+_valid(m, device, test_itr, criterion,  imax=1,  )
 fit(model,  data_pars=None, compute_pars=None, out_pars=None,  **kwargs)
 fit_metrics(model,  data_pars=None, compute_pars=None, out_pars=None,  )
 get_config_file(  )
 get_dataset( data_pars=None,  **kw)
+get_dataset_mnist_torch(data_pars,   )
 get_params( param_pars=None,  **kw)
-load(path,   )
+load(load_pars,   )
 predict(model,  session=None, data_pars=None, compute_pars=None, out_pars=None,  )
-save(model, path,   )
+save(model, session, save_pars,   )
 test( data_path="dataset/", pars_choice="json", config_mode="test",  )
 
 

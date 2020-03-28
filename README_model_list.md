@@ -91,6 +91,7 @@ mlmodels.model_keras.01_deepctr.py
 mlmodels.model_keras.02_cnn.py
 mlmodels.model_keras.armdn.py
 mlmodels.model_keras.charcnn.py
+mlmodels.model_keras.charcnn_zhang.py
 mlmodels.model_keras.namentity_crm_bilstm.py
 mlmodels.model_keras.textcnn.py
 mlmodels.model_keras.textvae.py
