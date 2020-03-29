@@ -36,7 +36,6 @@ class Model:
         dense_neuron = model_pars["dense_neuron"]
         timesteps = model_pars["timesteps"]
         last_lstm_neuron = model_pars["last_lstm_neuron"]
-        print("creating model....")
         model = Sequential()
         for ind, hidden in enumerate(lstm_h_list):
             model.add(LSTM(units=hidden, return_sequences=True,
@@ -55,7 +54,6 @@ class Model:
         model.compile(loss=mdn.get_mixture_loss_func(OUTPUT_DIMS, N_MIXES),
                       optimizer=adam)
         self.model = model
-        print("Model created, use model.summary() for model sructure")
 
 
 def get_dataset(data_pars=None, **kw):
@@ -101,7 +99,7 @@ def load(load_pars={}, **kw):
 
 
 def get_params(param_pars={}, **kw):
-    data_path = "dataset/"
+    data_path = param_pars["data_path"]
     json_path = os.path.abspath(os.path.dirname(__file__)) + \
         "/armdn.json"
     config_mode = param_pars["config_mode"]
@@ -168,6 +166,8 @@ def get_dataset(data_params):
     x_test = x_test.values.reshape(-1, pred_length, feat_len)
     y_test = df.iloc[-pred_length:][target].shift().fillna(0)
     y_test = y_test.values.reshape(-1, pred_length, 1)
+    if data_params["predict"]:
+        return x_test, y_test
     return x_train, y_train, x_test, y_test
 
 
@@ -180,6 +180,7 @@ def fit(model=None, data_pars={}, compute_pars={}, out_pars={}, **kw):
 
     sess = None
     log("#### Loading dataset   #############################################")
+    data_pars["predict"] = False
     x_train, y_train, x_test, y_test = get_dataset(data_pars)
 
     early_stopping = EarlyStopping(monitor='loss', patience=patience,
@@ -189,12 +190,13 @@ def fit(model=None, data_pars={}, compute_pars={}, out_pars={}, **kw):
                     epochs=epochs,
                     callbacks=[early_stopping]
                     )
-    return model
+    return model, sess
 
 
 def predict(model=None, model_pars=None, data_pars=None, **kwargs):
-    pred = model.model.predict(kwargs["x_test"])
-
+    data_pars["predict"] = True
+    x_test, y_test = get_dataset(data_pars)
+    pred = model.model.predict(x_test)
     y_samples = np.apply_along_axis(mdn.sample_from_output, 1, pred,
                                     data_pars["prediction_length"],
                                     model_pars["n_mixes"], temp=1.0)
@@ -202,46 +204,25 @@ def predict(model=None, model_pars=None, data_pars=None, **kwargs):
 
 
 def test(data_path="dataset/", pars_choice="test0", config_mode="test"):
-    path = data_path + "timeseries/milk.csv"
+    path = data_path
+    
     log("#### Loading params   ##############################################")
-    param_pars = {"choice": pars_choice, "config_mode": config_mode}
-    model_pars, data_pars,\
-        compute_pars, out_pars = get_params(param_pars,
-                                            data_path=path)
+    param_pars = {"choice": pars_choice, "config_mode": config_mode,
+                  "data_path": path}
+    model_pars, data_pars, compute_pars, out_pars = get_params(param_pars)
 
     log("#### Model init, fit   #############################################")
     model = Model(model_pars=model_pars, data_pars=data_pars,
                   compute_pars=compute_pars)
     log("### Model created ###")
-    log(model.model.summary())
-    fit(model=model, data_pars=data_pars, compute_pars=compute_pars)
-    pred_length = data_pars["prediction_length"]
+    model, s= fit(model=model, data_pars=data_pars, compute_pars=compute_pars)
 
     # for prediction
-    features = data_pars["col_Xinput"]
-    target = data_pars["col_ytarget"]
-    feat_len = len(features)
-    pred_length = data_pars["prediction_length"]
-    df = pd.read_csv(data_pars["train_data_path"])
-    x_test = df.iloc[-pred_length:][features]
-    x_test = x_test.values.reshape(-1, pred_length, feat_len)
-    y_test = df.iloc[-pred_length:][target].shift().fillna(0)
-    y_test = y_test.values.reshape(-1, pred_length, 1)
     log("#### Predict   ####")
-    y_pred = predict(model=model, model_pars=model_pars,
-                     data_pars=data_pars, x_test=x_test)
-    path = out_pars["outpath"]
-    os.makedirs(path, exist_ok=True)
-    plt.plot(y_test.reshape(-1, 1), "blue", label="actual", alpha=0.7)
-    plt.plot(y_pred, "red", label="predicted", alpha=0.7)
-    plt.xlabel("Month")
-    plt.xlabel("milk demand")
-    plt.legend(loc="upper left")
-    log("### plot saved at ###")
-    log(out_pars["outpath"] + "/armdn_out.png")
-    plt.savefig(out_pars["outpath"] + "armdn_out.png", dpi=100)
+    y_pred = predict(model=model, model_pars=model_pars, data_pars=data_pars)
+
+    log("#### Save/Load   ###################################################")
     save(model=model, session=None, save_pars=out_pars)
-    log("### Loading model ###")
     load_pars = out_pars
     model2 = load(load_pars=out_pars, model_pars=model_pars,
                   data_pars=data_pars, compute_pars=compute_pars)
