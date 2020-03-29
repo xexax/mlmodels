@@ -203,6 +203,16 @@ def predict(model=None, model_pars=None, data_pars=None, **kwargs):
     return y_samples.reshape(-1, 1)
 
 
+def metrics_plot(metrics_params):
+    os.makedirs(metrics_params["outpath"], exist_ok=True)
+    if metrics_params["plot_type"] == "line":
+        plt.plot(metrics_params["actual"], label="Actual", 
+                 color="blue")
+        plt.plot(metrics_params["pred"], label="Prediction",
+                 color="red")
+        plt.savefig(metrics_params["outpath"] + "/armdn.png")
+
+
 def test(data_path="dataset/", pars_choice="test0", config_mode="test"):
     path = data_path
     
@@ -210,23 +220,30 @@ def test(data_path="dataset/", pars_choice="test0", config_mode="test"):
     param_pars = {"choice": pars_choice, "config_mode": config_mode,
                   "data_path": path}
     model_pars, data_pars, compute_pars, out_pars = get_params(param_pars)
-
+    
     log("#### Model init, fit   #############################################")
     model = Model(model_pars=model_pars, data_pars=data_pars,
                   compute_pars=compute_pars)
     log("### Model created ###")
-    model, s= fit(model=model, data_pars=data_pars, compute_pars=compute_pars)
+    fit(model=model, data_pars=data_pars, compute_pars=compute_pars)
 
     # for prediction
     log("#### Predict   ####")
     y_pred = predict(model=model, model_pars=model_pars, data_pars=data_pars)
 
+    log("### Plot ###")
+    data_pars["predict"] = True
+    x_test, y_test = get_dataset(data_pars)
+    metrics_params = {"plot_type": "line", "pred": y_pred, 
+                      "outpath": out_pars["outpath"], 
+                      "actual": y_test.reshape(-1, 1)}
+    metrics_plot(metrics_params)
+
     log("#### Save/Load   ###################################################")
     save(model=model, session=None, save_pars=out_pars)
-    load_pars = out_pars
     model2 = load(load_pars=out_pars, model_pars=model_pars,
-                  data_pars=data_pars, compute_pars=compute_pars)
-
+                data_pars=data_pars, compute_pars=compute_pars)
+  
 
 if __name__ == "__main__":
     VERBOSE = True
