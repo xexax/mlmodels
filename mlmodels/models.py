@@ -1,10 +1,5 @@
 # -*- coding: utf-8 -*-
 """
-Lightweight Functional interface to wrap access to Deep Learning, RLearning models.
-Logic follows Scikit Learn API and simple for easy extentions logic.
-Goal to facilitate Jupyter to Prod. models.
-
-
 Models are stored in model_XX/  or in folder XXXXX
     module :  folder/mymodel.py, contains the methods, operations.
     model  :  Class in mymodel.py containing the model definition, compilation
@@ -20,31 +15,7 @@ models.py   #### Generic Interface
    load(load_pars)
  
 
-
-
- 
-
-######### Code sample  #############################################################################
-https://github.com/arita37/mlmodels/blob/dev/README_model_list.md
-
-
-
 ######### Command line sample  #####################################################################
-#### generate config file
-python mlmodels/models.py  --do generate_config  --model_uri model_tf.1_lstm.py  --save_folder "c:\myconfig\" 
-
-#### Cusomt Directory Models
-python mlmodels/models.py --do test  --model_uri "D:\_devs\Python01\gitdev\mlmodels\mlmodels\model_tf\1_lstm.py"
-
-
-### RL model
-python  models.py  --model_uri model_tf.rl.4_policygradient  --do test
-
-### TF DNN model
-python  models.py  --model_uri model_tf.1_lstm.py  --do test
-
-## PyTorch models
-python  models.py  --model_uri model_tch.mlp.py  --do test
 
 
 """
@@ -323,12 +294,12 @@ def config_get_pars(config_file, config_mode="test"):
     """
       load JSON and output the params
     """
-    js = json.load(open(config_file, 'r'))  # Config
-    js = js[config_mode]  # test /uat /prod
-    model_p = js.get("model_pars")
-    data_p = js.get("data_pars")
+    js        = json.load(open(config_file, 'r'))  # Config
+    js        = js[config_mode]  # test /uat /prod
+    model_p   = js.get("model_pars")
+    data_p    = js.get("data_pars")
     compute_p = js.get("compute_pars")
-    out_p = js.get("out_pars")
+    out_p     = js.get("out_pars")
 
     return model_p, data_p, compute_p, out_p
 
@@ -369,7 +340,7 @@ def os_folder_copy(src, dst):
     import shutil
     for root, dirs, files in os.walk(src):
         if not os.path.isdir(root):
-            os.makedirs(root)
+            os.makedirs(root, exist_ok=True)
 
         for file in files:
             rel_path = root.replace(src, '').lstrip(os.sep)
@@ -419,14 +390,6 @@ def config_init(to_path="."):
 
     from mlmodels.util import config_path_pretrained, config_path_dataset
     log("Config path",  get_pretrained_path() )
-
-
-
-
-
-
-
-
 
 
 def config_model_list(folder=None):

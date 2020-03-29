@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import pandas as pd
 import os
 import numpy as np
@@ -104,10 +105,17 @@ def get_params(param_pars={}, **kw):
         "/armdn.json"
     config_mode = param_pars["config_mode"]
     if param_pars["choice"] == "json":
+
         data_path = path_norm(data_path)
         cf = json.load(open(json_path, mode='r'))
         cf = cf[config_mode]
         return cf['model_pars'], cf['data_pars'], cf['compute_pars'], cf['out_pars']
+
+       data_path = path_norm(data_path)
+       cf = json.load(open(json_path, mode='r'))
+       cf = cf[config_mode]
+       return cf['model_pars'], cf['data_pars'], cf['compute_pars'], cf['out_pars']
+
     if param_pars["choice"] == "test0":
         log("#### Path params   ##########################################")
         data_path = os_package_root_path(__file__, sublevel=1,
@@ -135,12 +143,6 @@ def get_params(param_pars={}, **kw):
         outpath = out_path + "result"
         out_pars = {"outpath": outpath}
     return model_pars, data_pars, compute_pars, out_pars
-
-
-def log(*s, n=0, m=1):
-    sspace = "#" * n
-    sjump = "\n" * m
-    print(sjump, sspace, s, sspace, flush=True)
 
 
 def reset_model():
@@ -227,7 +229,10 @@ def test(data_path="dataset/", pars_choice="test0", config_mode="test"):
     log("### Model created ###")
     fit(model=model, data_pars=data_pars, compute_pars=compute_pars)
 
+
+
     # for prediction
+    
     log("#### Predict   ####")
     y_pred = predict(model=model, model_pars=model_pars, data_pars=data_pars)
 
@@ -248,3 +253,24 @@ def test(data_path="dataset/", pars_choice="test0", config_mode="test"):
 if __name__ == "__main__":
     VERBOSE = True
     test()
+#####################################################################################################
+DESCRIPTION = """
+
+
+https://arxiv.org/abs/1803.03800
+
+
+
+ARMDN: Associative and Recurrent Mixture Density Networks for eRetail Demand Forecasting
+
+Srayanta Mukherjee, Devashish Shankar, Atin Ghosh, Nilam Tathawadekar, Pramod Kompalli, Sunita Sarawagi, Krishnendu Chaudhury
+(Submitted on 10 Mar 2018 (v1), last revised 16 Mar 2018 (this version, v2))
+Accurate demand forecasts can help on-line retail organizations better plan their supply-chain processes. 
+The challenge, however, is the large number of associative factors that result in large, non-stationary shifts in demand, 
+which traditional time series and regression approaches fail to model. In this paper, we propose a Neural Network architecture called AR-MDN,
+ that simultaneously models associative factors, time-series trends and the variance in the demand. We first identify several causal features and use a combination of feature embeddings, MLP and LSTM to represent them. We then model the output density as a learned mixture of Gaussian distributions. The AR-MDN can be trained end-to-end without the need for additional supervision. We experiment on a dataset of an year's worth of data over tens-of-thousands of products from Flipkart. The proposed architecture yields a significant improvement in forecasting accuracy when compared with existing alternatives
+
+
+
+
+"""

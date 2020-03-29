@@ -72,8 +72,8 @@ class Model:
         self.config = config_class.from_pretrained(model_pars['model_name'], num_labels=2, 
                                                    finetuning_task=model_pars['task_name'])
         self.tokenizer = tokenizer_class.from_pretrained(model_pars['model_name'])
-
-        self.model = model_class.from_pretrained(model_pars['model_name'])
+        # downloads the pretrained model and stores it in the cache directory
+        self.model = model_class.from_pretrained(model_pars['model_name'],cache_dir=model_pars.cache_dir )
         self.model.to(device)
  
 

@@ -6,6 +6,7 @@
 
 - Goal is to transform Jupyter/research code into Semi-Prod (batch,..) code with minimal code change ...
 
+
 - Model list is available here :
   https://github.com/arita37/mlmodels/blob/dev/README_model_list.md
 
@@ -13,22 +14,14 @@
   Functional reduces the amount of code needed, focus more on the computing part (vs design part),
   a bit easier maintenability for medium size project, good for scientific computing process.
 
-<<<<<<< HEAD
-* Colab demo :
-  https://colab.research.google.com/drive/1PFSRN5JpiOTt7W3YV8BsT4PG8mCOofo1
-=======
 
 *  Colab demo :
-https://colab.research.google.com/drive/1sYbrXNZh9nTeizS-AuCA8RSu94B_B-RF
->>>>>>> 54d8dce15108f5fe94bf448fceb519dce07a6d2d
+https://colab.research.google.com/drive/1sYbrXNZh9nTeizS-AuCA8RSu94B_B-RF54d8dce15108f5fe94bf448fceb519dce07a6d2d
+
 
 ## Model List :
 
-<<<<<<< HEAD
-Nbeats: 2019, Time Series NNetwork, https://arxiv.org/abs/1905.10437
 
-Amazon Deep AR: 2019, Time Series NNetwork, https://arxiv.org/abs/1905.10437
-=======
 ### Time Series:
 Nbeats: 2019, Time Series NNetwork,  https://arxiv.org/abs/1905.10437
 
@@ -43,8 +36,6 @@ LSTM prediction
 
 
 ### NLP :
->>>>>>> 54d8dce15108f5fe94bf448fceb519dce07a6d2d
-
 Sentence Transformers : 2019, Embedding of full sentences using BERT, https://arxiv.org/pdf/1908.10084.pdf
 
 Transformers Classifier : Using Transformer for Text Classification, https://arxiv.org/abs/1905.05583
@@ -66,18 +57,17 @@ All sklearn models, LighGBM
 ### VISION :
   Vision Models (pre-trained) :  
         alexnet, densenet121, densenet169, densenet201,
-        densenet161, inception_v3, resnet18, resnet34, resnet50, resnet101, resnet152,
-        resnext50_32x4d, resnext101_32x8d, wide_resnet50_2, wide_resnet101_2, squeezenet1_0,
-        squeezenet1_1, vgg11, vgg13, vgg16, vgg19, vgg11_bn, vgg13_bn, vgg16_bn, vgg19_bn,
-        googlenet, shufflenet_v2_x0_5, shufflenet_v2_x1_0, mobilenet_v2"
-
+        densenet161, inception_v3, resnet18, resnet34, 
+        resnet50, resnet101, resnet152,
+        resnext50_32x4d, resnext101_32x8d, 
+        wide_resnet50_2, wide_resnet101_2, squeezenet1_0,
+        squeezenet1_1, vgg11, vgg13, vgg16, vgg19, vgg11_bn,
+        vgg13_bn, vgg16_bn, vgg19_bn,googlenet, shufflenet_v2_x0_5, 
+        shufflenet_v2_x1_0, mobilenet_v2
 
 A lot more...
 
-<<<<<<< HEAD
-AutoML Gluon : 2020, AutoML in Gluon, MxNet
-=======
->>>>>>> 54d8dce15108f5fe94bf448fceb519dce07a6d2d
+
 
 ......
 
@@ -624,7 +614,6 @@ roc_auc_score(y, ypred)
 
 ---
 
-<<<<<<< HEAD
 ### Using hyper-params (optuna) for Titanic Problem from json file ([Example notebook](example/sklearn_titanic_randomForest_example2.ipynb), [JSON file](mlmodels/dataset/json/hyper_titanic_randomForest.json))
 
 #### Import library and functions
@@ -688,7 +677,6 @@ roc_auc_score(y, ypred)
 ```
 
 ---
-=======
 
 
 
@@ -700,4 +688,4 @@ roc_auc_score(y, ypred)
 
 
 
->>>>>>> 54d8dce15108f5fe94bf448fceb519dce07a6d2d
+54d8dce15108f5fe94bf448fceb519dce07a6d2d

@@ -245,9 +245,10 @@ def config_set(ddict2):
    
 
 
+
 def params_json_load(path, config_mode="test"):
     import json
-    pars = json.load(open(path, mode="rb"))
+    pars = json.load(open(path, mode="r"))
     pars = pars[config_mode]
 
     ### HyperParam, model_pars, data_pars,
@@ -489,7 +490,7 @@ def load_pkl(load_pars):
     return pickle.load(open( load_pars['path'], mode='rb') )
 
 
-def save_pkl(model=None, save_pars=None):
+def save_pkl(model=None, session=None, save_pars=None):
   import cloudpickle as pickle
   path, filename = os_path_split(save_pars['path'])
   os.makedirs(path, exist_ok=True)
