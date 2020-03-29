@@ -71,7 +71,7 @@ def optim(model_uri="model_tf.1_lstm.py",
 
 
 def optim_optuna(model_uri="model_tf.1_lstm.py",
-                 hypermodel_pars = {"engine" :{} },
+                 hypermodel_pars = {"engine_pars" :{} },
                  model_pars      = {},
                  data_pars       = {},
                  compute_pars    = {},    #only Model pars

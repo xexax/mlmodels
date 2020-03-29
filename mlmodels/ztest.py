@@ -1,4 +1,11 @@
 # -*- coding: utf-8 -*-
+"""
+
+ml_test --do test_json --config_file test/pullrequest.json
+
+ml_test --do test_all  --config_file  mlmdodels/config/test_config.json"
+
+"""
 import copy
 import math
 import os
@@ -6,20 +13,13 @@ from collections import Counter, OrderedDict
 import json
 
 import numpy as np
-import pandas as pd
-# import scipy as sci
-# import sklearn as sk
-
 ####################################################################################################
 
-# import autogluon
-# import gluonts
+
 ####################################################################################################
 import mlmodels
 
 from mlmodels.util import get_recursive_files, log, os_package_root_path, model_get_list, os_get_file
-
-
 
 
 def os_file_current_path():
@@ -48,7 +48,7 @@ def test_model_structure():
   os.system( cmd )
 
 
-def test_import() :
+def test_import(arg) :
     import tensorflow as tf
     import torch as torch
 
@@ -73,7 +73,8 @@ def test_import() :
 
 
 
-def test_all():
+def test_all(arg=None):
+
   print("os.getcwd", os.getcwd())
 
   path = mlmodels.__path__[0]
@@ -84,8 +85,8 @@ def test_all():
 
   ## Block list
   root = os_package_root_path()
-  cfg = json.load(open(root + "config/test_config.json", mode='r'))['test_all']
-  block_list = cfg['block_models']
+  cfg = json.load(open(root + "/" + arg.config_file, mode='r'))['test_all']
+  block_list = cfg['model_blocked']
   model_list = [ t for t in model_list if t not in block_list]
   print("Used", model_list)
 
@@ -93,6 +94,25 @@ def test_all():
   path = path.replace("\\", "//")  
   test_list =[ f"python {path}/"  + t.replace(".","//").replace("//py", ".py") for t in model_list ] 
 
+
+  for cmd in test_list :
+    print("\n\n\n", flush=True)
+    print(cmd, flush=True)
+    os.system( cmd )
+
+
+
+
+def test_json(arg):
+  print( "os.getcwd", os.getcwd() )
+  print("############Check model ################################")
+  path  = mlmodels.__path__[0]
+  cfg   = json.load(open( arg.config_file , mode='r'))
+
+  mlist = cfg['model_list']
+  print(mlist)
+  test_list =[   f"python {path}/{model}"  for model in  mlist ]  
+   
 
   for cmd in test_list :
     print("\n\n\n", flush=True)
@@ -201,13 +221,14 @@ def main():
   print(arg.do)
 
 
-  if ".py" in arg.do   :  #list all models in the repo
+  #### Input is String list of model name
+  if ".py" in arg.do   : 
     s = arg.do
     test_list(  s.split(",") )
 
 
   else :
-    globals()[arg.do]()
+    globals()[arg.do](arg)
 
 
 
