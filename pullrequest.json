@@ -1,0 +1,16 @@
+{
+
+  "test_list" : [ { "name": "test_list"
+                   ,"args": {}
+                  }
+                ]
+
+ ,"model_list": [ "model_tf.1_lstm"
+ 	             ,"model_keras.armdn"
+
+
+                ]
+
+
+
+}

@@ -25,7 +25,7 @@ from mlmodels.model_keras.raw.char_cnn.models.char_cnn_kim import CharCNNKim
 
 ####################################################################################################
 VERBOSE = False
-MODEL_URI = get_model_uri(__file__)                                                                                                    "")
+MODEL_URI = get_model_uri(__file__)
 # print( path_norm("dataset") )
 
 
@@ -37,9 +37,9 @@ class Model:
         ### Model Structure        ################################
         if model_pars is None :
             self.model = None
+            return None
 
-        else :
-            self.model = CharCNNKim(input_size=data_pars["input_size"],
+        self.model = CharCNNKim(input_size=data_pars["input_size"],
                                 alphabet_size          = data_pars["alphabet_size"],
                                 embedding_size         = model_pars["embedding_size"],
                                 conv_layers            = model_pars["conv_layers"],
@@ -48,6 +48,8 @@ class Model:
                                 dropout_p              = model_pars["dropout_p"],
                                 optimizer              = model_pars["optimizer"],
                                 loss                   = model_pars["loss"]).model
+
+
 
 
 def fit(model, data_pars=None, compute_pars=None, out_pars=None, **kw):
@@ -234,7 +236,7 @@ def test(data_path="dataset/", pars_choice="json", config_mode="test"):
 
     log("#### Loading dataset   #############################################")
     Xtuple = get_dataset(data_pars)
-    print(Xtuple.shape)
+    print(len(Xtuple))
 
     log("#### Model init, fit   #############################################")
     session = None

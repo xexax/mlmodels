@@ -75,6 +75,6 @@ jobs:
 
     ##### Please change BELOW to your model name  
     - name: ml_test Pull Request models
-      run: ml_test --do test_json --config_file test/pullrequest.json
+      run: ml_test --do test_json --config_file pullrequest.json
       
          
