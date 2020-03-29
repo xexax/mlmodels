@@ -37,7 +37,6 @@ class Model:
         dense_neuron = model_pars["dense_neuron"]
         timesteps = model_pars["timesteps"]
         last_lstm_neuron = model_pars["last_lstm_neuron"]
-        print("creating model....")
         model = Sequential()
         for ind, hidden in enumerate(lstm_h_list):
             model.add(LSTM(units=hidden, return_sequences=True,
@@ -56,12 +55,11 @@ class Model:
         model.compile(loss=mdn.get_mixture_loss_func(OUTPUT_DIMS, N_MIXES),
                       optimizer=adam)
         self.model = model
-        print("Model created, use model.summary() for model sructure")
 
 
 def get_dataset(data_pars=None, **kw):
     path = os.path.abspath(os.path.dirname(__file__)) \
-           + "/.." + data_pars["path"]
+        + "/.." + data_pars["path"]
     df = pd.read_csv(path)
     return df
 
@@ -90,8 +88,8 @@ def load(load_pars={}, **kw):
     model_pars = kw["model_pars"]
     compute_pars = kw["compute_pars"]
     data_pars = kw["data_pars"]
-    custom_pars = {"MDN": mdn.MDN, 
-                   "loss": mdn.get_mixture_loss_func(model_pars["timesteps"], 
+    custom_pars = {"MDN": mdn.MDN,
+                   "loss": mdn.get_mixture_loss_func(model_pars["timesteps"],
                                                      model_pars["n_mixes"])}
     model0 = load_keras({"path": path + "/armdn.h5"}, custom_pars)
     model = Model(model_pars=model_pars, data_pars=data_pars,
@@ -102,17 +100,21 @@ def load(load_pars={}, **kw):
 
 
 def get_params(param_pars={}, **kw):
-    data_path = "dataset/"
+    data_path = param_pars["data_path"]
     json_path = os.path.abspath(os.path.dirname(__file__)) + \
-                "/armdn.json"
+        "/armdn.json"
     config_mode = param_pars["config_mode"]
     if param_pars["choice"] == "json":
+
+        data_path = path_norm(data_path)
+        cf = json.load(open(json_path, mode='r'))
+        cf = cf[config_mode]
+        return cf['model_pars'], cf['data_pars'], cf['compute_pars'], cf['out_pars']
+
        data_path = path_norm(data_path)
        cf = json.load(open(json_path, mode='r'))
        cf = cf[config_mode]
        return cf['model_pars'], cf['data_pars'], cf['compute_pars'], cf['out_pars']
-
-
 
     if param_pars["choice"] == "test0":
         log("#### Path params   ##########################################")
@@ -154,7 +156,7 @@ def fit_metrics(model, data_pars=None, compute_pars=None, out_pars=None, **kw):
 
 def get_dataset(data_params):
     pred_length = data_params["prediction_length"]
-    features =  data_params["col_Xinput"]
+    features = data_params["col_Xinput"]
     target = data_params["col_ytarget"]
     feat_len = len(features)
     df = pd.read_csv(data_params["train_data_path"])
@@ -163,13 +165,15 @@ def get_dataset(data_params):
     y_train = df[features].iloc[:-pred_length].shift().fillna(0)
     y_train = y_train.values.reshape(-1, pred_length, 1)
     x_test = df.iloc[-pred_length:][target]
-    x_test = x_test.values.reshape(-1,pred_length, feat_len)
+    x_test = x_test.values.reshape(-1, pred_length, feat_len)
     y_test = df.iloc[-pred_length:][target].shift().fillna(0)
     y_test = y_test.values.reshape(-1, pred_length, 1)
+    if data_params["predict"]:
+        return x_test, y_test
     return x_train, y_train, x_test, y_test
 
 
-def fit(model=None, session=None, data_pars={}, compute_pars={}, out_pars={},   **kw):
+def fit(model=None, data_pars={}, compute_pars={}, out_pars={}, **kw):
     """
     """
     batch_size = compute_pars['batch_size']
@@ -178,6 +182,7 @@ def fit(model=None, session=None, data_pars={}, compute_pars={}, out_pars={},   
 
     sess = None
     log("#### Loading dataset   #############################################")
+    data_pars["predict"] = False
     x_train, y_train, x_test, y_test = get_dataset(data_pars)
 
     early_stopping = EarlyStopping(monitor='loss', patience=patience,
@@ -187,90 +192,67 @@ def fit(model=None, session=None, data_pars={}, compute_pars={}, out_pars={},   
                     epochs=epochs,
                     callbacks=[early_stopping]
                     )
-    return model
+    return model, sess
 
 
-def predict(model=None, session=None, model_pars=None, data_pars=None, **kwargs):
-    pred = model.model.predict(kwargs["x_test"])
-
+def predict(model=None, model_pars=None, data_pars=None, **kwargs):
+    data_pars["predict"] = True
+    x_test, y_test = get_dataset(data_pars)
+    pred = model.model.predict(x_test)
     y_samples = np.apply_along_axis(mdn.sample_from_output, 1, pred,
                                     data_pars["prediction_length"],
                                     model_pars["n_mixes"], temp=1.0)
     return y_samples.reshape(-1, 1)
 
 
-
-
-def plot(model=None, session=None, model_pars=None, data_pars=None, **kwargs):
-    # for prediction
-    features =  data_pars["col_Xinput"]
-    target = data_pars["col_ytarget"]
-    feat_len = len(features)
-    pred_length = data_pars["prediction_length"]
-
-    df = pd.read_csv(data_pars["train_data_path"])
-    
-    x_test = df.iloc[-pred_length:][features]
-    x_test = x_test.values.reshape(-1, pred_length, feat_len)
-    y_test = df.iloc[-pred_length:][target].shift().fillna(0)
-    y_test = y_test.values.reshape(-1, pred_length, 1)
-
-    path = out_pars["outpath"]
-    os.makedirs(path, exist_ok=True)
-    plt.plot(y_test.reshape(-1, 1), "blue", label="actual", alpha=0.7)
-    plt.plot(y_pred, "red", label="predicted", alpha=0.7)
-    plt.xlabel("Month")
-    plt.xlabel("milk demand")
-    plt.legend(loc="upper left")
-    log("### plot saved at ###")
-    log(out_pars["outpath"] + "/armdn_out.png")
-    plt.savefig(out_pars["outpath"] + "armdn_out.png", dpi=100)
-
-
+def metrics_plot(metrics_params):
+    os.makedirs(metrics_params["outpath"], exist_ok=True)
+    if metrics_params["plot_type"] == "line":
+        plt.plot(metrics_params["actual"], label="Actual", 
+                 color="blue")
+        plt.plot(metrics_params["pred"], label="Prediction",
+                 color="red")
+        plt.savefig(metrics_params["outpath"] + "/armdn.png")
 
 
 def test(data_path="dataset/", pars_choice="test0", config_mode="test"):
-    path = data_path + "timeseries/milk.csv"
+    path = data_path
+    
     log("#### Loading params   ##############################################")
-    param_pars = {"choice": pars_choice, "config_mode": config_mode}
-    model_pars, data_pars,\
-                          compute_pars, out_pars = get_params(param_pars,
-                                                              data_path=path)
+    param_pars = {"choice": pars_choice, "config_mode": config_mode,
+                  "data_path": path}
+    model_pars, data_pars, compute_pars, out_pars = get_params(param_pars)
     
     log("#### Model init, fit   #############################################")
     model = Model(model_pars=model_pars, data_pars=data_pars,
                   compute_pars=compute_pars)
-
-
     log("### Model created ###")
-    log(model.model.summary())
     fit(model=model, data_pars=data_pars, compute_pars=compute_pars)
-    pred_length = data_pars["prediction_length"]
 
 
 
-
-
-    log("#### Predict   ####")
-    y_pred = predict(model=model, model_pars=model_pars,
-                     data_pars=data_pars, x_test=x_test)
-
-
-
-
-    save(model=model, session=None, save_pars=out_pars)
-    log("### Loading model ###")
-    load_pars = out_pars
-    model2 = load(load_pars=out_pars, model_pars=model_pars, 
-         data_pars=data_pars, compute_pars=compute_pars)
+    # for prediction
     
+    log("#### Predict   ####")
+    y_pred = predict(model=model, model_pars=model_pars, data_pars=data_pars)
+
+    log("### Plot ###")
+    data_pars["predict"] = True
+    x_test, y_test = get_dataset(data_pars)
+    metrics_params = {"plot_type": "line", "pred": y_pred, 
+                      "outpath": out_pars["outpath"], 
+                      "actual": y_test.reshape(-1, 1)}
+    metrics_plot(metrics_params)
+
+    log("#### Save/Load   ###################################################")
+    save(model=model, session=None, save_pars=out_pars)
+    model2 = load(load_pars=out_pars, model_pars=model_pars,
+                data_pars=data_pars, compute_pars=compute_pars)
+  
 
 if __name__ == "__main__":
     VERBOSE = True
     test()
-
-
-
 #####################################################################################################
 DESCRIPTION = """
 
@@ -291,13 +273,4 @@ which traditional time series and regression approaches fail to model. In this p
 
 
 
-
-
-
-
-
-
-
-
 """
-
