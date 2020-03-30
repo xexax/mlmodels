@@ -509,7 +509,7 @@ def load_keras(load_pars, custom_pars=None):
                              custom_objects={"MDN": custom_pars["MDN"],
                                              "loss_func": custom_pars["loss"]})
     else:
-        model.model = load_model("model.h5")
+        model.model = load_model(path_file)
     return model
 
 

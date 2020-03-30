@@ -65,7 +65,7 @@ from mlmodels.util import save_keras, load_keras
 class Model:
     def __init__(self, model_pars=None, data_pars=None, compute_pars=None, **kwargs):
         # 4.Define Model
-        linear_cols, dnn_cols = kwargs.get('dataset')[1:3]
+        linear_cols, dnn_cols = get_dataset(data_pars)[1:3]
         self.model = DeepFM(linear_cols, dnn_cols, model_pars['task'])
 
         self.model.compile(model_pars['optimization'], model_pars['cost'], metrics=['binary_crossentropy'], )
@@ -423,7 +423,7 @@ def test(data_path="dataset/", pars_choice=0):
 
     log("#### Model init, fit   #############################################")
     from mlmodels.models import module_load_full, fit, predict
-    module, model = module_load_full("model_keras.01_deepctr", model_pars, data_pars, compute_pars, dataset=dataset)
+    module, model = module_load_full("model_keras.01_deepctr", model_pars, data_pars, compute_pars)
     model = fit(module, model, data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)
 
     log("#### Predict   ####################################################")
