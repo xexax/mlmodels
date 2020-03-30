@@ -55,7 +55,8 @@ from deepctr.models import DeepFM
 
 ####################################################################################################
 # Helper functions
-from mlmodels.util import os_package_root_path, log
+from mlmodels.util import os_package_root_path, log, path_norm
+from mlmodels.util import save_keras, load_keras
 
 
 
@@ -330,7 +331,8 @@ def get_params(choice="", data_path="dataset/", config_mode="test", **kw):
 
     if choice == 0:
         log("#### Path params   ###################################################")
-        data_path, out_path = path_setup(out_folder="/deepctr_test/", data_path=data_path)
+        data_path, _ = path_setup(out_folder="/deepctr_test/", data_path=data_path)
+        out_path = path_norm("ztest/model_keras/deepctr/model.h5")
 
         train_data_path = data_path + "recommender/criteo_sample.txt"
         data_pars = {"train_data_path": train_data_path, "dataset_type": "criteo", "test_size": 0.2}
@@ -343,7 +345,8 @@ def get_params(choice="", data_path="dataset/", config_mode="test", **kw):
 
     elif choice == 1:
         log("#### Path params   ##################################################")
-        data_path, out_path = path_setup(out_folder="/deepctr_test/", data_path=data_path)
+        data_path, _ = path_setup(out_folder="/deepctr_test/", data_path=data_path)
+        out_path = path_norm("ztest/model_keras/deepctr/model.h5")
 
         train_data_path = data_path + "recommender/criteo_sample.txt"
         data_pars = {"train_data_path": train_data_path, "hash_feature": True,
@@ -357,7 +360,8 @@ def get_params(choice="", data_path="dataset/", config_mode="test", **kw):
 
     elif choice == 2:
         log("#### Path params   ################################################")
-        data_path, out_path = path_setup(out_folder="/deepctr_test/", data_path=data_path)
+        data_path, _ = path_setup(out_folder="/deepctr_test/", data_path=data_path)
+        out_path = path_norm("ztest/model_keras/deepctr/model.h5")
 
         train_data_path = data_path + "/recommender/movielens_sample.txt"
         data_pars = {"train_data_path": train_data_path, "dataset_type": "movie_len",
@@ -372,7 +376,8 @@ def get_params(choice="", data_path="dataset/", config_mode="test", **kw):
 
     elif choice == 3:
         log("#### Path params   ##################################################")
-        data_path, out_path = path_setup(out_folder="/deepctr_test/", data_path=data_path)
+        data_path, _ = path_setup(out_folder="/deepctr_test/", data_path=data_path)
+        out_path = path_norm("ztest/model_keras/deepctr/model.h5")
 
         train_data_path = data_path + "/recommender/movielens_sample.txt"
         data_pars = {"train_data_path": train_data_path, "multiple_value": True,
@@ -387,7 +392,8 @@ def get_params(choice="", data_path="dataset/", config_mode="test", **kw):
 
     elif choice == 4:
         log("#### Path params   #################################################")
-        data_path, out_path = path_setup(out_folder="/deepctr_test/", data_path=data_path)
+        data_path, _ = path_setup(out_folder="/deepctr_test/", data_path=data_path)
+        out_path = path_norm("ztest/model_keras/deepctr/model.h5")
 
         train_data_path = data_path + "/recommender/movielens_sample.txt"
         data_pars = {"train_data_path": train_data_path, "multiple_value": True,
@@ -431,9 +437,10 @@ def test(data_path="dataset/", pars_choice=0):
     log("#### Plot   #######################################################")
 
     log("#### Save/Load   ##################################################")
-    # save(model, out_pars['path'] + f"/model_{pars_choice}.h5")
-    # model2 = load(out_pars['path'] + f"/model_{pars_choice}.h5")
-    # print(model2)
+    save_keras(model, save_pars=out_pars)
+    # TODO: load model now is hang forever => need check more
+    # model2 = load_keras(out_pars)
+    # model2.model.summary()
 
 
 if __name__ == '__main__':
