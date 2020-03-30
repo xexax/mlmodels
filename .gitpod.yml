@@ -21,8 +21,8 @@ ports:
 
 tasks:
 - init: >
-    source activate py36 && pip install -r requirements.txt
-    source activate py36 && pip install -r requirements_fake.txt 
+    source activate py36 && pip install -r requirements.txt  &&
+    source activate py36 && pip install -r requirements_fake.txt  &&
     source activate py36 && pip install -e .  --no-deps
 
   command: >
