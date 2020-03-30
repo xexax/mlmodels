@@ -48,12 +48,12 @@ charCNN Keras : Text Character Classifier,
 
 
 ### TABULAR :
-LightGBM
+#### LightGBM
 
-AutoML Gluon  :  2020, AutoML in Gluon, MxNet using LightGBM, CatBoost
+#### AutoML Gluon  :  2020, AutoML in Gluon, MxNet using LightGBM, CatBoost
 
 
-All sklearn models :
+#### All sklearn models :
 
 linear_model.ElasticNet\
 linear_model.ElasticNetCV\
@@ -86,7 +86,7 @@ neighbors.KNeighborsTransformer\
 
 
 
-Binary prediction from tabular data:
+#### Binary Neural Prediction from tabular data:
 
 A Convolutional Click Prediction Model](http://ir.ia.ac.cn/bitstream/173211/12337/1/A%20Convolutional%20Click%20Prediction%20Model.pdf)             |
 
