@@ -87,7 +87,7 @@ neighbors.KNeighborsTransformer\
 
 
 Binary prediction from tabular data:
-:-------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+
 A Convolutional Click Prediction Model](http://ir.ia.ac.cn/bitstream/173211/12337/1/A%20Convolutional%20Click%20Prediction%20Model.pdf)             |
 
 Deep Learning over Multi-field Categorical Data: A Case Study on User Response Prediction](https://arxiv.org/pdf/1601.02376.pdf)                    |
