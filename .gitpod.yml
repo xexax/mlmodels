@@ -1,7 +1,7 @@
 #image:
 #file: .gitpod.Dockerfile
-#image: kavis131995/gitpod_mlmodels 
-image: kavis131995/gitpod_mlmodel
+image: kavis131995/gitpod_mlmodels 
+#image: kavis131995/gitpod_mlmodel
 
 ###   https://hub.docker.com/r/kavis131995/gitpod_mlmodels
 
@@ -16,12 +16,12 @@ ports:
 #python3 -m pip install numpy==1.17.5 &&
 #python3 -m pip install -r requirements.txt &&
 
+#    conda activate py36 && pip install -r requirements_fake.txt &&
+#    conda activate py36 && pip install -e . -r requirements.txt
 
 
 tasks:
 - init: >
-#    conda activate py36 && pip install -r requirements_fake.txt &&
-#    conda activate py36 && pip install -e . -r requirements.txt
      conda activate py36 && pip install -e .  --no-deps
 
   command: >
