@@ -3,10 +3,9 @@ name:  test_pullrequest
 on:
   pull_request:
     branches:
-     - dev
-     - "**"
+
  
- 
+
   schedule:
     # * is a special character in YAML so you have to quote this string
     ### Every 12 hours
