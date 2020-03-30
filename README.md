@@ -161,6 +161,7 @@ https://github.com/arita37/mlmodels/blob/dev/README_model_list.md
 
 Install as editable package (ONLY dev branch), in Linux
 
+```
 conda create -n py36 python=3.6.5 -y
 source activate py36
 
@@ -201,6 +202,7 @@ https://colab.research.google.com/drive/1sYbrXNZh9nTeizS-AuCA8RSu94B_B-RF
 
     ##### To test model fitting
     ml_models
+```    
 
 #### Dependencies
 
