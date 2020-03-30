@@ -3,11 +3,18 @@ import pandas as pd
 import os
 import numpy as np
 import math
+import json
+
+
+
+
+
+#####################################################################################################
 import tensorflow as tf
 import keras.regularizers as reg
 import matplotlib.pyplot as plt
 import mdn
-import json
+
 from keras.models import Sequential
 from keras import Model
 from keras import layers
@@ -17,6 +24,9 @@ from keras.models import model_from_json
 from keras.regularizers import l2
 from keras.optimizers import Adam
 from keras import backend as Keras
+
+
+#####################################################################################################
 from mlmodels.util import save_keras, load_keras
 
 from mlmodels.util import (os_package_root_path, log, path_norm, get_model_uri,
@@ -26,8 +36,35 @@ from mlmodels.data import (download_data, import_data)
 # Less Keras warnings
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 VERBOSE = False
+MODE_URI = get_model_uri(__file__)
 
 
+
+#####################################################################################################
+INFO ={
+  "uri":MODE_URI   
+ ,"description" : """
+
+https://arxiv.org/abs/1803.03800
+
+ARMDN: Associative and Recurrent Mixture Density Networks for eRetail Demand Forecasting
+
+Srayanta Mukherjee, Devashish Shankar, Atin Ghosh, Nilam Tathawadekar, Pramod Kompalli, Sunita Sarawagi, Krishnendu Chaudhury
+(Submitted on 10 Mar 2018 (v1), last revised 16 Mar 2018 (this version, v2))
+Accurate demand forecasts can help on-line retail organizations better plan their supply-chain processes. 
+The challenge, however, is the large number of associative factors that result in large, non-stationary shifts in demand, 
+which traditional time series and regression approaches fail to model. In this paper, we propose a Neural Network architecture called AR-MDN,
+ that simultaneously models associative factors, time-series trends and the variance in the demand. We first identify several causal features and use a combination of feature embeddings, MLP and LSTM to represent them. We then model the output density as a learned mixture of Gaussian distributions. The AR-MDN can be trained end-to-end without the need for additional supervision. We experiment on a dataset of an year's worth of data over tens-of-thousands of products from Flipkart. The proposed architecture yields a significant improvement in forecasting accuracy when compared with existing alternatives
+
+
+"""
+}
+
+
+
+
+
+#####################################################################################################
 class Model:
     def __init__(self, model_pars=None, data_pars=None, compute_pars=None):
         lstm_h_list      = model_pars["lstm_h_list"]
@@ -241,24 +278,4 @@ def test(data_path="dataset/", pars_choice="test0", config_mode="test"):
 if __name__ == "__main__":
     VERBOSE = True
     test()
-#####################################################################################################
-DESCRIPTION = """
 
-
-https://arxiv.org/abs/1803.03800
-
-
-
-ARMDN: Associative and Recurrent Mixture Density Networks for eRetail Demand Forecasting
-
-Srayanta Mukherjee, Devashish Shankar, Atin Ghosh, Nilam Tathawadekar, Pramod Kompalli, Sunita Sarawagi, Krishnendu Chaudhury
-(Submitted on 10 Mar 2018 (v1), last revised 16 Mar 2018 (this version, v2))
-Accurate demand forecasts can help on-line retail organizations better plan their supply-chain processes. 
-The challenge, however, is the large number of associative factors that result in large, non-stationary shifts in demand, 
-which traditional time series and regression approaches fail to model. In this paper, we propose a Neural Network architecture called AR-MDN,
- that simultaneously models associative factors, time-series trends and the variance in the demand. We first identify several causal features and use a combination of feature embeddings, MLP and LSTM to represent them. We then model the output density as a learned mixture of Gaussian distributions. The AR-MDN can be trained end-to-end without the need for additional supervision. We experiment on a dataset of an year's worth of data over tens-of-thousands of products from Flipkart. The proposed architecture yields a significant improvement in forecasting accuracy when compared with existing alternatives
-
-
-
-
-"""
