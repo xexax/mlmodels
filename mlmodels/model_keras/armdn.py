@@ -64,6 +64,8 @@ which traditional time series and regression approaches fail to model. In this p
 
 
 
+
+
 #####################################################################################################
 class Model:
     def __init__(self, model_pars=None, data_pars=None, compute_pars=None):
