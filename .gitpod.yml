@@ -1,7 +1,7 @@
 #image:
 #file: .gitpod.Dockerfile
 #image: kavis131995/gitpod_mlmodels 
-image: kavis131995/gitpod_mlmodel:latest
+image: kavis131995/gitpod_mlmodel
 
 ###   https://hub.docker.com/r/kavis131995/gitpod_mlmodels
 
