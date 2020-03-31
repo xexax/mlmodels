@@ -1,9 +1,7 @@
 #image:
 #file: .gitpod.Dockerfile
-image: kavis131995/gitpod_mlmodels 
-#image: kavis131995/gitpod_mlmodel
-
-
+#image: kavis131995/gitpod_mlmodels 
+image: kavis131995/gitpod_mlmodel
 
 ###   https://hub.docker.com/r/kavis131995/gitpod_mlmodels
 
@@ -29,13 +27,10 @@ tasks:
     source activate py36 && pip install -r requirements_fake.txt  &&
     source activate py36 && pip install -e .  --no-deps  &&
     source activate py36 && pip install jupyterlab ipykernel    
-
   command: >
     source activate py36 && python -c "import mlmodels; print(mlmodels)"
-
-
-#- openMode: split-right
-#    command: echo SplitTerminal && clear
+- openMode: split-right
+    command: echo SplitTerminal && clear
     
     
 github:
@@ -49,7 +44,3 @@ github:
     # enable for pull requests coming from this repo (defaults to true)
     pullRequests: true
 
-
-
-    
-    
