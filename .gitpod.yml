@@ -32,8 +32,8 @@ tasks:
     source activate py36 && python -c "import mlmodels; print(mlmodels)"
 
 
-- openMode: split-right
-    command: echo SplitTerminal && clear
+#- openMode: split-right
+#    command: echo SplitTerminal && clear
     
     
 github:
