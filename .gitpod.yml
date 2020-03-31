@@ -22,12 +22,11 @@ ports:
 
 
 tasks:
-- init: >
-    source activate base && pip install jupyterlab  &&    
+- init: >   
     source activate py36 && pip install -r requirements.txt  &&
     source activate py36 && pip install -r requirements_fake.txt  &&
     source activate py36 && pip install -e .  --no-deps  &&
-    source activate py36 && pip install ipykernel    
+    source activate py36 && pip install jupyterlab ipykernel    
 
   command: >
     source activate py36 && python -c "import mlmodels; print(mlmodels)"
