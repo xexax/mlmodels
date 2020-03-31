@@ -58,8 +58,6 @@ logger = logging.getLogger(__name__)
 
 
 
-fromm mlmodels.util import os_package_root_path, log, path_norm
-
 
 
 ####################################################################################################
@@ -73,7 +71,7 @@ class Model:
                                                    finetuning_task=model_pars['task_name'])
         self.tokenizer = tokenizer_class.from_pretrained(model_pars['model_name'])
         # downloads the pretrained model and stores it in the cache directory
-        self.model = model_class.from_pretrained(model_pars['model_name'],cache_dir=model_pars.cache_dir )
+        self.model = model_class.from_pretrained(model_pars['model_name'],cache_dir=model_pars["cache_dir"] )
         self.model.to(device)
  
 
@@ -497,9 +495,9 @@ def test(data_path,model_pars, data_pars, compute_pars, out_pars, pars_choice=0)
         logger.info("Evaluate the following checkpoints: %s", checkpoints)
         for checkpoint in checkpoints:
             global_step = checkpoint.split('-')[-1] if len(checkpoints) > 1 else ""
-            model = model.model.from_pretrained(checkpoint)
-            model.to(device)
-            result, wrong_preds = fit_metrics(model, model.tokenizer,model_pars, data_pars, compute_pars, out_pars, prefix=global_step)
+            model_eval = model.model.from_pretrained(checkpoint)
+            model_eval.to(device)
+            result, wrong_preds = fit_metrics(model_eval, model.tokenizer,model_pars, data_pars, compute_pars, out_pars, prefix=global_step)
             result = dict((k + '_{}'.format(global_step), v) for k, v in result.items())
             results.update(result)
     print(results)
