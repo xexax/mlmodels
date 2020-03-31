@@ -10,3 +10,13 @@ ports:
   onOpen: open-browser
   
   
+
+tasks:
+- init: >
+    source activate base && pip install jupyterlab  nb_conda_kernels  &&
+    source activate py36 && pip install -r requirements.txt  &&
+    source activate py36 && pip install -r requirements_fake.txt  &&
+    source activate py36 && pip install -e .  --no-deps  &&
+    source activate py36 && pip install  ipykernel   
+
+
