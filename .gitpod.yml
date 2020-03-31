@@ -32,13 +32,17 @@ tasks:
     source activate py36 && python -c "import mlmodels; print(mlmodels)"
 
 
+- openMode: split-right
+    command: echo SplitTerminal && clear
+    
+    
 github:
   prebuilds:
     # enable for the master/default branch (defaults to true)
     default: true
     
-    # enable for all branches in this repo (defaults to false)
-    # branches: true
+    enable for all branches in this repo (defaults to false)
+    branches: true
     
     # enable for pull requests coming from this repo (defaults to true)
     pullRequests: true
