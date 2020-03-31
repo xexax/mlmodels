@@ -8,6 +8,8 @@ image: kavis131995/gitpod_mlmodel
 ports:
 - port: 8080
   onOpen: open-preview
+- port: 8888
+  onOpen: open-preview
 
 
 #pyenv install 3.6.10  &&
@@ -21,9 +23,11 @@ ports:
 
 tasks:
 - init: >
+    source activate base && pip install jupyterlab  &&    
     source activate py36 && pip install -r requirements.txt  &&
     source activate py36 && pip install -r requirements_fake.txt  &&
-    source activate py36 && pip install -e .  --no-deps
+    source activate py36 && pip install -e .  --no-deps  &&
+    source activate py36 base pip install ipykernel    
 
   command: >
     source activate py36 && python -c "import mlmodels; print(mlmodels)"
