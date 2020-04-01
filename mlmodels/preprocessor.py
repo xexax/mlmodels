@@ -164,9 +164,15 @@ def load_function(f):
 
 class AbstractDataLoader:
 
+    """
+       Auto=inference 
+
+       auto_infer = 0  (manual one)
+
+    """
     default_loaders = {
         '.csv': 'pd.read_csv',
-        '.txt': 'lambda f: open(f).read()',
+        '.txt': 'lambda f: open(f).read()',   ##### Sometimes txt files are like CSV files !!!!!
         '.npy': 'np.load',
         '.npz': 'np.load',
         '.pkl': 'lambda f: pickle.load(open(f,'
@@ -335,9 +341,12 @@ class AbstractDataLoader:
 
         if self.file_type == 'npz' and loader_function == np.load:
             loader['allow_pickle'] = True
+
         data = loader_function(loader_arg, **loader)
-        if self.  path_type == 'directory':
+
+        if self.path_type == 'directory':
             data = self._image_directory_load(self.  path, self.generator)
+
         if self.file_type == 'npz' and loader_function == np.load:
             data = [data[f] for f in data.files]
         return data

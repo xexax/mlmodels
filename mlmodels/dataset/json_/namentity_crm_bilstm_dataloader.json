@@ -7,7 +7,7 @@
 
 	"data_pars": {
 		"input": {
-			"location": "dataset/text/ner_dataset.csv",
+			"path": "dataset/text/ner_dataset.csv",
 			"test_size": 0.5,
 			"X_cols": ["X"],
 			"y_cols": ["y"]
@@ -19,6 +19,10 @@
 				"data_preprocessor": "{data}.fillna",
 				"method": "ffill"
 			},
+
+
+
+			##### Do not lambda code in the JSON (Code hacking injection...)
 			{
 				"data_preprocessor": [{
 						"index": ["Sentence #", "Word"],
