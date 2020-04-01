@@ -1,18 +1,16 @@
 ## Installation
 https://github.com/arita37/mlmodels/blob/dev/README.md
 
-## In Jupyter 
+
 
 ### LSTM example in TensorFlow ([Example notebook](example/1_lstm.ipynb))
 
-#### Import library and functions
+#### Define model and data definitions
 ```python
 # import library
 import mlmodels
-```
 
-#### Define model and data definitions
-```python
+
 model_uri    = "model_tf.1_lstm.py"
 model_pars   =  {  "num_layers": 1,
                   "size": ncol_input, "size_layer": 128, "output_size": ncol_output, "timestep": 4,
@@ -24,39 +22,33 @@ out_pars     =  { "path": "ztest_1lstm/", "model_path" : "ztest_1lstm/model/"}
 save_pars = { "path" : "ztest_1lstm/model/" }
 load_pars = { "path" : "ztest_1lstm/model/" }
 
-```
 
 
 #### Load Parameters and Train
-```python
 from mlmodels.models import module_load
 
 module        =  module_load( model_uri= model_uri )                           # Load file definition
 model         =  module.Model(model_pars=model_pars, data_pars=data_pars, compute_pars=compute_pars)             # Create Model instance
-model, sess   =  module.fit(model, data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)          # fit the model
-```
+model, sess   =  module.fit(model, data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)
 
 
 #### Inference
-```python
 metrics_val   =  module.fit_metrics( model, sess, data_pars, compute_pars, out_pars) # get stats
 ypred         = module.predict(model, sess,  data_pars, compute_pars, out_pars)     # predict pipeline
 
 
 ```
+
+
 ---
 
 ### AutoML example in Gluon ([Example notebook](example/gluon_automl.ipynb))
-
-#### Import library and functions
-```python
+```
 # import library
 import mlmodels
 import autogluon as ag
-```
 
 #### Define model and data definitions
-```python
 model_uri = "model_gluon.gluon_automl.py"
 data_pars = {"train": True, "uri_type": "amazon_aws", "dt_name": "Inc"}
 
@@ -70,7 +62,6 @@ model_pars = {"model_type": "tabular",
               'num_leaves': ag.space.Int(lower=26, upper=30, default=36)
              }
 
-
 compute_pars = {
     "hp_tune": True,
     "num_epochs": 10,
@@ -83,21 +74,17 @@ out_pars = {
     "out_path": "dataset/"
 }
 
-```
 
 
 #### Load Parameters and Train
-```python
 from mlmodels.models import module_load
 
 module        =  module_load( model_uri= model_uri )                           # Load file definition
 model         =  module.Model(model_pars=model_pars, compute_pars=compute_pars)             # Create Model instance
 model, sess   =  module.fit(model, data_pars=data_pars, model_pars=model_pars, compute_pars=compute_pars, out_pars=out_pars)      
-```
 
 
 #### Inference
-```python
 ypred       = module.predict(model, data_pars, compute_pars, out_pars)     # predict pipeline
 
 
@@ -107,14 +94,10 @@ ypred       = module.predict(model, data_pars, compute_pars, out_pars)     # pre
 
 ### RandomForest example in Scikit-learn ([Example notebook](example/sklearn.ipynb))
 
-#### Import library and functions
-```python
 # import library
 import mlmodels
-```
 
 #### Define model and data definitions
-```python
 model_uri    = "model_sklearn.sklearn.py"
 
 model_pars   = {"model_name":  "RandomForestClassifier", "max_depth" : 4 , "random_state":0}
@@ -124,36 +107,28 @@ data_pars    = {'mode': 'test', 'path': "../mlmodels/dataset", 'data_type' : 'pa
 compute_pars = {'return_pred_not': False}
 
 out_pars    = {'path' : "../ztest"}
-```
 
 
 #### Load Parameters and Train
-```python
 from mlmodels.models import module_load
 
 module        =  module_load( model_uri= model_uri )                           # Load file definition
 model         =  module.Model(model_pars=model_pars, data_pars=data_pars, compute_pars=compute_pars)             # Create Model instance
 model, sess   =  module.fit(model, data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)          # fit the model
-```
 
 
 #### Inference
-```python
 ypred       = module.predict(model,  data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)     # predict pipeline
-```
 
 ---
 
 ### TextCNN example in keras ([Example notebook](example/textcnn.ipynb))
 
-#### Import library and functions
 ```python
 # import library
 import mlmodels
-```
 
 #### Define model and data definitions
-```python
 model_uri    = "model_keras.textcnn.py"
 
 data_pars    = {"path" : "../mlmodels/dataset/text/imdb.csv", "train": 1, "maxlen":400, "max_features": 10}
@@ -165,21 +140,17 @@ compute_pars = {"engine": "adam", "loss": "binary_crossentropy", "metrics": ["ac
 
 out_pars     = {"path": "ztest/model_keras/textcnn/"}
 
-```
 
 
 #### Load Parameters and Train
-```python
 from mlmodels.models import module_load
 
 module        =  module_load( model_uri= model_uri )                           # Load file definition
 model         =  module.Model(model_pars=model_pars, data_pars=data_pars, compute_pars=compute_pars)             # Create Model instance
 module.fit(model, data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)          # fit the model
-```
 
 
 #### Inference
-```python
 data_pars['train'] = 0
 ypred       = module.predict(model,  data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)
 ```
