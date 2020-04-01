@@ -161,7 +161,7 @@ Requires at least one evaluation data. If True, the eval metric on the eval set 
     Xtrain, ytrain, Xtest,  ytest = get_dataset(data_pars)
 
     compute_pars_light = compute_pars["lightgbm_pars"]
-    model.model.fit(Xtrain, ytrain, **compute_pars_lightgbm)
+    model.model.fit(Xtrain, ytrain, **compute_pars_light)
     return model, sess
 
 
