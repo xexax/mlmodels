@@ -108,7 +108,6 @@ def save(model=None, session=None, save_pars={}):
 
 def load(load_pars={}):
     from mlmodels.util import load_keras
-    print(load_pars)
     model0 = load_keras(load_pars)
 
     model = Model()
