@@ -108,11 +108,10 @@ def save(model=None, session=None, save_pars={}):
 
 def load(load_pars={}):
     from mlmodels.util import load_keras
-    print(load_pars)
     model0 = load_keras(load_pars)
 
     model = Model()
-    model.model = model0
+    model.model = model0.model
     session = None
     return model, session
 
@@ -256,8 +255,8 @@ def test(data_path="dataset/", pars_choice="json", config_mode="test"):
 
 
     log("#### Save/Load   ###################################################")
-    save_pars = {"path" : out_pars['path'] + "/model/" }
-    save(model, session, save_pars= save_pars)
+    save_pars = {"path": out_pars['path']}
+    save(model, session, save_pars=save_pars)
     model2, session2 = load(save_pars)
 
     log("#### Save/Load - Predict   #########################################")

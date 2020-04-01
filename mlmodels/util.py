@@ -446,7 +446,7 @@ def load_tch(load_pars):
 def save_tch(model=None, optimizer=None, save_pars=None):
     import torch
     path, filename = os_path_split(save_pars['path'])
-    os.makedirs(path, exist_ok=True)
+    if not os.path.exists(path): os.makedirs(path, exist_ok=True)
 
     if save_pars.get('save_state') is not None:
         torch.save({
@@ -493,34 +493,43 @@ def load_pkl(load_pars):
 def save_pkl(model=None, session=None, save_pars=None):
   import cloudpickle as pickle
   path, filename = os_path_split(save_pars['path'])
-  os.makedirs(path, exist_ok=True)
+  if not os.path.exists(path): os.makedirs(path, exist_ok=True)
   return pickle.dump(model, open( f"{path}/{filename}" , mode='wb') )
 
 
 
 def load_keras(load_pars, custom_pars=None):
-    from keras.models import load_model
-    path, filename = os_path_split(load_pars['path']  )
+    from tensorflow.keras.models import load_model
+    if os.path.isfile(load_pars['path']):
+        path, filename = os_path_split(load_pars['path']  )
+    else:
+        path = load_pars['path']
+        filename = "model.h5"
+
     path_file = path + "/" + filename if ".h5" not in path else path
     model = Model_empty()
     if custom_pars:
         model.model = load_model(path_file, 
                              custom_objects={"MDN": custom_pars["MDN"],
-                                             "loss_func": custom_pars["loss"]})
+                                             "mdn_loss_func": custom_pars["loss"]})
     else:
         model.model = load_model(path_file)
     return model
 
 
 def save_keras(model=None, session=None, save_pars=None, ):
-    path, filename = os_path_split(save_pars['path']  )
-    os.makedirs(path, exist_ok=True)
-    model.model.save(str(Path(path) / filename))
+    if os.path.isdir(save_pars['path']):
+        path = save_pars['path']
+        filename = "model.h5"
 
+    else:
+        path, filename = os_path_split(save_pars['path'])
+    if not os.path.exists(path): os.makedirs(path, exist_ok=True)
+    model.model.save(str(Path(path) / filename))
 
 def save_gluonts(model=None, session=None, save_pars=None):
     path = save_pars['path']
-    os.makedirs(path, exist_ok=True)
+    if not os.path.exists(path): os.makedirs(path, exist_ok=True)
     model.model.serialize(Path(path))
 
 

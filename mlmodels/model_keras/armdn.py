@@ -26,6 +26,7 @@ from keras.optimizers import Adam
 from keras import backend as Keras
 
 
+
 #####################################################################################################
 from mlmodels.util import save_keras, load_keras
 
@@ -172,7 +173,7 @@ def load(load_pars={}, **kw):
     model0 = load_keras({"path": path + "/armdn.h5"}, custom_pars)
     model = Model(model_pars=model_pars, data_pars=data_pars,
                   compute_pars=compute_pars)
-    model.model = model0
+    model.model = model0.model
     session = None
     return model, session
 
@@ -214,9 +215,8 @@ def get_params(param_pars={}, **kw):
 
     if param_pars["choice"] == "test0":
         log("#### Path params   ##########################################")
-        data_path = os_package_root_path(__file__, sublevel=1,
-                                         path_add=data_path)
-        out_path = os.getcwd() + "/keras_armdn/"
+        data_path = path_norm(data_path)
+        out_path = path_norm("ztest/model_keras/armdn/")
         os.makedirs(out_path, exist_ok=True)
         log(data_path, out_path)
         train_data_path = data_path + "timeseries/milk.csv"
@@ -273,8 +273,9 @@ def test(data_path="dataset/", pars_choice="test0", config_mode="test"):
 
     log("#### Save/Load   ###################################################")
     save(model=model, session=None, save_pars=out_pars)
-    model2 = load(load_pars=out_pars, model_pars=model_pars,
+    model2, session2 = load(load_pars=out_pars, model_pars=model_pars,
                 data_pars=data_pars, compute_pars=compute_pars)
+    model2.model.summary()
   
 
 if __name__ == "__main__":
