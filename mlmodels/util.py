@@ -500,7 +500,11 @@ def save_pkl(model=None, session=None, save_pars=None):
 
 def load_keras(load_pars, custom_pars=None):
     from keras.models import load_model
-    path, filename = os_path_split(load_pars['path']  )
+    if os.path.isfile(load_pars['path']):
+        path, filename = os_path_split(load_pars['path']  )
+    else:
+        path = load_pars['path']
+        filename = "model.h5"
 
     path_file = path + "/" + filename if ".h5" not in path else path
     model = Model_empty()
@@ -514,7 +518,11 @@ def load_keras(load_pars, custom_pars=None):
 
 
 def save_keras(model=None, session=None, save_pars=None, ):
-    path, filename = os_path_split(save_pars['path']  )
+    if os.path.isfile(save_pars['path']):
+        path, filename = os_path_split(save_pars['path']  )
+    else:
+        path = save_pars['path']
+        filename = "model.h5"
     if not os.path.exists(path): os.makedirs(path, exist_ok=True)
     model.model.save(str(Path(path) / filename))
 
