@@ -187,14 +187,14 @@ cd mlmodels
 git checkout dev
 
     ### On Linux/MacOS
-    pip install numpy<1.17.0
+    pip install numpy<=1.16.4
     pip install -e .  -r requirements.txt
     pip install   -r requirements_fake.txt
 
 
     ### On Windows
     VC 14   https://www.visualstudio.com/downloads/#build-tools-for-visual-studio-2019
-    pip install  numpy<1.17.0
+    pip install numpy<=1.16.4
     pip install torch==1.0.1 -f https://download.pytorch.org/whl/torch_stable.html
     pip install -e .  -r requirements_wi.txt
     pip install   -r requirements_fake.txt
