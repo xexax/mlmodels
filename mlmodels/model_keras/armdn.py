@@ -15,15 +15,16 @@ import tensorflow.keras.regularizers as reg
 import matplotlib.pyplot as plt
 import mdn
 
-from tensorflow.keras.models import Sequential
-from tensorflow.keras import Model
-from tensorflow.keras import layers
-from tensorflow.keras.layers import Dense, Dropout, Input, LSTM, Concatenate, Layer
-from tensorflow.keras.callbacks import History, EarlyStopping
-from tensorflow.keras.models import model_from_json
-from tensorflow.keras.regularizers import l2
-from tensorflow.keras.optimizers import Adam
-from tensorflow.keras import backend as Keras
+from keras.models import Sequential
+from keras import Model
+from keras import layers
+from keras.layers import Dense, Dropout, Input, LSTM, Concatenate, Layer
+from keras.callbacks import History, EarlyStopping
+from keras.models import model_from_json
+from keras.regularizers import l2
+from keras.optimizers import Adam
+from keras import backend as Keras
+
 
 
 #####################################################################################################
