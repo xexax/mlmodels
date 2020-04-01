@@ -499,7 +499,7 @@ def save_pkl(model=None, session=None, save_pars=None):
 
 
 def load_keras(load_pars, custom_pars=None):
-    from keras.models import load_model
+    from tensorflow.keras.models import load_model
     if os.path.isfile(load_pars['path']):
         path, filename = os_path_split(load_pars['path']  )
     else:
@@ -511,18 +511,19 @@ def load_keras(load_pars, custom_pars=None):
     if custom_pars:
         model.model = load_model(path_file, 
                              custom_objects={"MDN": custom_pars["MDN"],
-                                             "loss_func": custom_pars["loss"]})
+                                             "mdn_loss_func": custom_pars["loss"]})
     else:
         model.model = load_model(path_file)
     return model
 
 
 def save_keras(model=None, session=None, save_pars=None, ):
-    if os.path.isfile(save_pars['path']):
-        path, filename = os_path_split(save_pars['path']  )
-    else:
+    if os.path.isdir(save_pars['path']):
         path = save_pars['path']
         filename = "model.h5"
+
+    else:
+        path, filename = os_path_split(save_pars['path'])
     if not os.path.exists(path): os.makedirs(path, exist_ok=True)
     model.model.save(str(Path(path) / filename))
 

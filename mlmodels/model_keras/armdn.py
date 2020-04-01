@@ -11,19 +11,19 @@ import json
 
 #####################################################################################################
 import tensorflow as tf
-import keras.regularizers as reg
+import tensorflow.keras.regularizers as reg
 import matplotlib.pyplot as plt
 import mdn
 
-from keras.models import Sequential
-from keras import Model
-from keras import layers
-from keras.layers import Dense, Dropout, Input, LSTM, Concatenate, Layer
-from keras.callbacks import History, EarlyStopping
-from keras.models import model_from_json
-from keras.regularizers import l2
-from keras.optimizers import Adam
-from keras import backend as Keras
+from tensorflow.keras.models import Sequential
+from tensorflow.keras import Model
+from tensorflow.keras import layers
+from tensorflow.keras.layers import Dense, Dropout, Input, LSTM, Concatenate, Layer
+from tensorflow.keras.callbacks import History, EarlyStopping
+from tensorflow.keras.models import model_from_json
+from tensorflow.keras.regularizers import l2
+from tensorflow.keras.optimizers import Adam
+from tensorflow.keras import backend as Keras
 
 
 #####################################################################################################
@@ -172,7 +172,7 @@ def load(load_pars={}, **kw):
     model0 = load_keras({"path": path + "/armdn.h5"}, custom_pars)
     model = Model(model_pars=model_pars, data_pars=data_pars,
                   compute_pars=compute_pars)
-    model.model = model0
+    model.model = model0.model
     session = None
     return model, session
 
@@ -214,9 +214,8 @@ def get_params(param_pars={}, **kw):
 
     if param_pars["choice"] == "test0":
         log("#### Path params   ##########################################")
-        data_path = os_package_root_path(__file__, sublevel=1,
-                                         path_add=data_path)
-        out_path = os.getcwd() + "/keras_armdn/"
+        data_path = path_norm(data_path)
+        out_path = path_norm("ztest/model_keras/armdn/")
         os.makedirs(out_path, exist_ok=True)
         log(data_path, out_path)
         train_data_path = data_path + "timeseries/milk.csv"
@@ -273,8 +272,9 @@ def test(data_path="dataset/", pars_choice="test0", config_mode="test"):
 
     log("#### Save/Load   ###################################################")
     save(model=model, session=None, save_pars=out_pars)
-    model2 = load(load_pars=out_pars, model_pars=model_pars,
+    model2, session2 = load(load_pars=out_pars, model_pars=model_pars,
                 data_pars=data_pars, compute_pars=compute_pars)
+    model2.model.summary()
   
 
 if __name__ == "__main__":
