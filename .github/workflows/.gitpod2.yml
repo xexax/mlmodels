@@ -42,7 +42,7 @@ github:
     # enable for the master/default branch (defaults to true)
     default: false
     
-    enable for all branches in this repo (defaults to false)
+    # enable for all branches in this repo (defaults to false)
     branches: false
     
     # enable for pull requests coming from this repo (defaults to true)
