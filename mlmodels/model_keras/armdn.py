@@ -11,7 +11,7 @@ import json
 
 #####################################################################################################
 import tensorflow as tf
-import tensorflow.keras.regularizers as reg
+import keras.regularizers as reg
 import matplotlib.pyplot as plt
 import mdn
 
