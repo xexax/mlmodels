@@ -19,6 +19,7 @@
 https://colab.research.google.com/drive/1sYbrXNZh9nTeizS-AuCA8RSu94B_B-RF54d8dce15108f5fe94bf448fceb519dce07a6d2d
 
 
+
 ## Model List :
 
 
@@ -48,22 +49,119 @@ charCNN Keras : Text Character Classifier,
 
 
 ### TABULAR :
-AutoML Gluon  :  2020, AutoML in Gluon, MxNet using LightGBM, CatBoost
+#### LightGBM
 
-All sklearn models, LighGBM
+#### AutoML Gluon  :  2020, AutoML in Gluon, MxNet using LightGBM, CatBoost
+
+
+#### All sklearn models :
+
+linear_model.ElasticNet\
+linear_model.ElasticNetCV\
+linear_model.Lars\
+linear_model.LarsCV\
+linear_model.Lasso\
+linear_model.LassoCV\
+linear_model.LassoLars\
+linear_model.LassoLarsCV\
+linear_model.LassoLarsIC\
+linear_model.OrthogonalMatchingPursuit\
+linear_model.OrthogonalMatchingPursuitCV\
+
+
+svm.LinearSVC\
+svm.LinearSVR\
+svm.NuSVC\
+svm.NuSVR\
+svm.OneClassSVM\
+svm.SVC\
+svm.SVR\
+svm.l1_min_c\
+
+
+neighbors.KNeighborsClassifier\
+neighbors.KNeighborsRegressor\
+neighbors.KNeighborsTransformer\
+
+
+
+
+
+#### Binary Neural Prediction from tabular data:
+
+A Convolutional Click Prediction Model](http://ir.ia.ac.cn/bitstream/173211/12337/1/A%20Convolutional%20Click%20Prediction%20Model.pdf)             |
+
+Deep Learning over Multi-field Categorical Data: A Case Study on User Response Prediction](https://arxiv.org/pdf/1601.02376.pdf)                    |
+
+Product-based neural networks for user response prediction](https://arxiv.org/pdf/1611.00144.pdf)                                                   |
+
+Wide & Deep Learning for Recommender Systems](https://arxiv.org/pdf/1606.07792.pdf)                                                                 |
+
+DeepFM: A Factorization-Machine based Neural Network for CTR Prediction](http://www.ijcai.org/proceedings/2017/0239.pdf)                           |
+
+Learning Piece-wise Linear Models from Large Scale Data for Ad Click Prediction](https://arxiv.org/abs/1704.05194)                                 |
+
+Deep & Cross Network for Ad Click Predictions](https://arxiv.org/abs/1708.05123)                                                                   |
+
+Attentional Factorization Machines: Learning the Weight of Feature Interactions via Attention Networks](http://www.ijcai.org/proceedings/2017/435) |
+
+Neural Factorization Machines for Sparse Predictive Analytics](https://arxiv.org/pdf/1708.05027.pdf)                                               |
+
+xDeepFM: Combining Explicit and Implicit Feature Interactions for Recommender Systems](https://arxiv.org/pdf/1803.05170.pdf)                         |
+
+AutoInt: Automatic Feature Interaction Learning via Self-Attentive Neural Networks](https://arxiv.org/abs/1810.11921)                              |
+
+Deep Interest Network for Click-Through Rate Prediction](https://arxiv.org/pdf/1706.06978.pdf)                                                       |
+
+Deep Interest Evolution Network for Click-Through Rate Prediction](https://arxiv.org/pdf/1809.03672.pdf)                                            |
+
+Operation-aware Neural Networks for User Response Prediction](https://arxiv.org/pdf/1904.12579.pdf)                                                |
+
+Feature Generation by Convolutional Neural Network for Click-Through Rate Prediction ](https://arxiv.org/pdf/1904.04447)                             |
+
+Deep Session Interest Network for Click-Through Rate Prediction ](https://arxiv.org/abs/1905.06482)                                                |
+
+FiBiNET: Combining Feature Importance and Bilinear feature Interaction for Click-Through Rate Prediction](https://arxiv.org/pdf/1905.09433.pdf)   |
+
 
 
 
 ### VISION :
   Vision Models (pre-trained) :  
-        alexnet, densenet121, densenet169, densenet201,
-        densenet161, inception_v3, resnet18, resnet34, 
-        resnet50, resnet101, resnet152,
-        resnext50_32x4d, resnext101_32x8d, 
-        wide_resnet50_2, wide_resnet101_2, squeezenet1_0,
-        squeezenet1_1, vgg11, vgg13, vgg16, vgg19, vgg11_bn,
-        vgg13_bn, vgg16_bn, vgg19_bn,googlenet, shufflenet_v2_x0_5, 
-        shufflenet_v2_x1_0, mobilenet_v2
+alexnet\
+densenet121\
+densenet169\
+densenet201\
+densenet161\
+inception_v3\
+resnet18\
+resnet34\
+resnet50\
+resnet101\
+resnet152\
+
+resnext50_32x4d\
+resnext101_32x8d\
+
+wide_resnet50_2\
+wide_resnet101_2\
+squeezenet1_0\
+
+squeezenet1_1\
+vgg11\
+vgg13\
+vgg16\
+vgg19\
+vgg11_bn\
+
+vgg13_bn\
+vgg16_bn\
+vgg19_bn\
+
+googlenet\
+shufflenet_v2_x0_5\
+shufflenet_v2_x1_0\
+mobilenet_v2\
 
 A lot more...
 
@@ -79,6 +177,7 @@ https://github.com/arita37/mlmodels/blob/dev/README_model_list.md
 
 Install as editable package (ONLY dev branch), in Linux
 
+```
 conda create -n py36 python=3.6.5 -y
 source activate py36
 
@@ -119,6 +218,7 @@ https://colab.research.google.com/drive/1sYbrXNZh9nTeizS-AuCA8RSu94B_B-RF
 
     ##### To test model fitting
     ml_models
+```    
 
 #### Dependencies
 

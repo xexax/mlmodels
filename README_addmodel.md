@@ -39,11 +39,9 @@ ________________________________________________________________________________
 
 
 ### Coding Style
-  Line = 110 characters
-  Loose PEP8, "Pretty Code is better than strict PEP8"
-  Please re-use existing functions :
-
-
+  **Line = 110 characters**
+  Only Loose PEP8, "Pretty Code is better than strict PEP8"
+  Please re-use existing functions.
 
 
 
@@ -64,8 +62,8 @@ ________________________________________________________________________________
   https://github.com/arita37/mlmodels/blob/dev/.github/workflows/test_specific_model.yml
 
 
-   Change only with your MODEL_NAME  (PULL Request)
-  https://github.com/arita37/mlmodels/blob/dev/.github/workflows/test_pullrequest.yml
+   Change only your MODEL_NAME  (PULL Request)
+   https://github.com/arita37/mlmodels/blob/dev/pullrequest.json
 
 
      Test will run on GITHUB server for your model AFTER each commit.
