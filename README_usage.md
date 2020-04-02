@@ -28,7 +28,7 @@ https://github.com/arita37/mlmodels/blob/dev/README.md
 
 
 
-### LSTM example in TensorFlow ([Example notebook](example/1_lstm.ipynb))
+### LSTM example in TensorFlow ([Example notebook](mlmodels/example/1_lstm.ipynb))
 
 #### Define model and data definitions
 ```python
@@ -67,7 +67,7 @@ ypred         = module.predict(model, sess,  data_pars, compute_pars, out_pars) 
 
 ---
 
-### AutoML example in Gluon ([Example notebook](example/gluon_automl.ipynb))
+### AutoML example in Gluon ([Example notebook](mlmodels/example/gluon_automl.ipynb))
 ```
 # import library
 import mlmodels
@@ -117,7 +117,7 @@ ypred       = module.predict(model, data_pars, compute_pars, out_pars)     # pre
 
 ---
 
-### RandomForest example in Scikit-learn ([Example notebook](example/sklearn.ipynb))
+### RandomForest example in Scikit-learn ([Example notebook](mlmodels/example/sklearn.ipynb))
 ```
 # import library
 import mlmodels
@@ -184,7 +184,7 @@ ypred       = module.predict(model,  data_pars=data_pars, compute_pars=compute_p
 
 ---
 
-### Using json config file for input ([Example notebook](example/1_lstm_json.ipynb), [JSON file](mlmodels/example/1_lstm.json))
+### Using json config file for input ([Example notebook](example/1_lstm_json.ipynb), [JSON file](mlmodels/mlmodels/example/1_lstm.json))
 
 #### Import library and functions
 ```python
@@ -216,7 +216,7 @@ ypred       = module.predict(model, sess=sess,  data_pars=data_pars, compute_par
 
 ---
 
-### Using Scikit-learn's SVM for Titanic Problem from json file ([Example notebook](example/sklearn_titanic_svm.ipynb), [JSON file](mlmodels/example/sklearn_titanic_svm.json))
+### Using Scikit-learn's SVM for Titanic Problem from json file ([Example notebook](mlmodels/example/sklearn_titanic_svm.ipynb), [JSON file](mlmodels/example/sklearn_titanic_svm.json))
 
 #### Import library and functions
 ```python
@@ -259,7 +259,7 @@ roc_auc_score(y, ypred)
 
 ---
 
-### Using Scikit-learn's Random Forest for Titanic Problem from json file ([Example notebook](example/sklearn_titanic_randomForest.ipynb), [JSON file](mlmodels/example/sklearn_titanic_randomForest.json))
+### Using Scikit-learn's Random Forest for Titanic Problem from json file ([Example notebook](mlmodels/example/sklearn_titanic_randomForest.ipynb), [JSON file](mlmodels/example/sklearn_titanic_randomForest.json))
 
 #### Import library and functions
 ```python
@@ -301,7 +301,7 @@ roc_auc_score(y, ypred)
 
 ---
 
-### Using Autogluon for Titanic Problem from json file ([Example notebook](example/gluon_automl_titanic.ipynb), [JSON file](mlmodels/example/gluon_automl.json))
+### Using Autogluon for Titanic Problem from json file ([Example notebook](mlmodels/example/gluon_automl_titanic.ipynb), [JSON file](mlmodels/example/gluon_automl.json))
 
 #### Import library and functions
 ```python
@@ -346,7 +346,7 @@ roc_auc_score(y, ypred)
 ---
 ---
 
-### Using hyper-params (optuna) for Titanic Problem from json file ([Example notebook](example/sklearn_titanic_randomForest_example2.ipynb), [JSON file](mlmodels/example/hyper_titanic_randomForest.json))
+### Using hyper-params (optuna) for Titanic Problem from json file ([Example notebook](mlmodels/example/sklearn_titanic_randomForest_example2.ipynb), [JSON file](mlmodels/example/hyper_titanic_randomForest.json))
 
 #### Import library and functions
 ```python
