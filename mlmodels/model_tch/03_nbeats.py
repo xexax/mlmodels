@@ -11,7 +11,7 @@ from torch.nn import functional as F
 from mlmodels.util import  os_package_root_path, log, path_norm, get_model_uri
 
 VERBOSE = False
-MODE_URI = get_model_uri(__file__)
+MODEL_URI = get_model_uri(__file__)
 
 
 
