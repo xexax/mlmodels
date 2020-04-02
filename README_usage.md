@@ -2,6 +2,31 @@
 https://github.com/arita37/mlmodels/blob/dev/README.md
 
 
+## Steps to add a new Colab notebook /Jupyter notbbok :
+
+```
+0) Read the readme.md and Install mlmodels on Linux
+    https://github.com/arita37/mlmodels/tree/dev/mlmodels/example
+
+
+1) Create a branch from DEV branch called : notebook_
+
+
+2) Create Jupyter Notebook in  mlmodels/example/           
+            
+
+3) Create mymodel.json in  mlmodels/example/
+
+ 
+4)  Do Pull Request to dev Branch.
+
+
+
+
+```
+
+
+
 
 ### LSTM example in TensorFlow ([Example notebook](example/1_lstm.ipynb))
 
@@ -247,10 +272,8 @@ roc_auc_score(y, ypred)
 ```python
 # import library
 import mlmodels
-```
 
 #### Load model and data definitions from json
-```python
 from mlmodels.models import module_load
 from mlmodels.util import load_config
 
@@ -262,29 +285,25 @@ model_pars, data_pars, compute_pars, out_pars = module.get_params(param_pars={
     'config_mode':'test',
     'data_path':'../mlmodels/example/sklearn_titanic_randomForest.json'
 })
-```
 
 
 #### Load Parameters and Train
-```python
 model         =  module.Model(model_pars=model_pars, data_pars=data_pars, compute_pars=compute_pars)             # Create Model instance
 model, sess   =  module.fit(model, data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)          # fit the model
-```
 
 
 #### Inference
-```python
+
 ypred       = module.predict(model,  data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)     # predict pipeline
 ypred
-```
 
 #### Check metrics
-```python
 import pandas as pd
 from sklearn.metrics import roc_auc_score
 
 y = pd.read_csv('../mlmodels/dataset/tabular/titanic_train_preprocessed.csv')['Survived'].values
 roc_auc_score(y, ypred)
+
 ```
 
 ---
@@ -295,10 +314,8 @@ roc_auc_score(y, ypred)
 ```python
 # import library
 import mlmodels
-```
 
 #### Load model and data definitions from json
-```python
 from mlmodels.models import module_load
 from mlmodels.util import load_config
 
@@ -310,24 +327,18 @@ model_pars, data_pars, compute_pars, out_pars = module.get_params(
     config_mode= 'test',
     data_path= '../mlmodels/example/gluon_automl.json'
 )
-```
 
 
 #### Load Parameters and Train
-```python
 model         =  module.Model(model_pars=model_pars, compute_pars=compute_pars)             # Create Model instance
 model   =  module.fit(model, model_pars=model_pars, data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)          # fit the model
 model.model.fit_summary()
-```
 
 
 #### Check inference
-```python
 ypred       = module.predict(model,  data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)     # predict pipeline
-```
 
 #### Check metrics
-```python
 model.model.model_performance
 
 import pandas as pd
@@ -335,6 +346,8 @@ from sklearn.metrics import roc_auc_score
 
 y = pd.read_csv('../mlmodels/dataset/tabular/titanic_train_preprocessed.csv')['Survived'].values
 roc_auc_score(y, ypred)
+
+
 ```
 
 ---
@@ -407,10 +420,8 @@ import mlmodels
 from mlmodels.models import module_load
 from mlmodels.util import path_norm_dict, path_norm
 import json
-```
 
 #### Load model and data definitions from json
-```python
 # Model defination
 model_uri    = "model_sklearn.model_lightgbm.py"
 module        =  module_load( model_uri= model_uri)
@@ -427,26 +438,22 @@ model_pars      = test['model_pars']
 data_pars       = test['data_pars']
 compute_pars    = test['compute_pars']
 out_pars        = test['out_pars']
-```
 
 
 #### Load Parameters and Train
-```python
 model = module.Model(model_pars, data_pars, compute_pars) # create model instance
 model, session = module.fit(model, data_pars, compute_pars, out_pars) # fit model
-```
 
 
 #### Check inference
-```python
 ypred       = module.predict(model,  data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)     # get predictions
 ypred
-```
+
 
 #### Check metrics
-```python
 metrics_val = module.fit_metrics(model, data_pars, compute_pars, out_pars)
 metrics_val 
+
 ```
 
 ---

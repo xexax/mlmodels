@@ -1,37 +1,8 @@
 # Documentation
 
-Functions/Methods
+List of Functions/Methods
 
 https://github.com/arita37/mlmodels/blob/dev/README_index_doc.py
-
-
-
-
-# Steps to add a new Colab notebook /Jupyter notbbok :
-
-```
-
-0) Read the readme.md and Install mlmodels on Linux
-    https://github.com/arita37/mlmodels/blob/dev/README_usage.md
-    https://github.com/arita37/mlmodels/tree/dev/mlmodels/example
-
-
-1) Create a branch from DEV branch called : notebook_
-
-
-2) Create Jupyter Notebook in  mlmodels/example/           
-            
-
-3) Create mymodel.json in  mlmodels/example/
-
- 
-4)  Do Pull Request to dev Branch !
-
-
-
-
-```
-
 
 
 ___________________________________________________________________________________________
@@ -59,16 +30,16 @@ ________________________________________________________________________________
 
 
 ### 2) Change this file with your MODEL_NAME AND BRANCH NAME  ( Your Branch test  ):
+
   https://github.com/arita37/mlmodels/blob/dev/.github/workflows/test_specific_model.yml
 
-
-   Change only your MODEL_NAME  (PULL Request)
-   https://github.com/arita37/mlmodels/blob/dev/pullrequest.json
+  https://github.com/arita37/mlmodels/blob/dev/pullrequest.json
 
 
-     Test will run on GITHUB server for your model AFTER each commit.
+  Test will run on GITHUB server for your model AFTER each commit.
   
   https://github.com/arita37/mlmodels/actions
+
 
 
 
