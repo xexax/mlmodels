@@ -139,7 +139,7 @@ def path_norm(path=""):
     if len(path) == 0 or path is None:
         path = root
 
-    tag_list = [ "model_", "//model_",  "dataset", "template", "ztest"  ]
+    tag_list = [ "model_", "//model_",  "dataset", "template", "ztest", "example"  ]
 
 
     for t in tag_list :
