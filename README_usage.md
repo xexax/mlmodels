@@ -118,7 +118,7 @@ ypred       = module.predict(model, data_pars, compute_pars, out_pars)     # pre
 ---
 
 ### RandomForest example in Scikit-learn ([Example notebook](example/sklearn.ipynb))
-
+```
 # import library
 import mlmodels
 
@@ -144,6 +144,8 @@ model, sess   =  module.fit(model, data_pars=data_pars, compute_pars=compute_par
 
 #### Inference
 ypred       = module.predict(model,  data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)     # predict pipeline
+```
+
 
 ---
 
@@ -188,10 +190,8 @@ ypred       = module.predict(model,  data_pars=data_pars, compute_pars=compute_p
 ```python
 # import library
 import mlmodels
-```
 
 #### Load model and data definitions from json
-```python
 from mlmodels.models import module_load
 from mlmodels.util import load_config
 
@@ -203,17 +203,15 @@ model_pars, data_pars, compute_pars, out_pars = module.get_params(param_pars={
     'config_mode':'test',
     'data_path':'../mlmodels/example/1_lstm.json'
 })
-```
 
 #### Load parameters and train
-```python
 model         =  module.Model(model_pars=model_pars, data_pars=data_pars, compute_pars=compute_pars)             # Create Model instance
 model, sess   =  module.fit(model, data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)          # fit the model
-```
 
 #### Check inference
-```python
 ypred       = module.predict(model, sess=sess,  data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)     # predict pipeline
+
+
 ```
 
 ---
@@ -224,10 +222,8 @@ ypred       = module.predict(model, sess=sess,  data_pars=data_pars, compute_par
 ```python
 # import library
 import mlmodels
-```
 
 #### Load model and data definitions from json
-```python
 from mlmodels.models import module_load
 from mlmodels.util import load_config
 
@@ -239,29 +235,26 @@ model_pars, data_pars, compute_pars, out_pars = module.get_params(param_pars={
     'config_mode':'test',
     'data_path':'../mlmodels/example/sklearn_titanic_svm.json'
 })
-```
-
 
 #### Load Parameters and Train
-```python
+
 model         =  module.Model(model_pars=model_pars, data_pars=data_pars, compute_pars=compute_pars)             # Create Model instance
 model, sess   =  module.fit(model, data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)          # fit the model
-```
 
 
 #### Inference
-```python
 ypred       = module.predict(model,  data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)     # predict pipeline
 ypred
-```
+
 
 #### Check metrics
-```python
 import pandas as pd
 from sklearn.metrics import roc_auc_score
 
 y = pd.read_csv('../mlmodels/dataset/tabular/titanic_train_preprocessed.csv')['Survived'].values
 roc_auc_score(y, ypred)
+
+
 ```
 
 ---
