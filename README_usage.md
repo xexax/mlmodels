@@ -2,8 +2,33 @@
 https://github.com/arita37/mlmodels/blob/dev/README.md
 
 
+## Steps to add a new Colab notebook /Jupyter notbbok :
 
-### LSTM example in TensorFlow ([Example notebook](example/1_lstm.ipynb))
+```
+0) Read the readme.md and Install mlmodels on Linux
+    https://github.com/arita37/mlmodels/tree/dev/mlmodels/example
+
+
+1) Create a branch from DEV branch called : notebook_
+
+
+2) Create Jupyter Notebook in  mlmodels/example/           
+            
+
+3) Create mymodel.json in  mlmodels/example/
+
+ 
+4)  Do Pull Request to dev Branch.
+
+
+
+
+```
+
+
+
+
+### LSTM example in TensorFlow ([Example notebook](mlmodels/example/1_lstm.ipynb))
 
 #### Define model and data definitions
 ```python
@@ -42,7 +67,7 @@ ypred         = module.predict(model, sess,  data_pars, compute_pars, out_pars) 
 
 ---
 
-### AutoML example in Gluon ([Example notebook](example/gluon_automl.ipynb))
+### AutoML example in Gluon ([Example notebook](mlmodels/example/gluon_automl.ipynb))
 ```
 # import library
 import mlmodels
@@ -92,8 +117,8 @@ ypred       = module.predict(model, data_pars, compute_pars, out_pars)     # pre
 
 ---
 
-### RandomForest example in Scikit-learn ([Example notebook](example/sklearn.ipynb))
-
+### RandomForest example in Scikit-learn ([Example notebook](mlmodels/example/sklearn.ipynb))
+```
 # import library
 import mlmodels
 
@@ -119,6 +144,8 @@ model, sess   =  module.fit(model, data_pars=data_pars, compute_pars=compute_par
 
 #### Inference
 ypred       = module.predict(model,  data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)     # predict pipeline
+```
+
 
 ---
 
@@ -157,16 +184,14 @@ ypred       = module.predict(model,  data_pars=data_pars, compute_pars=compute_p
 
 ---
 
-### Using json config file for input ([Example notebook](example/1_lstm_json.ipynb), [JSON file](mlmodels/example/1_lstm.json))
+### Using json config file for input ([Example notebook](example/1_lstm_json.ipynb), [JSON file](mlmodels/mlmodels/example/1_lstm.json))
 
 #### Import library and functions
 ```python
 # import library
 import mlmodels
-```
 
 #### Load model and data definitions from json
-```python
 from mlmodels.models import module_load
 from mlmodels.util import load_config
 
@@ -178,31 +203,27 @@ model_pars, data_pars, compute_pars, out_pars = module.get_params(param_pars={
     'config_mode':'test',
     'data_path':'../mlmodels/example/1_lstm.json'
 })
-```
 
 #### Load parameters and train
-```python
 model         =  module.Model(model_pars=model_pars, data_pars=data_pars, compute_pars=compute_pars)             # Create Model instance
 model, sess   =  module.fit(model, data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)          # fit the model
-```
 
 #### Check inference
-```python
 ypred       = module.predict(model, sess=sess,  data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)     # predict pipeline
+
+
 ```
 
 ---
 
-### Using Scikit-learn's SVM for Titanic Problem from json file ([Example notebook](example/sklearn_titanic_svm.ipynb), [JSON file](mlmodels/example/sklearn_titanic_svm.json))
+### Using Scikit-learn's SVM for Titanic Problem from json file ([Example notebook](mlmodels/example/sklearn_titanic_svm.ipynb), [JSON file](mlmodels/example/sklearn_titanic_svm.json))
 
 #### Import library and functions
 ```python
 # import library
 import mlmodels
-```
 
 #### Load model and data definitions from json
-```python
 from mlmodels.models import module_load
 from mlmodels.util import load_config
 
@@ -214,43 +235,38 @@ model_pars, data_pars, compute_pars, out_pars = module.get_params(param_pars={
     'config_mode':'test',
     'data_path':'../mlmodels/example/sklearn_titanic_svm.json'
 })
-```
-
 
 #### Load Parameters and Train
-```python
+
 model         =  module.Model(model_pars=model_pars, data_pars=data_pars, compute_pars=compute_pars)             # Create Model instance
 model, sess   =  module.fit(model, data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)          # fit the model
-```
 
 
 #### Inference
-```python
 ypred       = module.predict(model,  data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)     # predict pipeline
 ypred
-```
+
 
 #### Check metrics
-```python
 import pandas as pd
 from sklearn.metrics import roc_auc_score
 
 y = pd.read_csv('../mlmodels/dataset/tabular/titanic_train_preprocessed.csv')['Survived'].values
 roc_auc_score(y, ypred)
+
+
 ```
 
 ---
 
-### Using Scikit-learn's Random Forest for Titanic Problem from json file ([Example notebook](example/sklearn_titanic_randomForest.ipynb), [JSON file](mlmodels/example/sklearn_titanic_randomForest.json))
+### Using Scikit-learn's Random Forest for Titanic Problem from json file ([Example notebook](mlmodels/example/sklearn_titanic_randomForest.ipynb), [JSON file](mlmodels/example/sklearn_titanic_randomForest.json))
 
 #### Import library and functions
 ```python
 # import library
 import mlmodels
-```
 
 #### Load model and data definitions from json
-```python
 from mlmodels.models import module_load
 from mlmodels.util import load_config
 
@@ -262,43 +278,37 @@ model_pars, data_pars, compute_pars, out_pars = module.get_params(param_pars={
     'config_mode':'test',
     'data_path':'../mlmodels/example/sklearn_titanic_randomForest.json'
 })
-```
 
 
 #### Load Parameters and Train
-```python
 model         =  module.Model(model_pars=model_pars, data_pars=data_pars, compute_pars=compute_pars)             # Create Model instance
 model, sess   =  module.fit(model, data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)          # fit the model
-```
 
 
 #### Inference
-```python
+
 ypred       = module.predict(model,  data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)     # predict pipeline
 ypred
-```
 
 #### Check metrics
-```python
 import pandas as pd
 from sklearn.metrics import roc_auc_score
 
 y = pd.read_csv('../mlmodels/dataset/tabular/titanic_train_preprocessed.csv')['Survived'].values
 roc_auc_score(y, ypred)
+
 ```
 
 ---
 
-### Using Autogluon for Titanic Problem from json file ([Example notebook](example/gluon_automl_titanic.ipynb), [JSON file](mlmodels/example/gluon_automl.json))
+### Using Autogluon for Titanic Problem from json file ([Example notebook](mlmodels/example/gluon_automl_titanic.ipynb), [JSON file](mlmodels/example/gluon_automl.json))
 
 #### Import library and functions
 ```python
 # import library
 import mlmodels
-```
 
 #### Load model and data definitions from json
-```python
 from mlmodels.models import module_load
 from mlmodels.util import load_config
 
@@ -310,24 +320,18 @@ model_pars, data_pars, compute_pars, out_pars = module.get_params(
     config_mode= 'test',
     data_path= '../mlmodels/example/gluon_automl.json'
 )
-```
 
 
 #### Load Parameters and Train
-```python
 model         =  module.Model(model_pars=model_pars, compute_pars=compute_pars)             # Create Model instance
 model   =  module.fit(model, model_pars=model_pars, data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)          # fit the model
 model.model.fit_summary()
-```
 
 
 #### Check inference
-```python
 ypred       = module.predict(model,  data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)     # predict pipeline
-```
 
 #### Check metrics
-```python
 model.model.model_performance
 
 import pandas as pd
@@ -335,12 +339,14 @@ from sklearn.metrics import roc_auc_score
 
 y = pd.read_csv('../mlmodels/dataset/tabular/titanic_train_preprocessed.csv')['Survived'].values
 roc_auc_score(y, ypred)
+
+
 ```
 
 ---
 ---
 
-### Using hyper-params (optuna) for Titanic Problem from json file ([Example notebook](example/sklearn_titanic_randomForest_example2.ipynb), [JSON file](mlmodels/example/hyper_titanic_randomForest.json))
+### Using hyper-params (optuna) for Titanic Problem from json file ([Example notebook](mlmodels/example/sklearn_titanic_randomForest_example2.ipynb), [JSON file](mlmodels/example/hyper_titanic_randomForest.json))
 
 #### Import library and functions
 ```python
@@ -407,10 +413,8 @@ import mlmodels
 from mlmodels.models import module_load
 from mlmodels.util import path_norm_dict, path_norm
 import json
-```
 
 #### Load model and data definitions from json
-```python
 # Model defination
 model_uri    = "model_sklearn.model_lightgbm.py"
 module        =  module_load( model_uri= model_uri)
@@ -427,26 +431,22 @@ model_pars      = test['model_pars']
 data_pars       = test['data_pars']
 compute_pars    = test['compute_pars']
 out_pars        = test['out_pars']
-```
 
 
 #### Load Parameters and Train
-```python
 model = module.Model(model_pars, data_pars, compute_pars) # create model instance
 model, session = module.fit(model, data_pars, compute_pars, out_pars) # fit model
-```
 
 
 #### Check inference
-```python
 ypred       = module.predict(model,  data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)     # get predictions
 ypred
-```
+
 
 #### Check metrics
-```python
 metrics_val = module.fit_metrics(model, data_pars, compute_pars, out_pars)
 metrics_val 
+
 ```
 
 ---
