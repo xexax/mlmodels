@@ -1,16 +1,18 @@
 {
 	"test": {
+        "hypermodel_pars" :  {
+            "engine_pars" :  {"engine": "optuna", "ntrials":1, "metric_target":"mae", "method": "normal"},
+            "num_leaves":    {"type": "int", "init": 100,  "range" :[5, 200] },
+            "max_depth":    {"type": "int", "init": 4,  "range" :[0, 6] }
+
+        },
         "data_pars": {"mode": "test",
                       "path": "dataset/tabular/titanic_train_preprocessed.csv", 
                       "data_type" : "pandas" 
                     },
 
         "model_pars": {"objective":  "regression", 
-                       "max_depth" : 4 , 
-                       "random_state":2,
-                       "n_estimators": 100,
-                       "learning_rate": 0.1,
-                       "num_leaves" : 40
+                       "random_state":2
                     },
 
         "compute_pars": {  "lightgbm_pars" :{
@@ -18,8 +20,8 @@
                        }
          },
 
-        "out_pars":  {"save_path": "ztest/model_sklearn/lightgbm/", 
-                      "log_path": "ztest/model_sklearn/lightgbm/"
+        "out_pars":  {"save_path": "./temp", 
+                      "log_path": "./temp"
                     }
     }
 }

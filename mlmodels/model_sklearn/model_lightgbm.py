@@ -167,11 +167,19 @@ Requires at least one evaluation data. If True, the eval metric on the eval set 
 
 
 def fit_metrics(model, data_pars=None, compute_pars=None, out_pars=None, **kw):
+    from sklearn.metrics import mean_absolute_error
     """
        Return metrics of the model when fitted.
     """
-    ddict = { "feature_importance": model.model.feature_importances_ }
+    data_pars['train'] = True
+    _, _, Xval, yval = get_dataset(data_pars)
+    #### Do prediction
+    ypred = model.model.predict(Xval)
+    
+    score = mean_absolute_error(yval, ypred)
 
+
+    ddict = {"mae":score}
     return ddict
 
 
