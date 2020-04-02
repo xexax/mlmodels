@@ -17,6 +17,7 @@ tasks:
     source activate py36 && pip install -r requirements.txt  &&
     source activate py36 && pip install -r requirements_fake.txt  &&
     source activate py36 && pip install -e .  --no-deps  &&
-    source activate py36 && pip install  ipykernel   
+    source activate py36 && pip install  ipykernel   &&
+    chmod -R 777 .  &&  ./run_jupyter.sh
 
 
