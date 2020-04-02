@@ -34,8 +34,10 @@ def run_benchmark_all(bench_pars=None, json_path):
     import json
 
     json_list = get_all_json_path(json_path)
+    metric_list = bench_pars['metric_list']
 
     for jsonf in json_list :
+      for metric in metric_list : 
         #### Model URI and Config JSON
         config_path = path_norm( jsonf  ) # 'model_tch/torchhub_cnn.json'
         config_mode = "test"  ### test/prod
@@ -60,7 +62,6 @@ def run_benchmark_all(bench_pars=None, json_path):
         #### Inference
         ypred          = module.predict(model, session, data_pars, compute_pars, out_pars)   
         print(ypred)
-
 
 
         ### Calculate Metrics
@@ -112,16 +113,16 @@ def cli_load_arguments(config_file=None):
 
     add("--config_file", default=config_file, help="Params File")
     add("--config_mode", default="test", help="test/ prod /uat")
-    add("--log_file", default="ztest/benchmark/mlmodels_log.log", help="log.log")
+    add("--log_file",    default="ztest/benchmark/mlmodels_log.log", help="log.log")
 
-    add("--do", default="run", help="do ")
+    add("--do",          default="run", help="do ")
 
 
-    add("--path_json", default="dataset/json/benchmark/", help="")
+    add("--path_json",   default="dataset/json/benchmark/", help="")
 
 
     ##### out pars
-    add("--path_out", default="ztest/benchmark/", help=".")
+    add("--path_out",    default="ztest/benchmark/", help=".")
 
     arg = p.parse_args()
     # arg = load_config(arg, arg.config_file, arg.config_mode, verbose=0)
@@ -140,3 +141,6 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+
