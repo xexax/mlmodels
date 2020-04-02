@@ -1,0 +1,25 @@
+{
+	"test": {
+        "data_pars": {"mode": "test",
+                      "path": "dataset/tabular/titanic_train_preprocessed.csv", 
+                      "data_type" : "pandas" 
+                    },
+
+        "model_pars": {"objective":  "regression", 
+                       "max_depth" : 4 , 
+                       "random_state":2,
+                       "n_estimators": 100,
+                       "learning_rate": 0.1,
+                       "num_leaves" : 40
+                    },
+
+        "compute_pars": {  "lightgbm_pars" :{
+          "feature_name": ["Survived", "Pclass", "Sex", "Age", "SibSp", "Parch" , "Fare", "Embarked_Q", "Embarked_S", "Title"]
+                       }
+         },
+
+        "out_pars":  {"save_path": "ztest/model_sklearn/lightgbm/", 
+                      "log_path": "ztest/model_sklearn/lightgbm/"
+                    }
+    }
+}
