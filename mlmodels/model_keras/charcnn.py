@@ -1,19 +1,12 @@
 # coding: utf-8
 """
-Generic template for new model.
-Check parameters template in models_config.json
-
-"model_pars":   { "learning_rate": 0.001, "num_layers": 1, "size": 6, "size_layer": 128, "output_size": 6, "timestep": 4, "epoch": 2 },
-"data_pars":    { "data_path": "dataset/GOOG-year.csv", "data_type": "pandas", "size": [0, 0, 6], "output_size": [0, 6] },
-"compute_pars": { "distributed": "mpi", "epoch": 10 },
-"out_pars":     { "out_path": "dataset/", "data_type": "pandas", "size": [0, 0, 6], "output_size": [0, 6] }
-
 
 
 """
 import os
+
+
 from keras.callbacks import EarlyStopping
-from mlmodels.util import os_package_root_path, log, path_norm, get_model_uri
 
 
 #### Import EXISTING model and re-map to mlmodels
@@ -24,6 +17,8 @@ from mlmodels.model_keras.raw.char_cnn.models.char_cnn_kim import CharCNNKim
 
 
 ####################################################################################################
+from mlmodels.util import os_package_root_path, log, path_norm, get_model_uri
+
 VERBOSE = False
 MODEL_URI = get_model_uri(__file__)
 # print( path_norm("dataset") )

@@ -385,7 +385,7 @@ class Model_empty(object):
 
 
 def os_path_split(path) :
-  return str(Path( path ).parent), str(Path( path ).name)
+  return str(Path( path ).parent), str(Path( path ).name) # + str(Path( path ).suffix) 
 
 
 
@@ -436,9 +436,9 @@ def save_tf(model=None, sess=None, save_pars= None):
 
 def load_tch(load_pars):
     import torch
-    path, filename = load_pars['path'], load_pars['filename']
-
-    path = path + "/" + filename if "." not in path else path
+    #path, filename = load_pars['path'], load_pars.get('filename', "model.pkl")
+    #path = path + "/" + filename if "." not in path else path
+    path = load_pars['path']
     model = Model_empty()
     model.model = torch.load(path)
     return model
@@ -447,7 +447,8 @@ def load_tch(load_pars):
 def save_tch(model=None, optimizer=None, save_pars=None):
     import torch
     path, filename = os_path_split(save_pars['path'])
-    if not os.path.exists(path): os.makedirs(path, exist_ok=True)
+    if not os.path.exists(path): 
+        os.makedirs(path, exist_ok=True)
 
     if save_pars.get('save_state') is not None:
         torch.save({

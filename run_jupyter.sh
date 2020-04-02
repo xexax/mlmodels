@@ -6,6 +6,9 @@ set -e
 
 
 
-jupyter lab --NotebookApp.password="$(echo hello | python -c 'from notebook.auth import passwd;print(passwd("123"))')"
+# jupyter lab --NotebookApp.password="$(echo hello | python -c 'from notebook.auth import passwd;print(passwd("123"))')"
+
+jupyter lab
+
 
 
