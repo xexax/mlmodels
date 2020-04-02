@@ -1,11 +1,20 @@
+
+
+import os
+import json
+import shutil
+from pathlib import Path
+from time import sleep
+import re
+
+
 import torch
 import torch.optim as optim
 import torch.nn as nn
 import torch.nn.functional as F
 
-import mlmodels.models as M
 
-import re
+
 
 import pandas as pd
 from numpy.random import RandomState
@@ -18,15 +27,15 @@ from torchtext.data import Iterator, BucketIterator
 import torchtext.datasets
 
 import spacy
-import os
-import json
-import shutil
-from pathlib import Path
-from time import sleep
 
 
-from mlmodels.util import os_package_root_path, log, path_norm, get_model_uri
-MODEL_URI = get_model_uri(__file__)
+####################################################################################################
+import mlmodels.models as M
+
+from mlmodels.util import  os_package_root_path, log, path_norm, get_model_uri
+
+VERBOSE = False
+MODE_URI = get_model_uri(__file__)
 
 
 
@@ -307,7 +316,7 @@ def get_params(param_pars=None, **kw):
 
 
 
-def metric(model, data_pars=None, out_pars=None, **kwargs):
+def fit_metric(model, data_pars=None, out_pars=None, **kwargs):
     # return metrics on full dataset
     device = _get_device()
     data_pars = data_pars.copy()
@@ -417,7 +426,7 @@ def test():
     
 
     print("\n####### Computing model metrics... ##########")
-    test_loss, accuracy = metric(model, data_pars, out_pars)
+    test_loss, accuracy = fit_metric(model, data_pars, out_pars)
     
     print(f"\nTest loss: {test_loss}, accuracy: {accuracy}")
     

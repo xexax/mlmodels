@@ -8,18 +8,18 @@ from torch import optim
 from torch.nn import functional as F
 
 ####################################################################################################
-from mlmodels.model_tch.raw.nbeats.model import NBeatsNet
+from mlmodels.util import  os_package_root_path, log, path_norm, get_model_uri
 
 VERBOSE = False
+MODE_URI = get_model_uri(__file__)
+
+
+
 
 
 ####################################################################################################
-# Helper functions
-from mlmodels.util import  os_package_root_path, log, path_norm
+from mlmodels.model_tch.raw.nbeats.model import NBeatsNet
 
-
-
-####################################################################################################
 # Model
 Model = NBeatsNet
 
