@@ -133,13 +133,14 @@ def get_recursive_files(folderPath, ext='/*model*/*.py'):
 
 
 
+
 def path_norm(path=""):
     root = os_package_root_path(__file__, 0)
 
     if len(path) == 0 or path is None:
         path = root
 
-    tag_list = [ "model_", "//model_",  "dataset", "template", "ztest"  ]
+    tag_list = [ "model_", "//model_",  "dataset", "template", "ztest", "example"  ]
 
 
     for t in tag_list :
