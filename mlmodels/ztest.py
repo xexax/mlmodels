@@ -20,6 +20,8 @@ import numpy as np
 import mlmodels
 
 from mlmodels.util import get_recursive_files, log, os_package_root_path, model_get_list, os_get_file
+from mlmodels.util import get_recursive_files2
+
 
 
 def os_file_current_path():
@@ -68,6 +70,60 @@ def test_import(arg):
             print(f)
         except Exception as e:
             print(f, e)
+
+
+
+
+def test_jupyter(arg=None, config_mode="test_all"):
+    print("os.getcwd", os.getcwd())
+
+    root = os_package_root_path()
+    root = root.replace("\\", "//")
+
+    print("############Check model ################################")
+    model_list = get_recursive_files2(root +"/example/", r'/*.ipynb')
+    print(model_list)
+
+
+    ## Block list
+    cfg = json.load(open( f"root/{arg.config_file}", mode='r'))[ config_mode ]
+    block_list = cfg.get('jupyter_blocked', [])
+    model_list = [t for t in model_list if t not in block_list]
+    print("Used", model_list)
+
+    test_list = [f"ipython {root}/{t}"  for  t in model_list]
+
+    for cmd in test_list:
+        print("\n\n\n", flush=True)
+        print(cmd, flush=True)
+        os.system(cmd)
+
+
+
+
+
+def test_all(arg=None):
+    print("os.getcwd", os.getcwd())
+
+    path = mlmodels.__path__[0]
+    print("############Check model ################################")
+    model_list = model_get_list(folder=None, block_list=[])
+    print(model_list)
+
+    ## Block list
+    root = os_package_root_path()
+    cfg = json.load(open(root + "/" + arg.config_file, mode='r'))['test_all']
+    block_list = cfg['model_blocked']
+    model_list = [t for t in model_list if t not in block_list]
+    print("Used", model_list)
+
+    path = path.replace("\\", "//")
+    test_list = [f"python {path}/" + t.replace(".", "//").replace("//py", ".py") for t in model_list]
+
+    for cmd in test_list:
+        print("\n\n\n", flush=True)
+        print(cmd, flush=True)
+        os.system(cmd)
 
 
 def test_all(arg=None):
