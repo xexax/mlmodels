@@ -167,7 +167,6 @@ Requires at least one evaluation data. If True, the eval metric on the eval set 
 
 
 def fit_metrics(model, data_pars=None, compute_pars=None, out_pars=None, **kw):
-    from sklearn.metrics import roc_auc_score
     """
        Return metrics of the model when fitted.
     """
@@ -176,11 +175,23 @@ def fit_metrics(model, data_pars=None, compute_pars=None, out_pars=None, **kw):
     #### Do prediction
     ypred = model.model.predict(Xval)
     
-    score = roc_auc_score(yval, ypred)
+    ddict = {}
+    metric_score_name = compute_pars.get('metric_score') 
+    
+    if metric_score_name is None :
+        return {}
+    
+    from sklearn.metrics import *
+    if metric_score_name = "roc_auc_score" :
+      score = roc_auc_score(yval, ypred)
+      ddict[metric_score_name] = score
 
-
-    ddict = {"roc_auc_score":score}
+    if metric_score_name = "mean_square_error" :
+      score = mean_square_error(yval, ypred)
+      ddict[metric_score_name] = score
+        
     return ddict
+
 
 
 def predict(model, sess=None, data_pars=None, compute_pars=None, out_pars=None, **kw):
