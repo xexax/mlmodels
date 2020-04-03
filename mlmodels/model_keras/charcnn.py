@@ -95,13 +95,13 @@ def reset_model():
     pass
 
 
-def save(model=None, session=None, save_pars={}):
+def save(model=None,  save_pars=None, session=None):
     from mlmodels.util import save_keras
     print(save_pars)
     save_keras(model, session, save_pars=save_pars)
 
 
-def load(load_pars={}):
+def load(load_pars=None):
     from mlmodels.util import load_keras
     model0 = load_keras(load_pars)
 
@@ -218,7 +218,7 @@ def get_params(param_pars={}, **kw):
 
 
 ################################################################################################
-########## Tests are  ##########################################################################
+########## Tests ###############################################################################
 def test(data_path="dataset/", pars_choice="json", config_mode="test"):
     ### Local test
     from mlmodels.util import path_norm
