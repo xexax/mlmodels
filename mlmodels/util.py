@@ -495,10 +495,13 @@ def load_pkl(load_pars):
 def save_pkl(model=None, session=None, save_pars=None):
     import cloudpickle as pickle
     path, filename = os_path_split(save_pars['path'])
-    
-    filename = "model.pkl" if len(filename)  < 1 else filename
-    
+    filename = "model.json"
     os.makedirs(path, exist_ok=True)
+    return pickle.dump(model, open( f"{path}/{filename}" , mode='wb') )
+    path = save_pars['path']
+    filename = "model.pkl"
+    os.makedirs(path, exist_ok=True)
+    print(f"{path}/{filename}")
     return pickle.dump(model, open( f"{path}/{filename}" , mode='wb') )
 
 

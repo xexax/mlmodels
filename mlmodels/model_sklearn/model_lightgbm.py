@@ -174,22 +174,26 @@ def fit_metrics(model, data_pars=None, compute_pars=None, out_pars=None, **kw):
     _, _, Xval, yval = get_dataset(data_pars)
     #### Do prediction
     ypred = model.model.predict(Xval)
-    
     ddict = {}
     metric_score_name = compute_pars.get('metric_score') 
     
     if metric_score_name is None :
         return {}
     
-    from sklearn.metrics import *
-    if metric_score_name = "roc_auc_score" :
-      score = roc_auc_score(yval, ypred)
-      ddict[metric_score_name] = score
+    from sklearn.metrics import roc_auc_score,mean_squared_error,accuracy_score
+    if metric_score_name == "roc_auc_score" :
+        score = roc_auc_score(yval, ypred)
+        ddict[metric_score_name] = score
 
-    if metric_score_name = "mean_square_error" :
-      score = mean_square_error(yval, ypred)
-      ddict[metric_score_name] = score
+    if metric_score_name == "mean_square_error" :
+        score = mean_squared_error(yval, ypred)
+        ddict[metric_score_name] = score
         
+    if metric_score_name == "accuracy_score":
+        ypred = ypred.argmax(axis=1)
+        score = accuracy_score(yval, ypred)
+   
+        ddict[metric_score_name] = score
     return ddict
 
 
