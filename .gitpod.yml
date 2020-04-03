@@ -19,5 +19,6 @@ tasks:
     source activate py36 && pip install -e .  --no-deps  &&
     source activate py36 && pip install  ipykernel   &&
     chmod -R 777 .  
+    conda init
 # &&  ./run_jupyter.sh
 
