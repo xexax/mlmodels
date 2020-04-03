@@ -167,7 +167,7 @@ Requires at least one evaluation data. If True, the eval metric on the eval set 
 
 
 def fit_metrics(model, data_pars=None, compute_pars=None, out_pars=None, **kw):
-    from sklearn.metrics import mean_absolute_error
+    from sklearn.metrics import roc_auc_score
     """
        Return metrics of the model when fitted.
     """
@@ -176,10 +176,10 @@ def fit_metrics(model, data_pars=None, compute_pars=None, out_pars=None, **kw):
     #### Do prediction
     ypred = model.model.predict(Xval)
     
-    score = mean_absolute_error(yval, ypred)
+    score = roc_auc_score(yval, ypred)
 
 
-    ddict = {"mae":score}
+    ddict = {"roc_auc_score":score}
     return ddict
 
 
@@ -241,9 +241,9 @@ def get_dataset(data_pars=None, **kw):
         return Xtrain,  ytrain, Xtest, ytest
 
 
-    if data_pars['train']:
+    if data_pars['mode'] == 'train':
         from sklearn.model_selection import train_test_split
-        df = pd.read_csv(data_pars['path'] )
+        df = pd.read_csv(data_pars['path'])
         dfX = df[data_pars['colX']]
         dfy = df[data_pars['coly']]
         Xtrain, Xtest, ytrain, ytest =  train_test_split(dfX.values, dfy.values)
