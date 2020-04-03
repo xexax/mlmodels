@@ -1,4 +1,4 @@
-{
+{"test": {
 	"model_pars": {
 		"embedding": 40,
 		"optimizer": "rmsprop"
@@ -6,36 +6,50 @@
 
 
 	"data_pars": {
-		"input": {
+		"input_pars": {
 			"path": "dataset/text/ner_dataset.csv",
 			"test_size": 0.5,
 			"X_cols": ["X"],
-			"y_cols": ["y"]
+			"y_cols": ["y"],
+			"misc_cols":["word_count"]
 		},
 		"loader": {
 			"encoding": "'ISO-8859-1'"
 		},
 		"preprocessor": [{
-				"data_preprocessor": "{data}.fillna",
-				"method": "ffill"
+				"data_preprocessor": {
+					"uri": "dataloader::test_pandas_fillna",
+					"arg": {
+						"method": "ffill"
+					}
+				}
 			},
 
-
-
-			##### Do not lambda code in the JSON (Code hacking injection...)
 			{
 				"data_preprocessor": [{
 						"index": ["Sentence #", "Word"],
-						"encoder": "lambda data, max_len: (lambda d, ml, word_dict,sentence_groups: np.array(keras.preprocessing.sequence.pad_sequences([[word_dict[x] for x in sw] for sw in [y.values for _,y in sentence_groups['Word']]],ml,padding='post', value=0, dtype='int'),dtype='O'))(data, max_len,{y:x for x,y in enumerate(['PAD','UNK']+list(data['Word'].unique()))},data.groupby('Sentence #'))",
-						"output_name": "X",
-						"max_len": 75
+						"encoder": {
+							"uri": "dataloader::test_onehot_sentences",
+							"arg": {
+								"max_len": 75
+							}
+						},
+						"output_name": "X"
 					},
 					{
 						"index": ["Sentence #", "Tag"],
-						"encoder": "lambda data,max_len,classes: (lambda d, ml, c, tag_dict, sentence_groups: np.array([keras.utils.to_categorical(i, num_classes=c+1) for i in keras.preprocessing.sequence.pad_sequences([[tag_dict[w] for w in s] for s in [y.values for _,y in sentence_groups['Tag']]],ml,padding='post', value=0)]))(data,max_len,classes,{y:x for x,y in enumerate(['PAD']+list(data['Tag'].unique()))},data.groupby('Sentence #'))",
-						"output_name": "y",
-						"max_len": 75,
-						"classes": "{data}['Tag'].nunique()"
+						"encoder": {
+							"uri": "dataloader::test_word_categorical_labels_per_sentence",
+							"arg": {
+								"max_len": 75
+							}
+						},
+						"output_name": "y"
+					},
+					{
+						"index": ["Word"],
+						"encoder": {"uri": "dataloader::test_word_count"},
+						"output_name": "word_count"
 					}
 				]
 			}
@@ -47,9 +61,9 @@
 				[23979, 75],
 				[23980, 75],
 				[23979, 75, 18],
-				[23980, 75, 18]
-			]
-		}
+				[23980, 75, 18]]
+		},
+		"max_len": 75
 	},
 
 	"compute_pars": {
@@ -62,4 +76,4 @@
 	}
 
 
-}
+}}
