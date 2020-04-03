@@ -170,9 +170,28 @@ def fit_metrics(model, data_pars=None, compute_pars=None, out_pars=None, **kw):
     """
        Return metrics of the model when fitted.
     """
-    ddict = { "feature_importance": model.model.feature_importances_ }
+    data_pars['train'] = True
+    _, _, Xval, yval = get_dataset(data_pars)
+    #### Do prediction
+    ypred = model.model.predict(Xval)
+    
+    ddict = {}
+    metric_score_name = compute_pars.get('metric_score') 
+    
+    if metric_score_name is None :
+        return {}
+    
+    from sklearn.metrics import *
+    if metric_score_name = "roc_auc_score" :
+      score = roc_auc_score(yval, ypred)
+      ddict[metric_score_name] = score
 
+    if metric_score_name = "mean_square_error" :
+      score = mean_square_error(yval, ypred)
+      ddict[metric_score_name] = score
+        
     return ddict
+
 
 
 def predict(model, sess=None, data_pars=None, compute_pars=None, out_pars=None, **kw):
@@ -233,9 +252,9 @@ def get_dataset(data_pars=None, **kw):
         return Xtrain,  ytrain, Xtest, ytest
 
 
-    if data_pars['train']:
+    if data_pars['mode'] == 'train':
         from sklearn.model_selection import train_test_split
-        df = pd.read_csv(data_pars['path'] )
+        df = pd.read_csv(data_pars['path'])
         dfX = df[data_pars['colX']]
         dfy = df[data_pars['coly']]
         Xtrain, Xtest, ytrain, ytest =  train_test_split(dfX.values, dfy.values)
