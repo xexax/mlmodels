@@ -423,7 +423,7 @@ def get_params(param_pars={}, **kw):
     if choice == "test01":
         log("#### Path params   ##########################################")
         data_path  = path_norm( "dataset/text/imdb.csv"  )   
-        out_path   = path_norm( "/ztest/model_keras/textcnn/" )   
+        out_path   = path_norm( "/ztest/model_tch/transformer_classifier/" )
         model_path = os.path.join(out_path , "model")
 
 
