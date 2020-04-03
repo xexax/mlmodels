@@ -176,8 +176,6 @@ def fit_metrics(model, data_pars=None, compute_pars=None, out_pars=None, **kw):
     ypred = model.model.predict(Xval)
     ddict = {}
     metric_score_name = compute_pars.get('metric_score') 
-    print(metric_score_name)
-    print(compute_pars)
     if metric_score_name is None :
         return {}
     
