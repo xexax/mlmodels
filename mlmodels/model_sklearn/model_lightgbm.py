@@ -182,12 +182,12 @@ def fit_metrics(model, data_pars=None, compute_pars=None, out_pars=None, **kw):
         return {}
     
     from sklearn.metrics import *
-    if metric_score_name = "roc_auc_score" :
+    if metric_score_name == "roc_auc_score" :
       score = roc_auc_score(yval, ypred)
       ddict[metric_score_name] = score
 
-    if metric_score_name = "mean_square_error" :
-      score = mean_square_error(yval, ypred)
+    if metric_score_name == "mean_squared_error" :
+      score = mean_squared_error(yval, ypred)
       ddict[metric_score_name] = score
         
     return ddict
