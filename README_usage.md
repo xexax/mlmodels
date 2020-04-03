@@ -21,7 +21,7 @@ https://github.com/arita37/mlmodels/blob/dev/README.md
 4)  Do Pull Request to dev Branch.
 
 
-
+## Example of notebooks
 
 ```
 
@@ -32,17 +32,21 @@ https://github.com/arita37/mlmodels/blob/dev/mlmodels/example/model_lightgbm_hom
 
 
 ---
----
 
 ### Hyper-Parameter with LightGBM , Ex 2
-
 
 https://github.com/arita37/mlmodels/blob/dev/mlmodels/example/model_lightgbm_glass.ipynb
 
 
 
-
 ---
+### Hyper-Parameter with LightGBM , Ex 3
+
+https://github.com/arita37/mlmodels/blob/dev/mlmodels/example/model_lightgbm_titanic.ipynb
+
+
+
+
 ---
 
 
