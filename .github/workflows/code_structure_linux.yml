@@ -1,10 +1,17 @@
 name:  code_structure_linux
 
 
+#on:
+#  push:
+#    branches: 
+#      #- dev
+
 on:
-  push:
-    branches: 
-      - dev
+  schedule:
+    # * is a special character in YAML so you have to quote this string
+    ### Every 3 hours
+    - cron:  '0 */6 * * *'      
+
  
 jobs:
   build:
@@ -47,11 +54,17 @@ jobs:
     - name: Install numpy
       if: steps.cache-pipenv.outputs.cache-hit != 'true'
       run: pip install numpy
-      
-    - name: Install repo requirements
+ 
+
+    - name: Install repo requirements 1
       if: steps.cache-pipenv.outputs.cache-hit != 'true'
       run:  |
         pip install -r requirements.txt
+
+
+    - name: Install repo requirements 2
+      if: steps.cache-pipenv.outputs.cache-hit != 'true'
+      run:  |
         pip install -r requirements_fake.txt
 
 
@@ -60,12 +73,16 @@ jobs:
 
 
     - name: repo path
-      run: python -c "import mlmodels,os ; print(mlmodels); print(os)"
+      run: python  run_basic_check.py
 
 
     ########  Test running 
+    - name: ml_optim
+      run: ml_optim
+
+
     - name: ml_test
-      run: ml_test
+      run: ml_test  --do test_all
       
          
 

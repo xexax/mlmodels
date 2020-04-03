@@ -23,12 +23,12 @@ from mlmodels.model_tch.raw.pplm.run_pplm_discrim_train import train_discriminat
 VERBOSE = False
 
 ####################################################################################################
-from mlmodels.util import os_package_root_path, logg, norm_path
+from mlmodels.util import os_package_root_path, log, path_norm
 
 
 
-def path_setup(out_folder="", sublevel=1, data_path="dataset/"):
-    data_path = os_package_root_path(__file__, sublevel=sublevel, path_add=data_path)
+def path_setup(out_folder="", sublevel=0, data_path="dataset/"):
+    data_path = os_package_root_path( path_add=data_path)
     out_path = os.getcwd() + "/" + out_folder
     os.makedirs(out_path, exist_ok=True)
     model_path = out_path + "/model/"
@@ -84,7 +84,7 @@ class Model:
 
 
 
-def fit(model, data_pars={}, compute_pars={}, out_pars={},   **kw):
+def fit(model, data_pars=None, compute_pars=None, out_pars=None,   **kw):
   """
 
   :param model:    Class model
@@ -106,7 +106,7 @@ def fit(model, data_pars={}, compute_pars={}, out_pars={},   **kw):
 
     
 
-def predict(model, sess=None, data_pars={}, out_pars={}, compute_pars={}, **kw):
+def predict(model, sess=None, data_pars=None, compute_pars=None, out_pars=None, **kw):
   ##### Get Data ###############################################
   Xpred, ypred = None, None
 
@@ -153,7 +153,7 @@ def get_params(param_pars=None, **kw):
     data_path   = param_pars['data_path']
 
     if choice == "json":
-       data_path = path_normalize(data_path)
+       data_path = path_norm(data_path)
        cf = json.load(open(data_path, mode='r'))
        cf = cf[config_mode]
        return cf['model_pars'], cf['data_pars'], cf['compute_pars'], cf['out_pars']
@@ -162,7 +162,7 @@ def get_params(param_pars=None, **kw):
     if choice == "test01":
         log("#### Path params   ##########################################")
         data_path  = path_norm( "dataset/text/imdb.csv"  )   
-        out_path   = path_norm( "/ztest/model_tch/pplm/" )   
+        out_path   = path_norm( "ztest/model_tch/pplm/" )
         model_path = os.path.join(out_path , "model")
 
 

@@ -4,18 +4,41 @@ Gluon
 
 """
 import os
-
 import pandas as pd
+
+from mlmodels.util import env_pip_check
+#env_pip_check({"requirement": "pip/requirements_tabular.txt",
+#               "import":   ["gluonts", "mxnet"] })
+
 
 from gluonts.model.deepar import DeepAREstimator
 from gluonts.trainer import Trainer
-from mlmodels.model_gluon.util import (_config_process, fit, get_dataset, log,
-                                       metrics, os_package_root_path,
-                                       plot_predict, plot_prob_forecasts,
-                                       predict, save)
 
 
-from mlmodels.util import os_package_root_path, path_norm
+from gluonts.dataset.common import ListDataset
+from gluonts.dataset.field_names import FieldName
+from gluonts.dataset.util import to_pandas
+from gluonts.evaluation import Evaluator
+from gluonts.evaluation.backtest import make_evaluation_predictions
+from gluonts.model.predictor import Predictor
+
+import matplotlib.pyplot as plt
+import json
+
+
+
+from mlmodels.model_gluon.util import (
+    _config_process, fit, get_dataset, load, metrics,
+    plot_predict, plot_prob_forecasts, predict, save)
+
+
+from mlmodels.util import os_package_root_path, path_norm, log
+
+
+VERBOSE = False
+
+
+
 
 
 ########################################################################################################################
@@ -53,6 +76,11 @@ class Model(object):
                                          trainer=trainer)
 
 
+
+
+
+
+
 ########################################################################################################################
 def get_params(choice="", data_path="dataset/timeseries/", config_mode="test", **kw):
     
@@ -63,20 +91,19 @@ def get_params(choice="", data_path="dataset/timeseries/", config_mode="test", *
 
     if choice == "test01" :
         log("#### Path params   ###################################################")
-        data_path  = path_norm( data_path  )   
-        out_path   = path_norm( "/ztest/model_gluon/deepar/" )   
+        data_path  = path_norm( "dataset/timeseries" )   
+        out_path   = path_norm( "ztest/model_gluon/gluon_deepar/" )   
         model_path = os.path.join(out_path , "model")
 
 
-        data_pars = {"train_data_path": data_path + "/GLUON-GLUON-train.csv" , 
+        data_pars = {"train_data_path": data_path + "/GLUON-train.csv" , 
                      "test_data_path":  data_path + "/GLUON-test.csv" , 
                      "train": False,
                      'prediction_length': 48, 'freq': '1H', 
                      "start": pd.Timestamp("01-01-1750", freq='1H'), 
-                     "num_series": 245,
+                     "num_series": 37,
                      "save_fig": "./series.png", "modelpath": model_path}
-
-
+        
         log("#### Model params   ################################################")
         model_pars = {"prediction_length": data_pars["prediction_length"], "freq": data_pars["freq"],
                       "num_layers": 2, "num_cells": 40, "cell_type": 'lstm', "dropout_rate": 0.1,
@@ -90,10 +117,15 @@ def get_params(choice="", data_path="dataset/timeseries/", config_mode="test", *
                         'num_samples': 100,
                         "minimum_learning_rate": 5e-05, "patience": 10, "weight_decay": 1e-08}
 
-        out_pars = {"outpath": out_path + "/result", 
+        out_pars = {"outpath": out_path + "result", 
                     "plot_prob": True, "quantiles": [0.1, 0.5, 0.9]}
 
     return model_pars, data_pars, compute_pars, out_pars
+
+
+
+
+
 
 
 ########################################################################################################################
@@ -120,7 +152,7 @@ def test(data_path="dataset/", choice=""):
 
     log("#### Predict   ####################################################")
     ypred = predict(module, model, data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)
-    print(ypred)
+    # print(ypred)
 
     log("#### metrics   ####################################################")
     metrics_val, item_metrics = metrics(ypred, data_pars, compute_pars, out_pars)
@@ -133,7 +165,7 @@ def test(data_path="dataset/", choice=""):
 
 if __name__ == '__main__':
     VERBOSE = True
-    test(data_path="dataset/", choice="test01")
+    test(data_path="dataset/timeseries", choice="test01")
 
 
 

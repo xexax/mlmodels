@@ -1,7 +1,0 @@
-autogluon
-gluonts
-pandas
-matplotlib
-mxnet
-
-
