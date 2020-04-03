@@ -170,11 +170,8 @@ def optim_optuna(model_uri="model_tf.1_lstm.py",
     # param_dict.update(module.config_get_pars(choice="test", )
 
     log("### Save Stats   ##########################################################")
-    study_trials = study.trials_dataframe()
-    try:
-        os.stat(save_path)
-    except:
-        os.mkdir(save_path)  
+    os.makedirs(save_path, exist_ok=True)              
+    study_trials = study.trials_dataframe()  
     study_trials.to_csv(f"{save_path}/{model_uri}_study.csv")
     param_dict_best["best_value"] = study.best_value
     json.dump(param_dict_best, open(f"{save_path}/{model_uri}_best-params.json", mode="w"))
@@ -192,6 +189,7 @@ def optim_optuna(model_uri="model_tf.1_lstm.py",
     save_pars = {'path': save_path, 'model_type': model_uri.split("-")[0], 'model_uri': model_uri}
     module.save(model=model, session=sess, save_pars=save_pars)
 
+    log( os.stats(save_path))
     ## model_pars_update["model_name"] = model_name
     return model_pars_update
 
