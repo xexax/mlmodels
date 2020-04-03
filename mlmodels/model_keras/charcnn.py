@@ -1,19 +1,12 @@
 # coding: utf-8
 """
-Generic template for new model.
-Check parameters template in models_config.json
-
-"model_pars":   { "learning_rate": 0.001, "num_layers": 1, "size": 6, "size_layer": 128, "output_size": 6, "timestep": 4, "epoch": 2 },
-"data_pars":    { "data_path": "dataset/GOOG-year.csv", "data_type": "pandas", "size": [0, 0, 6], "output_size": [0, 6] },
-"compute_pars": { "distributed": "mpi", "epoch": 10 },
-"out_pars":     { "out_path": "dataset/", "data_type": "pandas", "size": [0, 0, 6], "output_size": [0, 6] }
-
 
 
 """
 import os
+
+
 from keras.callbacks import EarlyStopping
-from mlmodels.util import os_package_root_path, log, path_norm, get_model_uri
 
 
 #### Import EXISTING model and re-map to mlmodels
@@ -24,6 +17,8 @@ from mlmodels.model_keras.raw.char_cnn.models.char_cnn_kim import CharCNNKim
 
 
 ####################################################################################################
+from mlmodels.util import os_package_root_path, log, path_norm, get_model_uri
+
 VERBOSE = False
 MODEL_URI = get_model_uri(__file__)
 # print( path_norm("dataset") )
@@ -108,11 +103,10 @@ def save(model=None, session=None, save_pars={}):
 
 def load(load_pars={}):
     from mlmodels.util import load_keras
-    print(load_pars)
     model0 = load_keras(load_pars)
 
     model = Model()
-    model.model = model0
+    model.model = model0.model
     session = None
     return model, session
 
@@ -256,8 +250,8 @@ def test(data_path="dataset/", pars_choice="json", config_mode="test"):
 
 
     log("#### Save/Load   ###################################################")
-    save_pars = {"path" : out_pars['path'] + "/model/" }
-    save(model, session, save_pars= save_pars)
+    save_pars = {"path": out_pars['path']}
+    save(model, session, save_pars=save_pars)
     model2, session2 = load(save_pars)
 
     log("#### Save/Load - Predict   #########################################")

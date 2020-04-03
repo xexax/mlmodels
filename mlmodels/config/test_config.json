@@ -1,6 +1,7 @@
 {
    "test_all" : {   "model_blocked" : [
-                                     "model_tch/transformers_sentence.py"
+                                     "model_tch/transformers_sentence.py",
+                                     "model_keras/textvae.py"
                                     ]
                 }                     
 

@@ -40,7 +40,7 @@ simplefilter(action='ignore', category=DeprecationWarning)
 
 
 ####################################################################################################
-def module_env_build(model_uri="", verbose=0, env_build=0):
+def module_env_build(model_uri="", verbose=0, do_env_build=0):
     """
       Load the file which contains the model description
       model_uri:  model_tf.1_lstm.py  or ABSOLUTE PATH
@@ -52,7 +52,7 @@ def module_env_build(model_uri="", verbose=0, env_build=0):
         print(model_uri)
 
     #### Dynamic ENV Build based on requirements.txt
-    if env_build:
+    if do_env_build:
         env_pars = {"python_version": '3.6.5'}
         env_build(model_uri, env_pars)
 

@@ -6,7 +6,6 @@ Parse Code source CLI to extract JSON file
 
 
 """
-
 import json
 import  os, argparse
 from pathlib import Path
@@ -35,63 +34,57 @@ def cli_load_arguments(config_file=None):
     return arg
 
 
+def extract_args(txt, outfile):
+    ddict ={}
+    for ll in txt :
+       # print(ll)
+       if "add_argument(" in ll :
+            ll = ll.replace("parser.argument(", "")
+            ls = ll.split(",")
+
+
+            for t in ls :
+              if "default=" in t :
+                val = t.replace("default=", "").replace(")", "").strip()
+                key = ls[0].replace("parser.add_argument(", "").replace("--", "").replace("'", "").strip()
+                ddict[key] = val
+
+    def tonum(x):
+      try :
+         if "." in x :
+           return float(x)
+         else :
+           return int(x)  
+      except :
+         return x
+
+    ddict = { k : tonum(x) for k,x in ddict.items() }
+    print(ddict)
+
+    os.makedirs(  Path(outfile).parent, exist_ok=True)
+    json.dump(ddict, open(outfile, mode="w"))
+
 
 
 
 if __name__ == "__main__":
-
   arg = cli_load_arguments()
 
   file = arg.fromfile
-  outfile = "config/json/" + file.replace(".py", ".json")
 
-  with open(file, mode="r") as f :
-    txtjoin = f.read()
-
-  #print(txt)
-
-  txt = txtjoin.split("\n")
+  from mlmodels.util import get_recursive_files
 
 
-  def extract_args():
-	  ddict ={}
-	  for ll in txt :
-	     # print(ll)
-	     if "add_argument(" in ll :
-	          ll = ll.replace("parser.argument(", "")
-	          ls = ll.split(",")
+  filelist = [file]
+  for file in filelist :
 
+    with open(file, mode="r") as f :
+      txtjoin = f.read()
 
-	          for t in ls :
-	            if "default=" in t :
-	              val = t.replace("default=", "").replace(")", "").strip()
-	              key = ls[0].replace("parser.add_argument(", "").replace("--", "").replace("'", "").strip()
-	              ddict[key] = val
-
-
-
-	  def tonum(x):
-	    try :
-	       if "." in x :
-	         return float(x)
-	       else :
-	         return int(x)  
-	    except :
-	       return x
-
-
-
-
-	  ddict = { k : tonum(x) for k,x in ddict.items() }
-	  print(ddict)
-
-
-	  os.makedirs(  Path(outfile).parent, exist_ok=True)
-	  json.dump(ddict, open(outfile, mode="w"))
-
-
-  if "argparse.ArgumentParser" in txtjoin :
-        extract_args()
+    if "argparse.ArgumentParser" in txtjoin :
+       txt = txtjoin.split("\n")
+       outfile = "config/json/" + file.replace(".py", ".json")
+       extract_args(txt, outfile)
 
 
 

@@ -1,47 +1,18 @@
 # Documentation
 
-Functions/Methods
+List of Functions/Methods
 
 https://github.com/arita37/mlmodels/blob/dev/README_index_doc.py
 
 
-
-
-# Steps to add a new Colab notebook /Jupyter notbbok :
-
-```
-
-0) Read the readme.md and Install mlmodels on Linux
-    https://github.com/arita37/mlmodels/blob/dev/README_usage.md
-    https://github.com/arita37/mlmodels/tree/dev/mlmodels/example
-
-
-1) Create a branch from DEV branch called : notebook_
-
-
-2) Create Jupyter Notebook in  mlmodels/example/           
-            
-
-3) Create mymodel.json in  mlmodels/example/
-
- 
-4)  Do Pull Request to dev Branch !
-
-
-
-
-```
-
-
-
 ___________________________________________________________________________________________
-# Steps  to add a new model :
+# Steps  to do a PR,  do a fix or add a new model :
 
 
 ### Coding Style
-  **Line = 110 characters**
-  Only Loose PEP8, "Pretty Code is better than strict PEP8"
-  Please re-use existing functions.
+  Please use **Line = 110 characters**
+  Only Loose PEP8, "Pretty Code is better than strict PEP8, which is ugly to read..."
+  Please use BLACK Formatter.
 
 
 
@@ -58,28 +29,27 @@ ________________________________________________________________________________
   
 
 
-### 2) Change this file with your MODEL_NAME AND BRANCH NAME  ( Your Branch test  ):
+### 2) Change this file with your MODEL_NAME AND BRANCH NAME :
+
   https://github.com/arita37/mlmodels/blob/dev/.github/workflows/test_specific_model.yml
 
-
-   Change only your MODEL_NAME  (PULL Request)
-   https://github.com/arita37/mlmodels/blob/dev/pullrequest.json
+  https://github.com/arita37/mlmodels/blob/dev/pullrequest.json
 
 
-     Test will run on GITHUB server for your model AFTER each commit.
-  
+### 3) After each commit or PullRequest, automatic test is run on Github :
+  Please check here :
   https://github.com/arita37/mlmodels/actions
 
 
 
 ### 3) Create  mlmodels/model_XXXX/yyyyy.py   
+  Template
+  https://github.com/arita37/mlmodels/blob/dev/mlmodels/template/model_xxx.py
+
+  Example :
   https://github.com/arita37/mlmodels/blob/dev/mlmodels/model_keras/textcnn.py
   
   https://github.com/arita37/mlmodels/blob/dev/mlmodels/model_tch/transformer_sentence.py
-
-
-  Template
-  https://github.com/arita37/mlmodels/blob/dev/mlmodels/template/model_xxx.py
 
 
   Please re-use existing functions
@@ -93,8 +63,6 @@ ________________________________________________________________________________
 
 
 
-
-
 ### 4) Create  mlmodels/model_XXXX/yyyy.json , following this template :
   
   https://github.com/arita37/mlmodels/blob/dev/mlmodels/template/models_config.json
@@ -102,9 +70,9 @@ ________________________________________________________________________________
 
 
 ### 5) Run/Test on your local machine
+    source activate py36
     cd mlmodels
     python model_XXXX/yyyy.py  
-
 
 
 
@@ -114,7 +82,7 @@ https://github.com/arita37/mlmodels/actions?query=workflow%3Atest_custom_model
 
 
 
-### 7)  Do Pull Request to dev Branch !
+### 7)  Do Pull Request to dev Branc.
 
 
 
