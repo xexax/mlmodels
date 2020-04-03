@@ -27,13 +27,12 @@ import json
 
 
 
-
 from mlmodels.model_gluon.util import (
     _config_process, fit, get_dataset, load, metrics,
     plot_predict, plot_prob_forecasts, predict, save)
 
 
-from mlmodels.util import os_package_root_path, path_norm
+from mlmodels.util import os_package_root_path, path_norm, log
 
 
 VERBOSE = False

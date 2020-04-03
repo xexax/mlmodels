@@ -6,6 +6,10 @@ zsublime*
 ztest/
 mlmodels/ztest/*
 .idea/*
+zwork/*
+!zwork/*.ipny
+!zwork/*.py
+
 
 
 # C extensions
@@ -132,3 +136,5 @@ example/dask*
 example/dataset
 example/exp
 /functions.json
+.idea
+/classes.json

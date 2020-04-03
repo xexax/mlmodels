@@ -133,13 +133,14 @@ def get_recursive_files(folderPath, ext='/*model*/*.py'):
 
 
 
+
 def path_norm(path=""):
     root = os_package_root_path(__file__, 0)
 
     if len(path) == 0 or path is None:
         path = root
 
-    tag_list = [ "model_", "//model_",  "dataset", "template", "ztest"  ]
+    tag_list = [ "model_", "//model_",  "dataset", "template", "ztest", "example"  ]
 
 
     for t in tag_list :
@@ -245,9 +246,10 @@ def config_set(ddict2):
    
 
 
+
 def params_json_load(path, config_mode="test"):
     import json
-    pars = json.load(open(path, mode="rb"))
+    pars = json.load(open(path, mode="r"))
     pars = pars[config_mode]
 
     ### HyperParam, model_pars, data_pars,
@@ -383,7 +385,7 @@ class Model_empty(object):
 
 
 def os_path_split(path) :
-  return str(Path( path ).parent), str(Path( path ).name)
+  return str(Path( path ).parent), str(Path( path ).name) # + str(Path( path ).suffix) 
 
 
 
@@ -398,10 +400,11 @@ def load(load_pars):
 
 def save(model=None, session=None, save_pars=None):
     p = save_pars
-    if  "model_keras" in p['model_uri'] :
-       path = os.path.abspath( p['path'] + "/../")
-       name = os.path.basename(p['path']) if ".h5" in p['path'] else "model.h5"
-       save_keras( model, session, save_pars)
+    if "model_keras" in p['model_uri']:
+        path = os.path.abspath( p['path'] + "/../")
+        name = os.path.basename(p['path']) if ".h5" in p['path'] else "model.h5"
+        save_keras( model, session, save_pars)
+
 
 
 
@@ -411,39 +414,31 @@ def load_tf(load_pars=""):
   https://www.mlflow.org/docs/latest/python_api/mlflow.tensorflow.html#
 
  """
-  import mlflow
   import tensorflow as tf
-
-  path, filename = os_path_split( load_pars['path'] ) 
-   
-  model_uri = path + "/" + filename
   tf_graph = tf.Graph()
   tf_sess = tf.Session(graph=tf_graph)
+  model_path = os.path.join(load_pars['path'], "model")
   with tf_graph.as_default():
-    signature_def = mlflow.tensorflow.load_model(model_uri=model_uri,
-                                                 tf_sess=tf_sess)
-    input_tensors = [tf_graph.get_tensor_by_name(input_signature.name)
-                     for _, input_signature in signature_def.inputs.items()]
-    output_tensors = [tf_graph.get_tensor_by_name(output_signature.name)
-                      for _, output_signature in signature_def.outputs.items()]
-  return input_tensors, output_tensors
+    new_saver = tf.train.import_meta_graph(f"{model_path}.meta")
+    new_saver.restore(tf_sess, tf.train.latest_checkpoint(str(Path(model_path).parent)))
+
+  return tf_sess
 
 
 def save_tf(model=None, sess=None, save_pars= None):
   import tensorflow as tf
-  path, filename = os_path_split(save_pars['path'])
-  os.makedirs(path, exist_ok=True)
-
   saver = tf.compat.v1.train.Saver()
-  return saver.save(sess, path)
+  if not os.path.exists(save_pars['path']):
+      os.makedirs(save_pars['path'], exist_ok=True)
+  return saver.save(sess, os.path.join(save_pars['path'], "model"))
 
 
 
 def load_tch(load_pars):
     import torch
-    path, filename = load_pars['path'], load_pars['filename']
-
-    path = path + "/" + filename if "." not in path else path
+    #path, filename = load_pars['path'], load_pars.get('filename', "model.pkl")
+    #path = path + "/" + filename if "." not in path else path
+    path = load_pars['path']
     model = Model_empty()
     model.model = torch.load(path)
     return model
@@ -452,7 +447,8 @@ def load_tch(load_pars):
 def save_tch(model=None, optimizer=None, save_pars=None):
     import torch
     path, filename = os_path_split(save_pars['path'])
-    os.makedirs(path, exist_ok=True)
+    if not os.path.exists(path): 
+        os.makedirs(path, exist_ok=True)
 
     if save_pars.get('save_state') is not None:
         torch.save({
@@ -496,34 +492,48 @@ def load_pkl(load_pars):
     return pickle.load(open( load_pars['path'], mode='rb') )
 
 
-def save_pkl(model=None, save_pars=None):
-  import cloudpickle as pickle
-  path, filename = os_path_split(save_pars['path'])
-  os.makedirs(path, exist_ok=True)
-  return pickle.dump(model, open( f"{path}/{filename}" , mode='wb') )
+def save_pkl(model=None, session=None, save_pars=None):
+    import cloudpickle as pickle
+    path, filename = os_path_split(save_pars['path'])
+    
+    filename = "model.pkl" if len(filename)  < 1 else filename
+    
+    os.makedirs(path, exist_ok=True)
+    return pickle.dump(model, open( f"{path}/{filename}" , mode='wb') )
 
 
-
-def load_keras(load_pars):
-    from keras.models import load_model
-    path, filename = os_path_split(load_pars['path']  )
+def load_keras(load_pars, custom_pars=None):
+    from tensorflow.keras.models import load_model
+    if os.path.isfile(load_pars['path']):
+        path, filename = os_path_split(load_pars['path']  )
+    else:
+        path = load_pars['path']
+        filename = "model.h5"
 
     path_file = path + "/" + filename if ".h5" not in path else path
     model = Model_empty()
-    model.model = load_model(path_file)
+    if custom_pars:
+        model.model = load_model(path_file, 
+                             custom_objects={"MDN": custom_pars["MDN"],
+                                             "mdn_loss_func": custom_pars["loss"]})
+    else:
+        model.model = load_model(path_file)
     return model
 
 
 def save_keras(model=None, session=None, save_pars=None, ):
-    path, filename = os_path_split(save_pars['path']  )
-    os.makedirs(path, exist_ok=True)
+    if os.path.isdir(save_pars['path']):
+        path = save_pars['path']
+        filename = "model.h5"
+
+    else:
+        path, filename = os_path_split(save_pars['path'])
+    if not os.path.exists(path): os.makedirs(path, exist_ok=True)
     model.model.save(str(Path(path) / filename))
-
-
 
 def save_gluonts(model=None, session=None, save_pars=None):
     path = save_pars['path']
-    os.makedirs(path, exist_ok=True)
+    if not os.path.exists(path): os.makedirs(path, exist_ok=True)
     model.model.serialize(Path(path))
 
 
