@@ -11,19 +11,18 @@ https://github.com/arita37/mlmodels/blob/dev/README.md
 
 1) Create a branch from DEV branch called : notebook_
 
-
 2) Create Jupyter Notebook in  mlmodels/example/           
             
-
 3) Create mymodel.json in  mlmodels/example/
-
  
 4)  Do Pull Request to dev Branch.
+
+```
 
 
 ## Example of notebooks
 
-```
+
 
 ### Hyper-Parameter with LightGBM, Ex 1
 
