@@ -25,6 +25,22 @@ https://github.com/arita37/mlmodels/blob/dev/README.md
 
 ```
 
+### Hyper-Parameter with LightGBM, Ex 1
+
+
+https://github.com/arita37/mlmodels/blob/dev/mlmodels/example/model_lightgbm_home_retail.ipynb
+
+
+
+
+### Hyper-Parameter with LightGBM , Ex 2
+
+
+https://github.com/arita37/mlmodels/blob/dev/mlmodels/example/model_lightgbm_glass.ipynb
+
+
+
+
 
 
 
