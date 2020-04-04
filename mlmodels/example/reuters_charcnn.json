@@ -2,14 +2,10 @@
   "test": {
     
     "model_pars": {
-      "embedding_size": 128,
+      "embedding_size": 2,
       "conv_layers": [
-        [256, 10],
-        [256, 7],
-        [256, 5],
-        [256, 3]
       ],
-      "fully_connected_layers": [1024, 1024],
+      "fully_connected_layers": [512],
       "threshold": 1e-6,
       "dropout_p": 0.1,
       "optimizer": "adam",
@@ -19,13 +15,13 @@
       "train": true,
       "alphabet": "abcdefghijklmnopqrstuvwxyz0123456789-,;.!?:'\"/\\|_@#$%^&*~`+-=<>()[]{}",
       "alphabet_size": 69,
-      "input_size": 1014,
+      "input_size": 10000,
       "num_of_classes": 46,
       "type": "npz",
       "train_data_source": "dataset/text/reuters/reuters.npz"
     },
     "compute_pars": {
-      "epochs": 1,
+      "epochs": 50,
       "batch_size": 128,
       "metric_score": "accuracy_score"
     },
