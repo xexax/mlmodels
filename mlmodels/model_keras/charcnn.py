@@ -127,17 +127,19 @@ def get_dataset(data_pars=None, **kw):
                              alphabet       = data_pars["alphabet"],
                              input_size     = data_pars["input_size"],
                              num_of_classes = data_pars["num_of_classes"])
-        train_data.load_data()
-        train_inputs, train_labels = train_data.get_all_data()
+        if data_pars['type'] == "npz":
+            train_inputs,train_labels, val_inputs, val_labels = train_data.get_all_data_npz()
+        else: 
+            train_data.load_data()
+            train_inputs, train_labels = train_data.get_all_data()
 
-
-        # Load val data
-        val_data = Data(data_source = path_norm( data_pars["val_data_source"]) ,
-                               alphabet=data_pars["alphabet"],
-                               input_size=data_pars["input_size"],
-                               num_of_classes=data_pars["num_of_classes"])
-        val_data.load_data()
-        val_inputs, val_labels = val_data.get_all_data()
+            # Load val data
+            val_data = Data(data_source = path_norm( data_pars["val_data_source"]) ,
+                                   alphabet=data_pars["alphabet"],
+                                   input_size=data_pars["input_size"],
+                                   num_of_classes=data_pars["num_of_classes"])
+            val_data.load_data()
+            val_inputs, val_labels = val_data.get_all_data()
 
         return train_inputs, val_inputs, train_labels, val_labels
 
