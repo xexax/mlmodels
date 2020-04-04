@@ -234,7 +234,6 @@ class TextCNN(nn.Module):
         self.embed.weight.data.copy_(vocab_built.vectors)
 
 
-    """ ### Missing ???????????
     def forward(self, x):
         emb_x = self.embed(x)
         emb_x = emb_x.unsqueeze(1)
@@ -242,15 +241,14 @@ class TextCNN(nn.Module):
         con_x = [conv(emb_x) for conv in self.convs]
 
         pool_x = [F.max_pool1d(x.squeeze(-1), x.size()[2]) for x in con_x]
-        
+
         fc_x = torch.cat(pool_x, dim=1)
-        
+
         fc_x = fc_x.squeeze(-1)
 
         fc_x = self.dropout(fc_x)
         logit = self.fc(fc_x)
         return logit
-    """
 
 
 
