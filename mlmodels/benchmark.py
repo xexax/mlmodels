@@ -31,7 +31,7 @@ def get_all_json_path(json_path):
 
 
 ####################################################################################################
-def run_benchmark_all(bench_pars=None, json_path=None):
+def run_benchmark_all(bench_pars=None, json_path=None config_mode="test"):
     from mlmodels.models import module_load
     from mlmodels.util import path_norm_dict, path_norm, params_json_load
     import json
@@ -46,13 +46,18 @@ def run_benchmark_all(bench_pars=None, json_path=None):
         log ("### Running {} #####".format(jsonf))
         #### Model URI and Config JSON
         config_path = path_norm(jsonf)
-        config_mode = "test"
+        config_mode = config_mode
 
+        #### PLEASE Include   model_pars['model_uri'] = "model_gluon.gluon_prophet.py"  in the JSON directly
+        model_pars, data_pars, compute_pars = params_json_load(config_path, config_mode= config_mode)
+         
+        """ 
         #### Model Parameters
         if "prophet" in jsonf:
             model_pars, data_pars, compute_pars = \
             params_json_load(config_path, config_mode= config_mode)
             model_pars['model_uri'] = "model_gluon.gluon_prophet.py"
+            
         elif "deepar" in jsonf:
             model_pars, data_pars, compute_pars = \
             params_json_load(config_path, config_mode= config_mode)
@@ -62,8 +67,11 @@ def run_benchmark_all(bench_pars=None, json_path=None):
             params_json_load(config_path, config_mode= config_mode)
             
         model_uri = model_pars['model_uri']  # "model_tch.torchhub.py"
-        
+        """
+      
+      
         #### Setup Model 
+        model_uri = model_pars['model_uri']  # "model_tch.torchhub.py" 
         module = module_load(model_uri)
         model = module.Model(model_pars, data_pars, compute_pars) 
         
@@ -72,17 +80,33 @@ def run_benchmark_all(bench_pars=None, json_path=None):
         
         
 
-        #### Inference
-        ypred = module.predict(model=model, model_pars=model_pars, session=session, 
+        #### Inference  Please change to return ypred, ytrue
+        ypred, ytrue = module.predict(model=model, model_pars=model_pars, session=session, 
                                data_pars=data_pars, compute_pars=compute_pars, 
-                               out_pars=out_pars)   
-        
+                               out_pars=out_pars, return_ytrue=1)   
         
 
+
         ### Calculate Metrics
-        for ind, metric in enumerate(metric_list): 
+        for ind, metric in enumerate(metric_list):
+            """https://scikit-learn.org/stable/modules/generated/sklearn.metrics.get_scorer.html#sklearn.metrics.get_scorer
+            
+              
+            
+            """
+            from sklearn.metrics import get_scorer
+            scorer_metric = get_scorer(metric)
+            
+            metrics_val = scorer_metric(ytrue, ypred)
+            
+            
+            ##### NO Metrics IS INDEPENDANT Of model 
+            """
             metrics_val = module.fit_metrics(model, data_pars, compute_pars, 
                                             out_pars, model_pars, wmape=metric)   #### Check fit metrics
+            """
+            
+            
             benchmark_df.loc[ind, "date_run"] = str(datetime.now())
             benchmark_df.loc[ind, "model_uri"] = model_uri
             benchmark_df.loc[ind, "json"] = jsonf
