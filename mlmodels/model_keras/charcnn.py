@@ -1,19 +1,12 @@
 # coding: utf-8
 """
-Generic template for new model.
-Check parameters template in models_config.json
-
-"model_pars":   { "learning_rate": 0.001, "num_layers": 1, "size": 6, "size_layer": 128, "output_size": 6, "timestep": 4, "epoch": 2 },
-"data_pars":    { "data_path": "dataset/GOOG-year.csv", "data_type": "pandas", "size": [0, 0, 6], "output_size": [0, 6] },
-"compute_pars": { "distributed": "mpi", "epoch": 10 },
-"out_pars":     { "out_path": "dataset/", "data_type": "pandas", "size": [0, 0, 6], "output_size": [0, 6] }
-
 
 
 """
 import os
+
+
 from keras.callbacks import EarlyStopping
-from mlmodels.util import os_package_root_path, log, path_norm, get_model_uri
 
 
 #### Import EXISTING model and re-map to mlmodels
@@ -24,6 +17,8 @@ from mlmodels.model_keras.raw.char_cnn.models.char_cnn_kim import CharCNNKim
 
 
 ####################################################################################################
+from mlmodels.util import os_package_root_path, log, path_norm, get_model_uri
+
 VERBOSE = False
 MODEL_URI = get_model_uri(__file__)
 # print( path_norm("dataset") )
@@ -100,19 +95,18 @@ def reset_model():
     pass
 
 
-def save(model=None, session=None, save_pars={}):
+def save(model=None,  save_pars=None, session=None):
     from mlmodels.util import save_keras
     print(save_pars)
     save_keras(model, session, save_pars=save_pars)
 
 
-def load(load_pars={}):
+def load(load_pars=None):
     from mlmodels.util import load_keras
-    print(load_pars)
     model0 = load_keras(load_pars)
 
     model = Model()
-    model.model = model0
+    model.model = model0.model
     session = None
     return model, session
 
@@ -133,17 +127,19 @@ def get_dataset(data_pars=None, **kw):
                              alphabet       = data_pars["alphabet"],
                              input_size     = data_pars["input_size"],
                              num_of_classes = data_pars["num_of_classes"])
-        train_data.load_data()
-        train_inputs, train_labels = train_data.get_all_data()
+        if data_pars['type'] == "npz":
+            train_inputs,train_labels, val_inputs, val_labels = train_data.get_all_data_npz()
+        else: 
+            train_data.load_data()
+            train_inputs, train_labels = train_data.get_all_data()
 
-
-        # Load val data
-        val_data = Data(data_source = path_norm( data_pars["val_data_source"]) ,
-                               alphabet=data_pars["alphabet"],
-                               input_size=data_pars["input_size"],
-                               num_of_classes=data_pars["num_of_classes"])
-        val_data.load_data()
-        val_inputs, val_labels = val_data.get_all_data()
+            # Load val data
+            val_data = Data(data_source = path_norm( data_pars["val_data_source"]) ,
+                                   alphabet=data_pars["alphabet"],
+                                   input_size=data_pars["input_size"],
+                                   num_of_classes=data_pars["num_of_classes"])
+            val_data.load_data()
+            val_inputs, val_labels = val_data.get_all_data()
 
         return train_inputs, val_inputs, train_labels, val_labels
 
@@ -224,7 +220,7 @@ def get_params(param_pars={}, **kw):
 
 
 ################################################################################################
-########## Tests are  ##########################################################################
+########## Tests ###############################################################################
 def test(data_path="dataset/", pars_choice="json", config_mode="test"):
     ### Local test
     from mlmodels.util import path_norm
@@ -256,8 +252,8 @@ def test(data_path="dataset/", pars_choice="json", config_mode="test"):
 
 
     log("#### Save/Load   ###################################################")
-    save_pars = {"path" : out_pars['path'] + "/model/" }
-    save(model, session, save_pars= save_pars)
+    save_pars = {"path": out_pars['path']}
+    save(model, session, save_pars=save_pars)
     model2, session2 = load(save_pars)
 
     log("#### Save/Load - Predict   #########################################")
