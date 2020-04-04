@@ -5,8 +5,27 @@ List of Functions/Methods
 https://github.com/arita37/mlmodels/blob/dev/README_index_doc.py
 
 
+
+# Installation
+    ### On Linux/MacOS
+    pip install numpy<=1.17.0
+    pip install -e .  -r requirements.txt
+    pip install   -r requirements_fake.txt
+
+
+    ### On Windows
+    VC 14   https://www.visualstudio.com/downloads/#build-tools-for-visual-studio-2019
+    pip install numpy<=1.17.0
+    pip install torch==1..1 -f https://download.pytorch.org/whl/torch_stable.html
+    pip install -e .  -r requirements_wi.txt
+    pip install   -r requirements_fake.txt
+
+
+    ### No Deps
+    # pip install -e .  --no-deps
+
 ___________________________________________________________________________________________
-# Steps  to do a PR,  do a fix or add a new model :
+# Steps  for : Pull Request, a Fix or add a New Model :
 
 
 ### Coding Style
