@@ -4,8 +4,7 @@
 
 """
 import os
-
-
+import numpy as np
 from keras.callbacks import EarlyStopping
 
 
@@ -67,12 +66,22 @@ def fit(model, data_pars=None, compute_pars=None, out_pars=None, **kw):
     return model, sess
 
 
-def fit_metrics(model, session=None, data_pars=None, compute_pars=None, out_pars=None, **kw):
+def fit_metrics(model, data_pars=None, compute_pars=None, out_pars=None, **kw):
     """
        Return metrics ofw the model when fitted.
     """
+    from sklearn.metrics import accuracy_score
+    _,Xval,_, yval = get_dataset(data_pars)
+    ypred = model.model.predict(Xval)
+    metric_score_name = compute_pars.get('metric_score') 
+    if metric_score_name is None :
+        return {}
     ddict = {}
-
+    if metric_score_name == "accuracy_score":
+        ypred = ypred.argmax(axis=1)
+        yval = np.argmax(yval, axis=1)
+        score = accuracy_score(yval, ypred)
+        ddict[metric_score_name] = score
     return ddict
 
 

@@ -26,7 +26,8 @@
     },
     "compute_pars": {
       "epochs": 1,
-      "batch_size": 128
+      "batch_size": 128,
+      "metric_score": "accuracy_score"
     },
     "out_pars": {
       "path": "ztest/ml_keras/charcnn/charcnn.h5",
