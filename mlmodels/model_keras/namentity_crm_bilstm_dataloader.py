@@ -58,12 +58,10 @@ class Model:
         if model_pars is None:
             self.model = None
 
-        else:            
-            self.loader = KerasDataLoader(**data_pars)
-            max_len = self.loader['max_len']
-            num_tags = self.loader.output_shape[2][2] #ytrain's last dim is the number of tags
-            words = self.loader.get_data()[4]
-
+        else:
+            X_train, X_test, y_train, y_test, words = get_dataset(data_pars)
+            max_len = X_train.shape[1]
+            num_tags = y_train.shape[2]
             # Model architecture
             input = Input(shape=(max_len,))
             model = Embedding(input_dim=words, output_dim=model_pars["embedding"], input_length=max_len)(input)
@@ -88,7 +86,7 @@ def fit(model, data_pars=None, compute_pars=None, out_pars=None, **kw):
     epochs = compute_pars['epochs']
 
     sess = None  #
-    Xtrain, Xtest, ytrain, ytest, _ = model.loader.get_data()
+    Xtrain, Xtest, ytrain, ytest, _ =  get_dataset(data_pars)
 
     early_stopping = EarlyStopping(monitor='val_acc', patience=3, mode='max')
 
@@ -122,7 +120,7 @@ def fit_metrics(model, data_pars=None, compute_pars=None, out_pars=None, **kw):
 def predict(model, sess=None, data_pars=None, out_pars=None, compute_pars=None, **kw):
     ##### Get Data ###############################################
     data_pars['train'] = False
-    Xtrain, Xtest, ytrain, ytest, _ = model.loader.get_data()
+    Xtrain, Xtest, ytrain, ytest, _ = get_dataset(data_pars)
 
     #### Do prediction
     ypred = model.model.predict(Xtest)
@@ -154,6 +152,9 @@ def load(load_pars):
 
 ####################################################################################################
 
+def get_dataset(data_pars, return_preprocessor_function = False):
+    loader = KerasDataLoader(**data_pars)
+    return (loader.get_data(), loader.preprocessor) if return_preprocessor_function else loader.get_data()
 
 def get_params(param_pars={}, **kw):
     import json

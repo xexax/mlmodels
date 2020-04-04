@@ -124,11 +124,13 @@ class Preprocessor:
             for pars in preprocessor_dict:
                 preprocessed_data = self._interpret_preprocessor(pars)
         else:
-            self.interpret_preprocessor(preprocessor_dict)
+            self._interpret_preprocessor(preprocessor_dict)
 
     def _interpret_preprocessor(self, pars):
+        if len(pars.keys()) == 0:
+            return None
         try:
-            data_preprocessor = pars.pop("data_preprocessor")
+            data_preprocessor = pars.get("data_preprocessor")
         except KeyError:
             raise MissingDataPreprocessorError()
         if isinstance(data_preprocessor, list):
@@ -141,14 +143,14 @@ class Preprocessor:
 
     def _interpret_encoder(self, encoder_pars):
         try:
-            index = encoder_pars.pop("index")
+            index = encoder_pars.get("index")
         except:
             raise EncoderMissingIndexError(encoder_pars)
         try:
-            encoder_str = encoder_pars.pop("encoder")
+            encoder_str = encoder_pars.get("encoder")
         except:
             raise EncoderMissingEncoderError(encoder_pars)
-        output_name = encoder_pars.pop("output_name", index)
+        output_name = encoder_pars.get("output_name", index)
         encoder, args = load_callable_from_dict(encoder_str)
         return index, encoder, output_name, args
 
@@ -176,12 +178,18 @@ class Preprocessor:
                         )
                         out = preprocessor_instance.transform(selection)
                     else:
-                        transform = (lambda x: encoder(x, **args)) if args is not None else lambda x: encoder(x)
+                        transform = (
+                            (lambda x: encoder(x, **args))
+                            if args is not None
+                            else lambda x: encoder(x)
+                        )
                         encoders.append((index, transform, output_name))
                         out = transform(selection)
                     if (
-                        (isinstance(output_name, list)
-                        or isinstance(output_name, tuple))
+                        (
+                            isinstance(output_name, list)
+                            or isinstance(output_name, tuple)
+                        )
                         and (isinstance(out, list) or isinstance(out, tuple))
                         and len(output_name) != len(out)
                     ):
@@ -196,7 +204,11 @@ class Preprocessor:
                     self._preprocessors.append(preprocessor_instance.transform)
                     data = preprocessor_instance.transform(data)
                 else:
-                    transform = (lambda x: preprocessor(x, **args)) if args is not None else lambda x: preprocessor(x)
+                    transform = (
+                        (lambda x: preprocessor(x, **args))
+                        if args is not None
+                        else lambda x: preprocessor(x)
+                    )
                     self._preprocessors.append(transform)
                     data = transform(data)
         return data
