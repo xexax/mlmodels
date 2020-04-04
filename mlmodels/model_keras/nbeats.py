@@ -22,7 +22,7 @@ MODEL_URI = get_model_uri(__file__)
 
 
 #### Import EXISTING model and re-map to mlmodels
-from nbeats_keras.model import NBeatsNet
+from mlmodels.model_keras.raw.nbeats_keras.model import NBeatsNet
 
 
 
@@ -64,30 +64,33 @@ def main():
     np.testing.assert_almost_equal(predictions, predictions2)
 
 
-if __name__ == '__main__':
-    main()
-
-
 
 ####################################################################################################
 class Model:
-    def __init__(self, model_pars=None, data_pars=None, compute_pars=None
-                 ):
+    def __init__(self, model_pars=None, data_pars=None, compute_pars=None  ):
         ### Model Structure        ################################
         if model_pars is None :
             self.model = None
             return None
 
-        num_samples, time_steps, input_dim, output_dim = 50_000, 10, 1, 1
+        m = model_pars
+        num_samples = m['num_samples']
+        time_steps  = m['time_steps']
+        input_dim   = m['input_dim']
+        output_dim  = m['output_dim']
+
+        # num_samples, time_steps, input_dim, output_dim = 50_000, 10, 1, 1
 
         # Definition of the model.
         model = NBeatsNet(backcast_length=time_steps, forecast_length=output_dim,
                           stack_types=(NBeatsNet.GENERIC_BLOCK, NBeatsNet.GENERIC_BLOCK), nb_blocks_per_stack=2,
                           thetas_dim=(4, 4), share_weights_in_stack=True, hidden_layer_units=64)
 
+        loss = compute_pars['loss']
+        lr   = compute_pars['learning_rate']
         # Definition of the objective function and the optimizer.
-        model.compile_model(loss='mae', learning_rate=1e-5)
-
+        # model.compile_model(loss='mae', learning_rate=1e-5)
+        model.compile_model(loss= loss, learning_rate= learning_rate )
 
 
 
@@ -141,7 +144,6 @@ def reset_model():
 
 def save(model=None,  save_pars=None, session=None):
     from mlmodels.util import save_keras
-    print(save_pars)
     save_keras(model, session, save_pars=save_pars)
 
 
@@ -215,7 +217,7 @@ def get_params(param_pars={}, **kw):
         log("#### Path params   ##########################################")
         root       = path_norm()
         data_path  = path_norm( "dataset/text/imdb.npz"  )   
-        out_path   = path_norm( "ztest/model_keras/charcnn/" )
+        out_path   = path_norm( "ztest/model_keras/nbeats/" )
         model_path = os.path.join(out_path , "model")
 
 
@@ -249,7 +251,7 @@ def get_params(param_pars={}, **kw):
         }
 
         out_pars = {
-            "path":  path_norm( "ztest/ml_keras/charcnn/charcnn.h5"),
+            "path":  path_norm( "ztest/ml_keras/nbeats/nbeats.h5"),
             "data_type": "pandas",
             "size": [0, 0, 6],
             "output_size": [0, 6]
@@ -313,13 +315,13 @@ if __name__ == '__main__':
     test(pars_choice="test01")
 
     #### Local json file
-    test(pars_choice="json", data_path= f"model_keras/charcnn.json")
+    test(pars_choice="json", data_path= f"model_keras/nbeats.json")
 
 
     # ####    test_module(model_uri="model_xxxx/yyyy.py", param_pars=None)
     # from mlmodels.models import test_module
     #
-    # param_pars = {'choice': "json", 'config_mode': 'test', 'data_path': "model_keras/charcnn.json"}
+    # param_pars = {'choice': "json", 'config_mode': 'test', 'data_path': "model_keras/nbeats.json"}
     # test_module(model_uri=MODEL_URI, param_pars=param_pars)
     #
     # #### get of get_params
@@ -330,7 +332,7 @@ if __name__ == '__main__':
     # ####    test_api(model_uri="model_xxxx/yyyy.py", param_pars=None)
     # from mlmodels.models import test_api
     #
-    # param_pars = {'choice': "json", 'config_mode': 'test', 'data_path': "model_keras/charcnn.json"}
+    # param_pars = {'choice': "json", 'config_mode': 'test', 'data_path': "model_keras/nbeats.json"}
     # test_api(model_uri=MODEL_URI, param_pars=param_pars)
 
 
