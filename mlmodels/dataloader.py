@@ -28,9 +28,10 @@ class DataLoaderError(Exception):
 
 
 
+
+
+"""
 #### Can you remove those Exception... by RaiseError(  )  when needed --> Reduce code volume
-
-
 
 class MissingLocationKeyError(DataLoaderError):
     def __init__(self):
@@ -55,8 +56,7 @@ class NonfileURLError(DataLoaderError):
 class UndeterminableDataLoaderError(DataLoaderError):
     def __init__(self):
         print(
-            f"""Loader function to be used was not provided and could not be
-             automatically inferred from file type."""
+            f"Loader function to be used was not provided and could not be  automatically inferred from file type."
         )
 
 
@@ -81,6 +81,7 @@ class OutputShapeError(DataLoaderError):
             f"""Specified output shape {specified} does not match actual output
             shape {actual}"""
         )
+"""
 
 
 def open_read(file):
@@ -297,7 +298,11 @@ class AbstractDataLoader:
             self.output_shape = shape
         path = output.get("path", None)
 
+
         if isinstance(path, str):
+            path = [path]
+            out_tmp = [ out_tmp ]
+            """
             if isinstance(out_tmp, np.ndarray):
                 np.save(path, out_tmp)
 
@@ -309,6 +314,7 @@ class AbstractDataLoader:
 
             else:
                 pickle.dump(out_tmp, open(path, "wb"))
+            """
 
         elif isinstance(path, list):
             for p, f in zip(path, out_tmp):
