@@ -6,21 +6,21 @@ import pandas as pd
 import numpy as np
 import sklearn
 import keras
+
+
 from sklearn.model_selection import train_test_split
 from cli_code.cli_download import Downloader
 from collections.abc import MutableMapping
 import json
+
 from importlib import import_module
+
 import cloudpickle as pickle
+
 from preprocessor import Preprocessor
+
 from util import load_callable_from_dict
-import re
-import spacy
-import torch
-import torchtext
-from torchtext.data import Field, Pipeline
-from mlmodels.util import log
-from time import sleep
+
 
 
 class DataLoaderError(Exception):
@@ -90,7 +90,7 @@ class AbstractDataLoader:
 
     default_loaders = {
         ".csv": {"uri": "pandas::read_csv"},
-        ".txt": {"uri": "dataloader::open_read"},
+        ".txt": {"uri": "dataloader::open_read"},   #### NO Please make USER input OVer-ride.
         ".npy": {"uri": "numpy::load"},
         ".npz": {"uri": "np::.load", "arg": {"allow_pickle": True}},
         ".pkl": {"uri": "dataloader::pickle_load"},
@@ -178,23 +178,21 @@ class AbstractDataLoader:
         return self._misc_dict[key]
 
     def _interpret_input_pars(self, input_pars):
-        try:
-            path = input_pars["path"]
-        except KeyError:
-            raise MissingLocationKeyError()
-
+        
+        path = input_pars["path"]
         path_type = input_pars.get("path_type", None)
         if path_type is None:
-            if os.path.isfile(path):
-                path_type = "file"
-            if os.path.isdir(path):
-                path_type = "dir"
+            if os.path.isfile(path):  path_type = "file"
+            if os.path.isdir(path):   path_type = "dir"
+                
             if urlparse(path).scheme != "":
                 path_type = "url"
                 download_path = input_pars.get("download_path", "./")
+                
             if path_type == "dropbox":
                 dropbox_download(path)
                 path_type = "file"
+                
             if path_type is None:
                 raise UndeterminableLocationTypeError(path)
 
@@ -203,10 +201,8 @@ class AbstractDataLoader:
 
         file_type = input_pars.get("file_type", None)
         if file_type is None:
-            if path_type == "dir":
-                file_type = "image_dir"
-            elif path_type == "file":
-                file_type = os.path.splitext(path)[1]
+            if   path_type == "dir":   file_type = "image_dir"   #### THIS IS WRONG
+            elif path_type == "file":  file_type = os.path.splitext(path)[1]
             else:
                 if path[-1] == "/":
                     raise NonfileURLError()
