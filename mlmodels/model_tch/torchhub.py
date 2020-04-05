@@ -256,12 +256,12 @@ def fit_metrics(model, data_pars=None, compute_pars=None, out_pars=None):
 
 def save(model, session=None, save_pars=None):
     from mlmodels.util import save_tch
-    save_tch(model, save_pars)
+    save_tch(model=model, save_pars=save_pars)
 
 
 def load(load_pars):
     from mlmodels.util import load_tch
-    load_tch(load_pars)
+    return load_tch(load_pars)
 
 
 
@@ -298,10 +298,10 @@ def test(data_path="dataset/", pars_choice="json", config_mode="test"):
 
 
     log("#### Save/Load   ###################################################")
-    save_pars = { "path": out_pars +"/model/"  }
-    save(model, session, save_pars)
+    save_pars = { "path": out_pars["path"]  }
+    save(model=model, save_pars=save_pars)
     model2 = load( save_pars )
-    ypred = predict(model2, data_pars, compute_pars, out_pars)
+    ypred = predict(model2, data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)
     print(model2)
 
 

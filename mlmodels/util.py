@@ -14,8 +14,7 @@ from mlmodels.util import (os_package_root_path, log, path_norm
 """
 
 
-
-def metrics_evaluate(metric_name="mean_squared_error",ytrue, ypred, ypred_proba=None, ) :
+def metrics_evaluate(metric_name="mean_squared_error", ytrue=None, ypred=None, ypred_proba=None):
     """
       
 Scoring
@@ -199,10 +198,10 @@ metrics.mean_gamma_deviance
     
     if ypred_proba is not None :
        m_val = metric_scorer(ytrue, ypred, ypred_proba)
-   else :
+    else :
        m_val = metric_scorer(ytrue, ypred)
 
-   return m_val
+    return m_val
 
 
 ####################################################################################################
@@ -629,17 +628,22 @@ def load_tch(load_pars):
     import torch
     #path, filename = load_pars['path'], load_pars.get('filename', "model.pkl")
     #path = path + "/" + filename if "." not in path else path
-    path = load_pars['path']
+    if os.path.isdir(load_pars['path']):
+        path, filename = load_pars['path'], "model.pb"
+    else:
+        path, filename = os_path_split(load_pars['path'])
     model = Model_empty()
-    model.model = torch.load(path)
+    model.model = torch.load(Path(path) / filename)
     return model
 
 
 def save_tch(model=None, optimizer=None, save_pars=None):
     import torch
-    path, filename = os_path_split(save_pars['path'])
-    if not os.path.exists(path): 
-        os.makedirs(path, exist_ok=True)
+    if os.path.isdir(save_pars['path']):
+        path, filename = save_pars['path'], "model.pb"
+    else:
+        path, filename = os_path_split(save_pars['path'])
+    if not os.path.exists(path): os.makedirs(path, exist_ok=True)
 
     if save_pars.get('save_state') is not None:
         torch.save({
