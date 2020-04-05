@@ -61,26 +61,11 @@ if __name__ == '__main__':
     for key, value in best_params.items():
         print('    {}: {}'.format(key, value))
 """
-import inspect
 import os
-import sys
-from datetime import datetime, timedelta
 from pathlib import Path
 
-import numpy as np
 import pandas as pd
-
-
-import sklearn.datasets
-from sklearn.metrics import accuracy_score
-from sklearn.model_selection import train_test_split
-
-
-
-# import optuna.integration.lightgbm as lgb
 from lightgbm import LGBMModel
-
-
 
 VERBOSE = False
 MODEL_URI = Path(os.path.abspath(__file__)).parent.name + "." + os.path.basename(__file__).replace(".py", "")
@@ -88,7 +73,7 @@ MODEL_URI = Path(os.path.abspath(__file__)).parent.name + "." + os.path.basename
 
 ####################################################################################################
 ######## Logs, root path
-from mlmodels.util import os_package_root_path, log, path_norm
+from mlmodels.util import log, path_norm
 
 
 
@@ -334,8 +319,8 @@ if __name__ == '__main__':
     ####    test_module(model_uri="model_xxxx/yyyy.py", param_pars=None)
     from mlmodels.models import test_module
 
-    #param_pars = {'choice': "test01", 'config_mode': 'test', 'data_path': '/dataset/'}
-    #test_module(module_uri=MODEL_URI, param_pars=param_pars)
+    param_pars = {'choice': "test01", 'config_mode': 'test', 'data_path': '/dataset/'}
+    test_module(model_uri=MODEL_URI, param_pars=param_pars)
 
     ##### get of get_params
     # choice      = pp['choice']
@@ -346,5 +331,5 @@ if __name__ == '__main__':
     from mlmodels.models import test_api
 
     param_pars = {'choice': "test01", 'config_mode': 'test', 'data_path': '/dataset/'}
-    #test_api(module_uri=MODEL_URI, param_pars=param_pars)
+    test_api(model_uri=MODEL_URI, param_pars=param_pars)
 

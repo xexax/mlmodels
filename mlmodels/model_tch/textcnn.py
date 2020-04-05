@@ -264,13 +264,13 @@ class Model:
 
 
 
-def fit_metrics(model, session=None, data_pars=None, out_pars=None, **kwargs):
+def fit_metrics(model, session=None, data_pars=None, compute_pars=None, out_pars=None, **kwargs):
     # return metrics on full dataset
     device = _get_device()
     data_pars = data_pars.copy()
     data_pars.update(frac=1)
     test_iter, _, vocab = get_dataset(data_pars, out_pars)
-    model.rebuild_embed(vocab)
+    model.model.rebuild_embed(vocab)
 
     return _valid(model.model, device, test_iter)
 
@@ -443,7 +443,7 @@ def test(data_path="dataset/", pars_choice="json", config_mode="test"):
 
 
     log("#### Save/Load   ###################################################")
-    save_pars = {"path": out_pars['model_path'] + "/model.pkl"}
+    save_pars = {"path": out_pars['path'] + "/model.pkl"}
     save(model, session, save_pars=save_pars)
     model2, session2 = load(save_pars)
     ypred = predict(model2, session2, data_pars, compute_pars, out_pars)

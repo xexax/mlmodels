@@ -15,7 +15,8 @@ from mlmodels.util import (os_package_root_path, log, path_norm
 
 
 
-def metrics_evaluate(metric_names=["mean_squared_error"],ytrue, ypred, ypred_proba=None, ) :
+def metrics_evaluate(metric_name=["mean_squared_error"], ytrue=None, ypred=None, ypred_proba=None):
+
     """
       
 Scoring
@@ -208,6 +209,7 @@ metrics.mean_gamma_deviance
         
       mdict["metric_val"].append(mval)
       return mdict
+
 
 
 ####################################################################################################
@@ -634,17 +636,22 @@ def load_tch(load_pars):
     import torch
     #path, filename = load_pars['path'], load_pars.get('filename', "model.pkl")
     #path = path + "/" + filename if "." not in path else path
-    path = load_pars['path']
+    if os.path.isdir(load_pars['path']):
+        path, filename = load_pars['path'], "model.pb"
+    else:
+        path, filename = os_path_split(load_pars['path'])
     model = Model_empty()
-    model.model = torch.load(path)
+    model.model = torch.load(Path(path) / filename)
     return model
 
 
 def save_tch(model=None, optimizer=None, save_pars=None):
     import torch
-    path, filename = os_path_split(save_pars['path'])
-    if not os.path.exists(path): 
-        os.makedirs(path, exist_ok=True)
+    if os.path.isdir(save_pars['path']):
+        path, filename = save_pars['path'], "model.pb"
+    else:
+        path, filename = os_path_split(save_pars['path'])
+    if not os.path.exists(path): os.makedirs(path, exist_ok=True)
 
     if save_pars.get('save_state') is not None:
         torch.save({
@@ -690,14 +697,11 @@ def load_pkl(load_pars):
 
 def save_pkl(model=None, session=None, save_pars=None):
     import cloudpickle as pickle
-    path, filename = os_path_split(save_pars['path'])
-    filename = "model.json"
-    os.makedirs(path, exist_ok=True)
-    return pickle.dump(model, open( f"{path}/{filename}" , mode='wb') )
-    path = save_pars['path']
-    filename = "model.pkl"
-    os.makedirs(path, exist_ok=True)
-    print(f"{path}/{filename}")
+    if os.path.isdir(save_pars['path']):
+        path, filename = save_pars['path'], "model.pkl"
+    else:
+        path, filename = os_path_split(save_pars['path'])
+    if not os.path.exists(path): os.makedirs(path, exist_ok=True)
     return pickle.dump(model, open( f"{path}/{filename}" , mode='wb') )
 
 
