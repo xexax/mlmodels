@@ -146,24 +146,14 @@ class AbstractDataLoader:
                     except:
                         misc_input.append(processed_data[m])
 
-        split_size_arg_dict = {
-            self.validation_split_function[1]: self.test_size,
-            **self.validation_split_function[2],
-        }
-        if (
-            self.test_size > 0
-            and not self.generator
-            and len(Xinput) > 0
-            and len(yinput) > 0
-        ):
+        split_size_arg_dict = {self.validation_split_function[1]: self.test_size, **self.validation_split_function[2], } 
 
-            processed_data = self.validation_split_function[0](
-                *(Xinput + yinput), **split_size_arg_dict
-            )
+
+        if (self.test_size > 0 and not self.generator and len(Xinput) > 0 and len(yinput) > 0 ):
+            processed_data = self.validation_split_function[0]( *(Xinput + yinput), **split_size_arg_dict ) 
+
         elif self.test_size > 0:
-            processed_data = self.validation_split_function[0](
-                processed_data, **split_size_arg_dict
-            )
+            processed_data = self.validation_split_function[0](processed_data, **split_size_arg_dict )
 
         if isinstance(processed_data, Preprocessor.output_dict_type):
             processed_data = list(processed_data.values())
@@ -218,9 +208,12 @@ class AbstractDataLoader:
                 self.batch_size = int(input_pars.get("batch_size", 1))
             except:
                 raise NonIntegerBatchSizeError()
+
         self.X_cols = input_pars.get("X_cols", None)
         self.y_cols = input_pars.get("y_cols", None)
         self.misc_cols = input_pars.get("misc_cols", None)
+
+
 
     def _load_data(self, loader):
         data_loader = loader.get("data_loader", None)
@@ -238,34 +231,42 @@ class AbstractDataLoader:
                 assert callable(loader_function)
             except:
                 raise InvalidDataLoaderFunctionError(data_loader)
+
+
         if self.path_type == "file":
             if self.generator:
                 if self.file_type == "csv":
                     if loader_function == pd.read_csv:
-                        loader_args["chunksize"] = loader.get(
-                            "chunksize", self.batch_size
-                        )
-            loader_arg = self.path
+                        loader_args["chunksize"] = loader.get("chunksize", self.batch_size ) loader_arg = self.path
+
 
         if self.path_type == "url":
             if self.file_type == "csv" and loader_function == pd.read_csv:
                 data = loader_function(self.path, **loader_args)
+
             else:
                 downloader = Downloader(url)
                 downloader.download(out_path)
                 filename = self.path.split("/")[-1]
                 loader_arg = out_path + "/" + filename
 
+
         data = loader_function(loader_arg, **loader_args)
         if self.path_type == "directory":
             data = self._image_directory_load(self.path, self.generator)
+
         if self.file_type == "npz" and loader_function == np.load:
             data = [data[f] for f in data.files]
+
         return data
+
+
 
     def _image_directory_load(self, directory, generator):
         # To be overridden by loaders, or possibly use Keras's ImageDataGenerator by default, as it's designed to be universal
         pass
+
+
 
     def _interpret_output(self, output):
         max_len = output.get("out_max_len", None)
@@ -289,12 +290,13 @@ class AbstractDataLoader:
         if isinstance(path, str):
             if isinstance(intermediate_output, np.ndarray):
                 np.save(path, intermediate_output)
+
             elif isinstance(intermediate_output, pd.core.frame.DataFrame):
                 intermediate_output.to_csv(path)
-            elif isinstance(intermediate_output, list) and all(
-                [isinstance(x, np.ndarray) for x in intermediate_output]
-            ):
+
+            elif isinstance(intermediate_output, list) and all([isinstance(x, np.ndarray) for x in intermediate_output] ): 
                 np.savez(path, *intermediate_output)
+
             else:
                 pickle.dump(intermediate_output, open(path, "wb"))
 
@@ -302,11 +304,11 @@ class AbstractDataLoader:
             for p, f in zip(path, intermediate_output):
                 if isinstance(f, np.ndarray):
                     np.save(p, self.f)
+
                 elif isinstance(f, pd.core.frame.DataFrame):
                     f.to_csv(f)
-                elif isinstance(f, list) and all(
-                    [isinstance(x, np.ndarray) for x in f]
-                ):
+
+                elif isinstance(f, list) and all([isinstance(x, np.ndarray) for x in f] ): 
                     np.savez(p, *f)
                 else:
                     pickle.dump(f, open(p, "wb"))
@@ -315,33 +317,15 @@ class AbstractDataLoader:
         return self.intermediate_output
 
 
-class TensorflowDataLoader(AbstractDataLoader):
-    def __init__(self, *args, **kwargs):
-        super(TensorflowDataLoader, self).__init__(*args, **kwargs)
-        # Create a tf.data.Dataset object
-
-
-class KerasDataLoader(AbstractDataLoader):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        # Create a model.fit_generator-compatible generator
-
-
 class PyTorchDataLoader(AbstractDataLoader):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         if self.generator:
-            if isinstance(self.intermediate_output, list) or isinstance(
-                self.intermediate_output, tuple
-            ):
-                self.intermediate_output = [
-                    torchtext.data.Iterator(
-                        output,
-                        self.batch_size,
-                        device=torch.device(
-                            "cuda" if torch.cuda.is_available() else "cpu"
-                        ),
-                    )
+            if isinstance(self.intermediate_output, list) or isinstance(self.intermediate_output, tuple ):
+
+                device = torch.device("cuda" if torch.cuda.is_available() else "cpu"  ### Not automatic, user supplied please
+
+                self.intermediate_output = [ torchtext.data.Iterator(output, self.batch_size, device= device ),
                     for output in self.intermediate_output
                 ]
             else:
@@ -419,6 +403,38 @@ class PyTorchDataLoader(AbstractDataLoader):
     def _interpret_output(self, output):
         # if the intermediate data is a torch Dataset or Iterator, handle special logic. otherwise, default.
         super(PyTorchDataLoader, self)._interpret_output(output)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+class TensorflowDataLoader(AbstractDataLoader):
+    def __init__(self, *args, **kwargs):
+        super(TensorflowDataLoader, self).__init__(*args, **kwargs)
+        # Create a tf.data.Dataset object
+
+
+class KerasDataLoader(AbstractDataLoader):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Create a model.fit_generator-compatible generator
+
+
+
 
 
 class GluonTSDataLoader(AbstractDataLoader):
