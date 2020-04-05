@@ -14,7 +14,9 @@ from mlmodels.util import (os_package_root_path, log, path_norm
 """
 
 
+
 def metrics_evaluate(metric_name="mean_squared_error", ytrue=None, ypred=None, ypred_proba=None):
+
     """
       
 Scoring
@@ -194,14 +196,20 @@ metrics.mean_gamma_deviance
     
     """
     from sklearn.metrics import get_scorer
-    metric_scorer = get_scorer(metric_name)
     
-    if ypred_proba is not None :
-       m_val = metric_scorer(ytrue, ypred, ypred_proba)
-    else :
-       m_val = metric_scorer(ytrue, ypred)
+    mdict = {   "metric-name": [],
+"metric val": [] }
+    for metric_name in metric_names :
+      metric_scorer = get_scorer(metric_name)
+    
+      if ypred_proba is not None :
+        m_val = metric_scorer(ytrue, ypred, ypred_proba)
+      else :
+        m_val = metric_scorer(ytrue, ypred)
+        
+      mdict["metric_val"].append(mval)
+      return mdict
 
-    return m_val
 
 
 ####################################################################################################
