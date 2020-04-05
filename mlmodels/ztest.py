@@ -214,7 +214,7 @@ def cli_load_arguments(config_file=None):
         Load CLI input, load config.toml , overwrite config.toml by CLI Input
     """
     import argparse
-    from util import load_config, path_norm, os_package_root_path
+    from mlmodels.util import load_config, path_norm, os_package_root_path
     if config_file is None  :
       config_file =  os_package_root_path() + "/config/test_config.json"
     print(config_file)
