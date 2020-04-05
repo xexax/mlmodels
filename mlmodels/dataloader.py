@@ -2,6 +2,9 @@ import os
 import sys
 import inspect
 from urllib.parse import urlparse
+from collections.abc import MutableMapping
+import json
+
 import pandas as pd
 import numpy as np
 import sklearn
@@ -10,8 +13,7 @@ import keras
 
 from sklearn.model_selection import train_test_split
 from cli_code.cli_download import Downloader
-from collections.abc import MutableMapping
-import json
+
 
 from importlib import import_module
 
@@ -316,7 +318,7 @@ class AbstractDataLoader:
                 pickle.dump(out_tmp, open(path, "wb"))
             """
 
-        elif isinstance(path, list):
+        if isinstance(path, list):
             for p, f in zip(path, out_tmp):
                 if isinstance(f, np.ndarray):
                     np.save(p, self.f)
