@@ -27,6 +27,11 @@ class DataLoaderError(Exception):
     pass
 
 
+
+#### Can you remove those Exception... by RaiseError(  )  when needed --> Reduce code volume
+
+
+
 class MissingLocationKeyError(DataLoaderError):
     def __init__(self):
         print("Location key missing from the input dictionary.")
@@ -105,64 +110,66 @@ class AbstractDataLoader:
         loaded_data = self._load_data(loader)
         if isinstance(preprocessor, Preprocessor):
             self.preprocessor = preprocessor
-            processed_data = self.preprocessor.transform(loaded_data)
+            data_tmp = self.preprocessor.transform(loaded_data)
 
         else:
             self.preprocessor = Preprocessor(preprocessor)
-            processed_data = self.preprocessor.fit_transform(loaded_data)
+            data_tmp = self.preprocessor.fit_transform(loaded_data)
+
 
         ######## Xinput
         Xinput = []
         if self.X_cols is not None:
             for x in self.X_cols:
                 if isinstance(x, str):
-                    Xinput.append(processed_data[x])
+                    Xinput.append(data_tmp[x])
                 else:
                     try:
-                        Xinput.append(processed_data[:, x])
+                        Xinput.append(data_tmp[:, x])
                     except:
-                        Xinput.append(processed_data[x])
+                        Xinput.append(data_tmp[x])
 
         ######## yinput
         yinput = []
         if self.y_cols is not None:
             for y in self.y_cols:
                 if isinstance(y, str):
-                    yinput.append(processed_data[y])
+                    yinput.append(data_tmp[y])
                 else:
                     try:
-                        yinput.append(processed_data[:, y])
+                        yinput.append(data_tmp[:, y])
                     except:
-                        yinput.append(processed_data[y])
+                        yinput.append(data_tmp[y])
 
         ####### Other columns (columns that shouldn't be split if test_size > 0)
         misc_input = []
         if self.misc_cols is not None:
             for m in self.misc_cols:
                 if isinstance(m, str):
-                    misc_input.append(processed_data[m])
+                    misc_input.append(data_tmp[m])
                 else:
                     try:
-                        misc_input.append(processed_data[:, m])
+                        misc_input.append(data_tmp[:, m])
+
                     except:
-                        misc_input.append(processed_data[m])
+                        misc_input.append(data_tmp[m])
 
         split_size_arg_dict = {self.val_split_function[1]: self.test_size, **self.val_split_function[2], } 
 
 
         if (self.test_size > 0 and not self.generator and len(Xinput) > 0 and len(yinput) > 0 ):
-            processed_data = self.val_split_function[0]( *(Xinput + yinput), **split_size_arg_dict ) 
+            data_tmp = self.val_split_function[0]( *(Xinput + yinput), **split_size_arg_dict ) 
 
         elif self.test_size > 0:
-            processed_data = self.val_split_function[0](processed_data, **split_size_arg_dict )
+            data_tmp = self.val_split_function[0](data_tmp, **split_size_arg_dict )
 
-        if isinstance(processed_data, Preprocessor.output_dict_type):
-            processed_data = list(processed_data.values())
+        if isinstance(data_tmp, Preprocessor.output_dict_type):
+            data_tmp = list(data_tmp.values())
 
-        if isinstance(processed_data, list) and len(processed_data) == 1:
-            processed_data = processed_data[0]
+        if isinstance(data_tmp, list) and len(data_tmp) == 1:
+            data_tmp = data_tmp[0]
 
-        self.out_tmp = processed_data
+        self.out_tmp = data_tmp
         self._interpret_output(output)
 
     def __getitem__(self, key):
@@ -222,6 +229,7 @@ class AbstractDataLoader:
         if isinstance(data_loader, tuple):
             loader_function = data_loader[0]
             loader_args = data_loader[1]
+
         else:
             if data_loader is None:
                 try:
