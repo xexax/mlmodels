@@ -109,7 +109,6 @@ mlmodels.model_tch.pplm.py
 mlmodels.model_tch.textcnn.py
 mlmodels.model_tch.torchhub.py
 mlmodels.model_tch.transformer_classifier.py
-mlmodels.model_tch.transformer_classifier2.py
 mlmodels.model_tch.transformer_sentence.py
 
 

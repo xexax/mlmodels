@@ -1,3 +1,13 @@
+mlmodels\benchmark.py
+----------------methods----------------
+
+---------------functions---------------
+cli_load_arguments( config_file=None,  )
+config_model_list( folder=None,  )
+main(  )
+run_benchmark_all(json_path,  bench_pars=None,  )
+
+
 mlmodels\data.py
 ----------------methods----------------
 
@@ -8,6 +18,49 @@ import_data(  )
 import_data_dask(  **kw)
 import_data_fromfile(  **kw)
 import_data_tch( name="", mode="train", node_id=0, data_folder_root="",  )
+
+
+mlmodels\dataloader.py
+----------------methods----------------
+AbstractDataLoader.__init__(self, input_pars, loader, preprocessor, output,   )
+AbstractDataLoader._image_directory_load(self, directory, generator,   )
+AbstractDataLoader._interpret_input_pars(self, input_pars,   )
+AbstractDataLoader._interpret_output(self, output,   )
+AbstractDataLoader._interpret_processor(self, preprocessor, data,   )
+AbstractDataLoader._load_data(self, loader,   )
+AbstractDataLoader._preprocessor(self, data, pars,   )
+AbstractDataLoader.preprocess_new_data(self, data,   )
+EncoderMissingEncoderError.__init__(self, encoder_pars,   )
+EncoderMissingIndexError.__init__(self, encoder_pars,   )
+GluonTSDataLoader.__init__(self,   *args, **kwargs)
+InvalidDataLoaderFunctionError.__init__(self, loader,   )
+InvalidDataPreprocessorError.__init__(self, preprocessor,   )
+InvalidDataPreprocessorParameterError.__init__(self, parameter,   )
+InvalidEncoderError.__init__(self, preprocessor,   )
+InvalidEncoderParameterError.__init__(self, parameter,   )
+KerasDataLoader.__init__(self,   *args, **kwargs)
+MissingDataPreprocessorError.__init__(self,   )
+MissingLocationKeyError.__init__(self,   )
+NonCallableDataPreprocessorError.__init__(self, preprocessor,   )
+NonCallableEncoderError.__init__(self, preprocessor,   )
+NonIntegerBatchSizeError.__init__(self,   )
+NonfileURLError.__init__(self,   )
+NumpyGeneratorError.__init__(self,   )
+OutputShapeError.__init__(self, specified, actual,   )
+PreprocssingOutputDict.__getitem__(self, key,   )
+PreprocssingOutputDict.__init__(self,   *args, **kwargs)
+PreprocssingOutputDict.__repr__(self,   )
+PreprocssingOutputDict.__setitem__(self, key, value,   )
+PreprocssingOutputDict.__str__(self,   )
+PreprocssingOutputDict.values(self,   )
+PyTorchDataLoader.__init__(self,   *args, **kwargs)
+TensorflowDataLoader.__init__(self,   *args, **kwargs)
+UndeterminableDataLoaderError.__init__(self,   )
+UndeterminableLocationTypeError.__init__(self,   )
+UnknownLocationTypeError.__init__(self, location_type,   )
+
+---------------functions---------------
+load_function(f,   )
 
 
 mlmodels\distri_torch.py
@@ -36,7 +89,7 @@ load(module, load_pars,   **kwarg)
 main(  )
 metrics(module, model,  sess=None, data_pars=None, compute_pars=None, out_pars=None,  **kwarg)
 model_create(module,  model_pars=None, data_pars=None, compute_pars=None,  **kwarg)
-module_env_build( model_uri="", verbose=0, env_build=0,  )
+module_env_build( model_uri="", verbose=0, do_env_build=0,  )
 module_load( model_uri="", verbose=0, env_build=0,  )
 module_load_full( model_uri="", model_pars=None, data_pars=None, compute_pars=None, choice=None,  **kwarg)
 os_folder_copy(src, dst,   )
@@ -56,11 +109,19 @@ mlmodels\optim.py
 cli_load_arguments( config_file=None,  )
 main(  )
 optim( model_uri="model_tf.1_lstm.py", hypermodel_pars={}, model_pars={}, data_pars={}, compute_pars={}, out_pars={},  )
-optim_optuna( model_uri="model_tf.1_lstm.py", hypermodel_pars={"engine" :{},  )
-post_process_best(model, model_uri, model_pars_update, data_pars, compute_pars, out_pars,   )
+optim_optuna( model_uri="model_tf.1_lstm.py", hypermodel_pars={"engine_pars": {},  )
+post_process_best(model, module, model_uri, model_pars_update, data_pars, compute_pars, out_pars,   )
 test_all(  )
 test_fast( ntrials=2,  )
 test_json( path_json="", config_mode="test",  )
+
+
+mlmodels\parse.py
+----------------methods----------------
+
+---------------functions---------------
+cli_load_arguments( config_file=None,  )
+extract_args(txt, outfile,   )
 
 
 mlmodels\pipeline.py
@@ -111,7 +172,7 @@ get_recursive_files3(folderPath, ext,   )
 load(load_pars,   )
 load_config(args, config_file, config_mode,  verbose=0,  )
 load_gluonts( load_pars=None,  )
-load_keras(load_pars,   )
+load_keras(load_pars,  custom_pars=None,  )
 load_pkl(load_pars,   )
 load_tch(load_pars,   )
 load_tch_checkpoint(model, optimiser, load_pars,   )
@@ -129,7 +190,7 @@ path_norm_dict(ddict,   )
 save( model=None, session=None, save_pars=None,  )
 save_gluonts( model=None, session=None, save_pars=None,  )
 save_keras( model=None, session=None, save_pars=None,  )
-save_pkl( model=None, save_pars=None,  )
+save_pkl( model=None, session=None, save_pars=None,  )
 save_tch( model=None, optimizer=None, save_pars=None,  )
 save_tch_checkpoint(model, optimiser, save_pars,   )
 save_tf( model=None, sess=None, save_pars=None,  )
@@ -145,9 +206,12 @@ mlmodels\ztest.py
 cli_load_arguments( config_file=None,  )
 main(  )
 os_file_current_path(  )
-test_all(  )
+test_all( arg=None,  )
+test_all( arg=None,  )
 test_custom(  )
-test_import(  )
+test_import(arg,   )
+test_json(arg,   )
+test_jupyter( arg=None, config_mode="test_all",  )
 test_list(mlist,   )
 test_model_structure(  )
 
@@ -167,6 +231,12 @@ os_package_root_path(filepath,  sublevel=0, path_add="",  )
 
 
 mlmodels\__init__.py
+----------------methods----------------
+
+---------------functions---------------
+
+
+mlmodels\config\json\model_tch\raw\vae_pretraining_encoder\text_beta.py
 ----------------methods----------------
 
 ---------------functions---------------
@@ -903,12 +973,14 @@ Model.__init__(self,  model_pars=None, compute_pars=None, data_pars=None,  )
 
 ---------------functions---------------
 fit(model,  data_pars=None, model_pars=None, compute_pars=None, out_pars=None, session=None,  **kwargs)
-get_dataset(data_params,   **kw)
+get_dataset(data_pars,   **kw)
 get_params( choice=0, data_path="dataset/",  **kw)
+load( load_pars={},  )
 log( n=0, m=1,  *s)
-metrics(ypred, data_pars,  compute_pars=None, out_pars=None,  **kwargs)
+metrics(ypred, model,  session=None, model_pars=None, data_pars=None, compute_pars=None, out_pars=None,  **kwargs)
 os_package_root_path(filepath,  sublevel=0, path_add="",  )
-predict(model, data_pars,  compute_pars=None, out_pars=None,  **kwargs)
+predict(model,  session=None, data_pars=None, compute_pars=None, out_pars=None,  **kwargs)
+save( model=None, session=None, save_pars={},  )
 test( data_path="dataset/",  )
 test2( data_path="dataset/", out_path="keras/keras.png", reset=True,  )
 
@@ -919,15 +991,15 @@ Model.__init__(self,  model_pars=None, data_pars=None, compute_pars=None,  )
 
 ---------------functions---------------
 fit( model=None, data_pars={}, compute_pars={}, out_pars={},  **kw)
-get_dataset( data_pars=None,  **kw)
+fit_metrics(model,  data_pars=None, compute_pars=None, out_pars=None,  **kw)
 get_dataset(data_params,   )
-get_params( choice=0, data_path="dataset/",  **kw)
-load( load_pars={},  )
-log( n=0, m=1,  *s)
-os_package_root_path(filepath,  sublevel=0, path_add="",  )
+get_params( param_pars={},  **kw)
+load( load_pars={},  **kw)
+metrics_plot(metrics_params,   )
 predict( model=None, model_pars=None, data_pars=None,  **kwargs)
+reset_model(  )
 save( model=None, session=None, save_pars={},  )
-test( data_path="dataset/",  )
+test( data_path="dataset/", pars_choice="test0", config_mode="test",  )
 
 
 mlmodels\model_keras\charcnn.py
@@ -936,13 +1008,13 @@ Model.__init__(self,  model_pars=None, data_pars=None, compute_pars=None,  )
 
 ---------------functions---------------
 fit(model,  data_pars=None, compute_pars=None, out_pars=None,  **kw)
-fit_metrics(model,  data_pars=None, compute_pars=None, out_pars=None,  **kw)
+fit_metrics(model,  session=None, data_pars=None, compute_pars=None, out_pars=None,  **kw)
 get_dataset( data_pars=None,  **kw)
 get_params( param_pars={},  **kw)
-load( load_pars={},  )
-predict(model,  sess=None, data_pars=None, out_pars=None, compute_pars=None,  **kw)
+load( load_pars=None,  )
+predict(model,  session=None, data_pars=None, out_pars=None, compute_pars=None,  **kw)
 reset_model(  )
-save( model=None, session=None, save_pars={},  )
+save( model=None, save_pars=None, session=None,  )
 test( data_path="dataset/", pars_choice="json", config_mode="test",  )
 
 
@@ -2196,8 +2268,8 @@ predict(model,  sess=None, data_pars=None, compute_pars=None, out_pars=None,  **
 
 mlmodels\model_tch\textcnn.py
 ----------------methods----------------
-TextCNN.__init__(self,  model_pars=None,  **kwargs)
-TextCNN.forward(self, x,   )
+Model.__init__(self,  model_pars=None, data_pars=None, compute_pars=None,  )
+TextCNN.__init__(self,  model_pars=None, data_pars=None, compute_pars=None,  **kwargs)
 TextCNN.rebuild_embed(self, vocab_built,   )
 TextCNN.tokenizer(text,   )
 
@@ -2209,16 +2281,16 @@ clean_str(string,   )
 create_data_iterator(tr_batch_size, val_batch_size, tabular_train, tabular_valid, d,   )
 create_tabular_dataset(path_train, path_valid,  lang='en', pretrained_emb='glove.6B.300d',  )
 fit(model,  sess=None, data_pars=None, compute_pars=None, out_pars=None,  **kwargs)
+fit_metrics(model,  session=None, data_pars=None, out_pars=None,  **kwargs)
 get_config_file(  )
 get_data_file(  )
 get_dataset( data_pars=None, out_pars=None,  **kwargs)
 get_params( param_pars=None,  **kw)
-load(path,   )
-metric(model,  data_pars=None, out_pars=None,  **kwargs)
-predict(model,  data_pars=None, compute_pars=None, out_pars=None,  )
-save(model, path,   )
+load( load_pars=None,  )
+predict(model,  session=None, data_pars=None, compute_pars=None, out_pars=None,  )
+save(model,  session=None, save_pars=None,  )
 split_train_valid(path_data, path_train, path_valid,  frac=0.7,  )
-test(  )
+test( data_path="dataset/", pars_choice="json", config_mode="test",  )
 
 
 mlmodels\model_tch\torchhub.py
@@ -2237,7 +2309,7 @@ get_dataset_mnist_torch(data_pars,   )
 get_params( param_pars=None,  **kw)
 load(load_pars,   )
 predict(model,  session=None, data_pars=None, compute_pars=None, out_pars=None,  )
-save(model, session, save_pars,   )
+save(model,  session=None, save_pars=None,  )
 test( data_path="dataset/", pars_choice="json", config_mode="test",  )
 
 
@@ -2261,40 +2333,18 @@ save( model=None, session=None, save_pars={},  )
 test(data_path, model_pars, data_pars, compute_pars, out_pars,  pars_choice=0,  )
 
 
-mlmodels\model_tch\transformer_classifier2.py
-----------------methods----------------
-Model_empty.__init__(self,  model_pars=None, compute_pars=None,  )
-
----------------functions---------------
-_preprocess_XXXX(df,   **kw)
-evaluate(model, tokenizer,  prefix="",  )
-fit(model,  data_pars=None, model_pars={}, compute_pars=None, out_pars=None,  *args, **kw)
-get_dataset( data_pars=None,  **kw)
-get_eval_report(labels, preds,   )
-get_mismatched(labels, preds,   )
-get_params( choice=0, data_path="dataset/",  **kw)
-load( out_pars=None,  )
-metrics(task_name, preds, labels,   )
-metrics_evaluate(  )
-path_setup( out_folder="", sublevel=0, data_path="dataset/",  )
-predict(model,  sess=None, data_pars=None, out_pars=None, compute_pars=None,  **kw)
-reset_model(  )
-save(model, out_pars,   )
-test( data_path="dataset/", pars_choice=0,  )
-
-
 mlmodels\model_tch\transformer_sentence.py
 ----------------methods----------------
 
 ---------------functions---------------
-fit(model,  data_pars=None, model_pars={}, compute_pars=None, out_pars=None,  *args, **kw)
-fit_metrics(model,   **kw)
+fit(model,  data_pars=None, model_pars=None, compute_pars=None, out_pars=None,  *args, **kw)
+fit_metrics(model,  session=None, data_pars=None, compute_pars=None, out_pars=None,  **kw)
 get_dataset( data_pars=None,  **kw)
 get_params(param_pars,   **kw)
-load( out_pars=None,  )
-predict(model,  sess=None, data_pars=None, out_pars=None, compute_pars=None,  **kw)
+load( load_pars=None,  )
+predict(model,  session=None, data_pars=None, out_pars=None, compute_pars=None,  **kw)
 reset_model(  )
-save(model, out_pars,   )
+save(model,  session=None, save_pars=None,  )
 test( data_path="dataset/", pars_choice="test01",  )
 
 
@@ -3264,6 +3314,349 @@ mlmodels\model_tch\raw\vae\models\Beta_VAE_fft\__init__.py
 ----------------methods----------------
 
 ---------------functions---------------
+
+
+mlmodels\model_tch\raw\vae_pretraining_encoder\exp_utils.py
+----------------methods----------------
+
+---------------functions---------------
+create_exp_dir(dir_path,  scripts_to_save=None, debug=False,  )
+get_logger(log_path,   **kwargs)
+logging(s, log_path,  print_=True, log_=True,  )
+save_checkpoint(model, optimizer, path, epoch,   )
+
+
+mlmodels\model_tch\raw\vae_pretraining_encoder\lm.py
+----------------methods----------------
+
+---------------functions---------------
+init_config(  )
+main(args,   )
+test(model, test_data_batch, args,   )
+
+
+mlmodels\model_tch\raw\vae_pretraining_encoder\prepare_data.py
+----------------methods----------------
+
+---------------functions---------------
+download_file_from_google_drive(id, destination,   )
+get_confirm_token(response,   )
+save_response_content(response, destination,   )
+
+
+mlmodels\model_tch\raw\vae_pretraining_encoder\text_anneal_fb.py
+----------------methods----------------
+
+---------------functions---------------
+init_config(  )
+main(args,   )
+test(model, test_data_batch, mode, args,  verbose=True,  )
+
+
+mlmodels\model_tch\raw\vae_pretraining_encoder\text_beta.py
+----------------methods----------------
+
+---------------functions---------------
+init_config(  )
+main(args,   )
+test(model, test_data_batch, mode, args,  verbose=True,  )
+
+
+mlmodels\model_tch\raw\vae_pretraining_encoder\text_get_mean.py
+----------------methods----------------
+
+---------------functions---------------
+init_config(  )
+main(args,   )
+save_latents(args, vae, test_data_batch, test_label_batch, str_,   )
+test(model, test_data_batch, mode, args,  verbose=True,  )
+
+
+mlmodels\model_tch\raw\vae_pretraining_encoder\text_ss_ft.py
+----------------methods----------------
+
+---------------functions---------------
+init_config(  )
+main(args,   )
+test(model, test_data_batch, test_labels_batch, mode, args,  verbose=True,  )
+
+
+mlmodels\model_tch\raw\vae_pretraining_encoder\utils.py
+----------------methods----------------
+xavier_normal_initializer.__call__(self, tensor,   )
+
+---------------functions---------------
+calc_au(model, test_data_batch,  delta=0.01,  )
+calc_iwnll(model, test_data_batch, args,  ns=100,  )
+calc_mi(model, test_data_batch,   )
+call_multi_bleu_perl(fname_bleu_script, fname_hyp, fname_ref,  verbose=True,  )
+reconstruct(model, test_data_batch, vocab, strategy, fname,   )
+sample_sentences(vae, vocab, device, num_sentences,   )
+visualize_latent(args, epoch, vae, device, test_data,   )
+
+
+mlmodels\model_tch\raw\vae_pretraining_encoder\config\config_ptb.py
+----------------methods----------------
+
+---------------functions---------------
+
+
+mlmodels\model_tch\raw\vae_pretraining_encoder\config\config_short_yelp.py
+----------------methods----------------
+
+---------------functions---------------
+
+
+mlmodels\model_tch\raw\vae_pretraining_encoder\config\config_snli.py
+----------------methods----------------
+
+---------------functions---------------
+
+
+mlmodels\model_tch\raw\vae_pretraining_encoder\config\config_yahoo.py
+----------------methods----------------
+
+---------------functions---------------
+
+
+mlmodels\model_tch\raw\vae_pretraining_encoder\config\config_yahoo_label.py
+----------------methods----------------
+
+---------------functions---------------
+
+
+mlmodels\model_tch\raw\vae_pretraining_encoder\data\text_data.py
+----------------methods----------------
+MonoTextData.__init__(self, fname,  label=False, max_length=None, vocab=None,  )
+MonoTextData.__len__(self,   )
+MonoTextData._read_corpus(self, fname, label, max_length, vocab,   )
+MonoTextData._to_tensor(self, batch_data, batch_first, device,   )
+MonoTextData.create_data_batch(self, batch_size, device,  batch_first=False,  )
+MonoTextData.create_data_batch_labels(self, batch_size, device,  batch_first=False,  )
+MonoTextData.data_iter(self, batch_size, device,  batch_first=False, shuffle=True,  )
+MonoTextData.data_sample(self, nsample, device,  batch_first=False, shuffle=True,  )
+VocabEntry.__contains__(self, word,   )
+VocabEntry.__getitem__(self, word,   )
+VocabEntry.__init__(self,  word2id=None,  )
+VocabEntry.__len__(self,   )
+VocabEntry.add(self, word,   )
+VocabEntry.decode_sentence(self, sentence,   )
+VocabEntry.from_corpus(fname,   )
+VocabEntry.id2word(self, wid,   )
+
+---------------functions---------------
+
+
+mlmodels\model_tch\raw\vae_pretraining_encoder\data\__init__.py
+----------------methods----------------
+
+---------------functions---------------
+
+
+mlmodels\model_tch\raw\vae_pretraining_encoder\modules\utils.py
+----------------methods----------------
+
+---------------functions---------------
+generate_grid(zmin, zmax, dz, device,  ndim=2,  )
+log_sum_exp(value,  dim=None, keepdim=False,  )
+safe_log(z,   )
+
+
+mlmodels\model_tch\raw\vae_pretraining_encoder\modules\vae.py
+----------------methods----------------
+VAE.KL(self, x,   )
+VAE.__init__(self, encoder, decoder, args,   )
+VAE.calc_infer_mean(self, x,   )
+VAE.calc_mi_q(self, x,   )
+VAE.calc_model_posterior_mean(self, x, grid_z,   )
+VAE.decode(self, z, strategy,  K=10,  )
+VAE.encode(self, x,  nsamples=1,  )
+VAE.encode_stats(self, x,   )
+VAE.eval_complete_ll(self, x, z,   )
+VAE.eval_cond_ll(self, x, z,   )
+VAE.eval_inference_dist(self, x, z,  param=None,  )
+VAE.eval_log_model_posterior(self, x, grid_z,   )
+VAE.eval_prior_dist(self, zrange,   )
+VAE.loss(self, x, kl_weight,  nsamples=1,  )
+VAE.loss_iw(self, x, kl_weight,  nsamples=50, ns=10,  )
+VAE.nll_iw(self, x, nsamples,  ns=100,  )
+VAE.reconstruct(self, x,  decoding_strategy="greedy", K=5,  )
+VAE.sample_from_inference(self, x,  nsamples=1,  )
+VAE.sample_from_posterior(self, x, nsamples,   )
+
+---------------functions---------------
+
+
+mlmodels\model_tch\raw\vae_pretraining_encoder\modules\__init__.py
+----------------methods----------------
+
+---------------functions---------------
+
+
+mlmodels\model_tch\raw\vae_pretraining_encoder\modules\decoders\decoder.py
+----------------methods----------------
+DecoderBase.__init__(self,   )
+DecoderBase.beam_search_decode(self, z, K,   )
+DecoderBase.decode(self, x, z,   )
+DecoderBase.freeze(self,   )
+DecoderBase.greedy_decode(self, z,   )
+DecoderBase.log_probability(self, x, z,   )
+DecoderBase.reconstruct_error(self, x, z,   )
+DecoderBase.sample_decode(self, z,   )
+
+---------------functions---------------
+
+
+mlmodels\model_tch\raw\vae_pretraining_encoder\modules\decoders\decoder_help.py
+----------------methods----------------
+BeamSearchNode.__init__(self, hiddenstate, previousNode, wordId, logProb, length,   )
+BeamSearchNode.eval(self,  alpha=1.0,  )
+
+---------------functions---------------
+
+
+mlmodels\model_tch\raw\vae_pretraining_encoder\modules\decoders\decoder_helper.py
+----------------methods----------------
+BeamSearchNode.__init__(self, hiddenstate, previousNode, wordId, logProb, length,   )
+BeamSearchNode.eval(self,  alpha=1.0,  )
+
+---------------functions---------------
+
+
+mlmodels\model_tch\raw\vae_pretraining_encoder\modules\decoders\dec_lstm.py
+----------------methods----------------
+LSTMDecoder.__init__(self, args, vocab, model_init, emb_init,   )
+LSTMDecoder.beam_search_decode(self, z,  K=5,  )
+LSTMDecoder.decode(self, input, z,   )
+LSTMDecoder.greedy_decode(self, z,   )
+LSTMDecoder.log_probability(self, x, z,   )
+LSTMDecoder.reconstruct_error(self, x, z,   )
+LSTMDecoder.reset_parameters(self, model_init, emb_init,   )
+LSTMDecoder.sample_decode(self, z,  greedy=False,  )
+LSTMDecoder.sample_text(self, input, z, EOS, device,   )
+VarLSTMDecoder.__init__(self, args, vocab, model_init, emb_init,   )
+VarLSTMDecoder.decode(self, input, z,   )
+VarLSTMDecoder.reconstruct_error(self, x, z,   )
+
+---------------functions---------------
+
+
+mlmodels\model_tch\raw\vae_pretraining_encoder\modules\decoders\__init__.py
+----------------methods----------------
+
+---------------functions---------------
+
+
+mlmodels\model_tch\raw\vae_pretraining_encoder\modules\discriminators\discriminator_linear.py
+----------------methods----------------
+LinearDiscriminator.__init__(self, args, encoder,   )
+LinearDiscriminator.get_performance(self, batch_data, batch_labels,   )
+MLPDiscriminator.__init__(self, args, encoder,   )
+MLPDiscriminator.get_performance(self, batch_data, batch_labels,   )
+
+---------------functions---------------
+
+
+mlmodels\model_tch\raw\vae_pretraining_encoder\modules\discriminators\__init__.py
+----------------methods----------------
+
+---------------functions---------------
+
+
+mlmodels\model_tch\raw\vae_pretraining_encoder\modules\encoders\encoder.py
+----------------methods----------------
+EncoderBase.__init__(self,   )
+EncoderBase.calc_mi(self, x,   )
+EncoderBase.encode(self, input, nsamples,   )
+EncoderBase.eval_inference_dist(self, x, z,  param=None,  )
+EncoderBase.forward(self, x,   )
+EncoderBase.sample(self, input, nsamples,   )
+
+---------------functions---------------
+
+
+mlmodels\model_tch\raw\vae_pretraining_encoder\modules\encoders\enc_lstm.py
+----------------methods----------------
+GaussianLSTMEncoder.__init__(self, args, vocab_size, model_init, emb_init,   )
+GaussianLSTMEncoder.forward(self, input,   )
+GaussianLSTMEncoder.reset_parameters(self, model_init, emb_init,   )
+VarLSTMEncoder.__init__(self, args, vocab_size, model_init, emb_init,   )
+VarLSTMEncoder.encode(self, input, nsamples,   )
+VarLSTMEncoder.forward(self, input,   )
+
+---------------functions---------------
+
+
+mlmodels\model_tch\raw\vae_pretraining_encoder\modules\encoders\gaussian_encoder.py
+----------------methods----------------
+GaussianEncoderBase.__init__(self,   )
+GaussianEncoderBase.calc_mi(self, x,   )
+GaussianEncoderBase.encode(self, input, nsamples,   )
+GaussianEncoderBase.encode_stats(self, x,   )
+GaussianEncoderBase.eval_inference_dist(self, x, z,  param=None,  )
+GaussianEncoderBase.forward(self, x,   )
+GaussianEncoderBase.freeze(self,   )
+GaussianEncoderBase.reparameterize(self, mu, logvar,  nsamples=1,  )
+GaussianEncoderBase.sample(self, input, nsamples,   )
+
+---------------functions---------------
+
+
+mlmodels\model_tch\raw\vae_pretraining_encoder\modules\encoders\__init__.py
+----------------methods----------------
+
+---------------functions---------------
+
+
+mlmodels\model_tch\raw\vae_pretraining_encoder\modules\lm\lm_lstm.py
+----------------methods----------------
+LSTM_LM.__init__(self, args, vocab, model_init, emb_init,   )
+LSTM_LM.decode(self, input,   )
+LSTM_LM.log_probability(self, x,   )
+LSTM_LM.reconstruct_error(self, x,   )
+LSTM_LM.reset_parameters(self, model_init, emb_init,   )
+
+---------------functions---------------
+
+
+mlmodels\model_tch\raw\vae_pretraining_encoder\modules\lm\__init__.py
+----------------methods----------------
+
+---------------functions---------------
+
+
+mlmodels\model_tch\raw\vae_pretraining_encoder\scripts\sampling_training_labels.py
+----------------methods----------------
+
+---------------functions---------------
+
+
+mlmodels\model_tch\raw\vae_pretraining_encoder\scripts\unsupervised_cluster.py
+----------------methods----------------
+
+---------------functions---------------
+
+
+mlmodels\model_tch\zdocs\transformer_classifier2.py
+----------------methods----------------
+Model_empty.__init__(self,  model_pars=None, compute_pars=None,  )
+
+---------------functions---------------
+_preprocess_XXXX(df,   **kw)
+evaluate(model, tokenizer,  prefix="",  )
+fit(model,  data_pars=None, model_pars={}, compute_pars=None, out_pars=None,  *args, **kw)
+get_dataset( data_pars=None,  **kw)
+get_eval_report(labels, preds,   )
+get_mismatched(labels, preds,   )
+get_params( choice=0, data_path="dataset/",  **kw)
+load( out_pars=None,  )
+metrics(task_name, preds, labels,   )
+metrics_evaluate(  )
+path_setup( out_folder="", sublevel=0, data_path="dataset/",  )
+predict(model,  sess=None, data_pars=None, out_pars=None, compute_pars=None,  **kw)
+reset_model(  )
+save(model, out_pars,   )
+test( data_path="dataset/", pars_choice=0,  )
 
 
 mlmodels\model_tf\1_lstm.py

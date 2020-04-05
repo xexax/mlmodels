@@ -4,8 +4,7 @@
 
 """
 import os
-
-
+import numpy as np
 from keras.callbacks import EarlyStopping
 
 
@@ -67,12 +66,22 @@ def fit(model, data_pars=None, compute_pars=None, out_pars=None, **kw):
     return model, sess
 
 
-def fit_metrics(model, session=None, data_pars=None, compute_pars=None, out_pars=None, **kw):
+def fit_metrics(model, data_pars=None, compute_pars=None, out_pars=None, **kw):
     """
        Return metrics ofw the model when fitted.
     """
+    from sklearn.metrics import accuracy_score
+    _,Xval,_, yval = get_dataset(data_pars)
+    ypred = model.model.predict(Xval)
+    metric_score_name = compute_pars.get('metric_score') 
+    if metric_score_name is None :
+        return {}
     ddict = {}
-
+    if metric_score_name == "accuracy_score":
+        ypred = ypred.argmax(axis=1)
+        yval = np.argmax(yval, axis=1)
+        score = accuracy_score(yval, ypred)
+        ddict[metric_score_name] = score
     return ddict
 
 
@@ -127,17 +136,19 @@ def get_dataset(data_pars=None, **kw):
                              alphabet       = data_pars["alphabet"],
                              input_size     = data_pars["input_size"],
                              num_of_classes = data_pars["num_of_classes"])
-        train_data.load_data()
-        train_inputs, train_labels = train_data.get_all_data()
+        if data_pars['type'] == "npz":
+            train_inputs,train_labels, val_inputs, val_labels = train_data.get_all_data_npz()
+        else: 
+            train_data.load_data()
+            train_inputs, train_labels = train_data.get_all_data()
 
-
-        # Load val data
-        val_data = Data(data_source = path_norm( data_pars["val_data_source"]) ,
-                               alphabet=data_pars["alphabet"],
-                               input_size=data_pars["input_size"],
-                               num_of_classes=data_pars["num_of_classes"])
-        val_data.load_data()
-        val_inputs, val_labels = val_data.get_all_data()
+            # Load val data
+            val_data = Data(data_source = path_norm( data_pars["val_data_source"]) ,
+                                   alphabet=data_pars["alphabet"],
+                                   input_size=data_pars["input_size"],
+                                   num_of_classes=data_pars["num_of_classes"])
+            val_data.load_data()
+            val_inputs, val_labels = val_data.get_all_data()
 
         return train_inputs, val_inputs, train_labels, val_labels
 
