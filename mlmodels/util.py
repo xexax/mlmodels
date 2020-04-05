@@ -207,9 +207,7 @@ metrics.mean_gamma_deviance
         m_val = metric_scorer(ytrue, ypred)
         
       mdict["metric_val"].append(mval)
-    
-
-   return mdict
+      return mdict
 
 
 ####################################################################################################
