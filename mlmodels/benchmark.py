@@ -110,8 +110,7 @@ def run_benchmark_all(bench_pars=None, args=None, config_mode="test"):
 
     os.makedirs(output_path, exist_ok=True)
     log(" benchmark file saved at {}".format(output_path))
-    benchmark_df.to_csv("{}benchmark.csv".format(path_norm(output_path) 
-                                                    ), index=False)
+    benchmark_df.to_csv("{}benchmark.csv".format(output_path), index=False)
     ##### Output Format :
     """
      Dataframe :
