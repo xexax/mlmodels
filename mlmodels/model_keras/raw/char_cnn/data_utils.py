@@ -1,3 +1,4 @@
+import keras
 import numpy as np
 import re
 import csv
@@ -80,11 +81,11 @@ class Data(object):
         max_words = self.length
 
         tokenizer = Tokenizer(num_words=max_words)
-        x_train = tokenizer.sequences_to_matrix(x_train, mode='binary')
-        x_test = tokenizer.sequences_to_matrix(x_test, mode='binary')
+        x_train = tokenizer.sequences_to_matrix(xs_train, mode='binary')
+        x_test = tokenizer.sequences_to_matrix(xs_val, mode='binary')
 
-        y_train = keras.utils.to_categorical(y_train, self.no_of_classes)
-        y_test = keras.utils.to_categorical(y_test, self.no_of_classes)
+        y_train = keras.utils.to_categorical(labels_train, self.no_of_classes)
+        y_test = keras.utils.to_categorical(labels_val, self.no_of_classes)
 
         return x_train, y_train, x_test, y_test
     

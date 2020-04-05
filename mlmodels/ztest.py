@@ -79,14 +79,15 @@ def test_jupyter(arg=None, config_mode="test_all"):
 
     root = os_package_root_path()
     root = root.replace("\\", "//")
+    print(root)
 
     print("############Check model ################################")
-    model_list = get_recursive_files2(root +"/example/", r'/*.ipynb')
+    model_list = get_recursive_files2(root, r'/*/*.ipynb')
     print(model_list)
 
 
     ## Block list
-    cfg = json.load(open( f"root/{arg.config_file}", mode='r'))[ config_mode ]
+    cfg = json.load(open( f"{arg.config_file}", mode='r'))[ config_mode ]
     block_list = cfg.get('jupyter_blocked', [])
     model_list = [t for t in model_list if t not in block_list]
     print("Used", model_list)
@@ -112,7 +113,7 @@ def test_all(arg=None):
 
     ## Block list
     root = os_package_root_path()
-    cfg = json.load(open(root + "/" + arg.config_file, mode='r'))['test_all']
+    cfg = json.load(open( arg.config_file, mode='r'))['test_all']
     block_list = cfg['model_blocked']
     model_list = [t for t in model_list if t not in block_list]
     print("Used", model_list)
@@ -213,11 +214,10 @@ def cli_load_arguments(config_file=None):
         Load CLI input, load config.toml , overwrite config.toml by CLI Input
     """
     import argparse
-    # from util import load_config
-    # if config_file is None  :
-    #  cur_path = os.path.dirname(os.path.realpath(__file__))
-    #  config_file = os.path.join(cur_path, "template/test_config.json")
-    # print(config_file)
+    from util import load_config, path_norm, os_package_root_path
+    if config_file is None  :
+      config_file =  os_package_root_path() + "/config/test_config.json"
+    print(config_file)
 
     p = argparse.ArgumentParser()
 

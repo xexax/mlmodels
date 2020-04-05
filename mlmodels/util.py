@@ -14,6 +14,204 @@ from mlmodels.util import (os_package_root_path, log, path_norm
 """
 
 
+
+def metrics_evaluate(metric_name=["mean_squared_error"], ytrue=None, ypred=None, ypred_proba=None):
+
+    """
+      
+Scoring
+
+Function
+
+Comment
+
+Classification
+
+‘accuracy’
+
+metrics.accuracy_score
+
+‘balanced_accuracy’
+
+metrics.balanced_accuracy_score
+
+‘average_precision’
+
+metrics.average_precision_score
+
+‘neg_brier_score’
+
+metrics.brier_score_loss
+
+‘f1’
+
+metrics.f1_score
+
+for binary targets
+
+‘f1_micro’
+
+metrics.f1_score
+
+micro-averaged
+
+‘f1_macro’
+
+metrics.f1_score
+
+macro-averaged
+
+‘f1_weighted’
+
+metrics.f1_score
+
+weighted average
+
+‘f1_samples’
+
+metrics.f1_score
+
+by multilabel sample
+
+‘neg_log_loss’
+
+metrics.log_loss
+
+requires predict_proba support
+
+‘precision’ etc.
+
+metrics.precision_score
+
+suffixes apply as with ‘f1’
+
+‘recall’ etc.
+
+metrics.recall_score
+
+suffixes apply as with ‘f1’
+
+‘jaccard’ etc.
+
+metrics.jaccard_score
+
+suffixes apply as with ‘f1’
+
+‘roc_auc’
+
+metrics.roc_auc_score
+
+‘roc_auc_ovr’
+
+metrics.roc_auc_score
+
+‘roc_auc_ovo’
+
+metrics.roc_auc_score
+
+‘roc_auc_ovr_weighted’
+
+metrics.roc_auc_score
+
+‘roc_auc_ovo_weighted’
+
+metrics.roc_auc_score
+
+Clustering
+
+‘adjusted_mutual_info_score’
+
+metrics.adjusted_mutual_info_score
+
+‘adjusted_rand_score’
+
+metrics.adjusted_rand_score
+
+‘completeness_score’
+
+metrics.completeness_score
+
+‘fowlkes_mallows_score’
+
+metrics.fowlkes_mallows_score
+
+‘homogeneity_score’
+
+metrics.homogeneity_score
+
+‘mutual_info_score’
+
+metrics.mutual_info_score
+
+‘normalized_mutual_info_score’
+
+metrics.normalized_mutual_info_score
+
+‘v_measure_score’
+
+metrics.v_measure_score
+
+Regression
+
+‘explained_variance’
+
+metrics.explained_variance_score
+
+‘max_error’
+
+metrics.max_error
+
+‘neg_mean_absolute_error’
+
+metrics.mean_absolute_error
+
+‘neg_mean_squared_error’
+
+metrics.mean_squared_error
+
+‘neg_root_mean_squared_error’
+
+metrics.mean_squared_error
+
+‘neg_mean_squared_log_error’
+
+metrics.mean_squared_log_error
+
+‘neg_median_absolute_error’
+
+metrics.median_absolute_error
+
+‘r2’
+
+metrics.r2_score
+
+‘neg_mean_poisson_deviance’
+
+metrics.mean_poisson_deviance
+
+‘neg_mean_gamma_deviance’
+
+metrics.mean_gamma_deviance
+    
+    
+    """
+    from sklearn.metrics import get_scorer
+    
+    mdict = {   "metric-name": [],
+"metric val": [] }
+    for metric_name in metric_names :
+      metric_scorer = get_scorer(metric_name)
+    
+      if ypred_proba is not None :
+        m_val = metric_scorer(ytrue, ypred, ypred_proba)
+      else :
+        m_val = metric_scorer(ytrue, ypred)
+        
+      mdict["metric_val"].append(mval)
+      return mdict
+
+
+
 ####################################################################################################
 class to_namespace(object):
     def __init__(self, adict):
@@ -438,17 +636,22 @@ def load_tch(load_pars):
     import torch
     #path, filename = load_pars['path'], load_pars.get('filename', "model.pkl")
     #path = path + "/" + filename if "." not in path else path
-    path = load_pars['path']
+    if os.path.isdir(load_pars['path']):
+        path, filename = load_pars['path'], "model.pb"
+    else:
+        path, filename = os_path_split(load_pars['path'])
     model = Model_empty()
-    model.model = torch.load(path)
+    model.model = torch.load(Path(path) / filename)
     return model
 
 
 def save_tch(model=None, optimizer=None, save_pars=None):
     import torch
-    path, filename = os_path_split(save_pars['path'])
-    if not os.path.exists(path): 
-        os.makedirs(path, exist_ok=True)
+    if os.path.isdir(save_pars['path']):
+        path, filename = save_pars['path'], "model.pb"
+    else:
+        path, filename = os_path_split(save_pars['path'])
+    if not os.path.exists(path): os.makedirs(path, exist_ok=True)
 
     if save_pars.get('save_state') is not None:
         torch.save({
@@ -494,14 +697,11 @@ def load_pkl(load_pars):
 
 def save_pkl(model=None, session=None, save_pars=None):
     import cloudpickle as pickle
-    path, filename = os_path_split(save_pars['path'])
-    filename = "model.json"
-    os.makedirs(path, exist_ok=True)
-    return pickle.dump(model, open( f"{path}/{filename}" , mode='wb') )
-    path = save_pars['path']
-    filename = "model.pkl"
-    os.makedirs(path, exist_ok=True)
-    print(f"{path}/{filename}")
+    if os.path.isdir(save_pars['path']):
+        path, filename = save_pars['path'], "model.pkl"
+    else:
+        path, filename = os_path_split(save_pars['path'])
+    if not os.path.exists(path): os.makedirs(path, exist_ok=True)
     return pickle.dump(model, open( f"{path}/{filename}" , mode='wb') )
 
 
