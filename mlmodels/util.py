@@ -15,7 +15,7 @@ from mlmodels.util import (os_package_root_path, log, path_norm
 
 
 
-def metrics_evaluate(metric_name="mean_squared_error", ytrue=None, ypred=None, ypred_proba=None):
+def metrics_evaluate(metric_name=["mean_squared_error"], ytrue=None, ypred=None, ypred_proba=None):
 
     """
       
