@@ -28,7 +28,7 @@ Model = NBeatsNet
 # Dataaset
 def get_dataset(**kw):
     data_path = kw['data_path']
-    train_split_ratio = kw.get("train_split_ratio", 1)
+    train_split_ratio = kw.get("train_split_ratio", 0.8)
 
     df = pd.read_csv(data_path, index_col=0, parse_dates=True)
 
@@ -119,9 +119,7 @@ def fit_simple(net, optimiser, data_generator, on_save_callback, device, data_pa
 
 
 def predict(model, data_pars=None, compute_pars=None, out_pars=None, **kw):
-    data_pars["train_split_ratio"] = 1
-
-    x_test, y_test, _, _, _ = get_dataset(**data_pars)
+    _, _, x_test, y_test, _ = get_dataset(**data_pars)
 
     test_losses = []
     model.eval()
@@ -172,6 +170,7 @@ def plot_predict(x_test, y_test, p, data_pars, compute_pars, out_pars):
     backcast_length = data_pars["backcast_length"]
     norm_constant = compute_pars["norm_contsant"]
     out_path = out_pars['out_path']
+    if not os.path.exists(out_path): os.makedirs(out_path, exist_ok=True)
     output = f'{out_path}/n_beats_test.png'
 
     subplots = [221, 222, 223, 224]

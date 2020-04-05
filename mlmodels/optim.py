@@ -189,7 +189,7 @@ def optim_optuna(model_uri="model_tf.1_lstm.py",
     save_pars = {'path': save_path, 'model_type': model_uri.split("-")[0], 'model_uri': model_uri}
     module.save(model=model, session=sess, save_pars=save_pars)
 
-    log( os.stats(save_path))
+    #log( os.stats(save_path))
     ## model_pars_update["model_name"] = model_name
     return model_pars_update
 

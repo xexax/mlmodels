@@ -124,7 +124,8 @@ def fit(model=None, data_pars={}, compute_pars={}, out_pars={}, **kw):
     return model, sess
 
 
-def predict(model=None, model_pars=None, data_pars=None, **kwargs):
+def predict(model=None, model_pars=None,  sess=None, data_pars=None, 
+            compute_pars=None, out_pars=None, **kwargs):
     data_pars["predict"] = True
     x_test, y_test = get_dataset(data_pars)
     pred = model.model.predict(x_test)
@@ -149,8 +150,17 @@ def reset_model():
     pass
 
 
-def fit_metrics(model, data_pars=None, compute_pars=None, out_pars=None, **kw):
+def fit_metrics(model, data_pars=None, compute_pars=None, out_pars=None, model_pars=None, **kw):
     ddict = {}
+    data_pars["predict"] = True
+    x_test, y_test = get_dataset(data_pars)
+    pred = model.model.predict(x_test)
+    y_samples = np.apply_along_axis(mdn.sample_from_output, 1, pred,
+                                    data_pars["prediction_length"],
+                                    model_pars["n_mixes"], temp=1.0)
+    pred = y_samples.reshape(-1, 1)
+    if kw["wmape"]:
+        ddict["wmape"] = round(100 * np.sum(np.abs(x_test - pred)) / np.sum(x_test), 2)
     return ddict
 
 

@@ -26,47 +26,95 @@ from warnings import simplefilter
 from mlmodels.util import (get_recursive_files, load_config, log, os_package_root_path, path_norm)
 
 
+def get_all_json_path(json_path):
+    return get_recursive_files(json_path, ext='/*.json')
+
 
 ####################################################################################################
-def run_benchmark_all(bench_pars=None, json_path):
+def run_benchmark_all(bench_pars=None, json_path=None config_mode="test"):
     from mlmodels.models import module_load
     from mlmodels.util import path_norm_dict, path_norm, params_json_load
     import json
+    import pandas as pd
+    from datetime import datetime
 
     json_list = get_all_json_path(json_path)
     metric_list = bench_pars['metric_list']
-
+    benchmark_df = pd.DataFrame(columns=["date_run", "model_uri", "json",  
+                                        "dataset_uri", "metric", "metric_name"])
     for jsonf in json_list :
-      for metric in metric_list : 
+        log ("### Running {} #####".format(jsonf))
         #### Model URI and Config JSON
-        config_path = path_norm( jsonf  ) # 'model_tch/torchhub_cnn.json'
-        config_mode = "test"  ### test/prod
+        config_path = path_norm(jsonf)
+        config_mode = config_mode
 
-
+        #### PLEASE Include   model_pars['model_uri'] = "model_gluon.gluon_prophet.py"  in the JSON directly
+        model_pars, data_pars, compute_pars = params_json_load(config_path, config_mode= config_mode)
+         
+        """ 
         #### Model Parameters
-        hypermodel_pars, model_pars, data_pars, compute_pars, out_pars = params_json_load(config_path, config_mode= config_mode)
-        print( hypermodel_pars, model_pars, data_pars, compute_pars, out_pars)
-        model_uri   = model_pars['model_uri']  # "model_tch.torchhub.py"
-
-
+        if "prophet" in jsonf:
+            model_pars, data_pars, compute_pars = \
+            params_json_load(config_path, config_mode= config_mode)
+            model_pars['model_uri'] = "model_gluon.gluon_prophet.py"
+            
+        elif "deepar" in jsonf:
+            model_pars, data_pars, compute_pars = \
+            params_json_load(config_path, config_mode= config_mode)
+            model_pars['model_uri'] = "model_gluon.gluon_deepar.py"
+        else:
+            model_pars, data_pars, compute_pars, out_pars = \
+            params_json_load(config_path, config_mode= config_mode)
+            
+        model_uri = model_pars['model_uri']  # "model_tch.torchhub.py"
+        """
+      
+      
         #### Setup Model 
-        module         = module_load( model_uri)
-        model          = module.Model(model_pars, data_pars, compute_pars) 
+        model_uri = model_pars['model_uri']  # "model_tch.torchhub.py" 
+        module = module_load(model_uri)
+        model = module.Model(model_pars, data_pars, compute_pars) 
         
         #### Fit
         model, session = module.fit(model, data_pars, compute_pars, out_pars)           #### fit model
-        metrics_val    = module.fit_metrics(model, data_pars, compute_pars, out_pars)   #### Check fit metrics
-        print(metrics_val)
+        
+        
 
-
-        #### Inference
-        ypred          = module.predict(model, session, data_pars, compute_pars, out_pars)   
-        print(ypred)
+        #### Inference  Please change to return ypred, ytrue
+        ypred, ytrue = module.predict(model=model, model_pars=model_pars, session=session, 
+                               data_pars=data_pars, compute_pars=compute_pars, 
+                               out_pars=out_pars, return_ytrue=1)   
+        
 
 
         ### Calculate Metrics
+        for ind, metric in enumerate(metric_list):
+            """https://scikit-learn.org/stable/modules/generated/sklearn.metrics.get_scorer.html#sklearn.metrics.get_scorer
+            
+              
+            
+            """
+            from sklearn.metrics import get_scorer
+            scorer_metric = get_scorer(metric)
+            
+            metrics_val = scorer_metric(ytrue, ypred)
+            
+            
+            ##### NO Metrics IS INDEPENDANT Of model 
+            """
+            metrics_val = module.fit_metrics(model, data_pars, compute_pars, 
+                                            out_pars, model_pars, wmape=metric)   #### Check fit metrics
+            """
+            
+            
+            benchmark_df.loc[ind, "date_run"] = str(datetime.now())
+            benchmark_df.loc[ind, "model_uri"] = model_uri
+            benchmark_df.loc[ind, "json"] = jsonf
+            benchmark_df.loc[ind, "dataset_uri"] = "~/dataset/timeseries/HOBBIES_1_001_CA_1_validation.csv"
+            benchmark_df.loc[ind, "metric_name"] = metric
+            benchmark_df.loc[ind, "metric"] = metrics_val["wmape"]
 
-
+    log(benchmark_df)
     ##### Output Format :
     """
      Dataframe :
@@ -131,11 +179,9 @@ def cli_load_arguments(config_file=None):
 
 def main():
     arg = cli_load_arguments()
-    print(arg.do)
-
     if arg.do == "run":
         log("Fit")
-        bench_pars = None
+        bench_pars = {"metric_list": ["wmape"]}
         run_benchmark_all(bench_pars, arg.path_json) 
 
 
