@@ -132,6 +132,7 @@ def predict(model=None, model_pars=None,  sess=None, data_pars=None,
     y_samples = np.apply_along_axis(mdn.sample_from_output, 1, pred,
                                     data_pars["prediction_length"],
                                     model_pars["n_mixes"], temp=1.0)
+    y_samples[y_samples < 0] = 0
     return y_samples.reshape(-1, 1), y_test.reshape(-1, 1)
 
 
