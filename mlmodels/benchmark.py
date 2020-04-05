@@ -110,7 +110,7 @@ def run_benchmark_all(bench_pars=None, args=None, config_mode="test"):
 
     os.makedirs(output_path, exist_ok=True)
     log(" benchmark file saved at {}".format(output_path))
-    benchmark_df.to_csv("{}benchmark.csv".format(path_norm(output_path) 
+    benchmark_df.to_csv("{}/benchmark.csv".format(path_norm(output_path) 
                                                     ), index=False)
     ##### Output Format :
     """
@@ -150,11 +150,11 @@ def cli_load_arguments(config_file=None):
     add("--config_file", default=config_file, help="Params File")
     add("--config_mode", default="test", help="test/ prod /uat")
     add("--log_file",    default="ztest/benchmark/mlmodels_log.log", help="log.log")
-    add("--data_path",   default="dataset/timeseries/", help="Dataset path")
+    add("--data_path",   default="mlmodels/dataset/timeseries/", help="Dataset path")
     add("--dataset_name",default="sales_train_validation.csv", help="dataset name")
     add("--do",          default="run", help="do ")
     add("--item_id",     default="HOBBIES_1_001_CA_1_validation", help="forecast for which item")
-    add("--path_json",   default="dataset/json/benchmark/", help="")
+    add("--path_json",   default="mlmodels/dataset/json/benchmark/", help="")
     ##### out pars
     add("--path_out",    default="ztest/benchmark/", help=".")
 
