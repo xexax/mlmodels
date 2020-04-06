@@ -1,0 +1,36 @@
+name:  code_structure_linux
+
+on:
+  push:
+    branches: 
+      - dev
+
+on:
+  schedule:
+    # * is a special character in YAML so you have to quote this string
+    ### Every 3 hours
+    - cron:  '0 */6 * * *'      
+
+ 
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v1
+
+
+   
+    - name: Set up Python 3.6.*
+      uses: actions/setup-python@v1
+      with:
+        python-version: 3.6.*
+
+
+
+
+    - name: ml_test
+      run:  python -c "import os; print(os)"     2>&1 | tee > log_$(date '+%Y-%m-%d_%H-%M %s').txt
+      
+         
