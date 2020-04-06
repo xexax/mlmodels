@@ -26,14 +26,14 @@
 		},
 
 		"data_pars": {
-			"data_dir": "./data/",
+			"data_dir": "./mlmodels/dataset/text/yelp_reviews/",
 			"negative_data_file": "./dataset/rt-polaritydata/rt-polarity.neg",
 			"DEV_SAMPLE_PERCENTAGE": 0.1,
 			"data_type": "pandas",
 			"size": [0, 0, 6],
 			"output_size": [0, 6],
 			"train": "True",
-            "output_dir": "./data/",
+            "output_dir": "./mlmodels/dataset/text/yelp_reviews/",
             "cache_dir": "mlmodels/ztest/"
 		},
 
@@ -64,7 +64,7 @@
 
 
 		"out_pars": {
-			"output_dir": "./data/",
+			"output_dir": "./mlmodels/dataset/text/yelp_reviews/",
 			"data_type": "pandas",
 			"size": [0, 0, 6],
 			"output_size": [0, 6],
