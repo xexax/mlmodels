@@ -14,23 +14,31 @@ jobs:
 
     steps:
     - uses: actions/checkout@v1
-
-
-   
+  
     - name: Set up Python 3.6.*
       uses: actions/setup-python@v1
       with:
         python-version: 3.6.*
+
+    - name: log_start
+      run: |
+           cd /home/runner/work/mlmodels/  && git clone https://github.com/arita37/mlmodels_store.git  &&  ls && pwd
+           cd /home/runner/work/mlmodels/mlmodels/
+
 
 
 
 
     - name: ml_test
       run: |
-           cd /home/runner/work/mlmodels/  && git clone https://github.com/arita37/mlmodels_store.git  &&  ls && pwd
-           cd /home/runner/work/mlmodels/mlmodels/
            python -c "import os; print(os)"     2>&1 | tee -a  cd /home/runner/work/mlmodels/mlmodels_store/log_$(date '+%Y-%m-%d_%H:%M:%S,%3N').txt
-           cd /home/runner/work/mlmodels/mlmodels_store/  && git add --all &&  git commit -m "log" && git push --all
+
+
+
+
+    - name: log_gitpush
+      run: |      
+           cd /home/runner/work/mlmodels/mlmodels_store/  && ls &&  git add --all &&  git commit -m "log" && git push --all
       
          
   
