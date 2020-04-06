@@ -112,6 +112,7 @@ from mlmodels.util import os_package_root_path, log, path_norm, to_namespace
 
 
 ####################################################################################################
+"""
 def os_module_path():
     current_dir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
     parent_dir = os.path.dirname(current_dir)
@@ -123,7 +124,7 @@ def os_file_path(data_path):
     from pathlib import Path
     data_path = os.path.join(Path(__file__).parent.parent.absolute(), data_path)
     return data_path
-
+"""
 
 
 ####################################################################################################
@@ -146,7 +147,7 @@ class Model:
             self.fit_metrics = {"train": {}, "test": {}}    #### metrics during training
 
 
-def fit(model, data_pars={}, model_pars={}, compute_pars={}, out_pars={}, *args, **kw):
+def fit(model, data_pars=None, model_pars={}, compute_pars=None, out_pars=None, *args, **kw):
     """
 
   :param model:    Class model
@@ -199,7 +200,7 @@ def fit_metrics(model, **kw):
     return ddict
 
 
-def predict(model, sess=None, data_pars={}, out_pars={}, compute_pars={}, **kw):
+def predict(model, sess=None, data_pars=None, out_pars=None, compute_pars=None, **kw):
     ##### Get Data ###############################################
     reader = get_dataset(data_pars)
     train_fname = 'train.gz' if data_pars["train_type"].lower() == 'nli' else 'sts-train.csv'
@@ -223,7 +224,7 @@ def save(model, out_pars):
     return torch.save(model.model, out_pars['modelpath'])
 
 
-def load(out_pars={}):
+def load(out_pars=None):
     model = Model(skip_create=True)
     model.model = torch.load(out_pars['modelpath'])
     return model   
@@ -269,7 +270,7 @@ def get_params(param_pars, **kw):
     if choice == "test01":
         log("#### Path params   ##########################################")
         data_path  = path_norm("dataset/text/")
-        out_path   = path_norm("/ztest/model_tch/transformer_sentence/" )   
+        out_path   = path_norm("ztest/model_tch/transformer_sentence/" )
         model_path = os.path.join(out_path, "model")
 
         data_pars = {
@@ -296,7 +297,7 @@ def get_params(param_pars, **kw):
         }
 
         out_pars = {
-            "model_save_path": "/tmp/sentence_transformers"
+            "model_save_path": model_path
         }
 
     return model_pars, data_pars, compute_pars, out_pars
@@ -348,7 +349,7 @@ if __name__ == '__main__':
     test_path = os.getcwd() + "/mytest/"
 
     ### Local fixed params
-    test(pars_choice="json")
+    # test(pars_choice="json")
     test(pars_choice="test01")
 
     ### Local json file

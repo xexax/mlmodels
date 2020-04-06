@@ -117,8 +117,8 @@ def main():
 
   ##### Signature Check
   sign_list = [
-     "def fit(model, data_pars={}, compute_pars={}, out_pars={}, out_pars={},",
-     "def predict(model, sess=None, data_pars={}, out_pars={}, compute_pars={}",
+     "def fit(model, data_pars=None, compute_pars=None, out_pars=None, out_pars=None,",
+     "def predict(model, sess=None, data_pars=None, out_pars=None, compute_pars=None",
      "def save(model, path)",
      "def load(path)",
      "def get_dataset(data_pars=None, **kw)",
