@@ -36,9 +36,16 @@ jobs:
 
 
 
-    - name: log_gitpush
+
+    - name: log_gitcommit
       run: |      
-           cd /home/runner/work/mlmodels/mlmodels_store/  && ls &&  git add --all &&  git commit -m "log" && git push --all
+           git config --local user.email "action@github.com"
+           git config --local user.name "GitHub Action"
+           cd /home/runner/work/mlmodels/mlmodels_store/  && ls &&  git add --all &&  git commit -m "log" 
       
-         
+      
+    - name: log gitpush
+      uses: ad-m/github-push-action@master
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}    
   
