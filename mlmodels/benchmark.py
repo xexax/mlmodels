@@ -47,6 +47,7 @@ def pre_process(data_path=None, dataset_name=None, pred_length=10, item_id=None)
     df = pd.read_csv(data_path + dataset_name)
     col_to_del = ["item_id", "dept_id", "cat_id", "store_id", "state_id"]
     temp_df = df.drop(columns=col_to_del).copy()
+      
     # 1, -1 are hardcoded because we have to explicitly mentioned days column 
     temp_df = pd.melt(temp_df, id_vars=["id"], value_vars=temp_df.columns[1: -1])
     # select one itemid for which we have to forecast
@@ -63,6 +64,8 @@ def pre_process(data_path=None, dataset_name=None, pred_length=10, item_id=None)
 def run_benchmark_all(bench_pars=None, args=None, config_mode="test"):
     pre_process(data_path=args.data_path, dataset_name=args.dataset_name, 
                 pred_length=bench_pars["pred_length"], item_id=args.item_id)
+      
+    dataset_uri =  data_path + dataset_name # args.data_path  # "~/dataset/timeseries/HOBBIES_1_001_CA_1_validation.csv"  
     json_path = args.path_json
     output_path = args.path_out
     json_list = get_all_json_path(json_path)
@@ -103,14 +106,15 @@ def run_benchmark_all(bench_pars=None, args=None, config_mode="test"):
             benchmark_df.loc[ind, "model_uri"] = model_uri
             benchmark_df.loc[ind, "json"] = jsonf
             # i hardcoded data path because there will be only dataset for benchmark
-            benchmark_df.loc[ind, "dataset_uri"] = "~/dataset/timeseries/HOBBIES_1_001_CA_1_validation.csv"
+            benchmark_df.loc[ind, "dataset_uri"] = dataset_uri
             benchmark_df.loc[ind, "metric_name"] = metric
             benchmark_df.loc[ind, "metric"] = metric_val
 
 
     os.makedirs(path_norm(output_path), exist_ok=True)
-    log(" benchmark file saved at {}".format(path_norm(output_path)))
+    log(" benchmark file saved at {}".format(path_norm(output_path)))  
     benchmark_df.to_csv("{}benchmark.csv".format(path_norm(output_path)), index=False)
+    return benchmark_df
     ##### Output Format :
     """
      Dataframe :
