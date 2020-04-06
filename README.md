@@ -48,6 +48,45 @@ TextCNN Keras : 2016, Text CNN Classifier, https://arxiv.org/abs/1801.06287
 charCNN Keras : Text Character Classifier,
 
 
+DRMM: this model is an implementation of A Deep Relevance Matching Model for Ad-hoc Retrieval.
+
+DRMMTKS: this model is an implementation of A Deep Top-K Relevance Matching Model for Ad-hoc Retrieval.
+
+ARC-I: this model is an implementation of Convolutional Neural Network Architectures for Matching Natural Language Sentences
+
+ARC-II: this model is an implementation of Convolutional Neural Network Architectures for Matching Natural Language Sentences
+
+DSSM: this model is an implementation of Learning Deep Structured Semantic Models for Web Search using Clickthrough Data
+
+CDSSM: this model is an implementation of Learning Semantic Representations Using Convolutional Neural Networks for Web Search
+
+MatchLSTM:this model is an implementation of Machine Comprehension Using Match-LSTM and Answer Pointer
+
+DUET: this model is an implementation of Learning to Match Using Local and Distributed Representations of Text for Web Search
+
+KNRM: this model is an implementation of End-to-End Neural Ad-hoc Ranking with Kernel Pooling
+
+ConvKNRM: this model is an implementation of Convolutional neural networks for soft-matching n-grams in ad-hoc search
+
+ESIM: this model is an implementation of Enhanced LSTM for Natural Language Inference
+
+BiMPM: this model is an implementation of Bilateral Multi-Perspective Matching for Natural Language Sentences
+
+MatchPyramid: this model is an implementation of Text Matching as Image Recognition
+
+Match-SRNN: this model is an implementation of Match-SRNN: Modeling the Recursive Matching Structure with Spatial RNN
+
+aNMM: this model is an implementation of aNMM: Ranking Short Answer Texts with Attention-Based Neural Matching Model
+
+MV-LSTM: this model is an implementation of A Deep Architecture for Semantic Matching with Multiple Positional Sentence Representations
+
+DIIN: this model is an implementation of Natural Lanuguage Inference Over Interaction Space
+
+HBMP: this model is an implementation of Sentence Embeddings in NLI with Iterative Refinement Encoders
+
+
+
+
 ### TABULAR :
 #### LightGBM
 
