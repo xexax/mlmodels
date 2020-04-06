@@ -1,20 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-
-
-https://colab.research.google.com/github/pytorch/pytorch.github.io/blob/master/assets/hub/facebookresearch_pytorch-gan-zoo_pgan.ipynb
-
-
+https://github.com/NTMC-Community/MatchZoo-py/tree/master/tutorials
 https://matchzoo.readthedocs.io/en/master/model_reference.html
-
-
-        the following models only: alexnet, densenet121, densenet169, densenet201,\
-        densenet161, inception_v3, resnet18, resnet34, resnet50, resnet101, resnet152,\
-        resnext50_32x4d, resnext101_32x8d, wide_resnet50_2, wide_resnet101_2, squeezenet1_0,\
-        squeezenet1_1, vgg11, vgg13, vgg16, vgg19, vgg11_bn, vgg13_bn, vgg16_bn, vgg19_bn,\
-        googlenet, shufflenet_v2_x0_5, shufflenet_v2_x1_0, mobilenet_v2"
-
-
 
 """
 import os, json
@@ -24,17 +11,6 @@ import matchzoo as mz
 import numpy as np
 import pandas as pd
 from pytorch_transformers import AdamW, WarmupLinearSchedule
-
-'''
-import torch.optim as optim
-import torch.nn as nn
-import torch.nn.functional as F
-from torchvision import datasets, transforms
-from torch import hub 
-'''
-# import mlmodels.models as M
-
-
 from mlmodels.util import os_package_root_path, log, path_norm, get_model_uri, path_norm_dict
 
 MODEL_URI = get_model_uri(__file__)
