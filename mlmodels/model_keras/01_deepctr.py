@@ -33,6 +33,27 @@ along with lots of core components layers which can be used to easily build cust
 |                FiBiNET                 | [RecSys 2019][FiBiNET: Combining Feature Importance and Bilinear feature Interaction for Click-Through Rate Prediction](https://arxiv.org/pdf/1905.09433.pdf)   |
 
 
+Names"
+
+model_list = ["AFM",
+"AUTOINT",
+"CCPM",
+"DCN",
+"DeepFM",
+"DIEN",
+"DIN",
+"DSIN",
+"FGCNN",
+"FIBINET",
+"FLEN",
+"FNN",
+"MLR",
+"NFM",
+"ONN",
+"PNN",
+"WDL",
+"XDEEPFM", ]
+
 
 """
 import json
@@ -69,8 +90,16 @@ class Model:
         if model_pars is None :
           return self
        
-        model_name = model_pars.get("model_name", "DeepFM")        
+        model_name = model_pars.get("model_name", "DeepFM")   
+        model_list = ["AFM", "AUTOINT", "CCPM", "DCN", "DeepFM", "DIEN", "DIN", "DSIN", "FGCNN", "FIBINET",
+                      "FLEN", "FNN", "MLR", "NFM", "ONN", "PNN", "WDL", "XDEEPFM", ]
+        
+        if not model_name in model_list :
+          raise ValueError('Not existing model', model_name)
+          return self
+        
         modeli = getattr(importlib.import_module("deepctr.models"), model_name)
+        
         
         # 4.Define Model
         linear_cols, dnn_cols = get_dataset(data_pars)[1:3]
