@@ -26,6 +26,9 @@ jobs:
 
 
     - name: ml_test
-      run:  python -c "import os; print(os)"     2>&1 | tee -a log_$(date '+%Y-%m-%d_%H:%M:%S,%3N').txt
+      run: |
+           cd /home/runner/work/mlmodels/  && git clone https://github.com/arita37/mlmodels_store.git  &&   cd /home/runner/work/mlmodels/mlodels/
+           python -c "import os; print(os)"     2>&1 | tee -a  cd /home/runner/work/mlmodels_store/log/log_$(date '+%Y-%m-%d_%H:%M:%S,%3N').txt
       
          
+  
