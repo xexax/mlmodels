@@ -64,13 +64,24 @@ from mlmodels.util import save_keras, load_keras
 ####################################################################################################
 class Model:
     def __init__(self, model_pars=None, data_pars=None, compute_pars=None, **kwargs):
+        from importlib import import_module
+        
+        if model_pars is None :
+          return self
+       
+        model_name = model_pars.get("model_name", "DeepFM")        
+        modeli = getattr(importlib.import_module("deepctr.models"), model_name)
+        
         # 4.Define Model
         linear_cols, dnn_cols = get_dataset(data_pars)[1:3]
-        self.model = DeepFM(linear_cols, dnn_cols, model_pars['task'])
+        # self.model = DeepFM(linear_cols, dnn_cols, model_pars['task'])
+        self.model = modeli(linear_cols, dnn_cols, model_pars['task'])
+        
+        metrics = compute_pars.get("metrics",  ['binary_crossentropy'])
+        self.model.compile(model_pars['optimization'], model_pars['cost'], metrics= metrics, )
+        self.model.summary()
 
-        self.model.compile(model_pars['optimization'], model_pars['cost'], metrics=['binary_crossentropy'], )
-
-
+        
 ##################################################################################################
 def _preprocess_criteo(df, **kw):
     hash_feature = kw.get('hash_feature')
