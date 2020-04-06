@@ -30,6 +30,7 @@ jobs:
            cd /home/runner/work/mlmodels/  && git clone https://github.com/arita37/mlmodels_store.git  &&  ls && pwd
            cd /home/runner/work/mlmodels/mlmodels/
            python -c "import os; print(os)"     2>&1 | tee -a  cd /home/runner/work/mlmodels/mlmodels_store/log_$(date '+%Y-%m-%d_%H:%M:%S,%3N').txt
+           cd /home/runner/work/mlmodels/mlmodels_store/  && git add --all &&  git commit -m "log" && git push --all
       
          
   
