@@ -38,7 +38,7 @@ def get_all_json_path(json_path):
     return get_recursive_files(json_path, ext='/*.json')
 
 
-def calculate_metric(actual=None, pred=None, metric_name="mean_absolute_error"):
+def metric_eval(actual=None, pred=None, metric_name="mean_absolute_error"):
     metric = getattr(importlib.import_module("sklearn.metrics"), metric_name)
     return metric(actual, pred)
 
@@ -100,7 +100,7 @@ def run_benchmark_all(bench_pars=None, args=None, config_mode="test"):
         for ind, metric in enumerate(metric_list):
             """https://scikit-learn.org/stable/modules/generated/sklearn.metrics.get_scorer.html#sklearn.metrics.get_scorer 
             """
-            metric_val = calculate_metric(actual=actual, pred=pred, 
+            metric_val = metric_eval(actual=actual, pred=pred, 
                                           metric_name=metric)
             benchmark_df.loc[ind, "date_run"] = str(datetime.now())
             benchmark_df.loc[ind, "model_uri"] = model_uri
