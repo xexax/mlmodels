@@ -1,7 +1,10 @@
+  
 # -*- coding: utf-8 -*-
 """
 https://github.com/NTMC-Community/MatchZoo-py/tree/master/tutorials
 https://matchzoo.readthedocs.io/en/master/model_reference.html
+
+https://github.com/NTMC-Community/MatchZoo-py/blob/master/tutorials/classification/esim.ipynb
 
 """
 import os, json
@@ -11,6 +14,9 @@ import matchzoo as mz
 import numpy as np
 import pandas as pd
 from pytorch_transformers import AdamW, WarmupLinearSchedule
+
+
+
 from mlmodels.util import os_package_root_path, log, path_norm, get_model_uri, path_norm_dict
 
 MODEL_URI = get_model_uri(__file__)
@@ -35,10 +41,19 @@ MODEL_MAPPING = {
     'BERT' : mz.models.Bert
 }
 
+
+TASK_MAPPING = {
+    'ranking' : mz.tasks.Ranking,
+    'ranking' : mz.tasks.Classification,
+
+}
+
+
+
+
+
 def get_config_file():
-    return os.path.join(
-        os_package_root_path(__file__, 1),
-        'config', 'model_tch', 'Imagecnn.json')
+    return os.path.join(os_package_root_path(__file__, 1), 'config', 'model_tch', 'Imagecnn.json')
 
 
 ###########################################################################################################
@@ -52,23 +67,33 @@ class Model:
             return self
  
         _model = model_pars['model']
-
-        
         assert _model in MODEL_MAPPING.keys()
 
-        
-        self.ranking_task = mz.tasks.Ranking(losses=mz.losses.RankHingeLoss())
-        self.ranking_task.metrics = [
-            mz.metrics.NormalizedDiscountedCumulativeGain(k=3),
-            mz.metrics.NormalizedDiscountedCumulativeGain(k=5),
-            mz.metrics.MeanAveragePrecision()
-        ]
+        task_name = model_pars['task_name']   
+        if task_name == "ranking" :
+            self.ranking_task = mz.tasks.Ranking(losses=mz.losses.RankHingeLoss())
+            self.ranking_task.metrics = [
+                mz.metrics.NormalizedDiscountedCumulativeGain(k=3),
+                mz.metrics.NormalizedDiscountedCumulativeGain(k=5),
+                mz.metrics.MeanAveragePrecision()
+            ]
+            self.model.params['task'] = self.ranking_task
+
+        elif task_name == "classification" :
+            self.task = mz.tasks.Classification(num_classes= data_pars["num_classes"])
+            self.task.metrics = [
+                mz.metrics.accuracy(),
+            ]
+            self.model.params['task'] = self.task
+        else :
+            raise Exception(f"Not support choice {task_name} yet")
+
 
         self.model = MODEL_MAPPING[_model]()
-        self.model.params['task'] = self.ranking_task
         self.model.params['mode'] = model_pars['mode']
         self.model.params['dropout_rate'] = model_pars['dropout_rate']
         self.model.build()
+
 
 def get_params(param_pars=None, **kw):
     pp          = param_pars
@@ -94,14 +119,14 @@ def get_params(param_pars=None, **kw):
 def get_dataset_wikiqa(data_pars, model):
     
     train_pack_raw = mz.datasets.wiki_qa.load_data('train', task=model.ranking_task)
-    dev_pack_raw = mz.datasets.wiki_qa.load_data('dev', task=model.ranking_task, filtered=True)
-    test_pack_raw = mz.datasets.wiki_qa.load_data('test', task=model.ranking_task, filtered=True)
+    dev_pack_raw   = mz.datasets.wiki_qa.load_data('dev', task=model.ranking_task, filtered=True)
+    test_pack_raw  = mz.datasets.wiki_qa.load_data('test', task=model.ranking_task, filtered=True)
 
-    preprocessor = model.model.get_default_preprocessor()
+    preprocessor   = model.model.get_default_preprocessor()
 
     train_pack_processed = preprocessor.transform(train_pack_raw)
-    dev_pack_processed = preprocessor.transform(dev_pack_raw)
-    test_pack_processed = preprocessor.transform(test_pack_raw)
+    dev_pack_processed   = preprocessor.transform(dev_pack_raw)
+    test_pack_processed  = preprocessor.transform(test_pack_raw)
 
     trainset = mz.dataloader.Dataset(
         data_pack=train_pack_processed,
@@ -112,23 +137,11 @@ def get_dataset_wikiqa(data_pars, model):
         resample=True,
         sort=False,
     )
-    testset = mz.dataloader.Dataset(
-        data_pack=test_pack_processed,
-        batch_size=data_pars["test_batch_size"]
-    )
-    
+    testset          = mz.dataloader.Dataset(data_pack=test_pack_processed, batch_size=data_pars["test_batch_size"] )
     padding_callback = model.model.get_default_padding_callback()
 
-    trainloader = mz.dataloader.DataLoader(
-        dataset=trainset,
-        stage='train',
-        callback=padding_callback
-    )
-    testloader = mz.dataloader.DataLoader(
-        dataset=testset,
-        stage='dev',
-        callback=padding_callback
-    )
+    trainloader      = mz.dataloader.DataLoader(dataset=trainset, stage='train', callback=padding_callback )
+    testloader       = mz.dataloader.DataLoader(dataset=testset, stage='dev', callback=padding_callback )
     return trainloader, testloader
 
 def get_dataset(data_pars=None, **kw):
@@ -164,13 +177,7 @@ def fit(model, data_pars=None, compute_pars=None, out_pars=None, **kwargs):
     os.makedirs(out_pars["checkpointdir"], exist_ok=True)
     
     trainer = mz.trainers.Trainer(
-        model=model.model,
-        optimizer=optimizer,
-        trainloader=trainloader,
-        validloader=validloader,
-        epochs=epochs
-    )
-
+              model=model.model, optimizer=optimizer, trainloader=trainloader, validloader=validloader, epochs=epochs )
     trainer.run()
     return model, None
 
@@ -179,9 +186,10 @@ def predict(model, session=None, data_pars=None, compute_pars=None, out_pars=Non
     # get a batch of data
     model0 = model.model
     _, valid_iter = get_dataset(data_pars=data_pars)
-    x_test = next(iter(valid_iter))[0].to(device)
-    ypred  = model0(x_test).detach().cpu().numpy()
+    x_test        = next(iter(valid_iter))[0].to(device)
+    ypred         = model0(x_test).detach().cpu().numpy()
     return ypred
+
 
 def fit_metrics(model, data_pars=None, compute_pars=None, out_pars=None):
     pass
@@ -241,3 +249,7 @@ def test(data_path="dataset/", pars_choice="json", config_mode="test"):
 
 if __name__ == "__main__":
     test(data_path="model_tch/matchzoo.json", pars_choice="json", config_mode="test")
+
+
+
+
