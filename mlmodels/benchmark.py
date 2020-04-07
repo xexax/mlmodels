@@ -64,7 +64,7 @@ def metric_eval(actual=None, pred=None, metric_name="mean_absolute_error"):
     return metric(actual, pred)
 
  
-def pre_process(data_path=None, dataset_name=None, pred_length=10, item_id=None):
+def preprocess_timeseries_m5(data_path=None, dataset_name=None, pred_length=10, item_id=None):
     df         = pd.read_csv(data_path + dataset_name)
     col_to_del = ["item_id", "dept_id", "cat_id", "store_id", "state_id"]
     temp_df    = df.drop(columns=col_to_del).copy()
@@ -85,12 +85,16 @@ def pre_process(data_path=None, dataset_name=None, pred_length=10, item_id=None)
 
 ####################################################################################################
 def benchmark_run(bench_pars=None, args=None, config_mode="test"):
+	"""
+      Runnner for benchmark computation
+      File is alredy saved on disk
 
-    pre_process(data_path=args.data_path, dataset_name=args.dataset_name, 
-                pred_length=bench_pars["pred_length"], item_id=args.item_id)
+	"""
+    #pre_process(data_path=args.data_path, dataset_name=args.dataset_name, 
+    #            pred_length=bench_pars["pred_length"], item_id=args.item_id)
       
     dataset_uri  = args.data_path + f"{args.item_id}.csv"
-    json_path    = args.path_json
+    json_path    = path_norm( args.path_json )
     output_path  = path_norm( args.path_out )
     json_list    = get_all_json_path(json_path)
     metric_list  = bench_pars['metric_list']
@@ -127,8 +131,9 @@ def benchmark_run(bench_pars=None, args=None, config_mode="test"):
             benchmark_df.loc[ind, "metric_name"] = metric
             benchmark_df.loc[ind, "metric"]      = metric_val
 
-    os.makedirs( output_path, exist_ok=True)
+
     log( f"benchmark file saved at {output_path}")  
+    os.makedirs( output_path, exist_ok=True)
     benchmark_df.to_csv( f"{output_path}/benchmark.csv", index=False)
     return benchmark_df
 
@@ -157,7 +162,7 @@ def cli_load_arguments(config_file=None):
 
     add("--data_path",   default="mlmodels/dataset/timeseries/", help="Dataset path")
     add("--dataset_name",default="sales_train_validation.csv", help="dataset name")   
-     
+
     add("--path_json",   default="mlmodels/dataset/json/benchmark/", help="")
 
     ##### out pars
@@ -175,12 +180,16 @@ def cli_load_arguments(config_file=None):
 
 def main():
     arg = cli_load_arguments()
+
     if arg.do == "timeseries":
         log("Fit")
         bench_pars = {"metric_list": ["mean_absolute_error", "mean_squared_error",
                                       "mean_squared_log_error", "median_absolute_error", 
                                       "r2_score"], 
                       "pred_length": 100}
+
+        pre_process_timeseries_m5(data_path=arg.data_path, dataset_name=arg.dataset_name, 
+                                  pred_length=bench_pars["pred_length"], item_id=arg.item_id)              
         benchmark_run(bench_pars, arg) 
 
 
