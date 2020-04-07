@@ -92,7 +92,7 @@ class Model:
        
         model_name = model_pars.get("model_name", "DeepFM")   
         model_list = ["AFM", "AUTOINT", "CCPM", "DCN", "DeepFM", "DIEN", "DIN", "DSIN", "FGCNN", "FIBINET",
-                      "FLEN", "FNN", "MLR", "NFM", "ONN", "PNN", "WDL", "XDEEPFM", ]
+                      "FLEN", "FNN", "MLR", "NFM", "ONN", "PNN", "WDL", "XDeepFM", ]
         
         if not model_name in model_list :
           raise ValueError('Not existing model', model_name)
@@ -239,12 +239,42 @@ def _preprocess_movielens(df, **kw):
     return df, linear_cols, dnn_cols, train, test, target, ytrue
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 def get_dataset(data_pars=None, **kw):
     ##check whether dataset is of kind train or test
+
+
+    #### To test all models
+    if not data_pars.get("test_model") is None :
+      from mlmodels.preprocess.keras_deepctr_tabular  import get_test_data
+      # model_name = "AFM"
+      use_attention, sparse_feature_num, dense_feature_num = True,3,0
+      sample_size = 10
+      x, y, feature_columns = get_test_data(sample_size, sparse_feature_num=sparse_feature_num,
+                                            dense_feature_num=dense_feature_num)
+
+      return x, y, feature_columns
+      # model = AFM(feature_columns, feature_columns, use_attention=use_attention, afm_dropout=0.5)
+
+
     data_path = data_pars['train_data_path']
     data_type = data_pars['dataset_type']
     test_size = data_pars['test_size']
-
+  
     #### read from csv file
     if data_pars.get("uri_type") == "pickle":
         df = pd.read_pickle(data_path)
@@ -265,6 +295,7 @@ def get_dataset(data_pars=None, **kw):
         ytrue = data_pars['target_col']
 
     return df, linear_cols, dnn_cols, train, test, target, ytrue
+
 
 
 def fit(model, session=None, compute_pars=None, data_pars=None, out_pars=None,
