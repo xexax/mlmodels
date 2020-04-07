@@ -3,8 +3,8 @@
 
   "model_list": [
     "model_tf/1_lstm",
+    "model_keras/01_deepctr.py",
     "benchmark.py",
     "model_tch/torchhub.py",
-    "data.py"
   ]
 }
