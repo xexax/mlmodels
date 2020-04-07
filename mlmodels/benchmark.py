@@ -71,6 +71,7 @@ def pre_process(data_path=None, dataset_name=None, pred_length=10, item_id=None)
       
     # 1, -1 are hardcoded because we have to explicitly mentioned days column 
     temp_df    = pd.melt(temp_df, id_vars=["id"], value_vars=temp_df.columns[1: -1])
+
     # select one itemid for which we have to forecast
     i_id       = item_id
     temp_df    = temp_df.loc[temp_df["id"] == i_id]
@@ -116,11 +117,9 @@ def benchmark_run(bench_pars=None, args=None, config_mode="test"):
                                       data_pars=data_pars, compute_pars=compute_pars, 
                                       out_pars=out_pars, return_ytrue=1)   
         
-        actual = ytrue
-        pred   = ypred
         ### Calculate Metrics
         for ind, metric in enumerate(metric_list):
-            metric_val = metric_eval(actual=actual, pred=pred,  metric_name=metric)
+            metric_val = metric_eval(actual=ytrue, pred=ypred,  metric_name=metric)
             benchmark_df.loc[ind, "date_run"]    = str(datetime.now())
             benchmark_df.loc[ind, "model_uri"]   = model_uri
             benchmark_df.loc[ind, "json"]        = str([model_pars, data_pars, compute_pars ])
@@ -157,12 +156,16 @@ def cli_load_arguments(config_file=None):
     add("--do",          default="run", help="do ")
 
     add("--data_path",   default="mlmodels/dataset/timeseries/", help="Dataset path")
-    add("--dataset_name",default="sales_train_validation.csv", help="dataset name")    
-    add("--item_id",     default="HOBBIES_1_001_CA_1_validation", help="forecast for which item")
+    add("--dataset_name",default="sales_train_validation.csv", help="dataset name")   
+     
     add("--path_json",   default="mlmodels/dataset/json/benchmark/", help="")
 
     ##### out pars
     add("--path_out",    default="ztest/benchmark/", help=".")
+
+
+
+    add("--item_id",     default="HOBBIES_1_001_CA_1_validation", help="forecast for which item")
 
     arg = p.parse_args()
     return arg
