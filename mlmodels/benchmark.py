@@ -27,7 +27,7 @@ from datetime import datetime
 
 ####################################################################################################
 from mlmodels.models import module_load
-from mlmodels.util import path_norm_dict, path_norm, params_json_load
+from mlmodels.util import path_norm_dict,  params_json_load
 from mlmodels.util import (get_recursive_files, load_config, log, os_package_root_path, path_norm)
 
 
@@ -137,18 +137,20 @@ def benchmark_run_mnist(bench_pars=None, args=None, config_mode="test"):
     benchmark_df = pd.DataFrame(columns=["date_run", "model_uri", "json",
                                          "dataset_uri", "metric", "metric_name"])
 
+    print(json_path)
     # import pdb; pdb.set_trace()
     for jsonf in json_list :
         log ( f"### Running {jsonf} #####")
         config_path = path_norm(jsonf)
-        _, model_pars, data_pars, compute_pars, out_pars = params_json_load(config_path, config_mode= config_mode)
-        #### Setup Model 
+        model_pars, data_pars, compute_pars, out_pars = params_json_load(config_path, config_mode= config_mode)
+
         log("#### Model init   #############################################")
         # import pdb; pdb.set_trace()
         model_uri = model_pars['model_uri']  
         module    = module_load(model_uri)
         model     = module.Model(model_pars, data_pars, compute_pars)
-        # Fitting the model (training)
+
+
         log("#### Model fit   #############################################")
         model, session = module.fit(model, data_pars, compute_pars, out_pars)
 
@@ -159,7 +161,6 @@ def benchmark_run_mnist(bench_pars=None, args=None, config_mode="test"):
 
 
         
-
         ### Calculate Metrics
         for ind, metric in enumerate(metric_list):
             metric_val = metric_eval(actual=ytrue, pred=ypred,  metric_name=metric)
@@ -199,10 +200,10 @@ def cli_load_arguments(config_file=None):
     add("--log_file",    default="ztest/benchmark/mlmodels_log.log", help="log.log")
     add("--do",          default="run", help="do ")
 
-    add("--data_path",   default="mlmodels/dataset/timeseries/", help="Dataset path")
+    add("--data_path",   default="dataset/timeseries/", help="Dataset path")
     add("--dataset_name",default="sales_train_validation.csv", help="dataset name")   
 
-    add("--path_json",   default="mlmodels/dataset/json/benchmark_cnn/", help="")
+    add("--path_json",   default="dataset/json/benchmark_cnn/", help="")
 
     ##### out pars
     add("--path_out",    default="ztest/benchmark/", help=".")
@@ -221,20 +222,26 @@ def main():
     arg = cli_load_arguments()
 
     if arg.do == "timeseries":
-        log("Fit")
+        log("Time series model")
+        arg_data_path = "mlmodels/dataset/json/benchmark/"
+
         bench_pars = {"metric_list": ["mean_absolute_error", "mean_squared_error",
                                       "mean_squared_log_error", "median_absolute_error", 
                                       "r2_score"], 
                       "pred_length": 100}
 
-        pre_process_timeseries_m5(data_path=arg.data_path, dataset_name=arg.dataset_name, 
+        preprocess_timeseries_m5(data_path=arg_data_path, dataset_name=arg.dataset_name, 
                                   pred_length=bench_pars["pred_length"], item_id=arg.item_id)              
         benchmark_run(bench_pars, arg) 
 
-    if arg.do == "MNIST":
-        log("Fit")
+
+    if arg.do == "vision_mnist":
+        log("Vision models")
         bench_pars = {"metric_list": ["accuracy_score"]}
         benchmark_run_mnist(bench_pars=bench_pars, args=arg)
+
+    else :
+        raise Exception("No options")
 
 
 if __name__ == "__main__":
