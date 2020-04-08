@@ -49,7 +49,7 @@ jobs:
            git config --local user.email "noelkev0@gmail.com"
            git config --local user.name "arita37"
            ls &&  git add --all &&  git commit -m "log" 
-           git push origin dev
+           git push --all
       
 
 
