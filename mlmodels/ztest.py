@@ -136,8 +136,8 @@ def test_all(arg=None):
     print(model_list)
 
     ## Block list
-    root = os_package_root_path()
-    cfg = json.load(open(root + "/" + arg.config_file, mode='r'))['test_all']
+    # root = os_package_root_path()
+    cfg = json.load(open(arg.config_file, mode='r'))['test_all']
     block_list = cfg['model_blocked']
     model_list = [t for t in model_list if t not in block_list]
     print("Used", model_list)
