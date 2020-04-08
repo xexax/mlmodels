@@ -241,14 +241,32 @@ def fit(model, data_pars=None, compute_pars=None, out_pars=None, **kwargs):
     return model, None
 
 
-def predict(model, session=None, data_pars=None, compute_pars=None, out_pars=None):
+def predict(model, session=None, data_pars=None, compute_pars=None, out_pars=None, imax = 1, return_ytrue=1):
     # get a batch of data
-    model0 = model.model
-    _, valid_iter = get_dataset(data_pars=data_pars)
+    import numpy as np
+    from metrics import metrics_eval
     device = _get_device()
-    x_test = next(iter(valid_iter))[0].to(device)
-    ypred  = model0(x_test).detach().cpu().numpy()
-    return ypred
+    model = model.model
+    _, test_iter = get_dataset(data_pars=data_pars)
+
+    # test_iter = get_dataset(data_pars, out_pars)
+    y_pred = []
+    y_true = []
+    for i,batch in enumerate(test_iter):
+        if i >= imax: break
+        image, target = batch[0], batch[1]
+        image = image.to(device)
+        logit = model(image)
+        predictions = torch.max(logit,1)[1].cpu().numpy()
+        y_pred.append(predictions)
+        y_true.append(target)
+    y_pred = np.vstack(y_pred)[0]
+    y_true = np.vstack(y_true)[0]
+
+    if return_ytrue:
+        return y_pred, y_true
+    else:
+        return y_pred
 
 def fit_metrics(model, data_pars=None, compute_pars=None, out_pars=None):
     pass

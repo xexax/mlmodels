@@ -51,15 +51,8 @@ def config_model_list(folder=None):
     return mlist
 
 
-
-
-
-
 ####################################################################################################
 def metric_eval(actual=None, pred=None, metric_name="mean_absolute_error"):
-	"""
-      https://scikit-learn.org/stable/modules/generated/sklearn.metrics.get_scorer.html#sklearn.metrics.get_scorer 
-	"""
     metric = getattr(importlib.import_module("sklearn.metrics"), metric_name)
     return metric(actual, pred)
 
@@ -85,13 +78,6 @@ def preprocess_timeseries_m5(data_path=None, dataset_name=None, pred_length=10, 
 
 ####################################################################################################
 def benchmark_run(bench_pars=None, args=None, config_mode="test"):
-	"""
-      Runnner for benchmark computation
-      File is alredy saved on disk
-
-	"""
-    #pre_process(data_path=args.data_path, dataset_name=args.dataset_name, 
-    #            pred_length=bench_pars["pred_length"], item_id=args.item_id)
       
     dataset_uri  = args.data_path + f"{args.item_id}.csv"
     json_path    = path_norm( args.path_json )
@@ -138,6 +124,59 @@ def benchmark_run(bench_pars=None, args=None, config_mode="test"):
     return benchmark_df
 
 
+# Benchmarking for CNN on MNIST #
+def benchmark_run_mnist(bench_pars=None, args=None, config_mode="test"):
+    """
+      Runnner for benchmark computation on MNIST
+      File is alredy saved on disk
+	"""
+    json_path    = path_norm( args.path_json )
+    output_path  = path_norm( args.path_out )
+    json_list    = get_all_json_path(json_path)
+    metric_list  = bench_pars['metric_list']
+    benchmark_df = pd.DataFrame(columns=["date_run", "model_uri", "json",
+                                         "dataset_uri", "metric", "metric_name"])
+
+    # import pdb; pdb.set_trace()
+    for jsonf in json_list :
+        log ( f"### Running {jsonf} #####")
+        config_path = path_norm(jsonf)
+        _, model_pars, data_pars, compute_pars, out_pars = params_json_load(config_path, config_mode= config_mode)
+        #### Setup Model 
+        log("#### Model init   #############################################")
+        # import pdb; pdb.set_trace()
+        model_uri = model_pars['model_uri']  
+        module    = module_load(model_uri)
+        model     = module.Model(model_pars, data_pars, compute_pars)
+        # Fitting the model (training)
+        log("#### Model fit   #############################################")
+        model, session = module.fit(model, data_pars, compute_pars, out_pars)
+
+        #### Inference Need return ypred, ytrue
+        ypred, ytrue = module.predict(model=model, session=session, 
+                                      data_pars=data_pars, compute_pars=compute_pars, 
+                                      out_pars=out_pars, return_ytrue=1) 
+
+
+        
+
+        ### Calculate Metrics
+        for ind, metric in enumerate(metric_list):
+            metric_val = metric_eval(actual=ytrue, pred=ypred,  metric_name=metric)
+            benchmark_df.loc[ind, "date_run"]    = str(datetime.now())
+            benchmark_df.loc[ind, "model_uri"]   = model_uri
+            benchmark_df.loc[ind, "json"]        = str([model_pars, data_pars, compute_pars ])
+            # benchmark_df.loc[ind, "dataset_uri"] = dataset_uri
+            benchmark_df.loc[ind, "metric_name"] = metric
+            benchmark_df.loc[ind, "metric"]      = metric_val
+
+        # import pdb; pdb.set_trace()
+
+    log( f"benchmark file saved at {output_path}")  
+    os.makedirs( output_path, exist_ok=True)
+    benchmark_df.to_csv( f"{output_path}/benchmark_MNIST_CNN.csv", index=False)
+    return benchmark_df
+
 
 
 
@@ -163,7 +202,7 @@ def cli_load_arguments(config_file=None):
     add("--data_path",   default="mlmodels/dataset/timeseries/", help="Dataset path")
     add("--dataset_name",default="sales_train_validation.csv", help="dataset name")   
 
-    add("--path_json",   default="mlmodels/dataset/json/benchmark/", help="")
+    add("--path_json",   default="mlmodels/dataset/json/benchmark_cnn/", help="")
 
     ##### out pars
     add("--path_out",    default="ztest/benchmark/", help=".")
@@ -191,6 +230,11 @@ def main():
         pre_process_timeseries_m5(data_path=arg.data_path, dataset_name=arg.dataset_name, 
                                   pred_length=bench_pars["pred_length"], item_id=arg.item_id)              
         benchmark_run(bench_pars, arg) 
+
+    if arg.do == "MNIST":
+        log("Fit")
+        bench_pars = {"metric_list": ["accuracy_score"]}
+        benchmark_run_mnist(bench_pars=bench_pars, args=arg)
 
 
 if __name__ == "__main__":
