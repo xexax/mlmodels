@@ -49,13 +49,7 @@ jobs:
            git config --local user.email "noelkev0@gmail.com"
            git config --local user.name "arita37"
            ls &&  git add --all &&  git commit -m "log" 
-           git push --all
+#           git push --all
       
 
 
-
-#    - name: log_gitpush
-#      uses: ad-m/github-push-action@master
-#      with:
-#        github_token: ${{ secrets.GITHUB_TOKEN }}    
-  
