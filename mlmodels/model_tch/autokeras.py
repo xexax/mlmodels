@@ -4,7 +4,7 @@
 https://autokeras.com/examples/imdb/
 """
 import sys
-sys.path.append('../../')
+## sys.path.append('../../')
 from mlmodels.util import os_package_root_path, log, path_norm, get_model_uri, path_norm_dict
 import os
 import json
