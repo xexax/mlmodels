@@ -1,9 +1,9 @@
-name:  test_charcnn_zhang
+name:  autokeras2
 
 on:
   push:
     branches: 
-      - featre_charcnn_zhang
+      - autokeras2
 
  
 jobs:
@@ -63,7 +63,7 @@ jobs:
     ########  Test running 
     ##### Please change BELOW to your model name  
     - name: ml_test
-      run: ml_test  --do model_keras/charcnn_zhang.py
+      run: ml_test  --do model_tch/autokeras_classifier.py
 
       
          
