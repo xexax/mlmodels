@@ -57,7 +57,7 @@ ________________________________________________________________________________
   
 
 
-### 2) Change this file with your MODEL_NAME AND BRANCH NAME :
+### 2) Change those filed with your MODEL_NAME AND BRANCH NAME :
 
   https://github.com/arita37/mlmodels/blob/dev/.github/workflows/test_specific_model.yml
 
@@ -70,13 +70,13 @@ ________________________________________________________________________________
 
 
 
+
 ### 3) Create  mlmodels/model_XXXX/yyyyy.py   
   Template
   https://github.com/arita37/mlmodels/blob/dev/mlmodels/template/model_xxx.py
 
   Example :
-  https://github.com/arita37/mlmodels/blob/dev/mlmodels/model_keras/textcnn.py
-  
+  https://github.com/arita37/mlmodels/blob/dev/mlmodels/model_keras/textcnn.py  
   https://github.com/arita37/mlmodels/blob/dev/mlmodels/model_tch/transformer_sentence.py
 
 
@@ -112,6 +112,9 @@ https://github.com/arita37/mlmodels/actions?query=workflow%3Atest_custom_model
 
 ### 7)  Do Pull Request to dev Branc.
 
+
+
+### 8)  Update the github issues.
 
 
 
