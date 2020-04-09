@@ -198,7 +198,8 @@ def get_dataset(data_params):
     features = data_params["col_Xinput"]
     target = data_params["col_ytarget"]
     feat_len = len(features)
-    df = pd.read_csv(data_params["train_data_path"])
+    path = path_norm( data_params["train_data_path"]   )
+    df = pd.read_csv( path )
 
     x_train = df[features].iloc[:-pred_length]
     x_train = x_train.values.reshape(-1, pred_length, feat_len)

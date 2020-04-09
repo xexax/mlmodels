@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
 """
+ ml_test --do test_benchmark
+
+ 
 For all json in Json_path_list :
    Load_json, 
    Load_model, 
@@ -101,15 +104,15 @@ def benchmark_run(bench_pars=None, args=None, config_mode="test"):
         model_pars, data_pars, compute_pars, out_pars = params_json_load(config_path, config_mode= config_mode)
 
 
-        #### Setup Model 
+        log("#### Setup Model    ")
         model_uri = model_pars['model_uri']  # "model_tch.torchhub.py"
         module    = module_load(model_uri)
         model     = module.Model(model_pars=model_pars, data_pars=data_pars, compute_pars=compute_pars)
         
-        #### Fit
+        log("#### Fit ")
         model, session = module.fit(model, data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)          
     
-        #### Inference Need return ypred, ytrue
+        log("#### Inference Need return ypred, ytrue")
         ypred, ytrue = module.predict(model=model, session=session, 
                                       data_pars=data_pars, compute_pars=compute_pars, 
                                       out_pars=out_pars, return_ytrue=1)   
