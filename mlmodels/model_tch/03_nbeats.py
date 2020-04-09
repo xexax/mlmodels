@@ -31,7 +31,11 @@ def get_dataset(**kw):
     train_split_ratio = kw.get("train_split_ratio", 0.8)
 
     df = pd.read_csv(data_path, index_col=0, parse_dates=True)
-
+    if kw["test_data_path"]:
+        test = df = pd.read_csv(kw["test_data_path"], 
+                                index_col=0, parse_dates=True)
+        df = df.append(test)
+        train_split_ratio = kw["forecast_length"] / df.shape[0]
     if VERBOSE: print(df.head(5))
 
     #### Preprocess
@@ -85,6 +89,7 @@ def fit(model, data_pars=None, compute_pars=None, out_pars=None, **kw):
     data_gen = data_generator(x_train, y_train, batch_size)
 
     ### Setup session
+    # print("[DEBUG] from fir of nbeats parameter {}\n",format(model.parameters()))
     optimiser = optim.Adam(model.parameters())
 
     ### fit model
@@ -126,7 +131,7 @@ def predict(model, data_pars=None, compute_pars=None, out_pars=None, **kw):
     _, f = model(torch.tensor(x_test, dtype=torch.float))
     test_losses.append(F.mse_loss(f, torch.tensor(y_test, dtype=torch.float)).item())
     p = f.detach().numpy()
-    return p
+    return p, y_test
 
 
 ###############################################################################################################
@@ -285,7 +290,11 @@ def get_params(param_pars, **kw):
         return model_pars, data_pars, compute_pars, out_pars
 
 
-
+class Model:
+    def __init__(self, model_pars=None, data_pars=None, compute_pars=None):
+        if model_pars["model_uri"]:
+            del model_pars["model_uri"]
+        self.model = NBeatsNet(**model_pars)
 
 #############################################################################################################
 
@@ -308,7 +317,7 @@ def test(data_path="dataset/milk.csv"):
     model, optimiser = fit(model, data_pars, compute_pars, out_pars)
 
     log("#### Predict    #############################################")
-    ypred = predict(model, data_pars, compute_pars, out_pars)
+    ypred, _ = predict(model, data_pars, compute_pars, out_pars)
     print(ypred)
 
     log("#### Plot     ###############################################")
