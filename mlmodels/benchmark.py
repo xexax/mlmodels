@@ -58,6 +58,7 @@ def metric_eval(actual=None, pred=None, metric_name="mean_absolute_error"):
 
  
 def preprocess_timeseries_m5(data_path=None, dataset_name=None, pred_length=10, item_id=None):
+    data_path = path_norm(data_path)
     df         = pd.read_csv(data_path + dataset_name)
     col_to_del = ["item_id", "dept_id", "cat_id", "store_id", "state_id"]
     temp_df    = df.drop(columns=col_to_del).copy()
@@ -223,15 +224,16 @@ def main():
 
     if arg.do == "timeseries":
         log("Time series model")
-        arg_data_path = "mlmodels/dataset/json/benchmark/"
+        arg_data_path = "dataset/json/benchmark/"
 
         bench_pars = {"metric_list": ["mean_absolute_error", "mean_squared_error",
                                       "mean_squared_log_error", "median_absolute_error", 
                                       "r2_score"], 
                       "pred_length": 100}
 
-        preprocess_timeseries_m5(data_path=arg_data_path, dataset_name=arg.dataset_name, 
-                                  pred_length=bench_pars["pred_length"], item_id=arg.item_id)              
+        preprocess_timeseries_m5(data_path=arg_data_path, 
+                                 dataset_name=arg.dataset_name, 
+                                 pred_length=bench_pars["pred_length"], item_id=arg.item_id)              
         benchmark_run(bench_pars, arg) 
 
 
