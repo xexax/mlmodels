@@ -98,6 +98,8 @@ def get_dataset(data_pars=None, **kw):
 
 
 
+
+
 def fit(model, data_pars=None, compute_pars=None, out_pars=None, **kwargs):
     model0        = model.model
     lr            = compute_pars['learning_rate']
