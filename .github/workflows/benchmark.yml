@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 name:  test_benchmark
 
 
@@ -105,8 +106,4 @@ jobs:
            git push --all
            cd /home/runner/work/mlmodels/mlmodels/
 
-# https://ianwhitestone.work/AWS-Serverless-Deployments-With-Github-Actions/
-#
-#
-#
-#
+
