@@ -1,18 +1,7 @@
 {
+  "test_list": [{ "name": "test_list", "args": {} }],
 
-  "test_list" : [ { "name": "test_list"
-                   ,"args": {}
-                  }
-                ]
-
- ,"model_list": [ "model_tf/1_lstm"
- 	             ,"model_keras/armdn"
- 	             ,"model_tch/torchhub.py"
- 	             ,"data.py"
-
-
-                ]
-
-
-
+  "model_list": [
+    "benchmark.py"
+  ]
 }

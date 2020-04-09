@@ -132,7 +132,8 @@ def predict(model=None, model_pars=None,  sess=None, data_pars=None,
     y_samples = np.apply_along_axis(mdn.sample_from_output, 1, pred,
                                     data_pars["prediction_length"],
                                     model_pars["n_mixes"], temp=1.0)
-    return y_samples.reshape(-1, 1)
+    y_samples[y_samples < 0] = 0
+    return y_samples.reshape(-1, 1), y_test.reshape(-1, 1)
 
 
 def metrics_plot(metrics_params):
@@ -271,14 +272,13 @@ def test(data_path="dataset/", pars_choice="test0", config_mode="test"):
     # for prediction
     
     log("#### Predict   ####")
-    y_pred = predict(model=model, model_pars=model_pars, data_pars=data_pars)
+    y_pred, y_test = predict(model=model, model_pars=model_pars, data_pars=data_pars)
 
     log("### Plot ###")
     data_pars["predict"] = True
-    x_test, y_test = get_dataset(data_pars)
     metrics_params = {"plot_type": "line", "pred": y_pred, 
                       "outpath": out_pars["outpath"], 
-                      "actual": y_test.reshape(-1, 1)}
+                      "actual": y_test}
     metrics_plot(metrics_params)
 
     log("#### Save/Load   ###################################################")
