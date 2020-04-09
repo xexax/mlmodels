@@ -195,8 +195,27 @@ def get_dataset(data_params):
     features = data_params["col_Xinput"]
     target = data_params["col_ytarget"]
     feat_len = len(features)
-    df = pd.read_csv(data_params["train_data_path"])
 
+    # when train and test both are provided
+    if data_params["test_data_path"]:
+        train = pd.read_csv(data_params["train_data_path"])
+        test = pd.read_csv(data_params["test_data_path"])
+
+        x_train = train[features]
+        x_train = x_train.values.reshape(-1, pred_length, feat_len)
+        y_train = train[features].shift().fillna(0)
+        y_train = y_train.values.reshape(-1, pred_length, 1)
+
+        x_test = test[features]
+        x_test = x_test.values.reshape(-1, pred_length, feat_len)
+        y_test = test[target].fillna(0)
+        y_test = y_test.values.reshape(-1, pred_length, 1)        
+        if data_params["predict"]:
+            return x_test, y_test
+        return x_train, y_train, x_test, y_test
+    
+    # for when only train is provided
+    df = pd.read_csv(data_params["train_data_path"])
     x_train = df[features].iloc[:-pred_length]
     x_train = x_train.values.reshape(-1, pred_length, feat_len)
     y_train = df[features].iloc[:-pred_length].shift().fillna(0)
