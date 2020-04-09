@@ -24,6 +24,15 @@ https://github.com/arita37/mlmodels/blob/dev/README_index_doc.py
     ### No Deps
     # pip install -e .  --no-deps
 
+
+
+
+# Online Editor
+
+https://github.com/arita37/mlmodels/issues/101
+
+
+
 ___________________________________________________________________________________________
 # Steps  for : Pull Request, a Fix or add a New Model :
 
@@ -44,7 +53,7 @@ ________________________________________________________________________________
 
 
     
-### 1) Create a branch from DEV branch called : keras_modelXXX
+### 1) Create a branch from DEV branch called : modelXXX
   
 
 
@@ -102,6 +111,8 @@ https://github.com/arita37/mlmodels/actions?query=workflow%3Atest_custom_model
 
 
 ### 7)  Do Pull Request to dev Branc.
+
+
 
 
 
