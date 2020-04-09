@@ -24,6 +24,10 @@ from mlmodels.util import get_recursive_files2
 
 
 
+log_git_push = " cd /home/runner/work/mlmodels/mlmodels_store/   && ls &&  git add --all &&  git commit -m 'log'   && git push --all   && cd /home/runner/work/mlmodels/mlmodels/ "
+
+
+
 def os_file_current_path():
     import inspect
     val = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
@@ -149,6 +153,7 @@ def test_all(arg=None):
         print("\n\n\n", flush=True)
         print(cmd, flush=True)
         os.system(cmd)
+        os.system(log_git_push)
 
 
 def test_json(arg):
