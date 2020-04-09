@@ -104,7 +104,7 @@ def benchmark_run(bench_pars=None, args=None, config_mode="test"):
         model, session = module.fit(model, data_pars, compute_pars, out_pars)          
     
         #### Inference Need return ypred, ytrue
-        ypred, ytrue = module.predict(model=model, model_pars=model_pars, session=session, 
+        ypred, ytrue = module.predict(model=model, session=session, 
                                       data_pars=data_pars, compute_pars=compute_pars, 
                                       out_pars=out_pars, return_ytrue=1)   
         
