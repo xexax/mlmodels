@@ -105,6 +105,25 @@ def test_jupyter(arg=None, config_mode="test_all"):
 
 
 
+def test_benchmark(arg=None):
+    print("os.getcwd", os.getcwd())
+
+    path = mlmodels.__path__[0]
+    print("############Check model ################################")
+    path = path.replace("\\", "//")
+    test_list = [ f"python {path}/benchmark.py --do timeseries "   ,
+                  f"python {path}/benchmark.py --do vision_mnist "   ,
+    ]
+
+    for cmd in test_list:
+        print("\n\n\n", flush=True)
+        print(cmd, flush=True)
+        os.system(cmd)
+
+
+
+
+
 
 
 def test_all(arg=None):
