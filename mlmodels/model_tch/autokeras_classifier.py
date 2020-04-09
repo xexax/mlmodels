@@ -122,11 +122,11 @@ def fit_metrics(model, data_pars=None, compute_pars=None, out_pars=None):
 
 
 def save(model, session=None, save_pars=None):
-    model.save(os.path.join(save_pars["model_dir"],'autokeras_classifier_model.h5'))
+    model.save(os.path.join(save_pars["checkpointdir"],'autokeras_classifier_model.h5'))
 
 
 def load(load_pars):
-    return load_model(os.path.join(load_pars["model_dir"],'autokeras_classifier_model.h5'), custom_objects=ak.CUSTOM_OBJECTS)
+    return load_model(os.path.join(load_pars["checkpointdir"],'autokeras_classifier_model.h5'), custom_objects=ak.CUSTOM_OBJECTS)
 
 
 ###########################################################################################################

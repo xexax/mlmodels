@@ -27,7 +27,7 @@
             },
 
             "out_pars": {
-                "model_dir": "ztest/model_tch/autokeras/textclassifier/",
+                "checkpointdir": "ztest/model_tch/autokeras/textclassifier/",
                 "path": "ztest/model_tch/autokeras/textclassifier/"
             }
         },
