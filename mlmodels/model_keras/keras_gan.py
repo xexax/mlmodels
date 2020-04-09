@@ -26,9 +26,10 @@ MODEL_URI = get_model_uri(__file__)
 
 #### Load all models
 from mlmodels.model_keras.raw import keras_gan as kg
+from mlmodels.model_keras.raw.keras_gan.aae.aae import AdversarialAutoencoder as aae
 
 MODEL_MAPPING = {
-    'AAE' : kg.aae.aae,
+    'AAE' : aae
 
 }
 
@@ -54,22 +55,20 @@ class Model:
         _model = model_pars['model']
         assert _model in MODEL_MAPPING.keys()
 
+        self.model = MODEL_MAPPING[_model]()
         task_name = model_pars['task_name']   
 
         if task_name == "classification" :
             self.task = mz.tasks.Classification(num_classes= data_pars["num_classes"])
-            self.task.metrics = [
-                mz.metrics.accuracy(),
-            ]
-            self.model.params['task'] = self.task
+            #.task.metrics = [
+            #    mz.matchzoo().metrics.accuracy(),
+            #]
+            #self.model.params['task'] = self.task
         else :
             raise Exception(f"Not support choice {task_name} yet")
 
-
-        self.model = MODEL_MAPPING[_model]()
-        self.model.params['mode'] = model_pars['mode']
-        self.model.params['dropout_rate'] = model_pars['dropout_rate']
-        self.model.build()
+        self.model.train()
+        self.model.save_model()
 
 
 def get_params(param_pars=None, **kw):
@@ -179,7 +178,7 @@ def test(data_path="dataset/", pars_choice="json", config_mode="test"):
 
     log("#### Save/Load   ###################################################")
     save_pars = { "path": out_pars["path"]  }
-    save(model=model, save_pars=save_pars)
+    #save(model=model, save_pars=save_pars)
     model2 = load( save_pars )
     ypred = predict(model2, data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)
     print(model2)
