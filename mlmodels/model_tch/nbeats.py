@@ -147,7 +147,7 @@ def plot(net, x, target, backcast_length, forecast_length, grad_step, out_path="
         # plt.title(f'step #{grad_step} ({i})')
 
     output = f'{out_path}/n_beats_{grad_step}.png'
-    plt.savefig(output)
+    # plt.savefig(output)
     plt.clf()
     print('Saved image to {}.'.format(output))
 
@@ -183,7 +183,7 @@ def plot_predict(x_test, y_test, p, data_pars, compute_pars, out_pars):
         plt.plot(range(0, backcast_length), xx, color='b')
         plt.plot(range(backcast_length, backcast_length + forecast_length), yy, color='g')
         plt.plot(range(backcast_length, backcast_length + forecast_length), ff, color='r')
-    plt.savefig(output)
+    # plt.savefig(output)
     plt.clf()
     print('Saved image to {}.'.format(output))
 
@@ -255,7 +255,11 @@ def get_params(param_pars, **kw):
         data_path = path_norm(data_path)
         cf = json.load(open(data_path, mode='r'))
         cf = cf[config_mode]
+
+        cf['model_pars']["stack_types"]  =  [NBeatsNet.GENERIC_BLOCK, NBeatsNet.GENERIC_BLOCK]
+
         return cf['model_pars'], cf['data_pars'], cf['compute_pars'], cf['out_pars']
+
 
 
     if choice == "test01":
@@ -276,7 +280,7 @@ def get_params(param_pars, **kw):
 
         compute_pars = {"batch_size": 100, "disable_plot": False,
                         "norm_contsant": 1.0,
-                        "result_path": 'n_beats_test{}.png',
+                        "result_path": out_path + '/n_beats_test{}.png',
                         "model_path": "mycheckpoint"}
 
         out_pars = {"out_path": out_path + "/", 
@@ -289,11 +293,11 @@ def get_params(param_pars, **kw):
 
 #############################################################################################################
 
-def test(data_path="dataset/milk.csv"):
+def test(choice="json", data_path="nbeats.json", config_mode="test"):
     ###loading the command line arguments
 
     log("#### Loading params   #######################################")
-    param_pars = { "choice" : "test01", "data_path" : "dataset/", "config_mode" : "test01" }
+    param_pars = { "choice" : choice, "data_path" : data_path, "config_mode" : config_mode }
     model_pars, data_pars, compute_pars, out_pars = get_params(param_pars)
 
 
@@ -317,9 +321,9 @@ def test(data_path="dataset/milk.csv"):
 
 if __name__ == '__main__':
     VERBOSE = True
-    test()
+    test(choice="json", data_path="model_tch/nbeats.json")
 
-
+    # test()
 
 
 
