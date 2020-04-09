@@ -13,7 +13,10 @@ import torch
 import matchzoo as mz
 import numpy as np
 import pandas as pd
+import sys
 
+print(sys.path)
+sys.path.append('/workspace/mlmodels/mlmodels/model_keras/raw/keras_gan/bgan/')
 
 from mlmodels.util import os_package_root_path, log, path_norm, get_model_uri, path_norm_dict
 
@@ -27,16 +30,12 @@ MODEL_URI = get_model_uri(__file__)
 #### Load all models
 from mlmodels.model_keras.raw import keras_gan as kg
 from mlmodels.model_keras.raw.keras_gan.aae.aae import AdversarialAutoencoder as aae
+from mlmodels.model_keras.raw.keras_gan.bgan.bgan import BGAN as bgan
 
 MODEL_MAPPING = {
-    'AAE' : aae
-
+    'AAE' : aae,
+    'BGAN':bgan
 }
-
-
-
-
-
 
 def get_config_file():
     return os.path.join(os_package_root_path(__file__, 1), 'config', 'model_tch', 'Imagecnn.json')
@@ -67,7 +66,7 @@ class Model:
         else :
             raise Exception(f"Not support choice {task_name} yet")
 
-        self.model.train()
+        self.model.train(epochs = 10)
         self.model.save_model()
 
 
