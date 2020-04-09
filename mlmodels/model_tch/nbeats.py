@@ -16,7 +16,6 @@ MODEL_URI = get_model_uri(__file__)
 
 
 
-
 ####################################################################################################
 from mlmodels.model_tch.raw.nbeats.model import NBeatsNet
 

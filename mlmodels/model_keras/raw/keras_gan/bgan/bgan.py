@@ -15,6 +15,9 @@ import sys
 
 import numpy as np
 
+###global var
+out_path = ""
+
 class BGAN():
     """Reference: https://wiseodd.github.io/techblog/2017/03/07/boundary-seeking-gan/"""
     def __init__(self):
@@ -158,10 +161,10 @@ class BGAN():
                 axs[i,j].imshow(gen_imgs[cnt, :,:,0], cmap='gray')
                 axs[i,j].axis('off')
                 cnt += 1
-        fig.savefig("images/mnist_%d.png" % epoch)
+        fig.savefig(out_path + "/images/img_%d.png" % epoch)
         plt.close()
 
 
 if __name__ == '__main__':
     bgan = BGAN()
-    bgan.train(epochs=30000, batch_size=32, sample_interval=200)
+    bgan.train(epochs=3, batch_size=32, sample_interval=200)

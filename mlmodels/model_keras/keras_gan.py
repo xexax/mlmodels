@@ -119,6 +119,12 @@ def fit(model, data_pars=None, compute_pars=None, out_pars=None, **kwargs):
 
     os.makedirs(out_pars["checkpointdir"], exist_ok=True)
 
+
+    model0.train()
+
+    model.mmodel = model0
+
+
     return model, None
 
 
@@ -127,7 +133,14 @@ def predict(model, session=None, data_pars=None, compute_pars=None, out_pars=Non
     model0 = model.model
     _, valid_iter = get_dataset(data_pars=data_pars)
 
-    return ypred
+    
+    model0 = model.model
+    model0.out_path = out_pars['path']   #### Use Global VAR
+
+    model0.generate_sample()
+
+
+
 
 
 def fit_metrics(model, data_pars=None, compute_pars=None, out_pars=None):
