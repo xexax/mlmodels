@@ -6,8 +6,8 @@ import re
 from pathlib import Path
 import json
 
-
-
+import importlib
+from inspect import getmembers
 
 
 ####################################################################################################
@@ -557,9 +557,30 @@ def load_gluonts(load_pars=None):
 
 
 
-
-
-
+def load_callable_from_uri(uri):
+    assert(len(uri)>0 and ('::' in uri or '.' in uri))
+    if '::' in uri:
+        module_path, callable_name = uri.split('::')
+    else:
+        module_path, callable_name = uri.rsplit('.',1)
+    if os.path.isfile(module_path):
+        module_name = '.'.join(module_path.split('.')[:-1])
+        spec = importlib.util.spec_from_file_location(module_name, module_path)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(foo)
+    else:
+        module = importlib.import_module(module_path)
+    return dict(getmembers(module))[callable_name]
+        
+def load_callable_from_dict(function_dict):
+    uri = function_dict['uri']
+    func = load_callable_from_uri(uri)
+    try:
+        assert(callable(func))
+    except:
+        raise TypeError(f'{func} is not callable')
+    arg = function_dict.get('arg', None)
+    return func, arg
 
 """
 def path_local_setup(current_file=None, out_folder="", sublevel=0, data_path="dataset/"):

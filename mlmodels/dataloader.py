@@ -2,481 +2,451 @@ import os
 import sys
 import inspect
 from urllib.parse import urlparse
+from collections.abc import MutableMapping
+import json
+
 import pandas as pd
 import numpy as np
 import sklearn
 import keras
+
+
 from sklearn.model_selection import train_test_split
 from cli_code.cli_download import Downloader
-from collections.abc import MutableMapping
-import json
+
+
 from importlib import import_module
-import pickle
+
+import cloudpickle as pickle
+
+from preprocessor import Preprocessor
+
+from util import load_callable_from_dict
+
 
 
 class DataLoaderError(Exception):
     pass
 
 
+
+
+
+"""
+#### Can you remove those Exception... by RaiseError(  )  when needed --> Reduce code volume
+
 class MissingLocationKeyError(DataLoaderError):
     def __init__(self):
-        print('Location key missing from the input dictionary.')
+        print("Location key missing from the input dictionary.")
 
 
 class UndeterminableLocationTypeError(DataLoaderError):
-    def __init__(self):
-        print('Location type cannot be inferred.')
+    def __init__(self, location):
+        print(f"Location type cannot be inferred for '{location}'.")
 
 
 class UnknownLocationTypeError(DataLoaderError):
-    def __init__(self, location_type):
-        print(f"Location type '{location_type}' is unknown.")
+    def __init__(self, path_type):
+        print(f"Location type '{  path_type}' is unknown.")
 
 
 class NonfileURLError(DataLoaderError):
     def __init__(self):
-        print(f'URL must point to a file.')
+        print(f"URL must point to a file.")
 
 
 class UndeterminableDataLoaderError(DataLoaderError):
     def __init__(self):
         print(
-            f"""Loader function to be used was not provided and could not be
-             automatically inferred from file type."""
+            f"Loader function to be used was not provided and could not be  automatically inferred from file type."
         )
 
 
 class NonIntegerBatchSizeError(DataLoaderError):
     def __init__(self):
-        print(f'Provided batch size cannot be interpreted as an integer.')
+        print(f"Provided batch size cannot be interpreted as an integer.")
 
 
 class InvalidDataLoaderFunctionError(DataLoaderError):
     def __init__(self, loader):
-        print(f'Invalid data loader function \'{loader}\ specified.')
+        print(f"Invalid data loader function '{loader}\ specified.")
 
 
 class NumpyGeneratorError(DataLoaderError):
     def __init__(self):
-        print(f'Loading Numpy binaries as generators is unsupported.')
-
-
-class MissingDataPreprocessorError(DataLoaderError):
-    def __init__(self):
-        print(f'data_preprocessor is missing in preprocessor.')
-
-
-class InvalidDataPreprocessorParameterError(DataLoaderError):
-    def __init__(self, parameter):
-        print(f'Could not evaluate data_preprocessor parameter {parameter}.')
-
-
-class InvalidEncoderParameterError(DataLoaderError):
-    def __init__(self, parameter):
-        print(f'Could not evaluate encoder parameter {parameter}.')
-
-
-class InvalidDataPreprocessorError(DataLoaderError):
-    def __init__(self, preprocessor):
-        print(f'Could not evaluate data_preprocessor \'{preprocessor}\'.')
-
-
-class InvalidEncoderError(DataLoaderError):
-    def __init__(self, preprocessor):
-        print(f'Could not evaluate encoder \'{preprocessor}\'.')
-
-
-class NonCallableDataPreprocessorError(DataLoaderError):
-    def __init__(self, preprocessor):
-        print(f'\'{preprocessor}\' is not callable.')
-
-
-class NonCallableEncoderError(DataLoaderError):
-    def __init__(self, preprocessor):
-        print(f'\'{preprocessor}\' is not callable.')
-
-
-class EncoderMissingIndexError(DataLoaderError):
-    def __init__(self, encoder_pars):
-        print(f'\'{encoder_pars}\' is missing the index parameter.')
-
-
-class EncoderMissingEncoderError(DataLoaderError):
-    def __init__(self, encoder_pars):
-        print(f'\'{encoder_pars}\' is missing the encoder parameter.')
+        print(f"Loading Numpy binaries as generators is unsupported.")
 
 
 class OutputShapeError(DataLoaderError):
     def __init__(self, specified, actual):
         print(
-            f'''Specified output shape {specified} does not match actual output
-            shape {actual}'''
+            f"""Specified output shape {specified} does not match actual output
+            shape {actual}"""
         )
+"""
 
 
-class PreprocssingOutputDict(dict):
-    def __init__(self, *args, **kwargs):
-        super(PreprocssingOutputDict, self).__init__(*args, **kwargs)
-
-    def __getitem__(self, key):
-        if isinstance(key, list):
-            return (super(PreprocssingOutputDict, self).__getitem__(k)
-                    for k in key)
-        else:
-            return super(PreprocssingOutputDict, self).__getitem__(key)
-
-    def __setitem__(self, key, value):
-        if isinstance(key, list):
-            (super(PreprocssingOutputDict, self).__setitem__(k, v)
-             for k, v in zip(key, value))
-        else:
-            super(PreprocssingOutputDict, self).__setitem__(key, value)
-
-    def __str__(self):
-        return super(PreprocssingOutputDict, self).__str__()
-
-    def __repr__(self):
-        return super(PreprocssingOutputDict, self).__repr__()
-
-    def values(self):
-        return super(PreprocssingOutputDict, self).values()
+def open_read(file):
+    return open(f).read()
 
 
-def load_function(f):
-    try:
-        return eval(f)
-    except NameError:
-        import_module(f.rsplit('.', 1)[0])
-        return eval(f)
+def pickle_load(file):
+    return pickle.load(open(f, " r"))
 
 
 class AbstractDataLoader:
 
     default_loaders = {
-        '.csv': 'pd.read_csv',
-        '.txt': 'lambda f: open(f).read()',
-        '.npy': 'np.load',
-        '.npz': 'np.load',
-        '.pkl': 'lambda f: pickle.load(open(f,'
-        r'))'
+        ".csv": {"uri": "pandas::read_csv"},
+        ".txt": {"uri": "dataloader::open_read"},   #### NO Please make USER input OVer-ride.
+        ".npy": {"uri": "numpy::load"},
+        ".npz": {"uri": "np::.load", "arg": {"allow_pickle": True}},
+        ".pkl": {"uri": "dataloader::pickle_load"},
     }
 
-    def __init__(self, input_pars, loader, preprocessor, output):
-        self.preprocessor = preprocessor
-        self.state_preprocessors = []
+    val_split_function = [train_test_split, "test_size", {}]  #### Why not using train_test
+
+
+    def __init__(self, input_pars, loader, preprocessor, output, **args):
+        self._misc_dict = args if args is not None else {}
         self._interpret_input_pars(input_pars)
         loaded_data = self._load_data(loader)
-        processed_data = self._interpret_processor(preprocessor, loaded_data)
-        X_list = []
+        if isinstance(preprocessor, Preprocessor):
+            self.preprocessor = preprocessor
+            data_tmp = self.preprocessor.transform(loaded_data)
+
+        else:
+            self.preprocessor = Preprocessor(preprocessor)
+            data_tmp = self.preprocessor.fit_transform(loaded_data)
+
+
+        ######## Xinput
+        Xinput = []
         if self.X_cols is not None:
             for x in self.X_cols:
                 if isinstance(x, str):
-                    X_list.append(processed_data[x])
+                    Xinput.append(data_tmp[x])
                 else:
                     try:
-                        X_list.append(processed_data[:, x])
+                        Xinput.append(data_tmp[:, x])
                     except:
-                        X_list.append(processed_data[x])
-        y_list = []
+                        Xinput.append(data_tmp[x])
+
+        ######## yinput
+        yinput = []
         if self.y_cols is not None:
             for y in self.y_cols:
-                if isinstance(x, str):
-                    y_list.append(processed_data[y])
+                if isinstance(y, str):
+                    yinput.append(data_tmp[y])
                 else:
                     try:
-                        y_list.append(processed_data[:, y])
+                        yinput.append(data_tmp[:, y])
                     except:
-                        y_list.append(processed_data[y])
-        misc_list = []
+                        yinput.append(data_tmp[y])
+
+        ####### Other columns (columns that shouldn't be split if test_size > 0)
+        misc_input = []
         if self.misc_cols is not None:
             for m in self.misc_cols:
-                if isinstance(x, str):
-                    misc_list.append(processed_data[m])
+                if isinstance(m, str):
+                    misc_input.append(data_tmp[m])
                 else:
                     try:
-                        misc_list.append(processed_data[:, m])
+                        misc_input.append(data_tmp[:, m])
+
                     except:
-                        misc_list.append(processed_data[m])
-        if self.test_size > 0 and not self.generator and len(
-                X_list) > 0 and len(y_list) > 0:
-            processed_data = train_test_split(
-                *(X_list + y_list), test_size=self.test_size) + misc_list
-        if isinstance(processed_data, PreprocssingOutputDict):
-            processed_data = list(processed_data.values())
-        if isinstance(processed_data, list) and len(processed_data) == 1:
-            processed_data = processed_data[0]
-        print([x.shape for x in processed_data])
-        self.intermediate_output = processed_data
+                        misc_input.append(data_tmp[m])
+
+        split_size_arg_dict = {self.val_split_function[1]: self.test_size, **self.val_split_function[2], } 
+
+
+        if (self.test_size > 0 and not self.generator and len(Xinput) > 0 and len(yinput) > 0 ):
+            data_tmp = self.val_split_function[0]( *(Xinput + yinput), **split_size_arg_dict ) 
+
+        elif self.test_size > 0:
+            data_tmp = self.val_split_function[0](data_tmp, **split_size_arg_dict )
+
+        if isinstance(data_tmp, Preprocessor.output_dict_type):
+            data_tmp = list(data_tmp.values())
+
+        if isinstance(data_tmp, list) and len(data_tmp) == 1:
+            data_tmp = data_tmp[0]
+
+        self.out_tmp = data_tmp
         self._interpret_output(output)
 
+    def __getitem__(self, key):
+        return self._misc_dict[key]
+
+
+
     def _interpret_input_pars(self, input_pars):
-        try:
-            location = input_pars['location']
-        except KeyError:
-            raise MissingLocationKeyError()
+        
+        path = input_pars["path"]
+        path_type = input_pars.get("path_type", None)
+        if path_type is None:
+            if os.path.isfile(path):  path_type = "file"
+            if os.path.isdir(path):   path_type = "dir"
+                
+            if urlparse(path).scheme != "":
+                path_type = "url"
+                download_path = input_pars.get("download_path", "./")
+                
+            if path_type == "dropbox":
+                dropbox_download(path)
+                path_type = "file"
+                
+            if path_type is None:
+                raise UndeterminableLocationTypeError(path)
 
-        location_type = input_pars.get('location_type', None)
-        if location_type is None:
-            if os.path.isfile(location):
-                location_type = 'file'
-            if os.path.isdir(location):
-                location_type = 'dir'
-            if urlparse(location).scheme != '':
-                location_type = 'url'
-                download_path = input_pars.get('download_path', './')
-            if location_type == 'dropbox':
-                dropbox_download(location)
-                location_type = 'file'
-            if location_type is None:
-                raise UndeterminableLocationTypeError(location_type)
-        elif location_type != 'file' and location_type != 'dir' \
-                and location_type != 'url':
-                raise UnknownLocationTypeError()
+        elif path_type != "file" and path_type != "dir" and path_type != "url":
+            raise UnknownLocationTypeError()
 
-        file_type = input_pars.get('file_type', None)
+        file_type = input_pars.get("file_type", None)
         if file_type is None:
-            if location_type == 'dir':
-                file_type = 'image_dir'
-            elif location_type == 'file':
-                file_type = os.path.splitext(location)[1]
+            if   path_type == "dir":   file_type = "image_dir"   #### THIS IS WRONG
+            elif path_type == "file":  file_type = os.path.splitext(path)[1]
             else:
-                if location[-1] == '/':
+                if path[-1] == "/":
                     raise NonfileURLError()
-                file_type = os.path.splittext(location.split('/')[-1])[1]
+                file_type = os.path.splittext(path.split("/")[-1])[1]
 
-        self.location = location
-        self.location_type = location_type
+
+        self.path = path
+        self.path_type = path_type
         self.file_type = file_type
-        self.test_size = input_pars.get('test_size', None)
-        self.generator = input_pars.get('generator', False)
+        self.test_size = input_pars.get("test_size", None)
+        self.generator = input_pars.get("generator", False)
         if self.generator:
-            try:
-                self.generator_batch = int(
-                    input_pars.get('generator_batch', 1))
-            except:
-                raise NonIntegerBatchSizeError()
-        self.X_cols = input_pars.get('X_cols', None)
-        self.y_cols = input_pars.get('y_cols', None)
-        self.misc_cols = input_pars.get('misc_cols', None)
+                self.batch_size = int(input_pars.get("batch_size", 1))
+
+
+        self.X_cols = input_pars.get("X_cols", None)
+        self.y_cols = input_pars.get("y_cols", None)
+        self.misc_cols = input_pars.get("misc_cols", None)
+
+
 
     def _load_data(self, loader):
-        data_loader = loader.pop('data_loader', None)
-        if data_loader is None:
-            try:
-                data_loader = self.default_loaders[self.file_type]
-            except KeyError:
-                raise UndeterminableDataLoaderError()
-        try:
-            loader_function = load_function(data_loader)
-            assert (callable(loader_function))
-        except:
-            raise InvalidDataLoaderFunctionError(data_loader)
-        if self.location_type == 'file':
-            if self.generator:
-                if self.file_type == 'csv':
-                    if loader_function == pd.read_csv:
-                        loader['chunksize'] = loader.get(
-                            'chunksize', self.generator_batch)
-            loader_arg = self.location
+        data_loader = loader.get("data_loader", None)
+        if isinstance(data_loader, tuple):
+            loader_function = data_loader[0]
+            loader_args = data_loader[1]
 
-        if self.location_type == 'url':
-            if self.file_type == 'csv' and loader_function == pd.read_csv:
-                data = loader_function(self.location, **loader)
+        else:
+            if data_loader is None:
+                try:
+                    data_loader = self.default_loaders[self.file_type]
+                except KeyError:
+                    raise UndeterminableDataLoaderError()
+            try:
+                loader_function, loader_args = load_callable_from_dict(data_loader)
+                assert callable(loader_function)
+            except:
+                raise InvalidDataLoaderFunctionError(data_loader)
+
+
+        if self.path_type == "file":
+            if self.generator:
+                if self.file_type == "csv":
+                    if loader_function == pd.read_csv:
+                        loader_args["chunksize"] = loader.get("chunksize", self.batch_size ) loader_arg = self.path
+
+
+        if self.path_type == "url":
+            if self.file_type == "csv" and loader_function == pd.read_csv:
+                data = loader_function(self.path, **loader_args)
+
             else:
                 downloader = Downloader(url)
                 downloader.download(out_path)
-                filename = self.location.split('/')[-1]
-                loader_arg = out_path + '/' + filename
+                filename = self.path.split("/")[-1]
+                loader_arg = out_path + "/" + filename
 
-        if self.file_type == 'npz' and loader_function == np.load:
-            loader['allow_pickle'] = True
-        data = loader_function(loader_arg, **loader)
-        if self.location_type == 'directory':
-            data = self._image_directory_load(self.location, self.generator)
-        if self.file_type == 'npz' and loader_function == np.load:
+
+        data = loader_function(loader_arg, **loader_args)
+        if self.path_type == "directory":
+            data = self._image_directory_load(self.path, self.generator)
+
+        if self.file_type == "npz" and loader_function == np.load:
             data = [data[f] for f in data.files]
+
         return data
 
+
+
     def _image_directory_load(self, directory, generator):
-        # To be overridden by loaders.
+        # To be overridden by loaders, or possibly use Keras's ImageDataGenerator by default, as it's designed to be universal
         pass
 
-    def _interpret_processor(self, preprocessor, data):
-        if preprocessor is None:
-            return interpreted_data
-        if isinstance(preprocessor, list):
-            for p in preprocessor:
-                preprocessed_data = self._preprocessor(data, p)
-        else:
-            preprocessed_data = self._preprocessor(data, p)
-        return preprocessed_data
 
-    def _preprocessor(self, data, pars):
-        try:
-            data_preprocessor = pars.pop('data_preprocessor')
-        except KeyError:
-            raise MissingDataPreprocessorError()
-        if isinstance(data_preprocessor, list):
-            preprocessors = []
-            output = PreprocssingOutputDict()
-            for encoder_pars in data_preprocessor:
-                try:
-                    index = encoder_pars.pop('index')
-                except:
-                    raise EncoderMissingIndexError(encoder_pars)
-                try:
-                    encoder_str = encoder_pars.pop('encoder')
-                except:
-                    raise EncoderMissingEncoderError(encoder_pars)
-                output_name = encoder_pars.pop('output_name', index)
-                if isinstance(index, str) or (isinstance(index, list) and
-                                              isinstance(index[0], str)):
-                    selection = data[index]
-                else:
-                    try:
-                        selection = data[:, index]
-                    except:
-                        selection = data[index]
-                for x, y in encoder_pars.items():
-                    parameter_string = str(x) + ' : ' + str(y)
-                    if '{data}' in parameter_string:
-                        try:
-                            encoder_pars[x] = eval(
-                                y.replace('{data}', 'selection'))
-                        except:
-                            raise InvalidEncoderParameterError(
-                                parameter_string)
-                    elif str(y)[0] == '@':
-                        try:
-                            encoder_pars[x] = eval(y[1:])
-                        except:
-                            raise InvalidEncoderParameterError(
-                                parameter_string)
-                    else:
-                        encoder_pars[x] = y
-                try:
-                    if '{data}' in encoder_str:
-                        encoder = lambda x, args: eval(
-                                  encoder_str.replace('{data}',
-                                                      'selection'))(**args)
-                    encoder = load_function(encoder_str)
-                except:
-                    raise InvalidEncoderError(encoder)
-                try:
-                    assert callable(encoder)
-                except:
-                    raise NonCallableEncoderError(encoder_str)
-                if inspect.isclass(encoder):
-                    encoder_output = encoder.fit_transform(
-                        selection, **encoder_pars)
-                    preprocessors.append((index, encoder.transform,
-                                          output_name, encoder_pars))
-                    encoder_output = encoder(selection, **encoder_pars)
-                    output[output_name] = encoder_output
-                else:
-                    preprocessors.append((index, encoder, output_name,
-                                          encoder_pars))
-                    encoder_output = encoder(selection, **encoder_pars)
-                    output[output_name] = encoder_output
-            self.state_preprocessors.append(preprocessors)
-            return output
-        parameters = {}
-        for x, y in pars.items():
-            parameter_string = str(x) + ' : ' + str(y)
-            if '{data}' in parameter_string:
-                try:
-                    parameters[x] = eval(y.replace('{data}', 'data'))
-                except:
-                    raise InvalidDataPreprocessorError(parameter_string)
-            elif str(y)[0] == '@':
-                try:
-                    parameters[x] = eval(y[1:])
-                except:
-                    raise InvalidDataPreprocessorError(parameter_string)
-            else:
-                parameters[x] = y
-        try:
-            if '{data}' in data_preprocessor:
-                return eval(data_preprocessor.replace('{data}',
-                                                      'data'))(**parameters)
-            preprocessor = load_function(data_preprocessor)
-        except:
-            raise InvalidDataPreprocessorError(data_preprocessor)
-        try:
-            assert callable(preprocessor)
-        except:
-            raise NonCallableDataPreprocessorError(data_preprocessor)
-        if inspect.isclass(preprocessor):
-            preprocessor_instance = preprocessor()
-            data = preprocessor_instance.fit_transform(data, **parameters)
-            self.state_preprocessors.append((preprocessor_instance.transform,
-                                             parameters))
-            return data
-        else:
-            data = preprocessor(data, **parameters)
-            self.state_preprocessors.append((preprocessor, parameters))
-            return data
-
-    def preprocess_new_data(self, data):
-        for processor in self.state_preprocessors:
-            if inspect.isfunction(processor):
-                data = processor(data)
-            elif isinstance(processor, tuple):
-                data = processor[0](data, **processor[1])
-            else:
-                output = PreprocssingOutputDict()
-                for index, encoder, output_name, args in processor:
-                    if isinstance(index,
-                                  str) or (isinstance(index, list) and
-                                           isinstance(index[0], str)):
-                        selection = data[index]
-                    else:
-                        try:
-                            selection = data[:, index]
-                        except:
-                            selection = data[index]
-                    outout[output_name] = encoder(selection, **args)
-                data = output
-        return output
 
     def _interpret_output(self, output):
-        shape = output.get('shape', None)
+        max_len = output.get("out_max_len", None)
+        out_tmp = self.out_tmp
+        if max_len is not None:
+            try:
+                out_tmp = self.out_tmp[0:max_len]
+            except:
+                pass
+        shape = output.get("shape", None)
         if shape is not None:
             if isinstance(shape[0], list):
-                for s, o in zip(shape, self.intermediate_output):
-                    if tuple(s) != o.shape:
+                for s, o in zip(shape, out_tmp):
+                    if hasattr(o, "shape") and tuple(s) != o.shape:
                         raise OutputShapeError(tuple(s), o.shape)
-            elif tuple(shape) != self.intermediate_output.shape:
-                raise OutputShapeError(
-                    tuple(shape), self.intermediate_output.shape)
-        path = output.get('path', None)
+            elif tuple(shape) != out_tmp.shape:
+                raise OutputShapeError(tuple(shape), out_tmp.shape)
+            self.output_shape = shape
+        path = output.get("path", None)
+
+
         if isinstance(path, str):
-            if isinstance(self.intermediate_output, np.ndarray):
-                np.save(path, self.intermediate_output)
-            elif isinstance(self.intermediate_output, pd.core.frame.DataFrame):
-                self.intermediate_output.to_csv(path)
-            elif isinstance(self.intermediate_output, list) and \
-                all([isinstance(x, np.ndarray)
-                    for x in self.intermediate_output]):
-                np.savez(path, *self.intermediate_output)
+            path = [path]
+            out_tmp = [ out_tmp ]
+            """
+            if isinstance(out_tmp, np.ndarray):
+                np.save(path, out_tmp)
+
+            elif isinstance(out_tmp, pd.core.frame.DataFrame):
+                out_tmp.to_csv(path)
+
+            elif isinstance(out_tmp, list) and all([isinstance(x, np.ndarray) for x in out_tmp] ): 
+                np.savez(path, *out_tmp)
+
             else:
-                pickle.dump(self.intermediate_output, open(path, 'wb'))
-        elif isinstance(path, list):
-            for p, f in zip(path, self.intermediate_output):
+                pickle.dump(out_tmp, open(path, "wb"))
+            """
+
+        if isinstance(path, list):
+            for p, f in zip(path, out_tmp):
                 if isinstance(f, np.ndarray):
                     np.save(p, self.f)
+
                 elif isinstance(f, pd.core.frame.DataFrame):
                     f.to_csv(f)
-                elif isinstance(f, list) and all(
-                        [isinstance(x, np.ndarray) for x in f]):
+
+                elif isinstance(f, list) and all([isinstance(x, np.ndarray) for x in f] ): 
                     np.savez(p, *f)
                 else:
-                    pickle.dump(f, open(p, 'wb'))
+                    pickle.dump(f, open(p, "wb"))
+
+    def get_data(self):
+        return self.out_tmp
+
+
+class PyTorchDataLoader(AbstractDataLoader):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu"  ### Not automatic, user supplied please
+
+        if self.generator:
+            if isinstance(self.out_tmp, list) or isinstance(self.out_tmp, tuple ):
+                self.out_tmp = [ torchtext.data.Iterator(output, self.batch_size, device= device ) 
+                                 for output in self.out_tmp
+                               ]
+
+            else:
+                if isinstance(self.out_tmp, torchtext.data.Dataset ) or isinstance(self.out_tmp, torchtext.data.TabularDataset ):
+                    self.out_tmp = torchtext.data.Iterator(self.out_tmps, self.batch_size, device= device, )
+
+
+
+    #### Please transfer pre-processing code to preprocessor.py
+
+
+    def _load_data(self, loader):
+        # if loader is tabulardataset then assume its use. otherwise, assume that the loader's output is to be fed to dataset. change the split function.
+        if "torchtext_fields" in loader.keys():
+            self.val_split_function = [lambda x, test_size, **args: x.split(test_size, **args), "test_size", {}, ]
+            fields = []
+            field_vocab_args = {}
+
+
+            for field_pars in loader["torchtext_fields"]:
+                # process each field
+                field_types = {"Field": Field}
+                field_name  = field_pars["name"]
+                field_class = field_types[field_pars.get("type", "Field")]
+                field_args  = field_pars.get("args", {})
+
+
+                if "preprocessing" in field_pars.keys():
+                    processor, _ = load_callable_from_dict(field_pars["preprocessing"])
+                    field_args["preprocessing"] = Pipeline(processor)
+
+                if "postprocessing" in field_pars.keys():
+                    processor, _ = load_callable_from_dict(field_pars["postprocessing"])
+                    field_args["postprocessing"] = Pipeline(processor)
+
+                if "tokenize" in field_pars.keys():
+                    tokenizer, _ = load_callable_from_dict(field_pars["tokenize"])
+                    field_args["tokenize"] = tokenizer
+
+                field = field_class(**field_args)
+                fields.append((field_name, field))
+                field_vocab_args[field_name] = field_pars.get("vocab_args", {})
+
+
+            loader_function = None
+            if "data_loader" in loader.keys():
+                data_loader = loader["data_loader"]
+                loader_function, loader_args = load_callable_from_dict(data_loader)
+
+                if loader_function != torchtext.data.TabularDataset:
+                    data = torchtext.data.Dataset(
+                        super(PyTorchDataLoader, self)._load_data(loader),
+                        fields,
+                        **loader_args,
+                    )
+                else:
+                    loader_args["fields"] = fields
+                    loader_args["format"] = "csv"
+                    loader_args["skip_header"] = True
+                    loader = loader.copy()
+                    loader["data_loader"] = (torchtext.data.TabularDataset, arg_dict)
+                    data = super(PyTorchDataLoader, self)._load_data(loader)
+
+            else:
+                loader = loader.copy()
+                loader["data_loader"] = (torchtext.data.TabularDataset, {"fields": fields, "format": "csv", "skip_header": True}, ) 
+                data = super(PyTorchDataLoader, self)._load_data(loader)
+
+ 
+            ##### NO Specialized code
+            for f in fields:
+                f[1].build_vocab(data, **field_vocab_args[f[0]])
+
+            return data
+        else:
+            return super(PyTorchDataLoader, self)._load_data(self, loader)
+
+    def _interpret_output(self, output):
+        # if the intermediate data is a torch Dataset or Iterator, handle special logic. otherwise, default.
+        super(PyTorchDataLoader, self)._interpret_output(output)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 class TensorflowDataLoader(AbstractDataLoader):
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        super(TensorflowDataLoader, self).__init__(*args, **kwargs)
         # Create a tf.data.Dataset object
 
 
@@ -486,10 +456,7 @@ class KerasDataLoader(AbstractDataLoader):
         # Create a model.fit_generator-compatible generator
 
 
-class PyTorchDataLoader(AbstractDataLoader):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        # Create a dynamic Dataset subclass
+
 
 
 class GluonTSDataLoader(AbstractDataLoader):
@@ -497,14 +464,29 @@ class GluonTSDataLoader(AbstractDataLoader):
         super().__init__(*args, **kwargs)
 
 
+###functions for the example JSON tests
+
+# namentity_crm_bilstm_dataloader
+
+
+
 if __name__ == "__main__":
-    print('Dataloader test')
-    j = json.loads(
-        open('./dataset/json_/namentity_crm_bilstm_dataloader.json').read())[
-            'data_pars']
-    input_pars = j['input']
-    loader = j['loader']
-    preprocessing = j['preprocessor']
-    output = j['output']
-    g = AbstractDataLoader(input_pars, loader, preprocessing, output)
-    print(g.intermediate_output)
+    from models import test_module
+
+    # param_pars = {
+    #    "choice": "json",
+    #    "config_mode": "test",
+    #    "data_path": f"dataset/json_/namentity_crm_bilstm_dataloader.json",
+    # }
+
+    # test_module("model_keras/namentity_crm_bilstm_dataloader.py", param_pars)
+
+    param_pars = {
+        "choice": "json",
+        "config_mode": "test",
+        "data_path": f"dataset/json_/textcnn_dataloader.json",
+    }
+    test_module("model_tch/textcnn_dataloader.py", param_pars)
+
+
+
