@@ -98,7 +98,8 @@ class Model:
         model.compile(loss=mdn.get_mixture_loss_func(OUTPUT_DIMS, N_MIXES),
                       optimizer=adam)
         self.model = model
-
+        self.model_pars = model_pars 
+        model.summary()
 
 
 
@@ -128,10 +129,12 @@ def predict(model=None, model_pars=None,  sess=None, data_pars=None,
             compute_pars=None, out_pars=None, **kwargs):
     data_pars["predict"] = True
     x_test, y_test = get_dataset(data_pars)
+
+
     pred = model.model.predict(x_test)
     y_samples = np.apply_along_axis(mdn.sample_from_output, 1, pred,
                                     data_pars["prediction_length"],
-                                    model_pars["n_mixes"], temp=1.0)
+                                    model.model_pars["n_mixes"], temp=1.0)
     y_samples[y_samples < 0] = 0
     return y_samples.reshape(-1, 1), y_test.reshape(-1, 1)
 
