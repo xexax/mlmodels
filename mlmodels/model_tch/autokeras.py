@@ -10,8 +10,12 @@ import os
 import json
 
 import numpy as np
-from tensorflow.keras.datasets import imdb
+
+
+#from tensorflow.keras.datasets import imdb
 import autokeras as ak
+from keras.datasets import imdb
+
 
 
 
