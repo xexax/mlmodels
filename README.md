@@ -251,8 +251,7 @@ Will copy template, dataset, example to your folder
 ##### To test model fitting
     ml_models
     
-    
-```    
+        
 
 #### Dependencies
 
