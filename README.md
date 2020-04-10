@@ -4,13 +4,7 @@
 
 - Logic follows sklearn : fit, predict, transform, metrics, save, load
 
-- Goal is to transform Jupyter/research code into Semi-Prod (batch,..) code with minimal code change ...
-
-
-
-
-- Model list is available here :
-  https://github.com/arita37/mlmodels/blob/dev/README_model_list.md
+- Goal is to transform Script/Research code into Re-usable/batch/ code with minimal code change ...
 
 - Why Functional interface instead of OOP ?
   Functional reduces the amount of code needed, focus more on the computing part (vs design part),
