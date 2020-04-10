@@ -11,8 +11,8 @@
     },
     "data_pars": {
       "train": true,
-      "train_data_path": "mlmodels/dataset/timeseries/HOBBIES_1_001_CA_1_validation_train.csv",
-      "test_data_path": "mlmodels/dataset/timeseries/HOBBIES_1_001_CA_1_validation_test.csv",
+      "train_data_path": "dataset/timeseries/HOBBIES_1_001_CA_1_validation_train.csv",
+      "test_data_path": "dataset/timeseries/HOBBIES_1_001_CA_1_validation_test.csv",
       "prediction_length": 60,
       "col_Xinput": ["Demand"],
       "col_ytarget": "Demand"
@@ -24,7 +24,7 @@
       "patience": 50
     },
     "out_pars": {
-      "outpath": "mlmodels/ztest/model_keras/armdn/"
+      "outpath": "ztest/model_keras/armdn/"
     }
   }
 }
