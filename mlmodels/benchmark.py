@@ -36,18 +36,19 @@ from mlmodels.util import (get_recursive_files, load_config, log, os_package_roo
 def get_all_json_path(json_path):
     return get_recursive_files(json_path, ext='/*.json')
 
+
 def metric_eval(actual=None, pred=None, metric_name="mean_absolute_error"):
     pred[pred < 0] = 0
     metric = getattr(importlib.import_module("sklearn.metrics"), metric_name)
     return metric(actual, pred)
 
+
 def preprocess_timeseries_m5(data_path=None, dataset_name=None, pred_length=10, item_id=None):
     df = pd.read_csv(data_path + dataset_name)
-    cal= pd.read_csv(data_path + "calendar.csv")
+    cal = pd.read_csv(data_path + "calendar.csv")
     col_to_del = ["item_id", "dept_id", "cat_id", "store_id", "state_id"]
     temp_df = df.drop(columns=col_to_del).copy()
-    
-    
+
     temp_df = pd.melt(temp_df, id_vars=["id"], value_vars=temp_df.columns[1: -1])
     # select one itemid for which we have to forecast
     i_id = "HOBBIES_1_001_CA_1_validation"
@@ -60,59 +61,59 @@ def preprocess_timeseries_m5(data_path=None, dataset_name=None, pred_length=10, 
     time_steps = 60
     temp_df = temp_df.iloc[:time_steps * (temp_df.shape[0] // time_steps)]
     train = temp_df.iloc[:-time_steps]
-    test = temp_df.iloc[-time_steps: ]
+    test = temp_df.iloc[-time_steps:]
     train.to_csv("{}/{}_train.csv".format(data_path, i_id))
     test.to_csv("{}/{}_test.csv".format(data_path, i_id))
-    
+
 
 ####################################################################################################
 def benchmark_run(bench_pars=None, args=None, config_mode="test"):
-    preprocess_timeseries_m5(data_path=args.data_path, dataset_name=args.dataset_name, 
-                pred_length=bench_pars["pred_length"], item_id=args.item_id)
+    preprocess_timeseries_m5(data_path=args.data_path, dataset_name=args.dataset_name,
+                             pred_length=bench_pars["pred_length"], item_id=args.item_id)
 
-    dataset_uri =  args.data_path + "{}.csv".format(args.item_id)
+    dataset_uri = args.data_path + "{}.csv".format(args.item_id)
     json_path = args.path_json
     output_path = args.path_out
     json_list = get_all_json_path(json_path)
     metric_list = bench_pars['metric_list']
-    benchmark_df = pd.DataFrame(columns=["date_run", "model_uri", "json",  
-                                        "dataset_uri", "metric_name", "metric"])
+    benchmark_df = pd.DataFrame(columns=["date_run", "model_uri", "json",
+                                         "dataset_uri", "metric_name", "metric"])
     df_ind = 0
     for ind, jsonf in enumerate(json_list):
-        log ("### Running {} #####".format(jsonf))
-        #### Model URI and Config JSON
+        log("### Running {} #####".format(jsonf))
+        # Model URI and Config JSON
         config_path = path_norm(jsonf)
         config_mode = config_mode
 
-        #### PLEASE Include
-        model_pars, data_pars, compute_pars, out_pars = params_json_load(config_path, config_mode= config_mode)
-          
-        #### Setup Model 
-        model_uri = model_pars['model_uri']  # "model_tch.torchhub.py" 
+        # PLEASE Include
+        model_pars, data_pars, compute_pars, out_pars = params_json_load(
+            config_path, config_mode=config_mode)
+
+        # Setup Model
+        model_uri = model_pars['model_uri']  # "model_tch.torchhub.py"
         module = module_load(model_uri)
         model = module.Model(model_pars, data_pars, compute_pars)
         try:
-            #### Fit
-            model, session = module.fit(model, data_pars, compute_pars, out_pars)           #### fit model
+            # Fit
+            model, session = module.fit(model, data_pars, compute_pars, out_pars)  # fit model
         except Exception as e:
-            #### Fit
+            # Fit
             model = model.model
-            model, session = module.fit(model, data_pars, compute_pars, out_pars)           #### fit model
+            model, session = module.fit(model, data_pars, compute_pars, out_pars)  # fit model
 
+        # Inference  Please change to return ypred, ytrue
+        ypred, ytrue = module.predict(model=model, model_pars=model_pars, session=session,
+                                      data_pars=data_pars, compute_pars=compute_pars,
+                                      out_pars=out_pars, return_ytrue=1)
 
-        #### Inference  Please change to return ypred, ytrue
-        ypred, ytrue = module.predict(model=model, model_pars=model_pars, session=session, 
-                               data_pars=data_pars, compute_pars=compute_pars, 
-                               out_pars=out_pars, return_ytrue=1)   
-        
         actual = np.array(ytrue).reshape(-1, 1)
         pred = np.array(ypred).reshape(-1, 1)
-        ### Calculate Metrics
+        # Calculate Metrics
         for metric in metric_list:
             """https://scikit-learn.org/stable/modules/generated/sklearn.metrics.get_scorer.html#sklearn.metrics.get_scorer 
             """
-            metric_val = metric_eval(actual=actual, pred=pred, 
-                                          metric_name=metric)
+            metric_val = metric_eval(actual=actual, pred=pred,
+                                     metric_name=metric)
             benchmark_df.loc[df_ind, "date_run"] = str(datetime.now())
             benchmark_df.loc[df_ind, "model_uri"] = model_uri
             benchmark_df.loc[df_ind, "json"] = jsonf
@@ -123,15 +124,14 @@ def benchmark_run(bench_pars=None, args=None, config_mode="test"):
             df_ind += 1
 
     os.makedirs(path_norm(output_path), exist_ok=True)
-    log(" benchmark file saved at {}".format(path_norm(output_path)))  
+    log(" benchmark file saved at {}".format(path_norm(output_path)))
     benchmark_df.to_csv("{}benchmark.csv".format(path_norm(output_path)), index=False)
     return benchmark_df
-    ##### Output Format :
+    # Output Format :
     """
      Dataframe :
          [ "date_run", model_uri", "json",  "dataset_uri",  "metric", "metric_name" ]
     """
-
 
 
 ####################################################################################################
@@ -148,7 +148,6 @@ def config_model_list(folder=None):
     return mlist
 
 
-
 ####################################################################################################
 ############CLI Command ############################################################################
 def cli_load_arguments(config_file=None):
@@ -159,18 +158,19 @@ def cli_load_arguments(config_file=None):
         cur_path = os.path.dirname(os.path.realpath(__file__))
         config_file = os.path.join(cur_path, "config/benchmark_config.json")
     p = argparse.ArgumentParser()
+
     def add(*w, **kw):
         p.add_argument(*w, **kw)
     add("--config_file", default=config_file, help="Params File")
     add("--config_mode", default="test", help="test/ prod /uat")
-    add("--log_file",    default="ztest/benchmark/mlmodels_log.log", help="log.log")
-    add("--data_path",   default="mlmodels/dataset/timeseries/", help="Dataset path")
-    add("--dataset_name",default="sales_train_validation.csv", help="dataset name")
-    add("--do",          default="run", help="do ")
-    add("--item_id",     default="HOBBIES_1_001_CA_1_validation", help="forecast for which item")
-    add("--path_json",   default="mlmodels/dataset/json/benchmark/", help="")
-    ##### out pars
-    add("--path_out",    default="mlmodels/ztest/benchmark/", help=".")
+    add("--log_file", default="ztest/benchmark/mlmodels_log.log", help="log.log")
+    add("--data_path", default="mlmodels/dataset/timeseries/", help="Dataset path")
+    add("--dataset_name", default="sales_train_validation.csv", help="dataset name")
+    add("--do", default="run", help="do ")
+    add("--item_id", default="HOBBIES_1_001_CA_1_validation", help="forecast for which item")
+    add("--path_json", default="mlmodels/dataset/json/benchmark/", help="")
+    # out pars
+    add("--path_out", default="mlmodels/ztest/benchmark/", help=".")
 
     arg = p.parse_args()
     # arg = load_config(arg, arg.config_file, arg.config_mode, verbose=0)
@@ -182,14 +182,11 @@ def main():
     if arg.do == "run":
         log("Fit")
         bench_pars = {"metric_list": ["mean_absolute_error", "mean_squared_error",
-                                      "mean_squared_log_error", "median_absolute_error", 
-                                      "r2_score"], 
+                                      "mean_squared_log_error", "median_absolute_error",
+                                      "r2_score"],
                       "pred_length": 100}
-        benchmark_run(bench_pars, arg) 
+        benchmark_run(bench_pars, arg)
 
 
 if __name__ == "__main__":
     main()
-
-
-
