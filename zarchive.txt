@@ -3,6 +3,16 @@ Notes
 
 
 
+COPY scripts/bashrc.txt .
+RUN cat bashrc.txt >> $HOME/.bashrc
+
+
+git add --all && git commit -m "ok" && git push --all
+
+
+
+
+
 
 
 

@@ -64,7 +64,22 @@ ________________________________________________________________________________
                             path_norm, get_model_uri, path_norm_dict
 
      ### Use path_norm to normalize your path.
-     data_path = path_norm("dataset/text/myfile.txt") -->   PATH.../mlmodels/dataset/text/myfile.txt
+     data_path = path_norm("dataset/text/myfile.txt")
+        --> FULL_ PATH   /home/ubuntu/mlmodels/dataset/text/myfile.txt
+
+
+     ### Use path_norm to normalize your path.
+     data_path = path_norm("ztest/text/myfile.txt")
+        --> FULL_ PATH   /home/ubuntu/mlmodels/ztest/text/myfile.txt
+
+
+     ### Use path_norm to normalize your path.
+     data_path = path_norm("ztest/text/myfile.txt")
+        --> FULL_ PATH   /home/ubuntu/mlmodels/ztest/text/myfile.txt
+
+
+
+
 
 
 
