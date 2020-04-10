@@ -3,10 +3,10 @@
     "hypermodel_pars": {},
 
     "data_pars": {
-      "data_path": "dataset/timeseries/HOBBIES_1_001_CA_1_validation_train.csv",
+      "data_path": "mlmodels/dataset/timeseries/HOBBIES_1_001_CA_1_validation_train.csv",
       "forecast_length": 60,
       "backcast_length": 10,
-      "test_data_path": "dataset/timeseries/HOBBIES_1_001_CA_1_validation_test.csv"
+      "test_data_path": "mlmodels/dataset/timeseries/HOBBIES_1_001_CA_1_validation_test.csv"
     },
 
     "model_pars": {
@@ -30,7 +30,7 @@
     },
 
     "out_pars": {
-      "out_path": "ztest/model_tch/nbeats/",
+      "out_path": "mlmodels/ztest/model_tch/nbeats/",
       "model_checkpoint": "ztest/model_tch/nbeats/model_checkpoint/"
     }
   },

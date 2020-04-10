@@ -179,7 +179,7 @@ def cli_load_arguments(config_file=None):
         p.add_argument(*w, **kw)
     add("--config_file", default=config_file, help="Params File")
     add("--config_mode", default="test", help="test/ prod /uat")
-    add("--log_file", default="ztest/benchmark/mlmodels_log.log", help="log.log")
+    add("--log_file", default="mlmodels/ztest/benchmark/mlmodels_log.log", help="log.log")
     add("--data_path", default="mlmodels/dataset/timeseries/", help="Dataset path")
     add("--dataset_name", default="sales_train_validation.csv", help="dataset name")
     add("--do", default="timeseries", help="do ")
@@ -205,15 +205,15 @@ def main():
 
                       
         #### Pre-processing
-        arg.data_path = "dataset/timeseries/"
+        arg.data_path = "mlmodels/dataset/timeseries/"
         arg.dataset_name = "sales_train_validation.csv"
         preprocess_timeseries_m5(data_path = arg.data_path, 
                                  dataset_name = arg.dataset_name, 
                                  pred_length = bench_pars["pred_length"], item_id=arg.item_id)   
 
         #### Models
-        arg.path_json = "dataset/json/benchmark_timeseries/"
-        arg.path_out =  "ztest/benchmark_timseries/"
+        arg.path_json = "mlmodels/dataset/json/benchmark_timeseries/"
+        arg.path_out =  "mlmodels/ztest/benchmark_timseries/"
 
         benchmark_run(bench_pars, arg) 
 
