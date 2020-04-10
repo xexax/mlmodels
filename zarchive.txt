@@ -11,6 +11,9 @@ git add --all && git commit -m "ok" && git push --all
 
 
 
+git pull --all
+
+
 
 
 
