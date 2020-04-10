@@ -54,7 +54,7 @@ ________________________________________________________________________________
 
     
 ### 1) Create a branch from DEV branch called : modelXXX
-  
+    git checkout -b myfeat
 
 
 ### 2) Change those filed with your MODEL_NAME AND BRANCH NAME :
@@ -104,17 +104,18 @@ ________________________________________________________________________________
 
 
 
-### 6) Check on Github your runs
+### 7)  Git pull --all   or Pull Request  DEV ---> YourBranch
+   You can merge with recent changes in dev
+
+
+
+### 8) Check on Github your runs
 
 https://github.com/arita37/mlmodels/actions?query=workflow%3Atest_custom_model
 
 
 
-### 7)  Do Pull Request to dev Branc.
-
-
-
-### 8)  Update the github issues.
+### 9)  Send Pull Request
 
 
 
