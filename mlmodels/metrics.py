@@ -9,7 +9,6 @@ import sklearn
 
 
 
-
 def log(*s, n=0, m=1):
     sspace = "#" * n
     sjump = "\n" * m
@@ -100,8 +99,6 @@ def metrics_eval(metric_list=["mean_squared_error"], ytrue=None, ypred=None, ypr
 
         ##### Biclustering metrics
         consensus_score(a, b , similarity  )    The similarity of two sets of biclusters.
-
-
 
         ##### Pairwise metrics
         pairwise.additive_chi2_kernel(X , Y  )  Computes the additive chi-squared kernel between observations in X and Y

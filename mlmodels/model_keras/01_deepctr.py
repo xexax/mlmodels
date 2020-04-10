@@ -59,6 +59,8 @@ model_list = ["AFM",
 import json
 import os
 from pathlib import Path
+import importlib
+
 
 import numpy as np
 import pandas as pd
@@ -256,10 +258,13 @@ def _preprocess_movielens(df, **kw):
 
 def get_dataset(data_pars=None, **kw):
     ##check whether dataset is of kind train or test
+    data_path = data_pars['train_data_path']
+    data_type = data_pars['dataset_type']
+    test_size = data_pars['test_size']
 
 
     #### To test all models
-    if not data_pars.get("test_model") is None :
+    if data_type == "synthetic" is None :
       from mlmodels.preprocess.keras_deepctr_tabular  import get_test_data
       # model_name = "AFM"
       use_attention, sparse_feature_num, dense_feature_num = True,3,0
@@ -267,13 +272,13 @@ def get_dataset(data_pars=None, **kw):
       x, y, feature_columns = get_test_data(sample_size, sparse_feature_num=sparse_feature_num,
                                             dense_feature_num=dense_feature_num)
 
+
+      ##TODO : train split
       return x, y, feature_columns
       # model = AFM(feature_columns, feature_columns, use_attention=use_attention, afm_dropout=0.5)
 
 
-    data_path = data_pars['train_data_path']
-    data_type = data_pars['dataset_type']
-    test_size = data_pars['test_size']
+
   
     #### read from csv file
     if data_pars.get("uri_type") == "pickle":
@@ -289,10 +294,10 @@ def get_dataset(data_pars=None, **kw):
 
     else:  ## Already define
         linear_cols = data_pars['linear_cols']
-        dnn_cols = data_pars['dnn_cols']
+        dnn_cols    = data_pars['dnn_cols']
         train, test = train_test_split(df, test_size=data_pars['test_size'])
-        target = data_pars['target_col']
-        ytrue = data_pars['target_col']
+        target      = data_pars['target_col']
+        ytrue       = data_pars['target_col']
 
     return df, linear_cols, dnn_cols, train, test, target, ytrue
 
