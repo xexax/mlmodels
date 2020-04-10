@@ -216,7 +216,13 @@ https://github.com/arita37/mlmodels/blob/dev/README_model_list.md
 
 ## ① Installation
 
-Install as editable package (ONLY dev branch), in Linux
+Using pre-installed online Setup :
+
+    https://github.com/arita37/mlmodels/issues/101
+
+
+
+Manual Install as editable package in Linux
 
 ```
 conda create -n py36 python=3.6.5 -y
@@ -226,24 +232,26 @@ cd yourfolder
 git clone https://github.com/arita37/mlmodels.git mlmodels
 cd mlmodels
 git checkout dev
+```
 
-
-
-
-    ### Check this Colab for install :
+### Check this Colab for install :
 https://colab.research.google.com/drive/1sYbrXNZh9nTeizS-AuCA8RSu94B_B-RF
 
-    ##### Initialize
-    Will copy template, dataset, example to your folder
+
+##### Initialize
+Will copy template, dataset, example to your folder
 
     ml_models --init  /yourworkingFolder/
 
 
-    ##### To test :
+##### To test :
     ml_optim
 
-    ##### To test model fitting
+
+##### To test model fitting
     ml_models
+    
+    
 ```    
 
 #### Dependencies
