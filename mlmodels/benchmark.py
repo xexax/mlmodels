@@ -195,7 +195,6 @@ def cli_load_arguments(config_file=None):
 
 def main():
     arg = cli_load_arguments()
-    print("[DEBUG] from main arg {}\n".format(arg))
     if arg.do == "timeseries":
         log("Time series model")
         bench_pars = {"metric_list": ["mean_absolute_error", "mean_squared_error",
