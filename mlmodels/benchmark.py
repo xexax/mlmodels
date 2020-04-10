@@ -41,8 +41,7 @@ def metric_eval(actual=None, pred=None, metric_name="mean_absolute_error"):
     metric = getattr(importlib.import_module("sklearn.metrics"), metric_name)
     return metric(actual, pred)
 
- 
-def pre_process(data_path=None, dataset_name=None, pred_length=10, item_id=None):
+def preprocess_timeseries_m5(data_path=None, dataset_name=None, pred_length=10, item_id=None):
     df = pd.read_csv(data_path + dataset_name)
     cal= pd.read_csv(data_path + "calendar.csv")
     col_to_del = ["item_id", "dept_id", "cat_id", "store_id", "state_id"]
@@ -68,7 +67,7 @@ def pre_process(data_path=None, dataset_name=None, pred_length=10, item_id=None)
 
 ####################################################################################################
 def run_benchmark_all(bench_pars=None, args=None, config_mode="test"):
-    pre_process(data_path=args.data_path, dataset_name=args.dataset_name, 
+    preprocess_timeseries_m5(data_path=args.data_path, dataset_name=args.dataset_name, 
                 pred_length=bench_pars["pred_length"], item_id=args.item_id)
 
     dataset_uri =  args.data_path + "{}.csv".format(args.item_id)
