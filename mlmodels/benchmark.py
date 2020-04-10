@@ -77,7 +77,7 @@ def preprocess_timeseries_m5(data_path=None, dataset_name=None, pred_length=10, 
     log("# making df to compatible 3d shape, otherwise cannot be reshape to 3d compatible form")
     pred_length = pred_length
     temp_df     = temp_df.iloc[:pred_length * (temp_df.shape[0] // pred_length)]
-    temp_df.to_csv("{}/{}.csv".format(data_path, i_id), index=False)
+    temp_df.to_csv( f"{data_path}/{i_id}.csv", index=False)
 
 
 
