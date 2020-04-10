@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
 """
+ ml_test --do test_benchmark
+
+ 
 For all json in Json_path_list :
    Load_json, 
    Load_model, 
@@ -58,6 +61,7 @@ def metric_eval(actual=None, pred=None, metric_name="mean_absolute_error"):
 
  
 def preprocess_timeseries_m5(data_path=None, dataset_name=None, pred_length=10, item_id=None):
+    data_path = path_norm(data_path)
     df         = pd.read_csv(data_path + dataset_name)
     col_to_del = ["item_id", "dept_id", "cat_id", "store_id", "state_id"]
     temp_df    = df.drop(columns=col_to_del).copy()
@@ -65,11 +69,12 @@ def preprocess_timeseries_m5(data_path=None, dataset_name=None, pred_length=10, 
     # 1, -1 are hardcoded because we have to explicitly mentioned days column 
     temp_df    = pd.melt(temp_df, id_vars=["id"], value_vars=temp_df.columns[1: -1])
 
-    # select one itemid for which we have to forecast
+    log("# select one itemid for which we have to forecast")
     i_id       = item_id
     temp_df    = temp_df.loc[temp_df["id"] == i_id]
     temp_df.rename(columns={"variable": "Day", "value": "Demand"}, inplace=True)
-    # making df to compatible 3d shape, otherwise cannot be reshape to 3d compatible form
+
+    log("# making df to compatible 3d shape, otherwise cannot be reshape to 3d compatible form")
     pred_length = pred_length
     temp_df     = temp_df.iloc[:pred_length * (temp_df.shape[0] // pred_length)]
     temp_df.to_csv("{}/{}.csv".format(data_path, i_id), index=False)
@@ -87,6 +92,11 @@ def benchmark_run(bench_pars=None, args=None, config_mode="test"):
     benchmark_df = pd.DataFrame(columns=["date_run", "model_uri", "json",
                                          "dataset_uri", "metric", "metric_name"])
 
+    if len(json_list) < 1 :
+        raise Exception("empty json")
+    
+    log("Model List", json_list)
+    ind = -1
     for jsonf in json_list :
         log ( f"### Running {jsonf} #####")
         #### Model URI and Config JSON
@@ -94,21 +104,22 @@ def benchmark_run(bench_pars=None, args=None, config_mode="test"):
         model_pars, data_pars, compute_pars, out_pars = params_json_load(config_path, config_mode= config_mode)
 
 
-        #### Setup Model 
+        log("#### Setup Model    ")
         model_uri = model_pars['model_uri']  # "model_tch.torchhub.py"
         module    = module_load(model_uri)
-        model     = module.Model(model_pars, data_pars, compute_pars)
+        model     = module.Model(model_pars=model_pars, data_pars=data_pars, compute_pars=compute_pars)
         
-        #### Fit
-        model, session = module.fit(model, data_pars, compute_pars, out_pars)          
+        log("#### Fit ")
+        model, session = module.fit(model, data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)          
     
-        #### Inference Need return ypred, ytrue
-        ypred, ytrue = module.predict(model=model, model_pars=model_pars, session=session, 
+        log("#### Inference Need return ypred, ytrue")
+        ypred, ytrue = module.predict(model=model, session=session, 
                                       data_pars=data_pars, compute_pars=compute_pars, 
                                       out_pars=out_pars, return_ytrue=1)   
         
         ### Calculate Metrics
-        for ind, metric in enumerate(metric_list):
+        for metric in metric_list:
+            ind = ind + 1
             metric_val = metric_eval(actual=ytrue, pred=ypred,  metric_name=metric)
             benchmark_df.loc[ind, "date_run"]    = str(datetime.now())
             benchmark_df.loc[ind, "model_uri"]   = model_uri
@@ -122,6 +133,98 @@ def benchmark_run(bench_pars=None, args=None, config_mode="test"):
     os.makedirs( output_path, exist_ok=True)
     benchmark_df.to_csv( f"{output_path}/benchmark.csv", index=False)
     return benchmark_df
+
+
+
+
+####################################################################################################
+############CLI Command ############################################################################
+def cli_load_arguments(config_file=None):
+    """
+        Load CLI input, load config.toml , overwrite config.toml by CLI Input
+    """
+    if config_file is None:
+        cur_path = os.path.dirname(os.path.realpath(__file__))
+        config_file = os.path.join(cur_path, "config/benchmark_config.json")
+    p = argparse.ArgumentParser()
+
+    def add(*w, **kw):
+        p.add_argument(*w, **kw)
+    
+    add("--config_file", default=config_file, help="Params File")
+    add("--config_mode", default="test", help="test/ prod /uat")
+    add("--log_file",    default="ztest/benchmark/mlmodels_log.log", help="log.log")
+    add("--do",          default="run", help="do ")
+
+    add("--data_path",   default="dataset/timeseries/", help="Dataset path")
+    add("--dataset_name",default="sales_train_validation.csv", help="dataset name")   
+
+    add("--path_json",   default="dataset/json/benchmark_cnn/", help="")
+
+    ##### out pars
+    add("--path_out",    default="ztest/benchmark/", help=".")
+
+
+
+    add("--item_id",     default="HOBBIES_1_001_CA_1_validation", help="forecast for which item")
+
+    arg = p.parse_args()
+    return arg
+
+
+
+
+def main():
+    arg = cli_load_arguments()
+
+    if arg.do == "timeseries":
+        log("Time series model")
+        bench_pars = {"metric_list": ["mean_absolute_error", "mean_squared_error",
+                                      "mean_squared_log_error", "median_absolute_error", 
+                                      "r2_score"], 
+                      "pred_length": 100}
+
+                      
+        #### Pre-processing
+        arg.data_path = "dataset/timeseries/"
+        arg.dataset_name = "sales_train_validation.csv"
+        preprocess_timeseries_m5(data_path = arg.data_path, 
+                                 dataset_name = arg.dataset_name, 
+                                 pred_length = bench_pars["pred_length"], item_id=arg.item_id)   
+
+        #### Models
+        arg.path_json = "dataset/json/benchmark_timeseries/"
+        arg.path_out =  "ztest/benchmark_timseries/"
+
+        benchmark_run(bench_pars, arg) 
+
+
+
+    elif arg.do == "vision_mnist":
+        log("Vision models")
+
+        arg.data_path = ""
+        arg.dataset_name = ""
+        arg.path_json = "dataset/json/benchmark_cnn/"
+        arg.path_out =  "ztest/benchmark_cnn/"
+
+        bench_pars = {"metric_list": ["accuracy_score"]}
+        benchmark_run(bench_pars=bench_pars, args=arg)
+
+
+
+
+    else :
+        raise Exception("No options")
+
+
+if __name__ == "__main__":
+    main()
+
+
+
+
+
 
 
 # Benchmarking for CNN on MNIST #
@@ -177,73 +280,4 @@ def benchmark_run_mnist(bench_pars=None, args=None, config_mode="test"):
     os.makedirs( output_path, exist_ok=True)
     benchmark_df.to_csv( f"{output_path}/benchmark_MNIST_CNN.csv", index=False)
     return benchmark_df
-
-
-
-
-####################################################################################################
-############CLI Command ############################################################################
-def cli_load_arguments(config_file=None):
-    """
-        Load CLI input, load config.toml , overwrite config.toml by CLI Input
-    """
-    if config_file is None:
-        cur_path = os.path.dirname(os.path.realpath(__file__))
-        config_file = os.path.join(cur_path, "config/benchmark_config.json")
-    p = argparse.ArgumentParser()
-
-    def add(*w, **kw):
-        p.add_argument(*w, **kw)
-    
-    add("--config_file", default=config_file, help="Params File")
-    add("--config_mode", default="test", help="test/ prod /uat")
-    add("--log_file",    default="ztest/benchmark/mlmodels_log.log", help="log.log")
-    add("--do",          default="run", help="do ")
-
-    add("--data_path",   default="dataset/timeseries/", help="Dataset path")
-    add("--dataset_name",default="sales_train_validation.csv", help="dataset name")   
-
-    add("--path_json",   default="dataset/json/benchmark_cnn/", help="")
-
-    ##### out pars
-    add("--path_out",    default="ztest/benchmark/", help=".")
-
-
-
-    add("--item_id",     default="HOBBIES_1_001_CA_1_validation", help="forecast for which item")
-
-    arg = p.parse_args()
-    return arg
-
-
-
-
-def main():
-    arg = cli_load_arguments()
-
-    if arg.do == "timeseries":
-        log("Time series model")
-        arg_data_path = "mlmodels/dataset/json/benchmark/"
-
-        bench_pars = {"metric_list": ["mean_absolute_error", "mean_squared_error",
-                                      "mean_squared_log_error", "median_absolute_error", 
-                                      "r2_score"], 
-                      "pred_length": 100}
-
-        preprocess_timeseries_m5(data_path=arg_data_path, dataset_name=arg.dataset_name, 
-                                  pred_length=bench_pars["pred_length"], item_id=arg.item_id)              
-        benchmark_run(bench_pars, arg) 
-
-
-    if arg.do == "vision_mnist":
-        log("Vision models")
-        bench_pars = {"metric_list": ["accuracy_score"]}
-        benchmark_run_mnist(bench_pars=bench_pars, args=arg)
-
-    else :
-        raise Exception("No options")
-
-
-if __name__ == "__main__":
-    main()
 

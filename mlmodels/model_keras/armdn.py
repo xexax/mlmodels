@@ -98,7 +98,8 @@ class Model:
         model.compile(loss=mdn.get_mixture_loss_func(OUTPUT_DIMS, N_MIXES),
                       optimizer=adam)
         self.model = model
-
+        self.model_pars = model_pars 
+        model.summary()
 
 
 
@@ -128,10 +129,12 @@ def predict(model=None, model_pars=None,  sess=None, data_pars=None,
             compute_pars=None, out_pars=None, **kwargs):
     data_pars["predict"] = True
     x_test, y_test = get_dataset(data_pars)
+
+
     pred = model.model.predict(x_test)
     y_samples = np.apply_along_axis(mdn.sample_from_output, 1, pred,
                                     data_pars["prediction_length"],
-                                    model_pars["n_mixes"], temp=1.0)
+                                    model.model_pars["n_mixes"], temp=1.0)
     y_samples[y_samples < 0] = 0
     return y_samples.reshape(-1, 1), y_test.reshape(-1, 1)
 
@@ -195,16 +198,19 @@ def get_dataset(data_params):
     features = data_params["col_Xinput"]
     target = data_params["col_ytarget"]
     feat_len = len(features)
-    df = pd.read_csv(data_params["train_data_path"])
+    path = path_norm( data_params["train_data_path"]   )
+    df = pd.read_csv( path )
 
     x_train = df[features].iloc[:-pred_length]
     x_train = x_train.values.reshape(-1, pred_length, feat_len)
     y_train = df[features].iloc[:-pred_length].shift().fillna(0)
     y_train = y_train.values.reshape(-1, pred_length, 1)
+
     x_test = df.iloc[-pred_length:][target]
     x_test = x_test.values.reshape(-1, pred_length, feat_len)
     y_test = df.iloc[-pred_length:][target].shift().fillna(0)
     y_test = y_test.values.reshape(-1, pred_length, 1)
+    
     if data_params["predict"]:
         return x_test, y_test
     return x_train, y_train, x_test, y_test
