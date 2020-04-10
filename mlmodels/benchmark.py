@@ -66,7 +66,7 @@ def preprocess_timeseries_m5(data_path=None, dataset_name=None, pred_length=10, 
     
 
 ####################################################################################################
-def run_benchmark_all(bench_pars=None, args=None, config_mode="test"):
+def benchmark_run(bench_pars=None, args=None, config_mode="test"):
     preprocess_timeseries_m5(data_path=args.data_path, dataset_name=args.dataset_name, 
                 pred_length=bench_pars["pred_length"], item_id=args.item_id)
 
@@ -185,7 +185,7 @@ def main():
                                       "mean_squared_log_error", "median_absolute_error", 
                                       "r2_score"], 
                       "pred_length": 100}
-        run_benchmark_all(bench_pars, arg) 
+        benchmark_run(bench_pars, arg) 
 
 
 if __name__ == "__main__":
