@@ -1,16 +1,18 @@
 # Documentation
-
 List of Functions/Methods
 
 https://github.com/arita37/mlmodels/blob/dev/README_index_doc.py
 
+# 
+# 
 ___________________________________________________________________________________________
 # VScode Online Editor (pre-installed)
 
 https://github.com/arita37/mlmodels/issues/101
 
 
-
+# 
+# 
 ___________________________________________________________________________________________
 # Steps  for : Pull Request, a Fix or add a New Model :
 
@@ -115,7 +117,9 @@ https://github.com/arita37/mlmodels/actions?query=workflow%3Atest_custom_model
 
 
 
-___________________________________________________________________________________________
+# 
+# 
+# ___________________________________________________________________________________________
 # Manual Installation
     ### On Linux/MacOS
     pip install numpy<=1.17.0
