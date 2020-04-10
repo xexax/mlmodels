@@ -182,7 +182,7 @@ def cli_load_arguments(config_file=None):
     add("--log_file", default="ztest/benchmark/mlmodels_log.log", help="log.log")
     add("--data_path", default="mlmodels/dataset/timeseries/", help="Dataset path")
     add("--dataset_name", default="sales_train_validation.csv", help="dataset name")
-    add("--do", default="run", help="do ")
+    add("--do", default="timeseries", help="do ")
     add("--item_id", default="HOBBIES_1_001_CA_1_validation", help="forecast for which item")
     add("--path_json", default="mlmodels/dataset/json/benchmark/", help="")
     # out pars
@@ -195,7 +195,7 @@ def cli_load_arguments(config_file=None):
 
 def main():
     arg = cli_load_arguments()
-
+    print("[DEBUG] from main arg {}\n".format(arg))
     if arg.do == "timeseries":
         log("Time series model")
         bench_pars = {"metric_list": ["mean_absolute_error", "mean_squared_error",
