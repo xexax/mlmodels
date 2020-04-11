@@ -27,6 +27,7 @@ https://github.com/pytorch/pytorch/blob/98362d11ffe81ca48748f6b0e1e417cb81ba5998
 
 """
 import os, json
+import copy
 
 
 import torch
@@ -129,7 +130,7 @@ def get_dataset_mnist_torch(data_pars):
 ###########################################################################################################
 class Model:
     def __init__(self, model_pars=None, data_pars=None, compute_pars=None, out_pars=None):
-        self.model_pars = model_pars
+        self.model_pars = copy.deepcopy(model_pars)  
         m = model_pars 
 
         ### Model Structure        ################################
@@ -139,6 +140,10 @@ class Model:
 
         #### Progressive GAN
         if m['repo_uri'] == 'facebookresearch/pytorch_GAN_zoo:hub' :
+           """
+               'DCGAN',
+
+           """ 
 
            self.model = torch.hub.load(m['repo_uri'],
                                        m.get('model', 'PGAN'), 
@@ -152,10 +157,10 @@ class Model:
         num_classes = m['num_classes']
         _model      = m['model']
         self.model  = hub.load( m['repo_uri'], _model, 
-                               # model_name = m.get("model_name", m['model']),
-                               pretrained = bool( m.get('pretrained', True)),
-                               # useGPU     = m.get('use_gpu',False)
-                             ) 
+                                # model_name = m.get("model_name", m['model']),
+                                pretrained = bool( m.get('pretrained', True)),
+                                # useGPU     = m.get('use_gpu',False)
+                              ) 
 
         if num_classes != 1000:
             fc_in_features = self.model.fc.in_features
@@ -249,7 +254,7 @@ def fit(model, data_pars=None, compute_pars=None, out_pars=None, **kwargs):
 
 def predict(model, session=None, data_pars=None, compute_pars=None, out_pars=None, imax = 1, return_ytrue=1):
     ###### Progressive GAN
-    if model.model_pars['model'] == 'PGAN' :
+    if model.model_pars['repo_uri'] == 'facebookresearch/pytorch_GAN_zoo:hub' :
         model0     = model.model     
         num_images = compute_pars.get('num_images', 4)
         noise, _   = model0.buildNoiseData(num_images)
