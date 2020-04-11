@@ -42,7 +42,47 @@ class Model:
 
 
 ####################################################################################################
-# Dataaset
+def get_data(data_pars):
+  d = data_pars
+
+  pred_length = d["prediction_length"]
+  features    = d["col_Xinput"]
+  target      = d["col_ytarget"]
+  feat_len    = len(features)
+
+
+  if d.get("test_data_path"):
+    test = pd.read_csv(path_norm(data_pars["test_data_path"]))
+    x_test = test[features]
+    del test
+    x_test = x_test.values.reshape(-1, pred_length, feat_len)
+    y_test = test[target].fillna(0)
+    y_test = y_test.values.reshape(-1, pred_length, 1)        
+    
+    if d["predict_only"]:        
+        return x_test, y_test
+    
+    train = pd.read_csv(path_norm( data_pars["train_data_path"]))
+    x_train = train[features]
+    del train
+    x_train = x_train.values.reshape(-1, pred_length, feat_len)
+    y_train = train[features].shift().fillna(0)
+    y_train = y_train.values.reshape(-1, pred_length, 1)
+
+    return x_train, y_train, x_test, y_test
+
+
+
+
+
+"""
+
+
+
+
+
+
+"""
 def get_dataset(**kw):
     data_path =path_norm( kw['data_path'] )
     train_split_ratio = kw.get("train_split_ratio", 0.8)
@@ -78,7 +118,7 @@ def get_dataset(**kw):
     x_train_batch = np.array(x_train_batch)[..., 0]
     y = np.array(y)[..., 0]
 
-    #### Split
+    #### Split   ###############################################
     c                = int(len(x_train_batch) * train_split_ratio)
     x_train, y_train = x_train_batch[:c], y[:c]
     x_test, y_test   = x_train_batch[c:], y[c:]
