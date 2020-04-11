@@ -1,0 +1,39 @@
+-{"test": {
+-	"model_pars": {
+-		"embedding": 40,
+-		"optimizer": "rmsprop"
+-	},
+-
+-
+-	"data_pars": {
+-		"input_pars": {
+-			"path": "dataset/text/ner_dataset.csv",
+-			"test_size": 0.5,
+-			"split_outputs" : ["X","y"],
+-			"misc_outputs" : ["word_count"]
+-		},
+-		"loader": {"data_loader":{"arg":{"encoding": "'ISO-8859-1'"}}},
+-		"preprocessor": {
+-			"data_preprocessor": {"uri": "preprocess/keras_namentity_crm_bistm.py::preprocess", "arg":{"max_len":75}},
+-			"names" : ["X","y","word_count"]	
+-		},
+-		"output": {
+-			"path": "dataset/text/ner_dataset.npz",
+-			"format": "npz",
+-			"shape": [
+-				[75],
+-				[75, 18]]
+-		},
+-		"max_len": 75},
+-
+-	"compute_pars": {
+-		"epochs": 1,
+-		"batch_size": 64
+-	},
+-	"out_pars": {
+-		"path": "ztest/ml_keras/namentity_crm_bilstm/"
+-		
+-	}
+-
+-}
+-}

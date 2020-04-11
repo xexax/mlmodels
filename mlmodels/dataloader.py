@@ -1,23 +1,61 @@
+#########################################################################
+#### System utilities
 import os
 import sys
 import inspect
 from urllib.parse import urlparse
+import json
+from importlib import import_module
+import pandas as pd
+import numpy as np
+from collections.abc import MutableMapping
+
+
+#possibly replace with keras.utils.get_file down the road?
+#### It dowloads from HTTP from Dorpbox, ....  (not urgent)
+from cli_code.cli_download import Downloader 
+
+from sklearn.model_selection import train_test_split
+import cloudpickle as pickle
+
+#########################################################################
+#### mlmodels-internal imports
+from preprocessor import Preprocessor
+from util import load_callable_from_dict
+
+
+
+#########################################################################
+#### Specific packages   ##### Be ware of tensorflow version
+"""
+
+https://www.tensorflow.org/api_docs/python/tf/compat/v1
+tf.compat.v1   IS ALL TF 1.0
+
+tf.compat.v2    iS TF 2.0
+
+
+"""
+
 import tensorflow as tf
 import torch
 import torchtext
-import pandas as pd
-import numpy as np
-import sklearn
 import keras
-from sklearn.model_selection import train_test_split
-from cli_code.cli_download import Downloader
-from collections.abc import MutableMapping
-import json
-from importlib import import_module
-import cloudpickle as pickle
-from preprocessor import Preprocessor
-from util import load_callable_from_dict
+
 import tensorflow.data
+
+
+"""
+Typical user workflow
+
+def get_dataset(data_pars):
+    loader = DataLoader(data_pars)
+    loader.compute()
+    data = loader.get_data()
+    [print(x.shape) for x in data]
+    return data
+
+"""
 
 
 def pickle_load(file):
@@ -44,28 +82,58 @@ class DataLoader:
         "image_dir": {"uri": "dataloader::image_dir_load"},
     }
 
-    def __init__(self, input_pars, loader, preprocessor, output, **args):
+    def __init__(self, data_pars):
+        self.input_pars = data_pars['input_pars']
+        
         self.intermediate_output = None
         self.intermediate_output_split = None
         self.final_output = None
         self.final_output_split = None
 
-        self._misc_dict = args if args is not None else {}
+        self.loader = data_pars['loader']
+        self.preprocessor = data_pars.get('preprocessor',None)
+        self.split_xy = data_pars.get('split_xy',None)
+        self.split_train_test = data_pars.get('split_train_test',None)
+        self.save_intermediate_output = data_pars.get('save_intermediate_output',None)
+        self.output = data_pars.get('output',None)
+        self.data_pars = data_pars.copy() #for getting with __get_item__/dict-like indexing.
+        
+               
+    def compute(self):
+        #Interpret input_pars
+        self._interpret_input_pars(self.input_pars)
 
-        self._interpret_input_pars(input_pars)
-        loaded_data = self._load_data(loader)
-        if isinstance(preprocessor, Preprocessor):
-            self.preprocessor = preprocessor
-            processed_data = self.preprocessor.transform(loaded_data)
-        else:
-            self.preprocessor = Preprocessor(preprocessor)
-            processed_data = self.preprocessor.fit_transform(loaded_data)
-        self.intermediate_output = processed_data
+        #Delegate loading data
+        loaded_data = self._load_data(self.loader) 
+        
+        #Delegate data preprocessing
+        preprocessor_class, preprocessor_class_args = load_callable_from_dict(self.preprocessor)
+        self.preprocessor = preprocessor_class(self.data_pars. **preprocessor_class_args)
+        self.preprocessor.compute(loaded_data)
+        self.intermediate_output = self.preprocessor.get_data()
+
+        #Delegate data splitting
+        if self.split_xy is not None:
+            split_xy, split_xy_args = load_callable_from_dict(self.split_xy)
+            self.intermediate_output = split_xy(self.intermediate_output,self.data_pars,**split_xy_args)
+
+        #Name the split outputs
         if self._names is not None:
             self.intermediate_output = self._name_outputs(
                 self.names, self.intermediate_output
             )
-        if self._split_data():
+
+        #delegate train-test splitting
+        split = self._split_data()
+
+        #delegate output saving
+        if self.save_intermediate_output is not None:
+            path = self.save_intermediate_output['path']
+            save_intermediate_output, save_intermediate_output_args = load_callable_from_dict(self.save_intermediate_output['save_function'])
+            save_intermediate_output(self.intermediate_output,path,self.data_pars,**save_intermediate_output_args)
+        
+        #delegate output formatting
+        if split:
             self.final_output_split = tuple(
                 self._interpret_output(output, o)
                 for o in self.intermediate_output_split[0:2]
@@ -73,8 +141,9 @@ class DataLoader:
         else:
             self.final_output = self._interpret_output(output, self.intermediate_output)
 
+
     def __getitem__(self, key):
-        return self._misc_dict[key]
+        return self.data_pars[key]
 
     def _interpret_input_pars(self, input_pars):
         try:
@@ -121,7 +190,10 @@ class DataLoader:
                 self.batch_size = int(input_pars.get("batch_size", 1))
             except:
                 raise Exception('Batch size must be an integer')
-        self._names = input_pars.get("names", None)
+        self._names = input_pars.get("names", None) #None by default. (Possibly rename for clarity?)
+        self.col_Xinput = input_pars.get('col_Xinput',None)
+        self.col_Yinput = input_pars.get('col_Yinput',None)
+        self.col_miscinput = input_pars.get('col_miscinput',None)
         validation_split_function = [
             {"uri": "sklearn.model_selection::train_test_split", "args": {}},
             "test_size",
@@ -179,6 +251,8 @@ class DataLoader:
         return data
 
     def _interpret_output(self, output, intermediate_output):
+        if output is None:
+            return intermediate_output
         if isinstance(intermediate_output, list) and len(output) == 1:
             intermediate_output = intermediate_output[0]
         # case 0: non-tuple, non-dict: single output from the preprocessor/loader.
@@ -228,86 +302,15 @@ class DataLoader:
             if case == 3:
                 for s, o in zip(shape, tuple(intermediate_output.values())):
                     if hasattr(o, "shape") and tuple(s) != o.shape[1:]:
-                        raise raise Exception(f'Expected shape {tuple(shape)} does not match shape data shape {intermediate_output.shape[1:]}')
+                        raise Exception(f'Expected shape {tuple(shape)} does not match shape data shape {intermediate_output.shape[1:]}')
         self.output_shape = shape
 
-        # saving the intermediate output
-        '''
-        path = output.get("path", None)
-        if isinstance(path, str):
-            if isinstance(intermediate_output, np.ndarray):
-                np.save(path, intermediate_output)
-            elif isinstance(intermediate_output, pd.core.frame.DataFrame):
-                intermediate_output.to_csv(path)
-            elif isinstance(intermediate_output, tuple) and all(
-                [isinstance(x, np.ndarray) for x in intermediate_output]
-            ):
-                np.savez(path, *intermediate_output)
-            elif isinstance(intermediate_output, dict) and all(
-                [isinstance(x, np.ndarray) for x in tuple(intermediate_output.values())]
-            ):
-                np.savez(path, *(tuple(intermediate_output.values)))
-            else:
-                pickle.dump(intermediate_output, open(path, "wb"))
-        elif isinstance(path, list):
-            try:
-                for p, f in zip(path, intermediate_output):
-                    if isinstance(f, np.ndarray):
-                        np.save(p, self.f)
-                    elif isinstance(f, pd.core.frame.DataFrame):
-                        f.to_csv(f)
-                    elif isinstance(f, list) and all(
-                        [isinstance(x, np.ndarray) for x in f]
-                    ):
-                        np.savez(p, *f)
-                    else:
-                        pickle.dump(f, open(p, "wb"))
-            except:
-                pass
-        '''
-        
-        # Framework-specific output formatting.
-        final_output = intermediate_output
-        output_format = output.get("format", None)
-        if output_format == "tfDataset":
-            if case == 3:
-                intermediate_output = tuple(
-                    x for x in tuple(intermediate_output.values())
-                )
-            if case == 2 or case == 4:
-                raise Exception(
-                    "Input format not supported for the specified output format"
-                )
-            final_output = tf.data.Dataset.from_tensor_slices(intermediate_output)
-        if output_format == "tchDataset":
-            if case == 3:
-                intermediate_output = tuple(
-                    x for x in tuple(intermediate_output.values())
-                )
-            if case == 2 or case == 4:
-                raise Exception(
-                    "Input format not supported for the specified output format"
-                )
-            if case == 1:
-                final_output = torch.utils.data.TensorDataset(intermediate_output)
-            else:
-                final_output = torch.utils.data.TensorDataset(*intermediate_output)
-        if output_format == "generic_generator":
-            if case == 0:
-                final_output = batch_generator(intermediate_output, self.batch_size)
-            if case == 1:
-                final_output = batch_generator(
-                    tuple(zip(*intermediate_output)), self.batch_size
-                )
-            if case == 3:
-                final_output = batch_generator(
-                    tuple(zip(*tuple(intermediate_output.values()))), self.batch_size
-                )
-            if case == 2 or case == 4:
-                raise Exception(
-                    "Input format not supported for the specified output format"
-                )
-
+        out_format = output.get('format',None)
+        if out_format is None:
+            final_output = intermediate_output
+        else:
+            formatter, args = load_callable_from_dict(out_format)
+            final_output = formatter(intermediate_output,self.data_pars,**args)
         return final_output
 
     def get_data(self, intermediate=False):
@@ -332,7 +335,7 @@ class DataLoader:
     def _name_outputs(self, names, outputs):
         if hasattr(outputs, "__getitem__") and len(outputs) == len(names):
             data = dict(zip(names, outputs))
-            self._misc_dict.update(data)
+            self.data_pars.update(data)
             return data
         else:
             raise Exception("Outputs could not be named")
@@ -362,11 +365,13 @@ class DataLoader:
             processed_data_train = processed_data[0:l]
             processed_data_test = processed_data[l:]
             processed_data_misc = []
+
             if self._names is not None and isinstance(self.intermediate_output, dict):
                 new_names = [x + "_train" for x in self.split_outputs]
                 processed_data_train = dict(zip(new_names, processed_data_train))
                 new_names = [x + "_test" for x in self.split_outputs]
                 processed_data_test = dict(zip(new_names, processed_data_test))
+                
             if self.misc_outputs is not None:
                 if self._names is not None and isinstance(
                     self.intermediate_output, dict
@@ -394,7 +399,7 @@ if __name__ == "__main__":
     param_pars = {
         "choice": "json",
         "config_mode": "test",
-        "data_path": "dataset/json_/03_nbeats.json",
+        "data_path": "dataset/json/refractor/03_nbeats_dataloader.json",
     }
     test_module("model_tch/03_nbeats_dataloader.py", param_pars)
     # param_pars = {
