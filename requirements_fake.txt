@@ -15,6 +15,7 @@ torchvision==0.4.0
 Pillow<7.0   ##Issue
 
 
+
 ### transformers with 7.0
 pytorch-transformers
 ###transformers==2.4.1 #### fix issue #23 could not run on macos
