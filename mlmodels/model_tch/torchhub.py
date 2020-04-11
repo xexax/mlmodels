@@ -388,7 +388,7 @@ def test2(data_path="dataset/", pars_choice="json", config_mode="test"):
 
 
 if __name__ == "__main__":
-    #test(data_path="model_tch/torchhub_cnn.json", pars_choice="json", config_mode="test")
+    test(data_path="model_tch/torchhub_cnn.json", pars_choice="json", config_mode="test")
 
 
     test2(data_path="model_tch/torchhub_pgan.json", pars_choice="json", config_mode="test")
