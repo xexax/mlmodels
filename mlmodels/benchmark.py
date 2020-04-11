@@ -211,15 +211,25 @@ def main():
     elif arg.do == "vision_mnist":
         log("Vision models")
 
-        arg.data_path = ""
+        arg.data_path    = ""
         arg.dataset_name = ""
-        arg.path_json = "dataset/json/benchmark_cnn/"
-        arg.path_out =  "ztest/benchmark_cnn/"
+        arg.path_json    = "dataset/json/benchmark_cnn/"
+        arg.path_out     = "ztest/benchmark_cnn/"
 
         bench_pars = {"metric_list": ["accuracy_score"]}
         benchmark_run(bench_pars=bench_pars, args=arg)
 
 
+
+    elif arg.do == "nlp_reuters":
+        log("NLP Reuters")
+        arg.data_path    = ""
+        arg.dataset_name = ""
+        arg.path_json    = "dataset/json/benchmark_text/"
+        arg.path_out     = "ztest/benchmark_text/"
+
+        bench_pars = {"metric_list": ["accuracy, f1_score"]}
+        benchmark_run(bench_pars=bench_pars, args=arg)
 
 
     else :
@@ -228,6 +238,12 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+
+
+
+
 
 
 
