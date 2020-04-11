@@ -9,7 +9,7 @@ mlmodels/ztest/*
 zwork/*
 !zwork/*.ipny
 !zwork/*.py
-
+*ipynb_check*
 
 
 # C extensions
