@@ -5,7 +5,8 @@ https://github.com/arita37/mlmodels/issues/101
 
 
 
-
+#
+#
 
 ## Steps to add a new Colab notebook /Jupyter notebook :
 
@@ -46,6 +47,8 @@ print( path_norm( 'dataset/text/mytest.txt'  ) )
 
 ```
 
+
+
 ## Example of sample cripts
 https://github.com/arita37/mlmodels/blob/dev/mlmodels/example/arun_hyper.py
 
@@ -53,13 +56,30 @@ https://github.com/arita37/mlmodels/blob/dev/mlmodels/example/arun_model.py
 
 
 
+#
+#
+
+
+
+
 ## Example of notebooks
+
+
+
+### Progressive GAN , Image Generation with mlmodels
+
+https://github.com/arita37/mlmodels/issues/168
+
+
+
+
+
 
 ### Hyper-Parameter with LightGBM, Ex 1
 
 https://github.com/arita37/mlmodels/blob/dev/mlmodels/example/model_lightgbm_home_retail.ipynb
 
-
+#
 
 ---
 
@@ -68,7 +88,7 @@ https://github.com/arita37/mlmodels/blob/dev/mlmodels/example/model_lightgbm_hom
 https://github.com/arita37/mlmodels/blob/dev/mlmodels/example/model_lightgbm_glass.ipynb
 
 
-
+#
 ---
 ### Hyper-Parameter with LightGBM , Ex 3
 
@@ -76,7 +96,7 @@ https://github.com/arita37/mlmodels/blob/dev/mlmodels/example/model_lightgbm_tit
 
 
 
-
+#
 ---
 
 
