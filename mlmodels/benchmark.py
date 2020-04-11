@@ -89,14 +89,14 @@ def benchmark_run(bench_pars=None, args=None, config_mode="test"):
     output_path  = path_norm( args.path_out )
     json_list    = get_all_json_path(json_path)
     metric_list  = bench_pars['metric_list']
-    benchmark_df = pd.DataFrame(columns=["date_run", "model_uri", "json",
-                                         "dataset_uri", "metric", "metric_name"])
+    bench_df = pd.DataFrame(columns=["date_run", "model_uri", "json",
+                                     "dataset_uri", "metric", "metric_name"])
 
     if len(json_list) < 1 :
         raise Exception("empty json")
     
     log("Model List", json_list)
-    ind = -1
+    ii = -1
     for jsonf in json_list :
         log ( f"### Running {jsonf} #####")
         #### Model URI and Config JSON
@@ -105,8 +105,7 @@ def benchmark_run(bench_pars=None, args=None, config_mode="test"):
 
 
         log("#### Setup Model    ")
-        model_uri = model_pars['model_uri']  # "model_tch.torchhub.py"
-        module    = module_load(model_uri)
+        module    = module_load(model_pars['model_uri'])   # "model_tch.torchhub.py"
         model     = module.Model(model_pars=model_pars, data_pars=data_pars, compute_pars=compute_pars)
         
         log("#### Fit ")
@@ -127,20 +126,20 @@ def benchmark_run(bench_pars=None, args=None, config_mode="test"):
         
         ### Calculate Metrics
         for metric in metric_list:
-            ind = ind + 1
+            ii = ii + 1
             metric_val = metric_eval(actual=ytrue, pred=ypred,  metric_name=metric)
-            benchmark_df.loc[ind, "date_run"]    = str(datetime.now())
-            benchmark_df.loc[ind, "model_uri"]   = model_uri
-            benchmark_df.loc[ind, "json"]        = str([model_pars, data_pars, compute_pars ])
-            benchmark_df.loc[ind, "dataset_uri"] = dataset_uri
-            benchmark_df.loc[ind, "metric_name"] = metric
-            benchmark_df.loc[ind, "metric"]      = metric_val
+            bench_df.loc[ii, "date_run"]    = str(datetime.now())
+            bench_df.loc[ii, "model_uri"]   = model_pars['model_uri']
+            bench_df.loc[ii, "json"]        = str([model_pars, data_pars, compute_pars ])
+            bench_df.loc[ii, "dataset_uri"] = dataset_uri
+            bench_df.loc[ii, "metric_name"] = metric
+            bench_df.loc[ii, "metric"]      = metric_val
 
 
     log( f"benchmark file saved at {output_path}")  
     os.makedirs( output_path, exist_ok=True)
-    benchmark_df.to_csv( f"{output_path}/benchmark.csv", index=False)
-    return benchmark_df
+    bench_df.to_csv( f"{output_path}/benchmark.csv", index=False)
+    return bench_df
 
 
 
@@ -222,6 +221,13 @@ def main():
 
 
     elif arg.do == "nlp_reuters":
+        """
+           User Reuters datasts
+           config files in  "dataset/json/benchmark_text/"
+           
+
+
+        """
         log("NLP Reuters")
         arg.data_path    = ""
         arg.dataset_name = ""
@@ -245,63 +251,4 @@ if __name__ == "__main__":
 
 
 
-
-
-
-
-
-
-# Benchmarking for CNN on MNIST #
-def benchmark_run_mnist(bench_pars=None, args=None, config_mode="test"):
-    """
-      Runnner for benchmark computation on MNIST
-      File is alredy saved on disk
-	"""
-    json_path    = path_norm( args.path_json )
-    output_path  = path_norm( args.path_out )
-    json_list    = get_all_json_path(json_path)
-    metric_list  = bench_pars['metric_list']
-    benchmark_df = pd.DataFrame(columns=["date_run", "model_uri", "json",
-                                         "dataset_uri", "metric", "metric_name"])
-
-    print(json_path)
-    # import pdb; pdb.set_trace()
-    for jsonf in json_list :
-        log ( f"### Running {jsonf} #####")
-        config_path = path_norm(jsonf)
-        model_pars, data_pars, compute_pars, out_pars = params_json_load(config_path, config_mode= config_mode)
-
-        log("#### Model init   #############################################")
-        # import pdb; pdb.set_trace()
-        model_uri = model_pars['model_uri']  
-        module    = module_load(model_uri)
-        model     = module.Model(model_pars, data_pars, compute_pars)
-
-
-        log("#### Model fit   #############################################")
-        model, session = module.fit(model, data_pars, compute_pars, out_pars)
-
-        #### Inference Need return ypred, ytrue
-        ypred, ytrue = module.predict(model=model, session=session, 
-                                      data_pars=data_pars, compute_pars=compute_pars, 
-                                      out_pars=out_pars, return_ytrue=1) 
-
-
-        
-        ### Calculate Metrics
-        for ind, metric in enumerate(metric_list):
-            metric_val = metric_eval(actual=ytrue, pred=ypred,  metric_name=metric)
-            benchmark_df.loc[ind, "date_run"]    = str(datetime.now())
-            benchmark_df.loc[ind, "model_uri"]   = model_uri
-            benchmark_df.loc[ind, "json"]        = str([model_pars, data_pars, compute_pars ])
-            # benchmark_df.loc[ind, "dataset_uri"] = dataset_uri
-            benchmark_df.loc[ind, "metric_name"] = metric
-            benchmark_df.loc[ind, "metric"]      = metric_val
-
-        # import pdb; pdb.set_trace()
-
-    log( f"benchmark file saved at {output_path}")  
-    os.makedirs( output_path, exist_ok=True)
-    benchmark_df.to_csv( f"{output_path}/benchmark_MNIST_CNN.csv", index=False)
-    return benchmark_df
 
