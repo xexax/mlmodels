@@ -201,7 +201,7 @@ def main():
 
         #### Models
         arg.path_json = "dataset/json/benchmark_timeseries/"
-        arg.path_out =  "ztest/benchmark_timseries/"
+        arg.path_out  = "example/benchmark_timeseries/"
 
         benchmark_run(bench_pars, arg) 
 
@@ -213,7 +213,7 @@ def main():
         arg.data_path    = ""
         arg.dataset_name = ""
         arg.path_json    = "dataset/json/benchmark_cnn/"
-        arg.path_out     = "ztest/benchmark_cnn/"
+        arg.path_out     = "example/benchmark_cnn/"
 
         bench_pars = {"metric_list": ["accuracy_score"]}
         benchmark_run(bench_pars=bench_pars, args=arg)
@@ -224,7 +224,7 @@ def main():
         """
            User Reuters datasts
            config files in  "dataset/json/benchmark_text/"
-           
+
 
 
         """
@@ -232,7 +232,7 @@ def main():
         arg.data_path    = ""
         arg.dataset_name = ""
         arg.path_json    = "dataset/json/benchmark_text/"
-        arg.path_out     = "ztest/benchmark_text/"
+        arg.path_out     = "example/benchmark_text/"
 
         bench_pars = {"metric_list": ["accuracy, f1_score"]}
         benchmark_run(bench_pars=bench_pars, args=arg)
@@ -244,6 +244,8 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
 
 
 
