@@ -10,8 +10,15 @@
 
 
         "data_pars":  {"data_path": "dataset/timeseries/milk.csv", 
+                      "colX_input" :  ["milk_production_pounds"],
+
+                      "coly_input" : [],
                        "forecast_length": 5, 
-                       "backcast_length": 10},
+                       "backcast_length": 10
+
+
+
+                     },
   
 
         "model_pars": {"stack_types": ["NBeatsNet.GENERIC_BLOCK", "NBeatsNet.GENERIC_BLOCK"],

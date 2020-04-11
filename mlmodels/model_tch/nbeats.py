@@ -44,16 +44,19 @@ class Model:
 ####################################################################################################
 # Dataaset
 def get_dataset(**kw):
-    data_path = kw['data_path']
+    data_path =path_norm( kw['data_path'] )
     train_split_ratio = kw.get("train_split_ratio", 0.8)
 
-    df = pd.read_csv(data_path, index_col=0, parse_dates=True)
+    df = pd.read_csv(data_path,  parse_dates=True)
 
+    #### Filter by columns 
+    df = df[ kw['col_Xinput'] ]
 
 
     if kw.get("test_data_path"):
-        test = df = pd.read_csv(kw["test_data_path"], 
-                                index_col=0, parse_dates=True)
+        test = pd.read_csv( path_norm(kw["test_data_path"]),  parse_dates=True)
+        test = test[ kw['col_Xinput'] ]        
+
         df = df.append(test)
         train_split_ratio = kw["forecast_length"] / df.shape[0]
     
@@ -66,8 +69,8 @@ def get_dataset(**kw):
     df = df / norm_constant  # small leak to the test set here.
 
     x_train_batch, y = [], []
-    backcast_length = kw['backcast_length']
-    forecast_length = kw['forecast_length']
+    backcast_length  = kw['backcast_length']
+    forecast_length  = kw['forecast_length']
     for i in range(backcast_length, len(df) - forecast_length):
         x_train_batch.append(df[i - backcast_length:i])
         y.append(df[i:i + forecast_length])
@@ -76,10 +79,11 @@ def get_dataset(**kw):
     y = np.array(y)[..., 0]
 
     #### Split
-    c = int(len(x_train_batch) * train_split_ratio)
+    c                = int(len(x_train_batch) * train_split_ratio)
     x_train, y_train = x_train_batch[:c], y[:c]
-    x_test, y_test = x_train_batch[c:], y[c:]
+    x_test, y_test   = x_train_batch[c:], y[c:]
     return x_train, y_train, x_test, y_test, norm_constant
+
 
 
 def data_generator(x_full, y_full, bs):
