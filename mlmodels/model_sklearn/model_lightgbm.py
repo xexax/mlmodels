@@ -130,17 +130,17 @@ def fit_metrics(model, data_pars=None, compute_pars=None, out_pars=None, **kw):
     """
     data_pars['train'] = True
     _, _, Xval, yval = get_dataset(data_pars)
-    #### Do prediction
+
+
     ypred = model.model.predict(Xval)
     ddict = {}
-    metric_score_name = compute_pars.get('metric_score', 'accuracy') 
+    metric_score_name = compute_pars.get('metric_score') 
     if metric_score_name is None :
         return {}
     
 
-    from mlmodels.metrics import metrics_val
-
-    ddict = metrics_val( metric_list=[ metric_score_name ], ytrue= yval, ypred= ypred, 
+    from mlmodels.metrics import metrics_eval
+    ddict = metrics_eval( metric_list=[ metric_score_name ], ytrue= yval, ypred= ypred, 
                          ypred_proba=None, return_dict=1   )
 
     return ddict
