@@ -4,11 +4,7 @@
 
 - Logic follows sklearn : fit, predict, transform, metrics, save, load
 
-- Goal is to transform Jupyter/research code into Semi-Prod (batch,..) code with minimal code change ...
-
-
-- Model list is available here :
-  https://github.com/arita37/mlmodels/blob/dev/README_model_list.md
+- Goal is to transform Script/Research code into Re-usable/batch/ code with minimal code change ...
 
 - Why Functional interface instead of OOP ?
   Functional reduces the amount of code needed, focus more on the computing part (vs design part),
@@ -46,6 +42,45 @@ TextCNN Pytorch : 2016, Text CNN Classifier, https://arxiv.org/abs/1801.06287
 TextCNN Keras : 2016, Text CNN Classifier, https://arxiv.org/abs/1801.06287
 
 charCNN Keras : Text Character Classifier,
+
+
+DRMM: this model is an implementation of A Deep Relevance Matching Model for Ad-hoc Retrieval.
+
+DRMMTKS: this model is an implementation of A Deep Top-K Relevance Matching Model for Ad-hoc Retrieval.
+
+ARC-I: this model is an implementation of Convolutional Neural Network Architectures for Matching Natural Language Sentences
+
+ARC-II: this model is an implementation of Convolutional Neural Network Architectures for Matching Natural Language Sentences
+
+DSSM: this model is an implementation of Learning Deep Structured Semantic Models for Web Search using Clickthrough Data
+
+CDSSM: this model is an implementation of Learning Semantic Representations Using Convolutional Neural Networks for Web Search
+
+MatchLSTM:this model is an implementation of Machine Comprehension Using Match-LSTM and Answer Pointer
+
+DUET: this model is an implementation of Learning to Match Using Local and Distributed Representations of Text for Web Search
+
+KNRM: this model is an implementation of End-to-End Neural Ad-hoc Ranking with Kernel Pooling
+
+ConvKNRM: this model is an implementation of Convolutional neural networks for soft-matching n-grams in ad-hoc search
+
+ESIM: this model is an implementation of Enhanced LSTM for Natural Language Inference
+
+BiMPM: this model is an implementation of Bilateral Multi-Perspective Matching for Natural Language Sentences
+
+MatchPyramid: this model is an implementation of Text Matching as Image Recognition
+
+Match-SRNN: this model is an implementation of Match-SRNN: Modeling the Recursive Matching Structure with Spatial RNN
+
+aNMM: this model is an implementation of aNMM: Ranking Short Answer Texts with Attention-Based Neural Matching Model
+
+MV-LSTM: this model is an implementation of A Deep Architecture for Semantic Matching with Multiple Positional Sentence Representations
+
+DIIN: this model is an implementation of Natural Lanuguage Inference Over Interaction Space
+
+HBMP: this model is an implementation of Sentence Embeddings in NLI with Iterative Refinement Encoders
+
+
 
 
 ### TABULAR :
@@ -175,7 +210,13 @@ https://github.com/arita37/mlmodels/blob/dev/README_model_list.md
 
 ## ① Installation
 
-Install as editable package (ONLY dev branch), in Linux
+Using pre-installed online Setup :
+
+    https://github.com/arita37/mlmodels/issues/101
+
+
+
+Manual Install as editable package in Linux
 
 ```
 conda create -n py36 python=3.6.5 -y
@@ -185,40 +226,26 @@ cd yourfolder
 git clone https://github.com/arita37/mlmodels.git mlmodels
 cd mlmodels
 git checkout dev
+```
 
-    ### On Linux/MacOS
-    pip install numpy<1.17.0
-    pip install -e .  -r requirements.txt
-    pip install   -r requirements_fake.txt
-
-
-    ### On Windows
-    VC 14   https://www.visualstudio.com/downloads/#build-tools-for-visual-studio-2019
-    pip install  numpy<1.17.0
-    pip install torch==1.0.1 -f https://download.pytorch.org/whl/torch_stable.html
-    pip install -e .  -r requirements_wi.txt
-    pip install   -r requirements_fake.txt
-
-
-    ### No Deps
-    # pip install -e .  --no-deps
-
-
-    ### Check this Colab for install :
+### Check this Colab for install :
 https://colab.research.google.com/drive/1sYbrXNZh9nTeizS-AuCA8RSu94B_B-RF
 
-    ##### Initialize
-    Will copy template, dataset, example to your folder
+
+##### Initialize
+Will copy template, dataset, example to your folder
 
     ml_models --init  /yourworkingFolder/
 
 
-    ##### To test :
+##### To test :
     ml_optim
 
-    ##### To test model fitting
+
+##### To test model fitting
     ml_models
-```    
+    
+        
 
 #### Dependencies
 

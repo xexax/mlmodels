@@ -98,7 +98,8 @@ class Model:
         model.compile(loss=mdn.get_mixture_loss_func(OUTPUT_DIMS, N_MIXES),
                       optimizer=adam)
         self.model = model
-
+        self.model_pars = model_pars 
+        model.summary()
 
 
 
@@ -124,14 +125,18 @@ def fit(model=None, data_pars={}, compute_pars={}, out_pars={}, **kw):
     return model, sess
 
 
-def predict(model=None, model_pars=None, data_pars=None, **kwargs):
+def predict(model=None, model_pars=None,  sess=None, data_pars=None, 
+            compute_pars=None, out_pars=None, **kwargs):
     data_pars["predict"] = True
     x_test, y_test = get_dataset(data_pars)
+
+
     pred = model.model.predict(x_test)
     y_samples = np.apply_along_axis(mdn.sample_from_output, 1, pred,
                                     data_pars["prediction_length"],
-                                    model_pars["n_mixes"], temp=1.0)
-    return y_samples.reshape(-1, 1)
+                                    model.model_pars["n_mixes"], temp=1.0)
+    y_samples[y_samples < 0] = 0
+    return y_samples.reshape(-1, 1), y_test.reshape(-1, 1)
 
 
 def metrics_plot(metrics_params):
@@ -149,8 +154,17 @@ def reset_model():
     pass
 
 
-def fit_metrics(model, data_pars=None, compute_pars=None, out_pars=None, **kw):
+def fit_metrics(model, data_pars=None, compute_pars=None, out_pars=None, model_pars=None, **kw):
     ddict = {}
+    data_pars["predict"] = True
+    x_test, y_test = get_dataset(data_pars)
+    pred = model.model.predict(x_test)
+    y_samples = np.apply_along_axis(mdn.sample_from_output, 1, pred,
+                                    data_pars["prediction_length"],
+                                    model_pars["n_mixes"], temp=1.0)
+    pred = y_samples.reshape(-1, 1)
+    if kw["wmape"]:
+        ddict["wmape"] = round(100 * np.sum(np.abs(x_test - pred)) / np.sum(x_test), 2)
     return ddict
 
 
@@ -179,22 +193,43 @@ def load(load_pars={}, **kw):
 
 
 
-def get_dataset(data_params):
-    pred_length = data_params["prediction_length"]
-    features = data_params["col_Xinput"]
-    target = data_params["col_ytarget"]
+def get_dataset(data_pars):
+    pred_length = data_pars["prediction_length"]
+    features = data_pars["col_Xinput"]
+    target = data_pars["col_ytarget"]
     feat_len = len(features)
-    df = pd.read_csv(data_params["train_data_path"])
 
+    # when train and test both are provided
+    if data_pars["test_data_path"]:
+        train = pd.read_csv(path_norm( data_pars["train_data_path"]))
+        test = pd.read_csv(path_norm(data_pars["test_data_path"]))
+
+        x_train = train[features]
+        x_train = x_train.values.reshape(-1, pred_length, feat_len)
+        y_train = train[features].shift().fillna(0)
+        y_train = y_train.values.reshape(-1, pred_length, 1)
+
+        x_test = test[features]
+        x_test = x_test.values.reshape(-1, pred_length, feat_len)
+        y_test = test[target].fillna(0)
+        y_test = y_test.values.reshape(-1, pred_length, 1)        
+        if data_pars["predict"]:
+            return x_test, y_test
+        return x_train, y_train, x_test, y_test
+    
+    # for when only train is provided
+    df = pd.read_csv( path_norm(data_pars["train_data_path"]))
     x_train = df[features].iloc[:-pred_length]
     x_train = x_train.values.reshape(-1, pred_length, feat_len)
     y_train = df[features].iloc[:-pred_length].shift().fillna(0)
     y_train = y_train.values.reshape(-1, pred_length, 1)
+
     x_test = df.iloc[-pred_length:][target]
     x_test = x_test.values.reshape(-1, pred_length, feat_len)
     y_test = df.iloc[-pred_length:][target].shift().fillna(0)
     y_test = y_test.values.reshape(-1, pred_length, 1)
-    if data_params["predict"]:
+    
+    if data_pars["predict"]:
         return x_test, y_test
     return x_train, y_train, x_test, y_test
 
@@ -261,14 +296,13 @@ def test(data_path="dataset/", pars_choice="test0", config_mode="test"):
     # for prediction
     
     log("#### Predict   ####")
-    y_pred = predict(model=model, model_pars=model_pars, data_pars=data_pars)
+    y_pred, y_test = predict(model=model, model_pars=model_pars, data_pars=data_pars)
 
     log("### Plot ###")
     data_pars["predict"] = True
-    x_test, y_test = get_dataset(data_pars)
     metrics_params = {"plot_type": "line", "pred": y_pred, 
                       "outpath": out_pars["outpath"], 
-                      "actual": y_test.reshape(-1, 1)}
+                      "actual": y_test}
     metrics_plot(metrics_params)
 
     log("#### Save/Load   ###################################################")

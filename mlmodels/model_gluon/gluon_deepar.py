@@ -3,6 +3,36 @@
 Gluon
 
 """
+"""
+Things to do for benchamrking
+
+1. In mlmodels.model_gluon.util
+    i- explicitly mentioned Features columns and Target columns, incase for 
+       multivariate time series forecasting
+
+2. Fit function should return two values
+    i. first is trained model
+    ii. second is session, though if their is no session use in 
+        your model then return session=None
+
+3. Run and test this model for choice="json" and prepare prod ready json file
+   which contain all params_info to run this model
+   JSON should have following parameters
+    i. data_pars
+    ii. model_pars
+    iii. compute_pars 
+    iv. out_pars (output param like model output path, plot save path, use some dummy
+                  value incase if their is no need of out_pars) 
+
+4. predict should return two arrays
+    i. first should be prediction (only array/list/numpy array)
+    ii. second would be actual (only array/list/numpy array)
+    iii. prediction and actual should have same length
+         so to easily calculate metrics using third party
+         code
+"""
+
+
 import os
 import pandas as pd
 
