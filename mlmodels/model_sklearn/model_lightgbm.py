@@ -78,16 +78,6 @@ from mlmodels.util import log, path_norm
 
 
 
-
-
-
-
-
-
-
-
-
-
 ####################################################################################################
 class Model(object):
     def __init__(self, model_pars=None, data_pars=None, compute_pars=None):
@@ -143,10 +133,19 @@ def fit_metrics(model, data_pars=None, compute_pars=None, out_pars=None, **kw):
     #### Do prediction
     ypred = model.model.predict(Xval)
     ddict = {}
-    metric_score_name = compute_pars.get('metric_score') 
+    metric_score_name = compute_pars.get('metric_score', 'accuracy') 
     if metric_score_name is None :
         return {}
     
+
+    from mlmodels.metrics import metrics_val
+
+    ddict = metrics_val( metric_list=[ metric_score_name ], ytrue= yval, ypred= ypred, 
+                         ypred_proba=None, return_dict=1   )
+
+    return ddict
+
+    """
     from sklearn.metrics import roc_auc_score,mean_squared_error,accuracy_score
     if metric_score_name == "roc_auc_score" :
         score = roc_auc_score(yval, ypred)
@@ -162,7 +161,7 @@ def fit_metrics(model, data_pars=None, compute_pars=None, out_pars=None, **kw):
    
         ddict[metric_score_name] = score
     return ddict
-
+    """
 
 
 def predict(model, sess=None, data_pars=None, compute_pars=None, out_pars=None, **kw):
