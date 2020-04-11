@@ -80,7 +80,7 @@ class DataLoader:
         try:
             path = input_pars["path"]
         except KeyError:
-            raise MissingLocationKeyError()
+            raise Exception('Missing path key in the dataloader.')
 
         path_type = input_pars.get("path_type", None)
         if path_type is None:
@@ -95,10 +95,10 @@ class DataLoader:
                 dropbox_download(path)
                 path_type = "file"
             if path_type is None:
-                raise UndeterminableLocationTypeError(path)
+                raise Exception(f'Path type for {path} is undeterminable')
 
         elif path_type != "file" and path_type != "dir" and path_type != "url":
-            raise UnknownLocationTypeError()
+            raise Exception('Unknown location type')
 
         file_type = input_pars.get("file_type", None)
         if file_type is None:
@@ -108,7 +108,7 @@ class DataLoader:
                 file_type = os.path.splitext(path)[1]
             else:
                 if path[-1] == "/":
-                    raise NonfileURLError()
+                    raise Exception('URL must target a single file.')
                 file_type = os.path.splittext(path.split("/")[-1])[1]
 
         self.path = path
@@ -120,7 +120,7 @@ class DataLoader:
             try:
                 self.batch_size = int(input_pars.get("batch_size", 1))
             except:
-                raise NonIntegerBatchSizeError()
+                raise Exception('Batch size must be an integer')
         self._names = input_pars.get("names", None)
         validation_split_function = [
             {"uri": "sklearn.model_selection::train_test_split", "args": {}},
@@ -146,14 +146,14 @@ class DataLoader:
                         loader_args = {}
                     data_loader = self.default_loaders[self.file_type]
                 except KeyError:
-                    raise UndeterminableDataLoaderError()
+                    raise Exception('Loader function could not beautomataically determined.')
             try:
                 loader_function, args = load_callable_from_dict(data_loader)
                 if args is not None:
                     loader_args.update(args)
                 assert callable(loader_function)
             except:
-                raise InvalidDataLoaderFunctionError(data_loader)
+                raise Exception(f'Invalid loader function: {data_loader}')
 
         if self.path_type == "file":
             if self.generator:
@@ -220,15 +220,15 @@ class DataLoader:
                 and hasattr(intermediate_output, "shape")
                 and tuple(shape) != intermediate_output.shape
             ):
-                raise OutputShapeError(tuple(shape), intermediate_output.shape[1:])
+                raise Exception(f'Expected shape {tuple(shape)} does not match shape data shape {intermediate_output.shape[1:]}')
             if case == 1:
                 for s, o in zip(shape, intermediate_output):
                     if hasattr(o, "shape") and tuple(s) != o.shape[1:]:
-                        raise OutputShapeError(tuple(s), o.shape[1:])
+                        raise Exception(f'Expected shape {tuple(shape)} does not match shape data shape {intermediate_output.shape[1:]}')
             if case == 3:
                 for s, o in zip(shape, tuple(intermediate_output.values())):
                     if hasattr(o, "shape") and tuple(s) != o.shape[1:]:
-                        raise OutputShapeError(tuple(s), o.shape[1:])
+                        raise raise Exception(f'Expected shape {tuple(shape)} does not match shape data shape {intermediate_output.shape[1:]}')
         self.output_shape = shape
 
         # saving the intermediate output
