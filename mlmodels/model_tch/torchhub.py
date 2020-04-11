@@ -12,7 +12,6 @@ https://github.com/pytorch/pytorch/blob/98362d11ffe81ca48748f6b0e1e417cb81ba5998
         googlenet, shufflenet_v2_x0_5, shufflenet_v2_x1_0, mobilenet_v2"
 
 
-
         assert _model in ['alexnet', 'densenet121', 'densenet169', 'densenet201', 'densenet161', 
         'inception_v3', 'resnet18', 'resnet34', 'resnet50', 'resnet101', 'resnet152', 
         'resnext50_32x4d', 'resnext101_32x8d', 'wide_resnet50_2', 'wide_resnet101_2',
@@ -103,9 +102,7 @@ def _get_device():
     return device
 
 def get_config_file():
-    return os.path.join(
-        os_package_root_path(__file__, 1),
-        'config', 'model_tch', 'Imagecnn.json')
+    return path_norm('config/model_tch/Imagecnn.json')
 
 
 def get_dataset_mnist_torch(data_pars):
@@ -161,23 +158,26 @@ plt.imshow(grid.permute(1, 2, 0).cpu().numpy())
 ###########################################################################################################
 class Model:
     def __init__(self, model_pars=None, data_pars=None, compute_pars=None, out_pars=None):
+        self.model_pars = model_pars
+        m = model_pars 
+
         ### Model Structure        ################################
         if model_pars is None :
             self.model = None
-            return self
-        self.model_pars = model_pars
-        m = model_pars 
+            return None
 
         #### Progressive GAN
         if m['repo_uri'] == 'facebookresearch/pytorch_GAN_zoo:hub' :
            model_id      = m.get('model', 'PGAN')
            model_name    = m.get('model_name', 'celebAHQ-512')
+           use_gpu       = compute_pars.get('use_gpu', _get_device()  )
 
-           model = torch.hub.load('facebookresearch/pytorch_GAN_zoo:hub',
-                                  'PGAN', 
-                                  model_name='celebAHQ-512',
-                                  pretrained=True, useGPU=use_gpu)
-           return self
+           self.model = torch.hub.load(m['repo_uri'],
+                                       model_id, 
+                                       model_name=model_name,
+                                       pretrained = bool( m.get('pretrained', True)), 
+                                       useGPU=use_gpu)
+           return None
         
 
 
@@ -280,7 +280,7 @@ def fit(model, data_pars=None, compute_pars=None, out_pars=None, **kwargs):
 
 
 def predict(model, session=None, data_pars=None, compute_pars=None, out_pars=None, imax = 1, return_ytrue=1):
-    ###### Predict
+    ###### Progressive GAN
     if model.model_pars['model'] == 'PGAN' :
         model0     = model.model     
         num_images = compute_pars.get('num_images', 4)
@@ -297,7 +297,8 @@ def predict(model, session=None, data_pars=None, compute_pars=None, out_pars=Non
         plt.savfig(out_pars['path'] + "/img_01.png")
         return 0
    
- 
+
+    ######  CNN models
     import numpy as np
     from mlmodels.metrics import metrics_eval
     device = _get_device()
@@ -388,7 +389,7 @@ def test2(data_path="dataset/", pars_choice="json", config_mode="test"):
     log(  data_pars, out_pars )
 
     log("#### Loading dataset   #############################################")
-    xtuple = get_dataset(data_pars)
+    #xtuple = get_dataset(data_pars)
 
 
     log("#### Model init, fit   #############################################")
@@ -410,11 +411,11 @@ def test2(data_path="dataset/", pars_choice="json", config_mode="test"):
 
 
     log("#### Save/Load   ###################################################")
-    save_pars = { "path": out_pars["path"]  }
-    save(model=model, save_pars=save_pars)
-    model2 = load( save_pars )
-    ypred = predict(model2, data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)
-    print(model2)
+    # save_pars = { "path": out_pars["path"]  }
+    # save(model=model, save_pars=save_pars)
+    # model2 = load( save_pars )
+    # ypred = predict(model2, data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)
+    # print(model2)
 
 
 if __name__ == "__main__":
