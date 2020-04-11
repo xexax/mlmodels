@@ -10,6 +10,8 @@ zwork/*
 !zwork/*.ipny
 !zwork/*.py
 *ipynb_check*
+*zarchive.txt*
+*untitled*
 
 
 # C extensions
