@@ -249,11 +249,6 @@ Will copy template, dataset, example to your folder
     ml_models
     
         
-
-#### Dependencies
-
-https://github.com/arita37/mlmodels/blob/dev/requirements.txt
-
 #### Actual test runs
 
 https://github.com/arita37/mlmodels/actions
@@ -276,12 +271,7 @@ https://github.com/arita37/mlmodels/blob/dev/README_usage.md
 
 https://github.com/arita37/mlmodels/blob/dev/README_usage_CLI.md
 
-```
-- ml_models    :  mlmodels/models.py
-- ml_optim     :  mlmodels/optim.py
-- ml_test      :  mlmodels/ztest.py
 
-```
 
 ####################################################################################
 
