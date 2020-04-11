@@ -2,14 +2,19 @@
         "test": {
 
             "model_pars": {
-                "max_trials": 10
+                "model": "BERT",
+                "pretrained": 0,
+                "embedding_output_dim": 100,
+		        "mode": "bert-base-uncased",
+		        "dropout_rate": 0.2
             },
 
             "data_pars" :{
-                "dataset": "IMDB",
+                "dataset": "WIKI_QA",
                 "data_path": "dataset/nlp/",
-		        "num_words" : 1000,
-		        "validation_split":0.15,
+		        "mode" : "pair",
+		        "num_dup" : 2,
+		        "num_neg" : 1,
                 "train_batch_size": 4,
                 "test_batch_size": 1
             },
@@ -27,8 +32,8 @@
             },
 
             "out_pars": {
-                "checkpointdir": "ztest/model_tch/autokeras/textclassifier/",
-                "path": "ztest/model_tch/autokeras/textclassifier/"
+                "checkpointdir": "ztest/model_tch/MATCHZOO/BERT/checkpoints/",
+                "path": "ztest/model_tch/MATCHZOO/BERT/"
             }
         },
     

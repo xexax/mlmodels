@@ -19,8 +19,26 @@ MODEL_URI = get_model_uri(__file__)
 ####################################################################################################
 from mlmodels.model_tch.raw.nbeats.model import NBeatsNet
 
+
+
+
+
 # Model
-Model = NBeatsNet
+class Model:
+    def __init__(self, model_pars=None, data_pars=None, compute_pars=None):
+        self.model_pars = model_pars    
+
+        if model_pars is None : 
+            self.model = None
+            return None
+
+
+        #### Remove Params
+        if model_pars.get("model_uri") :
+            del model_pars["model_uri"]
+        self.model = NBeatsNet(**model_pars)
+
+
 
 
 ####################################################################################################
@@ -30,6 +48,15 @@ def get_dataset(**kw):
     train_split_ratio = kw.get("train_split_ratio", 0.8)
 
     df = pd.read_csv(data_path, index_col=0, parse_dates=True)
+
+
+
+    if kw.get("test_data_path"):
+        test = df = pd.read_csv(kw["test_data_path"], 
+                                index_col=0, parse_dates=True)
+        df = df.append(test)
+        train_split_ratio = kw["forecast_length"] / df.shape[0]
+    
 
     if VERBOSE: print(df.head(5))
 
@@ -79,16 +106,22 @@ def fit(model, data_pars=None, compute_pars=None, out_pars=None, **kw):
     batch_size = compute_pars["batch_size"]  # greater than 4 for viz
     disable_plot = compute_pars["disable_plot"]
 
+
+    model0 = model.model
+
     ### Get Data
     x_train, y_train, x_test, y_test, _ = get_dataset(**data_pars)
     data_gen = data_generator(x_train, y_train, batch_size)
 
     ### Setup session
-    optimiser = optim.Adam(model.parameters())
+    # print("[DEBUG] from fir of nbeats parameter {}\n",format(model.parameters()))
+    optimiser = optim.Adam(model0.parameters())
 
     ### fit model
-    net, optimiser = fit_simple(model, optimiser, data_gen, plot_model, device, data_pars, out_pars)
-    return net, optimiser
+    net, optimiser = fit_simple(model0, optimiser, data_gen, plot_model, device, data_pars, out_pars)
+
+    model.model = net
+    return model, optimiser
 
 
 def fit_simple(net, optimiser, data_generator, on_save_callback, device, data_pars, out_pars, max_grad_steps=500):
@@ -117,15 +150,19 @@ def fit_simple(net, optimiser, data_generator, on_save_callback, device, data_pa
     return net, optimiser
 
 
+
 def predict(model, data_pars=None, compute_pars=None, out_pars=None, **kw):
+    model0 = model.model
     _, _, x_test, y_test, _ = get_dataset(**data_pars)
 
+   
     test_losses = []
-    model.eval()
-    _, f = model(torch.tensor(x_test, dtype=torch.float))
+    model0.eval()
+    _, f = model0(torch.tensor(x_test, dtype=torch.float))
     test_losses.append(F.mse_loss(f, torch.tensor(y_test, dtype=torch.float)).item())
-    p = f.detach().numpy()
-    return p
+    y_pred = f.detach().numpy()
+    return y_pred, y_test
+
 
 
 ###############################################################################################################
@@ -212,32 +249,21 @@ def load_checkpoint(model, optimiser, CHECKPOINT_NAME='nbeats-fiting-checkpoint.
 
 
 def save(model, session, save_pars):
-        optimiser = session
-        grad_step = save_pars['grad_step']
-        CHECKPOINT_NAME = save_pars['checkpoint_name']
-        torch.save({
-            'grad_step': grad_step,
-            'model_state_dict': model.state_dict(),
-            'optimizer_state_dict': optimiser.state_dict(),
-        }, CHECKPOINT_NAME)
+    model0          = model.model
+    optimiser       = session
+    grad_step       = save_pars['grad_step']
+    CHECKPOINT_NAME = save_pars['checkpoint_name']
+    torch.save({
+        'grad_step': grad_step,
+        'model_state_dict': model0.state_dict(),
+        'optimizer_state_dict': optimiser.state_dict(),
+    }, CHECKPOINT_NAME)
 
 
-    # def load(model, optimiser, CHECKPOINT_NAME='nbeats-fiting-checkpoint.th'):
 def load(load_pars):
-        model = None
-        session = None
+    model   = None
+    session = None
 
-        CHECKPOINT_NAME = load_pars['checkpoint_name']
-        optimiser = session
-
-        if os.path.exists(CHECKPOINT_NAME):
-            checkpoint = torch.load(CHECKPOINT_NAME)
-            model.load_state_dict(checkpoint['model_state_dict'])
-            optimiser.load_state_dict(checkpoint['optimizer_state_dict'])
-            grad_step = checkpoint['grad_step']
-            print(f'Restored checkpoint from {CHECKPOINT_NAME}.')
-            return grad_step
-        return 0
 
 
 
@@ -290,6 +316,7 @@ def get_params(param_pars, **kw):
 
 
 
+
 #############################################################################################################
 
 def test(choice="json", data_path="nbeats.json", config_mode="test"):
@@ -305,13 +332,13 @@ def test(choice="json", data_path="nbeats.json", config_mode="test"):
 
 
     log("#### Model setup   ##########################################")
-    model = NBeatsNet(**model_pars)
+    model = Model(model_pars, data_pars, compute_pars)
 
     log("#### Model fit   ############################################")
     model, optimiser = fit(model, data_pars, compute_pars, out_pars)
 
     log("#### Predict    #############################################")
-    ypred = predict(model, data_pars, compute_pars, out_pars)
+    ypred, _ = predict(model, data_pars, compute_pars, out_pars)
     print(ypred)
 
     log("#### Plot     ###############################################")

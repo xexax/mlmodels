@@ -27,8 +27,8 @@
             },
 
             "out_pars": {
-                "checkpointdir": "ztest/model_tch/autokeras/textclassifier/",
-                "path": "ztest/model_tch/autokeras/textclassifier/"
+                "checkpointdir": "ztest/model_tch/MATCHZOO/BERT/checkpoints/",
+                "path": "ztest/model_tch/MATCHZOO/BERT/"
             }
         },
     
