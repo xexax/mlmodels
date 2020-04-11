@@ -1,5 +1,6 @@
 import json
 import os
+import copy
 
 import numpy as np
 import pandas as pd
@@ -75,16 +76,9 @@ def get_data(data_pars):
 
 
 
-"""
 
-
-
-
-
-
-"""
 def get_dataset(**kw):
-    data_path =path_norm( kw['data_path'] )
+    data_path = path_norm( kw['train_data_path'] )
     train_split_ratio = kw.get("train_split_ratio", 0.8)
 
     df = pd.read_csv(data_path,  parse_dates=True)
@@ -151,6 +145,7 @@ def fit(model, data_pars=None, compute_pars=None, out_pars=None, **kw):
     disable_plot = compute_pars["disable_plot"]
 
 
+    # model0 = model.model
     model0 = model.model
 
     ### Get Data
