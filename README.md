@@ -1,19 +1,22 @@
-# mlmodels : Model ZOO for Pytorch, Tensorflow, Keras, Gluon, sklearn, LightGBM models...
+# mlmodels : Model ZOO for Pytorch, Tensorflow, Keras, Gluon, LightGBM, Sklearn models...
 
-- Model ZOO with Lightweight Functional interface to wrap access to Recent and State o Art Deep Learning, ML models and Hyper-Parameter Search, cross platforms such as Tensorflow, Pytorch, Gluon, Keras, sklearn, light-GBM,...
+- Model ZOO with Lightweight Functional interface to wrap access to Recent and State of Art Deep Learning, ML models and Hyper-Parameter Search, cross platforms such as Tensorflow, Pytorch, Gluon, Keras, sklearn, light-GBM,...
 
 - Logic follows sklearn : fit, predict, transform, metrics, save, load
 
 - Goal is to transform Script/Research code into Re-usable/batch/ code with minimal code change ...
 
-- Why Functional interface instead of OOP ?
+- Why Functional interface instead of pure OOP ?
   Functional reduces the amount of code needed, focus more on the computing part (vs design part),
   a bit easier maintenability for medium size project, good for scientific computing process.
 
 
-*  Colab demo :
-https://colab.research.google.com/drive/1sYbrXNZh9nTeizS-AuCA8RSu94B_B-RF54d8dce15108f5fe94bf448fceb519dce07a6d2d
+*  Usage, Example :
+https://github.com/arita37/mlmodels/blob/dev/mlmodels/example/README_usage.md
 
+
+*  Colab demo for Install :
+https://colab.research.google.com/drive/1sYbrXNZh9nTeizS-AuCA8RSu94B_B-RF
 
 
 ## Model List :
@@ -180,23 +183,23 @@ resnext101_32x8d\
 
 wide_resnet50_2\
 wide_resnet101_2\
-squeezenet1_0\
+squeezenet1_0
 
 squeezenet1_1\
 vgg11\
 vgg13\
 vgg16\
 vgg19\
-vgg11_bn\
+vgg11_bn
 
 vgg13_bn\
 vgg16_bn\
-vgg19_bn\
+vgg19_bn
 
 googlenet\
 shufflenet_v2_x0_5\
 shufflenet_v2_x1_0\
-mobilenet_v2\
+mobilenet_v2
 
 A lot more...
 
@@ -212,7 +215,7 @@ https://github.com/arita37/mlmodels/blob/dev/README_model_list.md
 
 Using pre-installed online Setup :
 
-    https://github.com/arita37/mlmodels/issues/101
+https://github.com/arita37/mlmodels/issues/101
 
 
 
@@ -246,11 +249,6 @@ Will copy template, dataset, example to your folder
     ml_models
     
         
-
-#### Dependencies
-
-https://github.com/arita37/mlmodels/blob/dev/requirements.txt
-
 #### Actual test runs
 
 https://github.com/arita37/mlmodels/actions
@@ -273,12 +271,7 @@ https://github.com/arita37/mlmodels/blob/dev/README_usage.md
 
 https://github.com/arita37/mlmodels/blob/dev/README_usage_CLI.md
 
-```
-- ml_models    :  mlmodels/models.py
-- ml_optim     :  mlmodels/optim.py
-- ml_test      :  mlmodels/ztest.py
 
-```
 
 ####################################################################################
 

@@ -3,10 +3,16 @@
     "hypermodel_pars": {},
 
     "data_pars": {
-      "data_path": "mlmodels/dataset/timeseries/HOBBIES_1_001_CA_1_validation_train.csv",
       "forecast_length": 60,
       "backcast_length": 10,
-      "test_data_path": "mlmodels/dataset/timeseries/HOBBIES_1_001_CA_1_validation_test.csv"
+
+
+      "train_data_path": "dataset/timeseries/energy_train.csv",
+      "test_data_path": "dataset/timeseries/energy_test.csv",
+      
+      "col_Xinput": ["load_true"],
+      "col_ytarget": "load_true"
+
     },
 
     "model_pars": {
