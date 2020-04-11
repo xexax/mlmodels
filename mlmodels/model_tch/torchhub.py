@@ -123,37 +123,8 @@ def get_dataset_mnist_torch(data_pars):
         batch_size=data_pars['test_batch_size'], shuffle=True)
     return train_loader, valid_loader  
 
-"""
-
-import torch
-use_gpu = True if torch.cuda.is_available() else False
-
-# trained on high-quality celebrity faces "celebA" dataset
-# this model outputs 512 x 512 pixel images
-model = torch.hub.load('facebookresearch/pytorch_GAN_zoo:hub',
-                       'PGAN', model_name='celebAHQ-512',
-                       pretrained=True, useGPU=use_gpu)
-# this model outputs 256 x 256 pixel images
-# model = torch.hub.load('facebookresearch/pytorch_GAN_zoo:hub',
-#                        'PGAN', model_name='celebAHQ-256',
-#                        pretrained=True, useGPU=use_gpu)
 
 
-num_images = 4
-noise, _ = model.buildNoiseData(num_images)
-with torch.no_grad():
-    generated_images = model.test(noise)
-
-# let's plot these images using torchvision and matplotlib
-import matplotlib.pyplot as plt
-import torchvision
-grid = torchvision.utils.make_grid(generated_images.clamp(min=-1, max=1), scale_each=True, normalize=True)
-plt.imshow(grid.permute(1, 2, 0).cpu().numpy())
-# plt.show()
-
-
-
-"""
 ###########################################################################################################
 ###########################################################################################################
 class Model:
@@ -168,22 +139,19 @@ class Model:
 
         #### Progressive GAN
         if m['repo_uri'] == 'facebookresearch/pytorch_GAN_zoo:hub' :
-           model_id      = m.get('model', 'PGAN')
-           model_name    = m.get('model_name', 'celebAHQ-512')
-           use_gpu       = compute_pars.get('use_gpu', _get_device()  )
 
            self.model = torch.hub.load(m['repo_uri'],
-                                       model_id, 
-                                       model_name=model_name,
+                                       m.get('model', 'PGAN'), 
+                                       model_name = m.get('model_name', 'celebAHQ-512'),
                                        pretrained = bool( m.get('pretrained', True)), 
-                                       useGPU=use_gpu)
+                                       useGPU     = compute_pars.get('use_gpu', _get_device()) )
            return None
         
 
-
+        #### Other CNN modles
         num_classes = m['num_classes']
         _model      = m['model']
-        self.model = hub.load( m['repo_uri'], _model, 
+        self.model  = hub.load( m['repo_uri'], _model, 
                                # model_name = m.get("model_name", m['model']),
                                pretrained = bool( m.get('pretrained', True)),
                                # useGPU     = m.get('use_gpu',False)
@@ -294,7 +262,10 @@ def predict(model, session=None, data_pars=None, compute_pars=None, out_pars=Non
         grid = torchvision.utils.make_grid(generated_images.clamp(min=-1, max=1), scale_each=True, normalize=True)
         plt.imshow(grid.permute(1, 2, 0).cpu().numpy())
         # plt.show()
-        plt.savfig(out_pars['path'] + "/img_01.png")
+
+        os.makedirs(out_pars['path'], exist_ok=True)
+        plt.savefig(out_pars['path'] + "/img_01.png")
+        os.system("ls " + out_pars['path'])
         return 0
    
 
@@ -319,10 +290,8 @@ def predict(model, session=None, data_pars=None, compute_pars=None, out_pars=Non
     y_pred = np.vstack(y_pred)[0]
     y_true = np.vstack(y_true)[0]
 
-    if return_ytrue:
-        return y_pred, y_true
-    else:
-        return y_pred
+    return y_pred, y_true  if return_ytrue else y_pred
+
 
 def fit_metrics(model, data_pars=None, compute_pars=None, out_pars=None):
     pass
@@ -411,11 +380,11 @@ def test2(data_path="dataset/", pars_choice="json", config_mode="test"):
 
 
     log("#### Save/Load   ###################################################")
-    # save_pars = { "path": out_pars["path"]  }
-    # save(model=model, save_pars=save_pars)
-    # model2 = load( save_pars )
-    # ypred = predict(model2, data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)
-    # print(model2)
+    save_pars = { "path": out_pars["path"]  }
+    save(model=model, save_pars=save_pars)
+    model2 = load( save_pars )
+    ypred = predict(model2, data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)
+    print(model2)
 
 
 if __name__ == "__main__":
@@ -430,39 +399,3 @@ if __name__ == "__main__":
 
 
 
-
-
-
-
-"""
-
-
-import torch
-use_gpu = True if torch.cuda.is_available() else False
-
-# trained on high-quality celebrity faces "celebA" dataset
-# this model outputs 512 x 512 pixel images
-model = torch.hub.load('facebookresearch/pytorch_GAN_zoo:hub',
-                       'PGAN', model_name='celebAHQ-512',
-                       pretrained=True, useGPU=use_gpu)
-# this model outputs 256 x 256 pixel images
-# model = torch.hub.load('facebookresearch/pytorch_GAN_zoo:hub',
-#                        'PGAN', model_name='celebAHQ-256',
-#                        pretrained=True, useGPU=use_gpu)
-
-
-
-
-num_images = 4
-noise, _ = model.buildNoiseData(num_images)
-with torch.no_grad():
-    generated_images = model.test(noise)
-
-# let's plot these images using torchvision and matplotlib
-import matplotlib.pyplot as plt
-import torchvision
-grid = torchvision.utils.make_grid(generated_images.clamp(min=-1, max=1), scale_each=True, normalize=True)
-plt.imshow(grid.permute(1, 2, 0).cpu().numpy())
-# plt.show()
-
-"""
