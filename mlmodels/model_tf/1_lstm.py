@@ -17,7 +17,10 @@ from mlmodels.util import os_package_root_path, log, params_json_load, path_norm
 
 
 ### Tf 2.0
-tf.disable_v2_behavior()
+tf.compat.v1.disable_v2_behavior()
+
+
+
 
 simplefilter(action='ignore', category=FutureWarning)
 simplefilter(action='ignore', category=DeprecationWarning)
