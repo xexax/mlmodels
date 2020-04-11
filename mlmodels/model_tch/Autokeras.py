@@ -3,17 +3,16 @@
 """
 https://autokeras.com/examples/imdb/
 """
-import sys
-## sys.path.append('../../')
 from mlmodels.util import os_package_root_path, log, path_norm, get_model_uri, path_norm_dict
 import os
 import json
 
 import numpy as np
 
-
-#from tensorflow.keras.datasets import imdb
 import autokeras as ak
+
+from keras.models import load_model
+
 from keras.datasets import imdb
 
 
@@ -127,13 +126,11 @@ def fit_metrics(model, data_pars=None, compute_pars=None, out_pars=None):
 
 
 def save(model, session=None, save_pars=None):
-    from mlmodels.util import save_tch
-    save_tch(model=model.model, save_pars=save_pars)
+    model.save(os.path.join(save_pars["checkpointdir"],'autokeras_classifier_model.h5'))
 
 
 def load(load_pars):
-    from mlmodels.util import load_tch
-    return load_tch(load_pars)
+    return load_model(os.path.join(load_pars["checkpointdir"],'autokeras_classifier_model.h5'), custom_objects=ak.CUSTOM_OBJECTS)
 
 
 ###########################################################################################################
@@ -151,25 +148,26 @@ def test(data_path="dataset/", pars_choice="json", config_mode="test"):
 
     log("#### Model init, fit   #############################################")
     model = Model(model_pars, data_pars, compute_pars)
-    model = fit(model.model, data_pars, compute_pars, out_pars)
+    fitted_model = fit(model.model, data_pars, compute_pars, out_pars)
 
     log("#### Predict   #####################################################")
-    ypred = predict(model.model, data_pars, compute_pars, out_pars)
+    ypred = predict(fitted_model, data_pars, compute_pars, out_pars)
     print(ypred[:10])
 
     log("#### metrics   #####################################################")
-    metrics_val = fit_metrics(model.model, data_pars, compute_pars, out_pars)
+    metrics_val = fit_metrics(fitted_model, data_pars, compute_pars, out_pars)
     print(metrics_val)
 
     log("#### Plot   ########################################################")
 
     log("#### Save/Load   ###################################################")
-    # save_pars = { "path": out_pars["path"]  }
-    # save(model=model, save_pars=save_pars)
-    # model2 = load( save_pars )
-    # ypred = predict(model.model, data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)
-    # print(model2)
+    ## Export as a Keras Model.
+    save_model = fitted_model.export_model()
+    save(model=save_model, save_pars=out_pars)
+    loaded_model = load( out_pars )
+    ypred = predict(loaded_model, data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)
+    print(ypred[:10])
 
 
 if __name__ == "__main__":
-    test(data_path="model_keras/autokeras_classifier.json", pars_choice="json", config_mode="test")
+    test(data_path="model_tch/autokeras_classifier.json", pars_choice="json", config_mode="test")
