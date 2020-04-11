@@ -16,8 +16,7 @@ https://github.com/arita37/mlmodels/blob/dev/mlmodels/example/README_usage.md
 
 
 *  Colab demo for Install :
-https://colab.research.google.com/drive/1sYbrXNZh9nTeizS-AuCA8RSu94B_B-RF54d8dce15108f5fe94bf448fceb519dce07a6d2d
-
+https://colab.research.google.com/drive/1sYbrXNZh9nTeizS-AuCA8RSu94B_B-RF
 
 
 ## Model List :
