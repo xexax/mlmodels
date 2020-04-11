@@ -138,7 +138,7 @@ def fit_metrics(model, data_pars=None, compute_pars=None, out_pars=None, **kw):
     if metric_score_name is None :
         return {}
     
-
+    """
     from mlmodels.metrics import metrics_eval
     ddict = metrics_eval( metric_list=[ metric_score_name ], ytrue= yval, ypred= ypred, 
                          ypred_proba=None, return_dict=1   )
@@ -161,7 +161,7 @@ def fit_metrics(model, data_pars=None, compute_pars=None, out_pars=None, **kw):
    
         ddict[metric_score_name] = score
     return ddict
-    """
+
 
 
 def predict(model, sess=None, data_pars=None, compute_pars=None, out_pars=None, **kw):
