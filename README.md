@@ -184,23 +184,23 @@ resnext101_32x8d\
 
 wide_resnet50_2\
 wide_resnet101_2\
-squeezenet1_0\
+squeezenet1_0
 
 squeezenet1_1\
 vgg11\
 vgg13\
 vgg16\
 vgg19\
-vgg11_bn\
+vgg11_bn
 
 vgg13_bn\
 vgg16_bn\
-vgg19_bn\
+vgg19_bn
 
 googlenet\
 shufflenet_v2_x0_5\
 shufflenet_v2_x1_0\
-mobilenet_v2\
+mobilenet_v2
 
 A lot more...
 
@@ -216,7 +216,7 @@ https://github.com/arita37/mlmodels/blob/dev/README_model_list.md
 
 Using pre-installed online Setup :
 
-    https://github.com/arita37/mlmodels/issues/101
+https://github.com/arita37/mlmodels/issues/101
 
 
 
