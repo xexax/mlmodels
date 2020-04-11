@@ -5,13 +5,9 @@ import re
 # import toml
 from pathlib import Path
 import json
+
 import importlib
 from inspect import getmembers
-"""
-from mlmodels.util import (os_package_root_path, log, path_norm
-    config_load_root, config_path_pretrained, config_path_dataset, config_set
-    )
-"""
 
 
 ####################################################################################################
@@ -174,7 +170,7 @@ def os_package_root_path(filepath="", sublevel=0, path_add=""):
     import mlmodels, os, inspect 
 
     path = Path(inspect.getfile(mlmodels)).parent
-    print( path )
+    # print( path )
 
     # path = Path(os.path.realpath(filepath)).parent
     for i in range(1, sublevel + 1):
@@ -247,14 +243,15 @@ def config_set(ddict2):
 
 
 
-def params_json_load(path, config_mode="test"):
+def params_json_load(path, config_mode="test", 
+                     tlist= [ "model_pars", "data_pars", "compute_pars", "out_pars"] ):
     import json
     pars = json.load(open(path, mode="r"))
     pars = pars[config_mode]
 
     ### HyperParam, model_pars, data_pars,
     list_pars = []
-    for t in ["hypermodel_pars", "model_pars", "data_pars", "compute_pars", "out_pars"]:
+    for t in tlist :
         pdict = pars.get(t)
         if pdict:
             list_pars.append(pdict)
@@ -262,6 +259,12 @@ def params_json_load(path, config_mode="test"):
             log("error in json, cannot load ", t)
 
     return tuple(list_pars)
+
+
+
+
+
+
 
 
 
@@ -438,17 +441,22 @@ def load_tch(load_pars):
     import torch
     #path, filename = load_pars['path'], load_pars.get('filename', "model.pkl")
     #path = path + "/" + filename if "." not in path else path
-    path = load_pars['path']
+    if os.path.isdir(load_pars['path']):
+        path, filename = load_pars['path'], "model.pb"
+    else:
+        path, filename = os_path_split(load_pars['path'])
     model = Model_empty()
-    model.model = torch.load(path)
+    model.model = torch.load(Path(path) / filename)
     return model
 
 
 def save_tch(model=None, optimizer=None, save_pars=None):
     import torch
-    path, filename = os_path_split(save_pars['path'])
-    if not os.path.exists(path): 
-        os.makedirs(path, exist_ok=True)
+    if os.path.isdir(save_pars['path']):
+        path, filename = save_pars['path'], "model.pb"
+    else:
+        path, filename = os_path_split(save_pars['path'])
+    if not os.path.exists(path): os.makedirs(path, exist_ok=True)
 
     if save_pars.get('save_state') is not None:
         torch.save({
@@ -494,11 +502,11 @@ def load_pkl(load_pars):
 
 def save_pkl(model=None, session=None, save_pars=None):
     import cloudpickle as pickle
-    path, filename = os_path_split(save_pars['path'])
-    
-    filename = "model.pkl" if len(filename)  < 1 else filename
-    
-    os.makedirs(path, exist_ok=True)
+    if os.path.isdir(save_pars['path']):
+        path, filename = save_pars['path'], "model.pkl"
+    else:
+        path, filename = os_path_split(save_pars['path'])
+    if not os.path.exists(path): os.makedirs(path, exist_ok=True)
     return pickle.dump(model, open( f"{path}/{filename}" , mode='wb') )
 
 

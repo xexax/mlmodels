@@ -20,65 +20,6 @@ from util import load_callable_from_dict
 import tensorflow.data
 
 
-class DataLoaderError(Exception):
-    pass
-
-
-class MissingLocationKeyError(DataLoaderError):
-    def __init__(self):
-        print("Location key missing from the input dictionary.")
-
-
-class UndeterminableLocationTypeError(DataLoaderError):
-    def __init__(self, location):
-        print(f"Location type cannot be inferred for '{location}'.")
-
-
-class UnknownLocationTypeError(DataLoaderError):
-    def __init__(self, path_type):
-        print(f"Location type '{  path_type}' is unknown.")
-
-
-class NonfileURLError(DataLoaderError):
-    def __init__(self):
-        print(f"URL must point to a file.")
-
-
-class UndeterminableDataLoaderError(DataLoaderError):
-    def __init__(self):
-        print(
-            f"""Loader function to be used was not provided and could not be
-             automatically inferred from file type."""
-        )
-
-
-class NonIntegerBatchSizeError(DataLoaderError):
-    def __init__(self):
-        print(f"Provided batch size cannot be interpreted as an integer.")
-
-
-class InvalidDataLoaderFunctionError(DataLoaderError):
-    def __init__(self, loader):
-        print(f"Invalid data loader function '{loader}\ specified.")
-
-
-class NumpyGeneratorError(DataLoaderError):
-    def __init__(self):
-        print(f"Loading Numpy binaries as generators is unsupported.")
-
-
-class OutputShapeError(DataLoaderError):
-    def __init__(self, specified, actual):
-        print(
-            f"""Specified output shape {specified} does not match actual output
-            shape {actual}"""
-        )
-
-
-def open_read(file):
-    return open(f).read()
-
-
 def pickle_load(file):
     return pickle.load(open(f, " r"))
 
@@ -97,9 +38,8 @@ class DataLoader:
 
     default_loaders = {
         ".csv": {"uri": "pandas::read_csv"},
-        ".txt": {"uri": "dataloader::open_read"},
         ".npy": {"uri": "numpy::load"},
-        ".npz": {"uri": "np::.load", "arg": {"allow_pickle": True}},
+        ".npz": {"uri": "np:load", "arg": {"allow_pickle": True}},
         ".pkl": {"uri": "dataloader::pickle_load"},
         "image_dir": {"uri": "dataloader::image_dir_load"},
     }
@@ -292,6 +232,7 @@ class DataLoader:
         self.output_shape = shape
 
         # saving the intermediate output
+        '''
         path = output.get("path", None)
         if isinstance(path, str):
             if isinstance(intermediate_output, np.ndarray):
@@ -308,7 +249,6 @@ class DataLoader:
                 np.savez(path, *(tuple(intermediate_output.values)))
             else:
                 pickle.dump(intermediate_output, open(path, "wb"))
-
         elif isinstance(path, list):
             try:
                 for p, f in zip(path, intermediate_output):
@@ -324,7 +264,8 @@ class DataLoader:
                         pickle.dump(f, open(p, "wb"))
             except:
                 pass
-
+        '''
+        
         # Framework-specific output formatting.
         final_output = intermediate_output
         output_format = output.get("format", None)

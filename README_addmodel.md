@@ -4,14 +4,20 @@ List of Functions/Methods
 
 https://github.com/arita37/mlmodels/blob/dev/README_index_doc.py
 
+___________________________________________________________________________________________
+# VScode Online Editor (pre-installed)
+
+https://github.com/arita37/mlmodels/issues/101
+
+
 
 ___________________________________________________________________________________________
-# Steps  to do a PR,  do a fix or add a new model :
+# Steps  for : Pull Request, a Fix or add a New Model :
 
 
 ### Coding Style
   Please use **Line = 110 characters**
-  Only Loose PEP8, "Pretty Code is better than strict PEP8, which is ugly to read..."
+  "Pretty Code is better than strict PEP8, which is ugly to read..."
   Please use BLACK Formatter.
 
 
@@ -25,11 +31,11 @@ ________________________________________________________________________________
 
 
     
-### 1) Create a branch from DEV branch called : keras_modelXXX
-  
+### 1) Create a branch from DEV branch called : modelXXX
+    git checkout -b myfeat
 
 
-### 2) Change this file with your MODEL_NAME AND BRANCH NAME :
+### 2) Change those files with your MODEL_NAME AND BRANCH NAME :
 
   https://github.com/arita37/mlmodels/blob/dev/.github/workflows/test_specific_model.yml
 
@@ -47,8 +53,7 @@ ________________________________________________________________________________
   https://github.com/arita37/mlmodels/blob/dev/mlmodels/template/model_xxx.py
 
   Example :
-  https://github.com/arita37/mlmodels/blob/dev/mlmodels/model_keras/textcnn.py
-  
+  https://github.com/arita37/mlmodels/blob/dev/mlmodels/model_keras/textcnn.py  
   https://github.com/arita37/mlmodels/blob/dev/mlmodels/model_tch/transformer_sentence.py
 
 
@@ -76,22 +81,49 @@ ________________________________________________________________________________
 
 
 
-### 6) Check on Github your runs
+## 7)  Pull Request  DEV ---> YourBranch  (or git pull --all )
+   You can merge with recent changes in dev INTO your Branch to reduce conflicts.
+
+
+
+
+
+### 8) Check on Github your test runs
 
 https://github.com/arita37/mlmodels/actions?query=workflow%3Atest_custom_model
 
 
 
-### 7)  Do Pull Request to dev Branc.
+### 9)  Send Pull Request
+
+
 
 
 
 
 ___________________________________________________________________________________________
+# Manual Installation
+    ### On Linux/MacOS
+    pip install numpy<=1.17.0
+    pip install -e .  -r requirements.txt
+    pip install   -r requirements_fake.txt
+
+
+    ### On Windows
+    VC 14   https://www.visualstudio.com/downloads/#build-tools-for-visual-studio-2019
+    pip install numpy<=1.17.0
+    pip install torch==1..1 -f https://download.pytorch.org/whl/torch_stable.html
+    pip install -e .  -r requirements_wi.txt
+    pip install   -r requirements_fake.txt
+
+
+    ### No Deps
+    # pip install -e .  --no-deps
 
 
 
 
+___________________________________________________________________________________________
 # How to add a new model
 ### Source code structure as below
 - `docs`: documentation
