@@ -88,12 +88,13 @@ def benchmark_run(bench_pars=None, args=None, config_mode="test"):
     json_path    = path_norm( args.path_json )
     output_path  = path_norm( args.path_out )
     json_list    = get_all_json_path(json_path)
+
     metric_list  = bench_pars['metric_list']
-    bench_df = pd.DataFrame(columns=["date_run", "model_uri", "json",
+    bench_df     = pd.DataFrame(columns=["date_run", "model_uri", "json",
                                      "dataset_uri", "metric", "metric_name"])
 
     if len(json_list) < 1 :
-        raise Exception("empty json")
+        raise Exception("empty model list json")
     
     log("Model List", json_list)
     ii = -1
@@ -161,18 +162,25 @@ def cli_load_arguments(config_file=None):
     add("--config_file", default=config_file, help="Params File")
     add("--config_mode", default="test", help="test/ prod /uat")
     add("--log_file",    default="ztest/benchmark/mlmodels_log.log", help="log.log")
+
+
+
     add("--do",          default="run", help="do ")
 
+
+    ### Benchmark config
+    add("--benchmark_json", default="dataset/json/benchmark.json", help=" benchmark config")
+    add("--path_json",      default="dataset/json/benchmark_cnn/", help=" list of json")
+    add("--path_out",       default="example/benchmark/", help=".")
+
+
+    #### Inout dataset
     add("--data_path",   default="dataset/timeseries/", help="Dataset path")
     add("--dataset_name",default="sales_train_validation.csv", help="dataset name")   
 
-    add("--path_json",   default="dataset/json/benchmark_cnn/", help="")
-
-    ##### out pars
-    add("--path_out",    default="ztest/benchmark/", help=".")
 
 
-
+    #### Specific to timeseries
     add("--item_id",     default="HOBBIES_1_001_CA_1_validation", help="forecast for which item")
 
     arg = p.parse_args()
@@ -184,24 +192,26 @@ def cli_load_arguments(config_file=None):
 def main():
     arg = cli_load_arguments()
 
-    if arg.do == "timeseries":
+
+    if arg.do == "preprocess_v1":
+        arg.data_path    = "dataset/timeseries/"
+        arg.dataset_name = "sales_train_validation.csv"
+        preprocess_timeseries_m5(data_path    = arg.data_path, 
+                                 dataset_name = arg.dataset_name, 
+                                 pred_length  = 100, item_id=arg.item_id)   
+
+
+    elif arg.do == "timeseries":
         log("Time series model")
         bench_pars = {"metric_list": ["mean_absolute_error", "mean_squared_error",
-                                      "mean_squared_log_error", "median_absolute_error", 
-                                      "r2_score"], 
+                                      "mean_squared_log_error", "median_absolute_error",  "r2_score"], 
                       "pred_length": 100}
 
-                      
-        #### Pre-processing
-        arg.data_path = "dataset/timeseries/"
-        arg.dataset_name = "sales_train_validation.csv"
-        preprocess_timeseries_m5(data_path = arg.data_path, 
-                                 dataset_name = arg.dataset_name, 
-                                 pred_length = bench_pars["pred_length"], item_id=arg.item_id)   
 
-        #### Models
-        arg.path_json = "dataset/json/benchmark_timeseries/"
-        arg.path_out  = "example/benchmark_timeseries/"
+        arg.data_path    = ""
+        arg.dataset_name = ""
+        arg.path_json    = "dataset/json/benchmark_timeseries/"
+        arg.path_out     = "example/benchmark/timeseries/"
 
         benchmark_run(bench_pars, arg) 
 
@@ -213,7 +223,7 @@ def main():
         arg.data_path    = ""
         arg.dataset_name = ""
         arg.path_json    = "dataset/json/benchmark_cnn/"
-        arg.path_out     = "example/benchmark_cnn/"
+        arg.path_out     = "example/benchmark/cnn/"
 
         bench_pars = {"metric_list": ["accuracy_score"]}
         benchmark_run(bench_pars=bench_pars, args=arg)
@@ -232,9 +242,17 @@ def main():
         arg.data_path    = ""
         arg.dataset_name = ""
         arg.path_json    = "dataset/json/benchmark_text/"
-        arg.path_out     = "example/benchmark_text/"
+        arg.path_out     = "example/benchmark/text/"
 
         bench_pars = {"metric_list": ["accuracy, f1_score"]}
+        benchmark_run(bench_pars=bench_pars, args=arg)
+
+
+
+    elif arg.do == "custom":
+        log("NLP Reuters")
+        bench_pars = json.load(open( arg.benchmark_json, mode='r'))
+        log(bench_pars['metric_list'])
         benchmark_run(bench_pars=bench_pars, args=arg)
 
 
