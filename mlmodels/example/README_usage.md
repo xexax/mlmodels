@@ -38,27 +38,22 @@ https://github.com/arita37/mlmodels/issues/101
 
 from mlmodels.util import path_norm_dict, path_norm
 
-
 print( path_norm( 'example/hyper_titanic_randomForest.json'  ) )
   ###  --> /home/ubuntu/mlmodels/example/hyper ...
-
 
 print( path_norm( 'dataset/text/mytest.txt'  ) )
   ###  --> /home/ubuntu/mlmodels/dataset/text ...
 
-
-
-#### path_norm_dict : Applied path to all elements.
-
-
-
 ```
+
+## Example of sample cripts
+https://github.com/arita37/mlmodels/blob/dev/mlmodels/example/arun_hyper.py
+
+https://github.com/arita37/mlmodels/blob/dev/mlmodels/example/arun_model.py
 
 
 
 ## Example of notebooks
-
-
 
 ### Hyper-Parameter with LightGBM, Ex 1
 
