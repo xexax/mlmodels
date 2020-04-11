@@ -68,7 +68,8 @@ class Model:
             [lstm_cell(size_layer) for _ in range(num_layers)], state_is_tuple=False
         )
 
-        drop = tf.compat.v1.contrib.rnn.DropoutWrapper(rnn_cells, output_keep_prob=forget_bias)
+        ## drop = tf.compat.v1.contrib.rnn.DropoutWrapper(rnn_cells, output_keep_prob=forget_bias)
+        drop = tf.compat.v1.nn.rnn_cell.DropoutWrapper(rnn_cells, output_keep_prob=forget_bias)
 
         self.hidden_layer = tf.compat.v1.placeholder(tf.compat.v1.float32, (None, self.hidden_layer_size))
         self.outputs, self.last_state = tf.compat.v1.nn.dynamic_rnn(
