@@ -33,7 +33,26 @@ https://github.com/arita37/mlmodels/issues/101
   https://github.com/arita37/mlmodels/tree/dev/mlmodels/example/
 
 
+  #### Access to json files inside mlmodels :
+```python
 
+from mlmodels.util import path_norm_dict, path_norm
+
+
+print( path_norm( 'example/hyper_titanic_randomForest.json'  ) )
+  ###  --> /home/ubuntu/mlmodels/example/hyper ...
+
+
+print( path_norm( 'dataset/text/mytest.txt'  ) )
+  ###  --> /home/ubuntu/mlmodels/dataset/text ...
+
+
+
+#### path_norm_dict : Applied path to all elements.
+
+
+
+```
 
 
 
@@ -107,7 +126,7 @@ ypred         = module.predict(model, sess,  data_pars, compute_pars, out_pars) 
 ---
 
 ### AutoML example in Gluon ([Example notebook](mlmodels/example/gluon_automl.ipynb))
-```
+```python
 # import library
 import mlmodels
 import autogluon as ag
@@ -157,7 +176,7 @@ ypred       = module.predict(model, data_pars, compute_pars, out_pars)     # pre
 ---
 
 ### RandomForest example in Scikit-learn ([Example notebook](mlmodels/example/sklearn.ipynb))
-```
+```python
 # import library
 import mlmodels
 
@@ -456,10 +475,8 @@ import json
 #### Load model and data definitions from json
 # Model defination
 model_uri    = "model_sklearn.model_lightgbm.py"
-module        =  module_load( model_uri= model_uri)
-
-# Path to JSON
 data_path = '../dataset/json/lightgbm_titanic.json'  
+
 
 # Model Parameters
 pars = json.load(open( data_path , mode='r'))
@@ -472,7 +489,9 @@ compute_pars    = test['compute_pars']
 out_pars        = test['out_pars']
 
 
+
 #### Load Parameters and Train
+module        =  module_load( model_uri= model_uri)
 model = module.Model(model_pars, data_pars, compute_pars) # create model instance
 model, session = module.fit(model, data_pars, compute_pars, out_pars) # fit model
 
@@ -522,7 +541,7 @@ print( hypermodel_pars, model_pars, data_pars, compute_pars, out_pars)
 #### Setup Model 
 module         = module_load( model_uri)
 model          = module.Model(model_pars, data_pars, compute_pars) 
-`
+
 #### Fit
 model, session = module.fit(model, data_pars, compute_pars, out_pars)           #### fit model
 metrics_val    = module.fit_metrics(model, data_pars, compute_pars, out_pars)   #### Check fit metrics
@@ -569,7 +588,7 @@ print( hypermodel_pars, model_pars, data_pars, compute_pars, out_pars)
 #### Setup Model 
 module         = module_load( model_uri)
 model          = module.Model(model_pars, data_pars, compute_pars) 
-`
+
 #### Fit
 model, session = module.fit(model, data_pars, compute_pars, out_pars)           #### fit model
 metrics_val    = module.fit_metrics(model, data_pars, compute_pars, out_pars)   #### Check fit metrics
