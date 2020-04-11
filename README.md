@@ -1,17 +1,21 @@
 # mlmodels : Model ZOO for Pytorch, Tensorflow, Keras, Gluon, sklearn, LightGBM models...
 
-- Model ZOO with Lightweight Functional interface to wrap access to Recent and State o Art Deep Learning, ML models and Hyper-Parameter Search, cross platforms such as Tensorflow, Pytorch, Gluon, Keras, sklearn, light-GBM,...
+- Model ZOO with Lightweight Functional interface to wrap access to Recent and State of Art Deep Learning, ML models and Hyper-Parameter Search, cross platforms such as Tensorflow, Pytorch, Gluon, Keras, sklearn, light-GBM,...
 
 - Logic follows sklearn : fit, predict, transform, metrics, save, load
 
 - Goal is to transform Script/Research code into Re-usable/batch/ code with minimal code change ...
 
-- Why Functional interface instead of OOP ?
+- Why Functional interface instead of pure OOP ?
   Functional reduces the amount of code needed, focus more on the computing part (vs design part),
   a bit easier maintenability for medium size project, good for scientific computing process.
 
 
-*  Colab demo :
+*  Usage, Example :
+https://github.com/arita37/mlmodels/blob/dev/mlmodels/example/README_usage.md
+
+
+*  Colab demo for Install :
 https://colab.research.google.com/drive/1sYbrXNZh9nTeizS-AuCA8RSu94B_B-RF54d8dce15108f5fe94bf448fceb519dce07a6d2d
 
 
