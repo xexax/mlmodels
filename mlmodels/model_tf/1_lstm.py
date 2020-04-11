@@ -79,7 +79,7 @@ class Model:
 
         ### Loss    ##############################################
         self.cost = tf.compat.v1.reduce_mean(tf.compat.v1.square(self.Y - self.logits))
-        self.optimizer = tf.compat.v1.compat.v1.train.AdamOptimizer(learning_rate).minimize(self.cost)
+        self.optimizer = tf.compat.v1.train.AdamOptimizer(learning_rate).minimize(self.cost)
 
 
 def fit(model, data_pars=None, compute_pars=None,  out_pars=None, **kwarg):
@@ -90,8 +90,8 @@ def fit(model, data_pars=None, compute_pars=None,  out_pars=None, **kwarg):
 
     ######################################################################
     # sess = tf.compat.v1.compat.v1.InteractiveSession()
-    sess = tf.compat.v1.compat.v1.Session()
-    sess.run(tf.compat.v1.compat.v1.global_variables_initializer())
+    sess = tf.compat.v1.Session()
+    sess.run(tf.compat.v1.global_variables_initializer())
     for i in range(model.epoch):
         total_loss = 0.0
 
