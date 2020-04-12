@@ -142,11 +142,12 @@ def gen_sequence(dim, max_len, sample_size):
 
 
 def get_test_data(sample_size=1000, embedding_size=4, sparse_feature_num=1, dense_feature_num=1,
-                  sequence_feature=['sum', 'mean', 'max', 'weight'], classification=True, include_length=False,
+                  sequence_feature=None, classification=True, include_length=False,
                   hash_flag=False, prefix='', use_group=False):
+    if not sequence_feature:
+        sequence_feature = ['sum', 'mean', 'max', 'weight']
     feature_columns = []
     model_input = {}
-
     if 'weight' in sequence_feature:
         feature_columns.append(
             VarLenSparseFeat(SparseFeat(prefix + "weighted_seq", vocabulary_size=2, embedding_dim=embedding_size),

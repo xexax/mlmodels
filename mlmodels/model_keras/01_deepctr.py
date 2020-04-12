@@ -75,6 +75,11 @@ from deepctr.models import DeepFM
 
 # from preprocess import _preprocess_criteo, _preprocess_movielens
 
+# Note: keep that to disable eager mode with tf 2.x
+import tensorflow as tf
+if tf.__version__ >= '2.0.0':
+    tf.compat.v1.disable_eager_execution()
+
 
 ####################################################################################################
 # Helper functions
@@ -97,7 +102,7 @@ DATA_PARAMS = {
     "FGCNN": {"embedding_size": 8, "sparse_feature_num": 1, "dense_feature_num": 1},
     "FiBiNET": {"sparse_feature_num": 2, "dense_feature_num": 2},
     "FLEN": {"embedding_size": 2, "sparse_feature_num": 6, "dense_feature_num": 6, "use_group": True},
-    "FNN": {"sparse_feature_num": (1, 1), "dense_feature_num": (3, 3)},
+    "FNN": {"sparse_feature_num": 1, "dense_feature_num": 1},
     "MLR": {"sparse_feature_num": 0, "dense_feature_num": 2, "prefix": "region"},
     "NFM": {"sparse_feature_num": 1, "dense_feature_num": 1},
     "ONN": {"sparse_feature_num": 2, "dense_feature_num": 2, "sequence_feature":('sum', 'mean', 'max',), "hash_flag":True},
@@ -110,21 +115,21 @@ MODEL_PARAMS = {
     "AFM": {"use_attention": True, "afm_dropout": 0.5},
     "AutoInt":{"att_layer_num": 1, "dnn_hidden_units": (), "dnn_dropout": 0.5},
     "CCPM": {"conv_kernel_width": (3, 2), "conv_filters": (2, 1), "dnn_hidden_units": [32,], "dnn_dropout": 0.5},
-    "DCN": {"cross_num": 0, "hidden_size": (8,), "dnn_dropout": 0.5},
-    "DeepFM": {"hidden_size": (2,), "dnn_dropout": 0.5},
+    "DCN": {"cross_num": 0, "dnn_hidden_units": (8,), "dnn_dropout": 0.5},
+    "DeepFM": {"dnn_hidden_units": (2,), "dnn_dropout": 0.5},
     "DIEN": {"dnn_hidden_units": [4, 4, 4], "dnn_dropout": 0.5, "gru_type": "GRU"},
     "DIN": {"dnn_hidden_units":[4, 4, 4], "dnn_dropout":0.5},
     "DSIN": {"sess_max_count":2, "dnn_hidden_units":[4, 4, 4], "dnn_dropout":0.5},
-    "FGCNN": {"conv_kernel_width":(3,2), "conv_filters":(2, 1), "new_maps":(2, 2), "pooling_width":(2, 2), "dnn_hidden_units":(32, ), "dnn_dropout":0.5},
+    "FGCNN": {"conv_kernel_width":(3,2), "conv_filters":(2, 1), "new_maps":(2, 2), "pooling_width":(2, 2), "dnn_hidden_units": (32, ), "dnn_dropout":0.5},
     "FiBiNET":{"bilinear_type": "all", "dnn_hidden_units":[4,], "dnn_dropout":0.5},
-    "FLEN": {"hidden_size": (3,), "dnn_dropout":0.5},
+    "FLEN": {"dnn_hidden_units": (3,), "dnn_dropout":0.5},
     "FNN": {"dnn_hidden_units":[32, 32], "dnn_dropout":0.5},
     "MLR": {},
-    "NFM": {"hidden_size": (8,), "dnn_dropout":0.5},
-    "ONN": {"hidden_size": (8,), "embedding_size":4, "dnn_dropout":0.5},
+    "NFM": {"dnn_hidden_units":[32, 32], "dnn_dropout":0.5},
+    "ONN": {"dnn_hidden_units": [32, 32], "embedding_size":4, "dnn_dropout":0.5},
     "PNN": {"embedding_size":4, "dnn_hidden_units":[4, 4], "dnn_dropout":0.5, "use_inner": True, "use_outter": True},
-    "WDL": {"dnn_dropout": 0.5, "dense_feature_num": 0},
-    "xDeepFM": {"dnn_dropout": 0.5, "dnn_hidden_units": (8,), "cin_layer_size": (),"cin_split_half":True,"cin_activation":'linear'}
+    "WDL": {"dnn_hidden_units":[32, 32], "dnn_dropout":0.5},
+    "xDeepFM": {"dnn_dropout": 0.5, "dnn_hidden_units": (8,), "cin_layer_size": (), "cin_split_half": True, "cin_activation": 'linear'}
 }
 
 class Model:
@@ -138,13 +143,10 @@ class Model:
         if not model_name in model_list :
           raise ValueError('Not existing model', model_name)
           return self
-        
+
         modeli = getattr(importlib.import_module("deepctr.models"), model_name)
-
-        
         # 4.Define Model
-        x, y, feature_columns, behavior_feature_list = get_dataset(data_pars)
-
+        x, y, feature_columns, behavior_feature_list = kwargs["dataset"]
         if model_name in ["DIEN", "DIN", "DSIN"]:
             self.model = modeli(feature_columns, behavior_feature_list, **MODEL_PARAMS[model_name])
         elif model_name == "MLR":
@@ -154,12 +156,10 @@ class Model:
         else:
             self.model = modeli(feature_columns, feature_columns, **MODEL_PARAMS[model_name])
 
-        metrics = compute_pars.get("metrics", ['binary_crossentropy'])
-        self.model.compile(model_pars['optimization'], model_pars['cost'], metrics=metrics, )
-        print(">>>>>>>>>> initttt model")
+        self.model.compile(model_pars['optimization'], model_pars['cost'],
+                           metrics=compute_pars.get("metrics", ['binary_crossentropy']), )
         self.model.summary()
-        self.model.fit(x, y,
-                        batch_size=100, epochs=1, validation_split=0.5)
+
 
         
 ##################################################################################################
@@ -301,17 +301,14 @@ def get_dataset(data_pars=None, **kw):
     if data_type == "synthesis":
         if data_pars["dataset_name"] == "DIEN":
             x, y, feature_columns, behavior_feature_list = get_xy_fd_dien(hash_flag=True)
-        elif data_pars["dataset_name"] == "DIEN":
+        elif data_pars["dataset_name"] == "DIN":
             x, y, feature_columns, behavior_feature_list = get_xy_fd_din(hash_flag=True)
         elif data_pars["dataset_name"] == "DSIN":
             x, y, feature_columns, behavior_feature_list = get_xy_fd_dsin(hash_flag=True)
         else:
-            print(">>>> data_pars: ", data_pars)
-            x, y, feature_columns = get_test_data(data_pars["sample_size"], sparse_feature_num=data_pars["sparse_feature_num"],
-                                            dense_feature_num=data_pars["dense_feature_num"])
+            x, y, feature_columns = get_test_data(**DATA_PARAMS[data_pars["dataset_name"]])
             behavior_feature_list = None
 
-        ##TODO : train split
         return x, y, feature_columns, behavior_feature_list
   
     #### read from csv file
@@ -343,36 +340,26 @@ def fit(model, session=None, compute_pars=None, data_pars=None, out_pars=None,
     """
           Classe Model --> model,   model.model contains thte sub-model
     """
-    x, y, feature_columns, behavior_feature_list = get_dataset(data_pars)
+    x, y, feature_columns, behavior_feature_list = kwargs["dataset"]
 
-    print(model.model.summary())
     model.model.fit(x, y,
-                    batch_size=100, epochs=1, validation_split=0.5)
+                    batch_size=compute_pars["batch_size"],
+                    epochs=compute_pars["epochs"],
+                    validation_split=compute_pars["validation_split"])
 
     return model
 
 
 # Model p redict
 def predict(model, session=None, compute_pars=None, data_pars=None, out_pars=None, **kwargs):
-    # load test dataset
-    x, y, feature_columns, behavior_feature_list = get_dataset(data_pars)
-
+    x, y, feature_columns, behavior_feature_list = kwargs["dataset"]
     pred_ans = model.model.predict(x, batch_size=compute_pars['batch_size'])
 
     return pred_ans
 
 
 def metrics(ypred, ytrue=None, session=None, compute_pars=None, data_pars=None, out_pars=None, **kwargs):
-    if kwargs.get("task") == "binary":
-        metrics_dict = {"LogLoss": log_loss(ytrue, ypred),
-                        "AUC": roc_auc_score(ytrue, ypred)}
-
-    elif kwargs.get("task") == "regression":
-        multiple_value = data_pars.get('multiple_value', None)
-        if multiple_value is None:
-            metrics_dict = {"MSE": mean_squared_error(ytrue, ypred)}
-        else:
-            metrics_dict = {}
+    metrics_dict = {"MSE": mean_squared_error(ytrue, ypred)}
     return metrics_dict
 
 
@@ -523,33 +510,36 @@ def test(data_path="dataset/", pars_choice=0, **kwargs):
     print(model_pars, data_pars, compute_pars, out_pars)
 
     log("#### Loading dataset   #############################################")
-    # dataset = get_dataset(data_pars)
+    dataset = get_dataset(data_pars)
 
     log("#### Model init, fit   #############################################")
     from mlmodels.models import module_load_full, fit, predict
-    module, model = module_load_full("model_keras.01_deepctr", model_pars, data_pars, compute_pars)
-    model = fit(module, model, data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)
+    module, model = module_load_full("model_keras.01_deepctr", model_pars, data_pars, compute_pars, dataset=dataset)
+    model = fit(module, model, data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars, dataset=dataset)
 
     # log("#### Predict   ####################################################")
-    # ypred = predict(module, model, compute_pars=compute_pars, data_pars=data_pars, out_pars=out_pars)
-    #
-    # log("#### metrics   ####################################################")
-    # metrics_val = metrics(ypred, dataset[-1], compute_pars=compute_pars, data_pars=data_pars, out_pars=out_pars,
-    #                       task=model_pars['task'])
-    # print(metrics_val)
-    #
-    # log("#### Plot   #######################################################")
-    #
-    # log("#### Save/Load   ##################################################")
-    # save_keras(model, save_pars=out_pars)
-    # TODO: load model now is hang forever => need check more
-    # model2 = load_keras(out_pars)
-    # model2.model.summary()
+    ypred = predict(module, model, compute_pars=compute_pars, data_pars=data_pars, out_pars=out_pars, dataset=dataset)
+
+    log("#### metrics   ####################################################")
+    metrics_val = metrics(ypred, dataset[1], compute_pars=compute_pars, data_pars=data_pars, out_pars=out_pars)
+    print(metrics_val)
+
+    log("#### Plot   #######################################################")
+
+    log("#### Save/Load   ##################################################")
+    save_keras(model, save_pars=out_pars)
+    from deepctr.layers import custom_objects
+    model2 = load_keras(out_pars, custom_pars={"custom_objects": custom_objects})
+    model2.model.summary()
 
 
 if __name__ == '__main__':
     VERBOSE = True
-    test(pars_choice=5, **{"model_name": "AFM"})
+    for model_name in MODEL_PARAMS.keys():
+        if model_name == "FGCNN": # TODO: check save io
+            continue
+        test(pars_choice=5, **{"model_name": model_name})
+
     # test(pars_choice=1)
     # test(pars_choice=2)
     # test(pars_choice=3)

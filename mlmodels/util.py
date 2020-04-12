@@ -521,9 +521,12 @@ def load_keras(load_pars, custom_pars=None):
     path_file = path + "/" + filename if ".h5" not in path else path
     model = Model_empty()
     if custom_pars:
-        model.model = load_model(path_file, 
-                             custom_objects={"MDN": custom_pars["MDN"],
-                                             "mdn_loss_func": custom_pars["loss"]})
+        if custom_pars.get("custom_objects"):
+            model.model = load_model(path_file, custom_objects=custom_pars["custom_objects"])
+        else:
+            model.model = load_model(path_file,
+                                     custom_objects={"MDN": custom_pars["MDN"],
+                                                     "mdn_loss_func": custom_pars["loss"]})
     else:
         model.model = load_model(path_file)
     return model
