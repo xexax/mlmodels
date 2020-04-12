@@ -50,4 +50,4 @@ jobs:
       ########  Test running
       ##### Please change BELOW to your model name
       - name: ml_test
-        run: ml_test  --do mlmodels/benchmark.py
+        run: ml_test  --do benchmark.py
