@@ -167,7 +167,7 @@ def cli_load_arguments(config_file=None):
 
 
 
-    add("--do",          default="run", help="do ")
+    add("--do",          default="timeseries", help="do ")
 
 
     ### Benchmark config

@@ -143,6 +143,7 @@ def optim_optuna(model_uri="model_tf.1_lstm.py",
 
         model, sess = module.fit(model, data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)
         metrics = module.fit_metrics(model, data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)
+        mtarget = metrics[metric_target]
 
         del sess, model
         try:
@@ -150,7 +151,7 @@ def optim_optuna(model_uri="model_tf.1_lstm.py",
         except Exception as e:
             log(e)
 
-        return metrics[metric_target]
+        return mtarget
 
 
     log("###### Hyper-optimization through study   ##################################")
