@@ -166,9 +166,7 @@ def cli_load_arguments(config_file=None):
     add("--log_file",    default="ztest/benchmark/mlmodels_log.log", help="log.log")
 
 
-
     add("--do",          default="timeseries", help="do ")
-
 
     ### Benchmark config
     add("--benchmark_json", default="dataset/json/benchmark.json", help=" benchmark config")
@@ -176,10 +174,9 @@ def cli_load_arguments(config_file=None):
     add("--path_out",       default="example/benchmark/", help=".")
 
 
-    #### Inout dataset
+    #### Input dataset
     add("--data_path",   default="dataset/timeseries/", help="Dataset path")
     add("--dataset_name",default="sales_train_validation.csv", help="dataset name")   
-
 
 
     #### Specific to timeseries
