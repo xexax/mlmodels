@@ -1,5 +1,5 @@
 import pandas as pd
-import os
+import os, copy
 import matplotlib.pyplot as plt
 import json
 from fbprophet import Prophet
@@ -9,7 +9,15 @@ from mlmodels.util import log, path_norm, save_pkl, load_pkl
 #####################################################################################################
 class Model:
     def __init__(self, model_pars=None, data_pars=None, compute_pars=None):
+        self.model_pars = copy.deepcopy(model_pars)
+        self.fit_metrics = {}
+
+        if model_pars is None :
+            self.model = None
+            return None
+
         self.model = Prophet()
+
 
 
 def get_dataset(data_pars):
@@ -38,20 +46,24 @@ def get_dataset(data_pars):
 def get_params(param_pars={}, **kw):
     data_path = param_pars["data_path"]
     config_mode = param_pars["config_mode"]
+
     if param_pars["choice"] == "json":
-        data_path = path_norm(data_path + "/../model_fb/fbprophet.json")
+        data_path = path_norm(data_path)
         cf = json.load(open(data_path, mode='r'))
         cf = cf[config_mode]
         return cf['model_pars'], cf['data_pars'], cf['compute_pars'], cf['out_pars']
 
-    if param_pars["choice"] == "test0":
+
+    if param_pars["choice"] == "test01":
         log("#### Path params   ##########################################")
-        data_path = path_norm(data_path)
-        out_path = path_norm("ztest/model_fb/prophet/")
-        os.makedirs(out_path, exist_ok=True)
+        data_path       = path_norm(data_path)
+        out_path        = path_norm("ztest/model_fb/prophet/")
+        train_data_path = data_path
+        test_data_path  = None
+        
+        os.makedirs(out_path, exist_ok=True)        
         log(data_path, out_path)
-        train_data_path = data_path + "timeseries/milk.csv"
-        test_data_path = None
+        
         log("#### Data params ####")
         data_pars = {"train_data_path": train_data_path,
                      "test_data_path": test_data_path,
@@ -59,10 +71,14 @@ def get_params(param_pars={}, **kw):
                      "date_col": "month",
                      "freq": "M",
                      "col_Xinput": "milk_production_pounds", }
+
         log("#### Model params ####")
         model_pars = {}
+
         log("#### Compute params ####")
         compute_pars = {}
+        
+
         outpath = out_path + "result"
         out_pars = {"outpath": outpath}
     return model_pars, data_pars, compute_pars, out_pars
@@ -87,7 +103,7 @@ def predict(model=None, model_pars=None, sess=None, data_pars=None,
 def save(model=None, session=None, save_pars={}):
     path = save_pars["outpath"]
     os.makedirs(path, exist_ok=True)
-    save_pkl(model=model, session=None, save_pars={"path": path + "/fbprophet.pcikle"})
+    save_pkl(model=model, session=None, save_pars={"path": path + "/fbprophet.pkl"})
 
 
 def load(load_pars={}, **kw):
@@ -100,21 +116,18 @@ def load(load_pars={}, **kw):
 def metrics_plot(metrics_params):
     os.makedirs(metrics_params["outpath"], exist_ok=True)
     if metrics_params["plot_type"] == "line":
-        plt.plot(metrics_params["actual"], label="Actual",
-                 color="blue")
-        plt.plot(metrics_params["pred"], label="Prediction",
-                 color="red")
+        plt.plot(metrics_params["actual"], label="Actual",    color="blue")
+        plt.plot(metrics_params["pred"], label="Prediction", color="red")
         plt.legend(loc="best")
         plt.savefig(metrics_params["outpath"] + "/prophet.png")
 
 
 def test(data_path="dataset/", pars_choice="test0", config_mode="test"):
-    path = data_path
-
     log("#### Loading params   ##############################################")
     param_pars = {"choice": pars_choice, "config_mode": config_mode,
-                  "data_path": path}
+                  "data_path": data_path}
     model_pars, data_pars, compute_pars, out_pars = get_params(param_pars)
+
 
     log("#### Model init, fit   #############################################")
     model = Model(model_pars=model_pars, data_pars=data_pars,
@@ -125,10 +138,11 @@ def test(data_path="dataset/", pars_choice="test0", config_mode="test"):
 
     # for prediction
 
-    log("#### Predict   ####")
+    log("#### Predict   ####################################################")
     y_pred, y_test = predict(model=model, model_pars=model_pars, data_pars=data_pars)
 
-    log("### Plot ###")
+
+    log("### Plot ###########################################################")
     data_pars["predict"] = True
     metrics_params = {"plot_type": "line", "pred": y_pred,
                       "outpath": out_pars["outpath"],
@@ -143,4 +157,10 @@ def test(data_path="dataset/", pars_choice="test0", config_mode="test"):
 
 if __name__ == "__main__":
     VERBOSE = True
-    test()
+    test(data_path = "model_fb/fbprophet.json", choice="json" )
+
+
+    test(data_path = "dataset/timeseries/milk.csv", choice="test01" )
+
+
+

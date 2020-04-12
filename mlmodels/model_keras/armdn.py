@@ -268,6 +268,7 @@ def get_dataset(data_pars):
 
     # for when only train is provided
     df      = pd.read_csv( path_norm(data_pars["train_data_path"]))
+    df      = df.fillna(method="pad")
     x_train = df[features].iloc[:-pred_length]
     x_train = x_train.values.reshape(-1, pred_length, feat_len)
     y_train = df[features].iloc[:-pred_length].shift().fillna(0)
@@ -361,9 +362,9 @@ def test(data_path="dataset/", pars_choice="test0", config_mode="test"):
 
 
     log("#### Load ###################################################")
-    model2, session2 = load(load_pars=out_pars, model_pars=model_pars,
-                            data_pars=data_pars, compute_pars=compute_pars)
-    model2.model.summary()
+    # model2, session2 = load(load_pars=out_pars, model_pars=model_pars,
+    #                        data_pars=data_pars, compute_pars=compute_pars)
+    # model2.model.summary()
   
 
 
