@@ -206,20 +206,27 @@ def get_dataset(data_pars):
     # when train and test both are provided
     if data_pars["test_data_path"]:
         test   = pd.read_csv(path_norm(data_pars["test_data_path"]))
+        ntest  = pred_length # len(test)
+        test   = test.iloc[-ntest:]
+
         x_test = test[features]
-        x_test = x_test.values.reshape(-1, pred_length, feat_len)
-        y_test = test[target].fillna(0)
-        y_test = y_test.values.reshape(-1, pred_length, 1)        
+        x_test = x_test.values.reshape(-1, ntest, feat_len)
+        y_test = test[target]
+        y_test = y_test.values.reshape(-1, ntest, 1)        
 
         if data_pars["predict"]:
             return x_test, y_test
 
 
         train   = pd.read_csv(path_norm( data_pars["train_data_path"]))
+
+        ntrain = pred_length  # len(train)
+        train   = train.iloc[-ntrain:]
+        
         x_train = train[features]
-        x_train = x_train.values.reshape(-1, pred_length, feat_len)
-        y_train = train[features].shift().fillna(0)
-        y_train = y_train.values.reshape(-1, pred_length, 1)
+        x_train = x_train.values.reshape(-1, ntrain, feat_len)
+        y_train = train[target].shift()
+        y_train = y_train.values.reshape(-1, ntrain, 1)
         return x_train, y_train, x_test, y_test
     
 

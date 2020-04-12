@@ -16,15 +16,18 @@
     },
 
     "model_pars": {
+      "model_uri": "model_tch.nbeats.py",
+      "forecast_length": 60,
+      "backcast_length": 100,
+
+
       "stack_types": ["NBeatsNet.GENERIC_BLOCK", "NBeatsNet.GENERIC_BLOCK"],
       "device": "cpu",
       "nb_blocks_per_stack": 3,
-      "forecast_length": 60,
-      "backcast_length": 100,
       "thetas_dims": [7, 8],
       "share_weights_in_stack": 0,
-      "hidden_layer_units": 256,
-      "model_uri": "model_tch.nbeats.py"
+      "hidden_layer_units": 256
+
     },
 
     "compute_pars": {
@@ -32,7 +35,7 @@
       "disable_plot": 1,
       "norm_constant": 1.0,
       "result_path": "ztest/model_tch/nbeats/n_beats_{}test.png",
-      "model_path": "mycheckpoint"
+      "model_path": "ztest/mycheckpoint"
     },
 
     "out_pars": {
