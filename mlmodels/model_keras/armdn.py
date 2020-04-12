@@ -261,8 +261,9 @@ def get_dataset(data_pars):
         
         x_train = train[features]
         x_train = x_train.values.reshape(-1, ntrain, feat_len)
-        y_train = train[target].shift()
+        y_train = train[target].shift().fillna(0)
         y_train = y_train.values.reshape(-1, ntrain, 1)
+        
         return x_train, y_train, x_test, y_test
     
 
@@ -270,12 +271,13 @@ def get_dataset(data_pars):
     df      = pd.read_csv( path_norm(data_pars["train_data_path"]))
     x_train = df[features].iloc[:-pred_length]
     x_train = x_train.values.reshape(-1, pred_length, feat_len)
-    y_train = df[features].iloc[:-pred_length].shift().fillna(0)
+    y_train = df[target].iloc[:-pred_length].shift().fillna(0)
+    
     y_train = y_train.values.reshape(-1, pred_length, 1)
 
     x_test = df.iloc[-pred_length:][target]
     x_test = x_test.values.reshape(-1, pred_length, feat_len)
-    y_test = df.iloc[-pred_length:][target].shift().fillna(0)
+    y_test = df[target].iloc[-pred_length:][target].shift().fillna(0)
     y_test = y_test.values.reshape(-1, pred_length, 1)
     
     if data_pars["predict"]:
