@@ -85,11 +85,12 @@ def get_dataset(**kw):
 
     #### Filter by columns 
     df = df[ kw['col_Xinput'] ]
-
+    df = df.fillna(method="pad")
 
     if kw.get("test_data_path"):
         test = pd.read_csv( path_norm(kw["test_data_path"]),  parse_dates=True)
         test = test[ kw['col_Xinput'] ]        
+        test = test.fillna(method="pad")
 
         df = df.append(test)
         train_split_ratio = kw["forecast_length"] / df.shape[0]
@@ -98,9 +99,11 @@ def get_dataset(**kw):
     if VERBOSE: print(df.head(5))
 
     #### Preprocess
+
     df = df.values  # just keep np array here for simplicity.
     norm_constant = np.max(df)
     df = df / norm_constant  # small leak to the test set here.
+    print(df)
 
     x_train_batch, y = [], []
     backcast_length  = kw['backcast_length']

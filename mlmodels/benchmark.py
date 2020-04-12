@@ -105,10 +105,13 @@ def benchmark_run(bench_pars=None, args=None, config_mode="test"):
         #### Model URI and Config JSON
         config_path = path_norm(jsonf)
         model_pars, data_pars, compute_pars, out_pars = params_json_load(config_path, config_mode= config_mode)
-
+        model_uri    =  model_pars['model_uri']
+        
+        # if bench_pars.get("data_pars") :
+        
 
         log("#### Setup Model    ")
-        module    = module_load(model_pars['model_uri'])   # "model_tch.torchhub.py"
+        module    = module_load(model_uri)   # "model_tch.torchhub.py"
         model     = module.Model(model_pars=model_pars, data_pars=data_pars, compute_pars=compute_pars)
         
         log("#### Fit ")
@@ -127,16 +130,17 @@ def benchmark_run(bench_pars=None, args=None, config_mode="test"):
         ytrue = np.array(ytrue).reshape(-1, 1)
         ypred = np.array(ypred).reshape(-1, 1)
         
-        ### Calculate Metrics
+        log("### Calculate Metrics          ")
         for metric in metric_list:
             ii = ii + 1
             metric_val = metric_eval(actual=ytrue, pred=ypred,  metric_name=metric)
             bench_df.loc[ii, "date_run"]    = str(datetime.now())
-            bench_df.loc[ii, "model_uri"]   = model_pars['model_uri']
+            bench_df.loc[ii, "model_uri"]   = model_uri
             bench_df.loc[ii, "json"]        = str([model_pars, data_pars, compute_pars ])
             bench_df.loc[ii, "dataset_uri"] = dataset_uri
             bench_df.loc[ii, "metric_name"] = metric
             bench_df.loc[ii, "metric"]      = metric_val
+            log( bench_df.loc[ii,:])
 
 
     log( f"benchmark file saved at {output_path}")  
@@ -204,8 +208,20 @@ def main():
     elif arg.do == "timeseries":
         log("Time series model")
         bench_pars = {"metric_list": ["mean_absolute_error", "mean_squared_error",
-                                      "mean_squared_log_error", "median_absolute_error",  "r2_score"], 
-                      "pred_length": 100}
+                                       "median_absolute_error",  "r2_score"], 
+                      "pred_length": 100,
+                      
+                      #### Over-ride data
+                      "data_pars" : {
+                         "train_data_path": "dataset/timeseries/stock/qqq_us_train.csv",
+                         "test_data_path": "dataset/timeseries/stock/qqq_us_test.csv",
+                         "col_Xinput": ["Close"],
+                         "col_ytarget": "Close"
+                      }
+                      
+                      
+                      
+                      }
 
 
         arg.data_path    = ""
