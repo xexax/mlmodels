@@ -39,22 +39,23 @@ def time_train_test_split(data_pars):
        predict_only
 
     """
-    pred_len = data_pars["prediction_length"]
-    features = data_pars["col_Xinput"]
-    target   = data_pars["col_ytarget"]
+    d = data_pars
+    pred_len = d["prediction_length"]
+    features = d["col_Xinput"]
+    target   = d["col_ytarget"]
     m_feat   = len(features)
 
 
     # when train and test both are provided
-    if data_pars["test_data_path"]:
-        test   = pd_load(data_pars["test_data_path"])
+    if d["test_data_path"]:
+        test   = pd_load(d["test_data_path"])
         test   = pd_clean(test)
         x_test, y_test = pd_reshape(test, features, target, pred_len, m_feat) 
-        if data_pars["predict_only"]:
+        if d["predict_only"]:
             return x_test, y_test
 
 
-        train   = pd_load( data_pars["train_data_path"])
+        train   = pd_load( d["train_data_path"])
         train   = pd_clean(train)
         x_train, y_train = pd_reshape(train, features, target, pred_len, m_feat) 
 
@@ -63,7 +64,7 @@ def time_train_test_split(data_pars):
 
 
     # for when only train is provided
-    df      = pd_load(data_pars["train_data_path"])
+    df      = pd_load(d["train_data_path"])
     train   = df.iloc[:-pred_len]
     train   = pd_clean(train)
     x_train, y_train = pd_reshape(train, features, target, pred_len, m_feat) 
@@ -72,7 +73,7 @@ def time_train_test_split(data_pars):
     test   = df.iloc[-pred_len:]
     test   = pd_clean(test)
     x_test, y_test = pd_reshape(test, features, target, pred_len, m_feat) 
-    if data_pars["predict_only"]:
+    if d["predict_only"]:
         return x_test, y_test
 
     return x_train, y_train, x_test, y_test
