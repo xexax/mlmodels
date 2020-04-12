@@ -1,6 +1,6 @@
 {
   "test": {
-    "model_pars": { "model_uri": "model_fb/fb_prophet.py" },
+    "model_pars": { "model_uri": "model_gluon/fb_prophet.py" },
     "data_pars": {
       "train_data_path": "dataset/timeseries/stock/qqq_us_train.csv",
       "test_data_path": "dataset/timeseries/stock/qqq_us_test.csv",
