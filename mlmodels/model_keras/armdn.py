@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import pandas as pd
-import os
+import os, copy
 import numpy as np
 import math
 import json
@@ -70,6 +70,8 @@ which traditional time series and regression approaches fail to model. In this p
 #####################################################################################################
 class Model:
     def __init__(self, model_pars=None, data_pars=None, compute_pars=None):
+        self.model_pars = copy.deepcopy(model_pars)
+
         lstm_h_list      = model_pars["lstm_h_list"]
         OUTPUT_DIMS      = model_pars["timesteps"]
         N_MIXES          = model_pars["n_mixes"]
@@ -107,26 +109,26 @@ def fit(model=None, data_pars={}, compute_pars={}, out_pars={}, **kw):
     """
     """
     batch_size = compute_pars['batch_size']
-    epochs = compute_pars['epochs']
-    patience = compute_pars["patience"]
+    epochs     = compute_pars['epochs']
+    patience   = compute_pars["patience"]
 
     sess = None
     log("#### Loading dataset   #############################################")
     data_pars["predict"] = False
     x_train, y_train, x_test, y_test = get_dataset(data_pars)
 
-    early_stopping = EarlyStopping(monitor='loss', patience=patience,
-                                   mode='min')
-    model.model.fit(x_train, y_train,
+    early_stopping = EarlyStopping(monitor='loss', patience=patience,  mode='min')
+    history = model.model.fit(x_train, y_train,
                     batch_size=batch_size,
                     epochs=epochs,
                     callbacks=[early_stopping]
                     )
+
+    model.fit_metrics = history  
     return model, sess
 
 
-def predict(model=None, model_pars=None,  sess=None, data_pars=None, 
-            compute_pars=None, out_pars=None, **kwargs):
+def predict(model=None, model_pars=None,  sess=None, data_pars=None, compute_pars=None, out_pars=None, **kwargs):
     data_pars["predict"] = True
     x_test, y_test = get_dataset(data_pars)
 
@@ -204,7 +206,7 @@ def get_dataset(data_pars):
     feat_len    = len(features)
 
     # when train and test both are provided
-    if data_pars["test_data_path"]:
+    if data_pars.get("test_data_path") :
         test   = pd.read_csv(path_norm(data_pars["test_data_path"]))
         ntest  = pred_length # len(test)
         test   = test.iloc[-ntest:]
@@ -251,41 +253,41 @@ def get_dataset(data_pars):
 
 def get_params(param_pars={}, **kw):
     data_path = param_pars["data_path"]
-    #json_path = os.path.abspath(os.path.dirname(__file__)) + "/armdn.json"
     config_mode = param_pars["config_mode"]
+
     if param_pars["choice"] == "json":
         data_path = path_norm(data_path)
-        cf = json.load(open(data_path, mode='r'))
-        cf = cf[config_mode]
+        cf        = json.load(open(data_path, mode='r'))
+        cf        = cf[config_mode]
         return cf['model_pars'], cf['data_pars'], cf['compute_pars'], cf['out_pars']
-
 
 
     if param_pars["choice"] == "test0":
         log("#### Path params   ##########################################")
         data_path = path_norm(data_path)
-        out_path = path_norm("ztest/model_keras/armdn/")
+        out_path  = path_norm("ztest/model_keras/armdn/")
         os.makedirs(out_path, exist_ok=True)
         log(data_path, out_path)
-        train_data_path = data_path + "timeseries/milk.csv"
-        log("#### Data params ####")
-        data_pars = {"train_data_path": train_data_path,
+
+        data_pars = {"train_data_path":  data_path + "timeseries/milk.csv",
                      "train": False,
                      "prediction_length": 12,
                      "col_Xinput": ["milk_production_pounds"],
                      "col_ytarget": "milk_production_pounds"}
-        log("#### Model params ####")
+
         model_pars = {"lstm_h_list": [300, 200, 24], "last_lstm_neuron": 12,
                       "timesteps": 12, "dropout_rate": 0.1, "n_mixes": 3,
                       "dense_neuron": 10,
                       }
-        log("#### Compute params ####")
+
+
         compute_pars = {"batch_size": 32, "clip_gradient": 100, "ctx": None,
                         "epochs": 10, "learning_rate": 0.05,
                         "patience": 50
                         }
         outpath = out_path + "result"
         out_pars = {"outpath": outpath}
+
     return model_pars, data_pars, compute_pars, out_pars
 
 
@@ -294,38 +296,44 @@ def test(data_path="dataset/", pars_choice="test0", config_mode="test"):
     path = data_path
     
     log("#### Loading params   ##############################################")
-    param_pars = {"choice": pars_choice, "config_mode": config_mode,
-                  "data_path": path}
+    param_pars = {"choice": pars_choice, "config_mode": config_mode, "data_path": path}
     model_pars, data_pars, compute_pars, out_pars = get_params(param_pars)
     
     log("#### Model init, fit   #############################################")
-    model = Model(model_pars=model_pars, data_pars=data_pars,
-                  compute_pars=compute_pars)
-    log("### Model created ###")
+    model = Model(model_pars=model_pars, data_pars=data_pars, compute_pars=compute_pars)
+
+
+    log("### Model Fit ###")
     fit(model=model, data_pars=data_pars, compute_pars=compute_pars)
 
-
-
-    # for prediction
     
-    log("#### Predict   ####")
+    log("#### Predict   #####################################################")
     y_pred, y_test = predict(model=model, model_pars=model_pars, data_pars=data_pars)
 
-    log("### Plot ###")
+
+    log("### Plot #########################################################3#")
     data_pars["predict"] = True
     metrics_params = {"plot_type": "line", "pred": y_pred, 
                       "outpath": out_pars["outpath"], 
                       "actual": y_test}
     metrics_plot(metrics_params)
 
-    log("#### Save/Load   ###################################################")
+    log("#### Save ###################################################")
     save(model=model, session=None, save_pars=out_pars)
+
+
+    log("#### Load ###################################################")
     model2, session2 = load(load_pars=out_pars, model_pars=model_pars,
-                data_pars=data_pars, compute_pars=compute_pars)
+                            data_pars=data_pars, compute_pars=compute_pars)
     model2.model.summary()
   
 
 if __name__ == "__main__":
     VERBOSE = True
-    test()
+    # test(pars_choice="json", data_path= "dataset/json/benchmark_timeseries/armdn.json")
+
+
+    test(pars_choice="json", data_path= "model_keras/armdn.json")
+
+
 
