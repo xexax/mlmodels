@@ -105,10 +105,11 @@ def benchmark_run(bench_pars=None, args=None, config_mode="test"):
         #### Model URI and Config JSON
         config_path = path_norm(jsonf)
         model_pars, data_pars, compute_pars, out_pars = params_json_load(config_path, config_mode= config_mode)
+        model_uri    =  model_pars['model_uri']
 
 
         log("#### Setup Model    ")
-        module    = module_load(model_pars['model_uri'])   # "model_tch.torchhub.py"
+        module    = module_load(model_uri)   # "model_tch.torchhub.py"
         model     = module.Model(model_pars=model_pars, data_pars=data_pars, compute_pars=compute_pars)
         
         log("#### Fit ")
@@ -132,7 +133,7 @@ def benchmark_run(bench_pars=None, args=None, config_mode="test"):
             ii = ii + 1
             metric_val = metric_eval(actual=ytrue, pred=ypred,  metric_name=metric)
             bench_df.loc[ii, "date_run"]    = str(datetime.now())
-            bench_df.loc[ii, "model_uri"]   = model_pars['model_uri']
+            bench_df.loc[ii, "model_uri"]   = model_uri
             bench_df.loc[ii, "json"]        = str([model_pars, data_pars, compute_pars ])
             bench_df.loc[ii, "dataset_uri"] = dataset_uri
             bench_df.loc[ii, "metric_name"] = metric
