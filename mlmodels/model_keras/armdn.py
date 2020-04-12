@@ -142,7 +142,7 @@ def fit(model=None, data_pars={}, compute_pars={}, out_pars={}, **kw):
 
 def fit_metrics(model, data_pars=None, compute_pars=None, out_pars=None, model_pars=None, **kw):
     ### return model.history[-1]
-     
+
     ddict = {}
     data_pars["predict"] = True
     x_test, y_test = get_dataset(data_pars)
@@ -240,7 +240,7 @@ def get_dataset(data_pars):
     # when train and test both are provided
     if data_pars.get("test_data_path") :
         test   = pd.read_csv(path_norm(data_pars["test_data_path"]))
-        test   = test.fillna(meethod="pad")
+        test   = test.fillna(method="pad")
         ntest  = pred_length # len(test)
         test   = test.iloc[-ntest:]
 
