@@ -42,7 +42,11 @@ numpy_ds = tfds.as_numpy(train_ds)
 numpy_images, numpy_labels = numpy_ds["image"], numpy_ds["label"]
     
     
-    
+    >>> test_array = np.random.rand(3, 2)
+>>> test_vector = np.random.rand(4)
+>>> np.savez_compressed('/tmp/123', a=test_array, b=test_vector)
+>>> loaded = np.load('/tmp/123.npz')
+>>> print(np.array_equal(test_array, loaded['a']))
     
     for ex in ds_numpy:
   # `{'image': np.array(shape=(28, 28, 1)), 'labels': np.array(shape=())}`
@@ -54,20 +58,22 @@ numpy_images, numpy_labels = numpy_ds["image"], numpy_ds["label"]
     dataset_id = d['dataset_id']
     n_train = d['n_train']
     n_test  = d['n_test']
-    batch_size = d.get('batch_size', -1)
+    batch_size = d.get('batch_size', -1)  # -1 neans all the dataset
     out_path = d['out_path']
     
     import tensorflow_datasets as tfds
-    train_ds =  tfds.as_numpy( tfds.load(dataset_id, split=tfds.Split.TRAIN, batch_size=-1) )
-    test_ds = tfds.as_numpy( tfds.load(dataset_id, split=tfds.Split.TEST, batch_size=-1) )
+    train_ds =  tfds.as_numpy( tfds.load(dataset_id, split="train", batch_size=-1) )
+    test_ds = tfds.as_numpy( tfds.load(dataset_id, split="test", batch_size=-1) )
+    
+    #### Reduce size of numpy
     
     for x in train_ds:
        print(x)
-       np.save( x, out_path )
+       np.savez_compressed(out_path, dataset_uri = x , "train" = train_ds['train'] , "label" = train_ds.get('label') )
         
     for x in test_ds:
        print(x)
-       np.save( x, out_path )
+       np.savez_compressed(out_path, dataset_uri = x , "train" = train_ds['train'] , "label" = train_ds.get('label') )
         
         
         
