@@ -19,6 +19,17 @@ https://github.com/arita37/mlmodels/blob/dev/mlmodels/example/README_usage.md
 https://colab.research.google.com/drive/1sYbrXNZh9nTeizS-AuCA8RSu94B_B-RF
 
 
+## Benefits :
+
+Having a standard framework for both machine learning models and deep learning models, 
+allows a step towards automatic Machine Learning. The collection of models, model zoo in Pytorch, Tensorflow, Keras
+allows removing dependency on one specific framework, and enable richer possibilities in model benchmarking and re-usage.
+Unique and simple interface, zero boilerplate code (!), and recent state of art models/frameworks are the main strength 
+of mlmodels.
+
+
+
+
 ## Model List :
 
 
