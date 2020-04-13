@@ -2,11 +2,15 @@
     "test": {
         "model_pars": {
             "task": {
-                "classification" : {
-                    "num_classes" : 2
+                "ranking" : {
+                    "losses" : ["RankHingeLoss"]
                 }
             },
-            "metrics": {"acc" : {}},
+            "metrics": {
+                "NormalizedDiscountedCumulativeGain" : {"k" : 3}, 
+                "NormalizedDiscountedCumulativeGain" : {"k" : 5},
+                "MeanAveragePrecision" : {}
+            },
             "model": "BERT",
             "pretrained": 0,
             "embedding_output_dim": 100,
@@ -15,11 +19,14 @@
         },
 
         "data_pars" :{
+            "num_classes": 2,
             "dataset": "WIKI_QA",
             "data_path": "dataset/nlp/",
-            "mode" : "point",
-            "train_batch_size": 20,
-            "test_batch_size": 20
+            "mode" : "pair",
+            "num_dup" : 2,
+            "num_neg" : 1,
+            "train_batch_size": 4,
+            "test_batch_size": 1
         },
 
         "compute_pars": {
@@ -45,5 +52,3 @@
         "data_pars": {}
     }
 }
-
-

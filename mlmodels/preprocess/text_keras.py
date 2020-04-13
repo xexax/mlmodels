@@ -4,9 +4,11 @@ from keras.preprocessing.sequence import pad_sequences
 from keras.utils import to_categorical
 import numpy as np
 
-class Preprocess:
+
+class Preprocess_namentity:
     def __init__(self,max_len,**args):
         self.max_len = max_len
+    
     def compute(self,df):
         df = df.fillna(method='ffill')
         ##### Get sentences
