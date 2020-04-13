@@ -28,6 +28,7 @@ def Model(model_pars, data_pars, compute_pars):
 # Dataaset
 def get_dataset(**data_pars):
     loader = DataLoader(**data_pars)
+    loader.compute()
     data = loader.get_data()
     [print(x.shape) for x in data]
     return data

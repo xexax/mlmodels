@@ -2,7 +2,7 @@ name:  test_pullrequest
 
 on:
   pull_request:
-    branches:
+    branches: bert_classification
 
  
 
@@ -64,7 +64,7 @@ jobs:
 
     ########  Test running 
     ##### Please change BELOW to your model name  
-    #- name: black
+    #- name: matchzoo
     #  run: black -l 120  --py36 --check --fast  .
 
     - name: ml_optim
@@ -75,7 +75,10 @@ jobs:
 
 
     ##### Please change BELOW to your model name  
-    - name: ml_test Pull Request models
-      run: ml_test --do test_json --config_file pullrequest.json
+    - name: ml_test matchzoo_bert_ranking
+      run: ml_test --do matchzoo_models --config_file matchzoo_ranking_bert.json
+    
+    - name: ml_test matchzoo_bert_classification
+      run: ml_test --do matchzoo_models --config_file matchzoo_classification_bert.json
       
          
