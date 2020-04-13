@@ -9,10 +9,10 @@
         },
 
 
-        "data_pars":  {"data_path": "dataset/timeseries/milk.csv", 
-                      "colX_input" :  ["milk_production_pounds"],
+        "data_pars":  {"train_data_path": "dataset/timeseries/milk.csv", 
+                      "col_Xinput" :  ["milk_production_pounds"],
 
-                      "coly_input" : [],
+                      "col_yinput" : [],
                        "forecast_length": 5, 
                        "backcast_length": 10
 

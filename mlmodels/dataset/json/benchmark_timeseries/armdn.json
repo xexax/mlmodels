@@ -12,12 +12,17 @@
     "data_pars": {
       "train": true,
 
-      "train_data_path": "dataset/timeseries/energy_train.csv",
-      "test_data_path": "dataset/timeseries/energy_test.csv",
-      "prediction_length": 60,
+
+
+      "col_Xinput": ["Close"],
+      "col_ytarget": "Close",
+
+      "train_data_path": "dataset/timeseries/stock/qqq_us_train.csv",
+      "test_data_path": "dataset/timeseries/stock/qqq_us_test.csv",
+
+      "prediction_length": 60
       
-      "col_Xinput": ["load_true"],
-      "col_ytarget": "load_true"
+
     },
 
     "compute_pars": {

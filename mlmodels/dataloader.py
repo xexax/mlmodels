@@ -1,4 +1,28 @@
-#########################################################################
+# -*- coding: utf-8 -*-
+"""
+
+
+
+https://www.tensorflow.org/api_docs/python/tf/compat/v1
+tf.compat.v1   IS ALL TF 1.0
+
+tf.compat.v2    iS TF 2.0
+
+
+
+Typical user workflow
+
+def get_dataset(data_pars):
+    loader = DataLoader(data_pars)
+    loader.compute()
+    data = loader.get_data()
+    [print(x.shape) for x in data]
+    return data
+
+
+
+
+"""
 #### System utilities
 import os
 import sys
@@ -18,6 +42,7 @@ from cli_code.cli_download import Downloader
 from sklearn.model_selection import train_test_split
 import cloudpickle as pickle
 
+
 #########################################################################
 #### mlmodels-internal imports
 from util import load_callable_from_dict
@@ -25,15 +50,7 @@ from util import load_callable_from_dict
 
 #########################################################################
 #### Specific packages   ##### Be ware of tensorflow version
-"""
-
-https://www.tensorflow.org/api_docs/python/tf/compat/v1
-tf.compat.v1   IS ALL TF 1.0
-
-tf.compat.v2    iS TF 2.0
-
-
-"""
+#### I fpossible, we dont use to have dependance on tensorflow, torch, ...
 
 import tensorflow as tf
 import torch
@@ -43,21 +60,15 @@ import keras
 import tensorflow.data
 
 
-"""
-Typical user workflow
-
-def get_dataset(data_pars):
-    loader = DataLoader(data_pars)
-    loader.compute()
-    data = loader.get_data()
-    [print(x.shape) for x in data]
-    return data
-
-"""
 
 
+#########################################################################
 def pickle_load(file):
     return pickle.load(open(f, " r"))
+
+
+def pickle_dump(t,path):
+    pickle.dump(t, open(path, "wb" ))
 
 
 def image_dir_load(path):
@@ -82,12 +93,15 @@ def _interpret_input_pars(self, input_pars):
             path_type = "file"
         if os.path.isdir(path):
             path_type = "dir"
+
         if urlparse(path).scheme != "":
             path_type = "url"
             download_path = input_pars.get("download_path", "./")
+
         if path_type == "dropbox":
             dropbox_download(path)
             path_type = "file"
+
         if path_type is None:
             raise Exception(f"Path type for {path} is undeterminable")
 
@@ -118,6 +132,7 @@ def _interpret_input_pars(self, input_pars):
     self.col_Xinput = input_pars.get("col_Xinput", None)
     self.col_Yinput = input_pars.get("col_Yinput", None)
     self.col_miscinput = input_pars.get("col_miscinput", None)
+
     validation_split_function = [
         {"uri": "sklearn.model_selection::train_test_split", "args": {}},
         "test_size",
@@ -127,15 +142,15 @@ def _interpret_input_pars(self, input_pars):
     )
 
 
-def _check_output_shape(self, intermediate_output, shape, max_len):
+def _check_output_shape(self, inter_output, shape, max_len):
     case = 0
-    if isinstance(intermediate_output, tuple):
-        if not isinstance(intermediate_output[0], dict):
+    if isinstance(inter_output, tuple):
+        if not isinstance(inter_output[0], dict):
             case = 1
         else:
             case = 2
-    if isinstance(intermediate_output, dict):
-        if not isinstance(tuple(intermediate_output.values())[0], dict):
+    if isinstance(inter_output, dict):
+        if not isinstance(tuple(inter_output.values())[0], dict):
             case = 3
         else:
             case = 4
@@ -143,12 +158,12 @@ def _check_output_shape(self, intermediate_output, shape, max_len):
     if max_len is not None:
         try:
             if case == 0:
-                intermediate_output = intermediate_output[0:max_len]
+                inter_output = inter_output[0:max_len]
             if case == 1:
-                intermediate_output = [o[0:max_len] for o in intermediate_output]
+                inter_output = [o[0:max_len] for o in inter_output]
             if case == 3:
-                intermediate_output = {
-                    k: v[0:max_len] for k, v in intermediate_output.items()
+                inter_output = {
+                    k: v[0:max_len] for k, v in inter_output.items()
                 }
         except:
             pass
@@ -156,26 +171,26 @@ def _check_output_shape(self, intermediate_output, shape, max_len):
     if shape is not None:
         if (
             case == 0
-            and hasattr(intermediate_output, "shape")
-            and tuple(shape) != intermediate_output.shape
+            and hasattr(inter_output, "shape")
+            and tuple(shape) != inter_output.shape
         ):
             raise Exception(
                 f"Expected shape {tuple(shape)} does not match shape data shape {intermediate_output.shape[1:]}"
             )
         if case == 1:
-            for s, o in zip(shape, intermediate_output):
+            for s, o in zip(shape, inter_output):
                 if hasattr(o, "shape") and tuple(s) != o.shape[1:]:
                     raise Exception(
                         f"Expected shape {tuple(shape)} does not match shape data shape {intermediate_output.shape[1:]}"
                     )
         if case == 3:
-            for s, o in zip(shape, tuple(intermediate_output.values())):
+            for s, o in zip(shape, tuple(inter_output.values())):
                 if hasattr(o, "shape") and tuple(s) != o.shape[1:]:
                     raise Exception(
                         f"Expected shape {tuple(shape)} does not match shape data shape {intermediate_output.shape[1:]}"
                     )
     self.output_shape = shape
-    return intermediate_output
+    return inter_output
 
 
 class DataLoader:
@@ -188,24 +203,25 @@ class DataLoader:
         "image_dir": {"uri": "dataloader::image_dir_load"},
     }
     _interpret_input_pars = _interpret_input_pars
-    _check_output_shape = _check_output_shape
-
+    _check_output_shape   = _check_output_shape
+    
     def __init__(self, data_pars):
-        self.input_pars = data_pars["input_pars"]
+        self.input_pars                = data_pars['input_pars']
+        
+        self.inter_output              = None
+        self.inter_output_split        = None
+        self.final_output              = None
+        self.final_output_split        = None
 
-        self.intermediate_output = None
-        self.intermediate_output_split = None
-        self.final_output = None
-        self.final_output_split = None
-
-        self.loader = data_pars["loader"]
-        self.preprocessor = data_pars.get("preprocessor", {})
-        self.split_xy = data_pars.get("split_xy", {})
-        self.split_train_test = data_pars.get("split_train_test", {})
-        self.save_intermediate_output = data_pars.get("save_intermediate_output", {})
-        self.output = data_pars.get("output", {})
-        self.data_pars = data_pars
-
+        self.loader                    = data_pars['loader']
+        self.preprocessor              = data_pars.get('preprocessor',{})
+        self.split_xy                  = data_pars.get('split_xy',{})
+        self.split_train_test          = data_pars.get('split_train_test',{})
+        self.save_inter_output         = data_pars.get('save_inter_output',{})
+        self.output                    = data_pars.get('output',{})
+        self.data_pars                 = data_pars
+        
+               
     def compute(self):
         # Interpret input_pars
         self._interpret_input_pars(self.input_pars)
@@ -234,88 +250,56 @@ class DataLoader:
         else:
             preprocessor = preprocessor_class(**preprocessor_class_args)
         preprocessor.compute(loaded_data)
-        self.intermediate_output = preprocessor.get_data()
+        self.inter_output = preprocessor.get_data()
+
 
         # Delegate data splitting
         if self.split_xy != {}:
-            split_xy, split_xy_args, other_keys = load_callable_from_dict(
-                self.split_xy, return_other_keys=True
-            )
-            if other_keys.get("pass_data_pars", True):
-                self.intermediate_output = split_xy(
-                    self.intermediate_output, self.data_pars, **split_xy_args
-                )
+            split_xy, split_xy_args, other_keys = load_callable_from_dict(self.split_xy,return_other_keys=True)
+            if other_keys.get('pass_data_pars', True):
+                self.inter_output = split_xy(self.inter_output,self.data_pars,**split_xy_args)
             else:
-                self.intermediate_output = split_xy(
-                    self.intermediate_output, **split_xy_args
-                )
+                self.inter_output = split_xy(self.inter_output,**split_xy_args)
+                
+        #Check output shape, trim to max_len
+        shape = self.output.get('shape', None)
+        max_len = self.output.get('max_len',None)
+        self.inter_output = self._check_output_shape(self.inter_output,shape,max_len)
+        
 
-        # Check output shape, trim to max_len
-        shape = self.output.get("shape", None)
-        max_len = self.output.get("max_len", None)
-        self.intermediate_output = self._check_output_shape(
-            self.intermediate_output, shape, max_len
-        )
-
-        # Delegate train-test splitting
+        #Delegate train-test splitting
         if self.split_train_test != {}:
-            outputs_to_split = (
-                self.intermediate_output
-                if self.col_miscinput is None
-                else self.intermediate_output[:-1]
-            )
-            (
-                split_train_test,
-                split_train_test_args,
-                other_keys,
-            ) = load_callable_from_dict(self.split_train_test, return_other_keys=True)
-            if "testsize_keyword" in other_keys.keys():
-                split_train_test_args[
-                    other_keys.get("testsize_keyword", "test_size")
-                ] = self.test_size
-            if other_keys.get("pass_data_pars", True):
-                split_out = split_train_test(
-                    *outputs_to_split, self.data_pars, **split_train_test_args
-                )
+            outputs_to_split = self.inter_output if self.col_miscinput is None else self.inter_output[:-1]
+            split_train_test, split_train_test_args, other_keys = load_callable_from_dict(self.split_train_test, return_other_keys=True)
+            if 'testsize_keyword' in other_keys.keys():
+                split_train_test_args[other_keys.get('testsize_keyword','test_size')] = self.test_size
+            if other_keys.get('pass_data_pars', True):
+                split_out = split_train_test(*outputs_to_split, self.data_pars, **split_train_test_args)
             else:
                 split_out = split_train_test(*outputs_to_split, **split_train_test_args)
-            i = len(self.intermediate_output)
-            self.intermediate_output_split = (split_out[0:i], split_out[i:])
+            i = len(self.inter_output)
+            self.inter_output_split = (split_out[0:i], split_out[i:])
             if self.col_miscinput is not None:
-                self.intermediate_output_split = self.intermediate_output_split + (
-                    [self.intermediate_output[-1]],
-                )  # add back misc outputs
+                self.inter_output_split = self.inter_output_split + ([self.inter_output[-1]],) #add back misc outputs
             else:
-                self.intermediate_output_split = self.intermediate_output_split + ([],)
-
-        # delegate output saving
-        if self.save_intermediate_output != {}:
-            if self.intermediate_output_split is None:
-                outputs_to_save = self.intermediate_output
+                self.inter_output_split = self.inter_output_split + ([],)
+        
+                
+        #delegate output saving
+        if self.save_inter_output != {}:
+            if self.inter_output_split is None:
+                outputs_to_save = self.inter_output
             else:
-                outputs_to_save = self.intermediate_output_split
-            path = self.save_intermediate_output["path"]
-            (
-                save_intermediate_output,
-                save_intermediate_output_args,
-                other_keys,
-            ) = load_callable_from_dict(
-                self.save_intermediate_output["save_function"], return_other_keys=True
-            )
-            if other_keys.get("pass_data_pars", True):
-                save_intermediate_output(
-                    outputs_to_save,
-                    path,
-                    self.data_pars,
-                    **save_intermediate_output_args,
-                )
+                outputs_to_save = self.inter_output_split
+            path = self.save_inter_output['path']
+            save_inter_output, save_inter_output_args, other_keys = load_callable_from_dict(self.save_inter_output['save_function'], return_other_keys=True)
+            if other_keys.get('pass_data_pars', True):
+                save_inter_output(outputs_to_save,path,self.data_pars,**save_inter_output_args)
             else:
-                save_intermediate_output(
-                    outputs_to_save, path, **save_intermediate_output_args
-                )
-
-        # Delegate output formatting
-        format_dict = self.output.get("format_func", {})
+                save_inter_output(outputs_to_save,path,**save_inter_output_args)
+        
+        #Delegate output formatting
+        format_dict = self.output.get('format_func',{})
         format_func = lambda x: x
         if format_dict != {}:
             format_func, format_func_args, other_keys = load_callable_from_dict(
@@ -331,21 +315,23 @@ class DataLoader:
             self.final_output_split = tuple(
                 format_func(o) for o in self.intermediate_output_split
             )
-
         else:
             self.final_output = format_func(self.intermediate_output)
 
+
     def get_data(self, intermediate=False):
         if intermediate or self.final_output is None:
-            if self.intermediate_output_split is not None:
+            if self.inter_output_split is not None:
                 return (
-                    *self.intermediate_output_split[0],
-                    *self.intermediate_output_split[1],
-                    *self.intermediate_output_split[2],
+                    *self.inter_output_split[0],
+                    *self.inter_output_split[1],
+                    *self.inter_output_split[2],
                 )
-            if isinstance(self.intermediate_output, dict):
-                return tuple(self.intermediate_output.values())
-            return self.intermediate_output
+            
+            if isinstance(self.inter_output, dict):
+                return tuple(self.inter_output.values())
+            return self.inter_output
+
         if self.final_output_split is not None:
             return (
                 *self.final_output_split[0],
@@ -356,18 +342,14 @@ class DataLoader:
 
 
 ### Test functions
-def split_xy_from_dict(out, data_pars):
-    X_c = data_pars["input_pars"].get("col_Xinput", [])
-    y_c = data_pars["input_pars"].get("col_yinput", [])
-    misc_c = data_pars["input_pars"].get("col_miscinput", [])
-    X = [out[n] for n in X_c]
-    y = [out[n] for n in y_c]
-    misc = [out[n] for n in misc_c]
-    return (*X, *y, *misc)
-
-
-def pickle_dump(t, path):
-    pickle.dump(t, open(path, "wb"))
+def split_xy_from_dict(out,data_pars):
+    X_c    = data_pars['input_pars'].get('col_Xinput',[])
+    y_c    = data_pars['input_pars'].get('col_yinput',[])
+    misc_c = data_pars['input_pars'].get('col_miscinput',[])
+    X      = [out[n] for n in X_c]
+    y      = [out[n] for n in y_c]
+    misc   = [out[n] for n in misc_c]
+    return (*X,*y,*misc)
 
 
 if __name__ == "__main__":
