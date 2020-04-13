@@ -10,7 +10,11 @@ from mlmodels.util import os_package_root_path, path_norm
 
 def tf_dataset(dataset_pars):
     """
-    
+    dataset_pars ={ "dataset_id" : "mnist", "batch_size" : 5000, "n_train"= 500, "n_test" = 500, 
+                    "out_path" : "dataset/vision/"
+    }
+
+
     import tensorflow_datasets as tfds
 import tensorflow as tf
 
@@ -42,7 +46,7 @@ numpy_ds = tfds.as_numpy(train_ds)
 numpy_images, numpy_labels = numpy_ds["image"], numpy_ds["label"]
     
     
-    >>> test_array = np.random.rand(3, 2)
+>>> test_array = np.random.rand(3, 2)
 >>> test_vector = np.random.rand(4)
 >>> np.savez_compressed('/tmp/123', a=test_array, b=test_vector)
 >>> loaded = np.load('/tmp/123.npz')
@@ -54,26 +58,33 @@ numpy_images, numpy_labels = numpy_ds["image"], numpy_ds["label"]
     
     
     """
-    d = dataset_pars
-    dataset_id = d['dataset_id']
-    n_train = d['n_train']
-    n_test  = d['n_test']
-    batch_size = d.get('batch_size', -1)  # -1 neans all the dataset
-    out_path = d['out_path']
-    
     import tensorflow_datasets as tfds
-    train_ds =  tfds.as_numpy( tfds.load(dataset_id, split="train", batch_size=-1) )
-    test_ds = tfds.as_numpy( tfds.load(dataset_id, split="test", batch_size=-1) )
+
+    d          = dataset_pars
+    dataset_id = d['dataset_id']
+    batch_size = d.get('batch_size', -1)  # -1 neans all the dataset
+    n_train    = d.get("n_train", 500)
+    n_test     = d.get("n_test", 500)
+    out_path   = path_norm(d['out_path'] )
+    name       = dataset_id.replace(".","-")    
+    os.makedirs(out_path, exist_ok=True) 
+
+
+    train_ds =  tfds.as_numpy( tfds.load(dataset_id, split= f"train[0:{n_train}]", batch_size=batch_size) )
+    test_ds  = tfds.as_numpy( tfds.load(dataset_id, split= f"test0[0:{n_test}]", batch_size=batch_size) )
     
-    #### Reduce size of numpy
+    print("train", train_ds)
+    print("test",  test_ds)
+
     
     for x in train_ds:
        print(x)
-       np.savez_compressed(out_path, dataset_uri = x , "train" = train_ds['train'] , "label" = train_ds.get('label') )
+       np.savez_compressed(out_path + f"{name}_train" , X = train_ds['train'] , y = train_ds.get('label') )
         
+
     for x in test_ds:
        print(x)
-       np.savez_compressed(out_path, dataset_uri = x , "train" = train_ds['train'] , "label" = train_ds.get('label') )
+       np.savez_compressed(out_path + f"{name})_test", X = train_ds['train'] , y = train_ds.get('label') )
         
         
         
