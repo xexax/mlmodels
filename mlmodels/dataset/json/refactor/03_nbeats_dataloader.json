@@ -4,33 +4,44 @@
 			"input_pars": {
 				"path": "dataset/timeseries/milk.csv",
 				"test_size": 0.2,
-				"split_function": [{
-					"uri": "sklearn.model_selection::train_test_split",
-					"args": {	"shuffle": false}
-				}, "test_size"],
 				"generator": true,
 				"batch_size": 100,
 				"forecast_length": 5,
 				"backcast_length": 10
-
 			},
-			
-            
-            "loader": {"data_loader":{"arg":{"parse_dates":true,"index_col":0}}},
 
+			"loader": {
+				"uri": "pandas::read_csv",
+				"arg": {
+					"parse_dates": true,
+					"index_col": 0
+				},
+				"pass_data_pars": false
+			},
 
 			"preprocessor": {
-				"data_preprocessor": {
-					"uri": "preprocess/tch_nbeats.py::preprocess",
-					"arg": {	"forecast_length": 5,	"backcast_length": 10
-					}
-				}
+				"uri": "preprocess/tch_nbeats.py::Preprocess",
+				"arg": {
+					"forecast_length": 5,
+					"backcast_length": 10
+				},
+				"pass_data_pars": false
 			},
+			"split_xy": {},
 
+			"split_train_test": {
+				"uri": "sklearn.model_selection::train_test_split",
+				"args": {
+					"shuffle": false
+				},
+				"pass_data_pars": false,
+				"testsize_keyword": "test_size"
+			},
+			"save_intermediate_output": {},
 
-			"output": {	"format": "generic_generator"	}
-			
-
+			"output": {
+				"format_func": {}
+			}
 		},
 		"model_pars": {
 			"stack_types": ["generic", "generic"],

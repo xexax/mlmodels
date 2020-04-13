@@ -584,15 +584,19 @@ def load_callable_from_uri(uri):
         module = importlib.import_module(module_path)
     return dict(getmembers(module))[callable_name]
         
-def load_callable_from_dict(function_dict):
-    uri = function_dict['uri']
+def load_callable_from_dict(function_dict, return_other_keys=False):
+    function_dict = function_dict.copy()
+    uri = function_dict.pop('uri')
     func = load_callable_from_uri(uri)
     try:
         assert(callable(func))
     except:
         raise TypeError(f'{func} is not callable')
-    arg = function_dict.get('arg', None)
-    return func, arg
+    arg = function_dict.pop('arg', {})
+    if not return_other_keys:
+        return func, arg
+    else:
+        return func, arg, function_dict
     
 
 """
