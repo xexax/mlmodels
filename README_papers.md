@@ -1,6 +1,6 @@
 # List of papers related 
 
-
+## 
 
 ## VAE
 
@@ -99,6 +99,12 @@ Learning group structure and disentangled representations of dynamical environme
 A simple framework for contrastive learning of visual representations.  Chen, Kornblith, Norouzi, Hinton  https://arxiv.org/abs/2002.05709
 
 
+##VAE Lok Raj
+WiSE-ALE: Wide Sample Estimator for Approximate Latent Embedding. Shuyu Lin, Ronald Clark, Robert Birke, Niki Trigoni, Stephen Roberts https://arxiv.org/pdf/1902.06160.pdf
+
+Learning to Dress 3D People in Generative Clothing. Qianli Ma, Jinlong Yang, Anurag Ranjan, Sergi Pujades, Gerard Pons-Moll, Siyu Tang, Michael J. Black https://arxiv.org/pdf/1907.13615.pdf
+
+VV-Net: Voxel VAE Net With Group Convolutions for Point Cloud Segmentation. Hsien-Yu Meng, Lin Gao, Yu-Kun Lai, Dinesh Manocha http://openaccess.thecvf.com/content_ICCV_2019/papers/Meng_VV-Net_Voxel_VAE_Net_With_Group_Convolutions_for_Point_Cloud_ICCV_2019_paper.pdf
 ## 2019
 
 Disentangling and learning robust representations with naturual clustering  . Antoran, Miguel https://arxiv.org/abs/1901.09415
