@@ -582,20 +582,25 @@ def load_callable_from_uri(uri):
         module_name = '.'.join(module_path.split('.')[:-1])
         spec = importlib.util.spec_from_file_location(module_name, module_path)
         module = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(foo)
+        spec.loader.exec_module(module)
     else:
         module = importlib.import_module(module_path)
     return dict(getmembers(module))[callable_name]
         
-def load_callable_from_dict(function_dict):
-    uri = function_dict['uri']
+def load_callable_from_dict(function_dict, return_other_keys=False):
+    function_dict = function_dict.copy()
+    uri = function_dict.pop('uri')
     func = load_callable_from_uri(uri)
     try:
         assert(callable(func))
     except:
         raise TypeError(f'{func} is not callable')
-    arg = function_dict.get('arg', None)
-    return func, arg
+    arg = function_dict.pop('arg', {})
+    if not return_other_keys:
+        return func, arg
+    else:
+        return func, arg, function_dict
+    
 
 """
 def path_local_setup(current_file=None, out_folder="", sublevel=0, data_path="dataset/"):
