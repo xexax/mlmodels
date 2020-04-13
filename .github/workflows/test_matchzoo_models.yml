@@ -3,7 +3,7 @@ name: "Benchmark"
 on:
   push:
     branches:
-      - keras_armdn
+      - bert_classification
 
 jobs:
   build:
@@ -49,5 +49,5 @@ jobs:
 
       ########  Test running
       ##### Please change BELOW to your model name
-      - name: ml_test
-        run: ml_test  --do benchmark.py
+      - name: matchzoo_test
+        run: python mlmodels/model_tch/matchzoo_models.py --do benchmark.py
