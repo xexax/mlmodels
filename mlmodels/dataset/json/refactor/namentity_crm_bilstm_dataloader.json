@@ -22,7 +22,7 @@
 				"pass_data_pars": false
 			},
 			"preprocessor": {
-				"uri": "preprocess/keras_namentity_crm_bistm.py::Preprocess",
+				"uri": "preprocess/text_keras.py::Preprocess_namentity",
 				"arg": {
 					"max_len": 75
 				},

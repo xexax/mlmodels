@@ -85,7 +85,7 @@ if tf.__version__ >= '2.0.0':
 # Helper functions
 from mlmodels.util import os_package_root_path, log, path_norm
 from mlmodels.util import save_keras, load_keras
-from mlmodels.preprocess.keras_deepctr_tabular  import get_test_data, get_xy_fd_dien, get_xy_fd_din, get_xy_fd_dsin
+from mlmodels.preprocess.tabular_keras  import get_test_data, get_xy_fd_dien, get_xy_fd_din, get_xy_fd_dsin
 
 
 
