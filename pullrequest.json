@@ -7,7 +7,7 @@
         "branch" : "feat_VAE",
         "github_issue" :  "https://github.com/arita37/mlmodels/issues/155",
         "test_file"  :  [ "model_gluon/fb_prophet.py"           ]"
-       }
+       },
     
     
     
