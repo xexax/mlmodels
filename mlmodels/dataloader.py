@@ -53,12 +53,17 @@ from util import load_callable_from_dict
 #### Specific packages   ##### Be ware of tensorflow version
 #### I fpossible, we dont use to have dependance on tensorflow, torch, ...
 
+
+"""  Not used
 import tensorflow as tf
 import torch
 import torchtext
 import keras
 
 import tensorflow.data
+"""
+
+
 
 
 
@@ -127,10 +132,8 @@ def _interpret_input_pars(self, input_pars):
     self.test_size = input_pars.get("test_size", None)
     self.generator = input_pars.get("generator", False)
     if self.generator:
-        try:
-            self.batch_size = int(input_pars.get("batch_size", 1))
-        except:
-            raise Exception('Batch size must be an integer')
+       self.batch_size = int(input_pars.get("batch_size", 1))
+
     self._names        = input_pars.get("names", None) #None by default. (Possibly rename for clarity?)
     self.col_Xinput    = input_pars.get('col_Xinput',None)
     self.col_Yinput    = input_pars.get('col_Yinput',None)
