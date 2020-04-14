@@ -1,7 +1,6 @@
 # List of papers related 
 
-## 
-### Collected by Lok Raj Ghimire
+
 ### Time Series:
 ###2018 (Time Series)
 PocketFlow: An Automated Framework for Compressing and Accelerating Deep Neural Networks .  Jiaxiang Wu, Yao Zhang, Haoli Bai, Huasong Zhong, Jinlong Hou, Wei Liu, Wenbing Huang, Junzhou Huang  https://openreview.net/pdf?id=H1fWoYhdim  
