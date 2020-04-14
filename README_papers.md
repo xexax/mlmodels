@@ -1,10 +1,9 @@
 # List of papers related 
 
 ## 
-### Collected by Lok Raj Ghimire
 ## Model List :
-### Collected by Lok Raj Ghimire
-######################################Vision##########################
+
+###Vision
 Towards Stabilizing Batch Statistics in Backward Propagation of Batch Normalization 
 Junjie Yan, Ruosi Wan, Xiangyu Zhang, Wei Zhang, Yichen Wei, Jian Sun
 https://openreview.net/pdf?id=SkgGjRVKDS
@@ -1295,9 +1294,6 @@ https://github.com/muhanzhang/D-VAE
 
 
 
-
-
-
 ###VAE 2020 (with out Code)
 
 q-VAE for Disentangled Representation Learning and Latent Dynamical Systems.  Taisuke Kobayashi https://arxiv.org/pdf/2003.01852 
@@ -1319,7 +1315,6 @@ Re-balancing Variational Autoencoder Loss for Molecule Sequence Generation  Chao
 RACT: TOWARDS AMORTIZED RANKING-CRITICAL TRAINING FOR COLLABORATIVE FILTERING Sam Lobel, Chunyuan Li, Jianfeng Gao, Lawrence Carin  https://arxiv.org/pdf/1906.04281.pdf    
 
 
-### end of lokraj collection
 
 ## VAE
 
