@@ -1,22 +1,32 @@
-# mlmodels : Model ZOO for Pytorch, Tensorflow, Keras, Gluon, sklearn, LightGBM models...
+# mlmodels : Model ZOO for Pytorch, Tensorflow, Keras, Gluon, LightGBM, Sklearn models...
 
-- Model ZOO with Lightweight Functional interface to wrap access to Recent and State o Art Deep Learning, ML models and Hyper-Parameter Search, cross platforms such as Tensorflow, Pytorch, Gluon, Keras, sklearn, light-GBM,...
+- Model ZOO with Lightweight Functional interface to wrap access to Recent and State of Art Deep Learning, ML models and Hyper-Parameter Search, cross platforms such as Tensorflow, Pytorch, Gluon, Keras, sklearn, light-GBM,...
 
 - Logic follows sklearn : fit, predict, transform, metrics, save, load
 
-- Goal is to transform Jupyter/research code into Semi-Prod (batch,..) code with minimal code change ...
+- Goal is to transform Script/Research code into Re-usable/batch/ code with minimal code change ...
 
-
-- Model list is available here :
-  https://github.com/arita37/mlmodels/blob/dev/README_model_list.md
-
-- Why Functional interface instead of OOP ?
+- Why Functional interface instead of pure OOP ?
   Functional reduces the amount of code needed, focus more on the computing part (vs design part),
   a bit easier maintenability for medium size project, good for scientific computing process.
 
 
-*  Colab demo :
-https://colab.research.google.com/drive/1sYbrXNZh9nTeizS-AuCA8RSu94B_B-RF54d8dce15108f5fe94bf448fceb519dce07a6d2d
+*  Usage, Example :
+https://github.com/arita37/mlmodels/blob/dev/mlmodels/example/README_usage.md
+
+
+*  Colab demo for Install :
+https://colab.research.google.com/drive/1sYbrXNZh9nTeizS-AuCA8RSu94B_B-RF
+
+
+## Benefits :
+
+Having a standard framework for both machine learning models and deep learning models, 
+allows a step towards automatic Machine Learning. The collection of models, model zoo in Pytorch, Tensorflow, Keras
+allows removing dependency on one specific framework, and enable richer possibilities in model benchmarking and re-usage.
+Unique and simple interface, zero boilerplate code (!), and recent state of art models/frameworks are the main strength 
+of mlmodels.
+
 
 
 
@@ -48,10 +58,52 @@ TextCNN Keras : 2016, Text CNN Classifier, https://arxiv.org/abs/1801.06287
 charCNN Keras : Text Character Classifier,
 
 
+DRMM:  Deep Relevance Matching Model for Ad-hoc Retrieval.
+
+DRMMTKS:  Deep Top-K Relevance Matching Model for Ad-hoc Retrieval.
+
+ARC-I:  Convolutional Neural Network Architectures for Matching Natural Language Sentences
+
+ARC-II:  Convolutional Neural Network Architectures for Matching Natural Language Sentences
+
+DSSM:  Learning Deep Structured Semantic Models for Web Search using Clickthrough Data
+
+CDSSM:  Learning Semantic Representations Using Convolutional Neural Networks for Web Search
+
+MatchLSTM: Machine Comprehension Using Match-LSTM and Answer Pointer
+
+DUET:  Learning to Match Using Local and Distributed Representations of Text for Web Search
+
+KNRM:  End-to-End Neural Ad-hoc Ranking with Kernel Pooling
+
+ConvKNRM:  Convolutional neural networks for soft-matching n-grams in ad-hoc search
+
+ESIM:  Enhanced LSTM for Natural Language Inference
+
+BiMPM:  Bilateral Multi-Perspective Matching for Natural Language Sentences
+
+MatchPyramid:  Text Matching as Image Recognition
+
+Match-SRNN:  Match-SRNN: Modeling the Recursive Matching Structure with Spatial RNN
+
+aNMM:  aNMM: Ranking Short Answer Texts with Attention-Based Neural Matching Model
+
+MV-LSTM:  Deep Architecture for Semantic Matching with Multiple Positional Sentence Representations
+
+DIIN:  Natural Lanuguage Inference Over Interaction Space
+
+HBMP:  Sentence Embeddings in NLI with Iterative Refinement Encoders
+
+
+
+
 ### TABULAR :
 #### LightGBM
 
 #### AutoML Gluon  :  2020, AutoML in Gluon, MxNet using LightGBM, CatBoost
+
+
+#### Auto-Keras  :  2020, Automatic Keras model selection
 
 
 #### All sklearn models :
@@ -145,23 +197,23 @@ resnext101_32x8d\
 
 wide_resnet50_2\
 wide_resnet101_2\
-squeezenet1_0\
+squeezenet1_0
 
 squeezenet1_1\
 vgg11\
 vgg13\
 vgg16\
 vgg19\
-vgg11_bn\
+vgg11_bn
 
 vgg13_bn\
 vgg16_bn\
-vgg19_bn\
+vgg19_bn
 
 googlenet\
 shufflenet_v2_x0_5\
 shufflenet_v2_x1_0\
-mobilenet_v2\
+mobilenet_v2
 
 A lot more...
 
@@ -175,7 +227,13 @@ https://github.com/arita37/mlmodels/blob/dev/README_model_list.md
 
 ## ① Installation
 
-Install as editable package (ONLY dev branch), in Linux
+Using pre-installed online Setup :
+
+https://github.com/arita37/mlmodels/issues/101
+
+
+
+Manual Install as editable package in Linux
 
 ```
 conda create -n py36 python=3.6.5 -y
@@ -185,30 +243,26 @@ cd yourfolder
 git clone https://github.com/arita37/mlmodels.git mlmodels
 cd mlmodels
 git checkout dev
+```
 
-
-
-
-    ### Check this Colab for install :
+### Check this Colab for install :
 https://colab.research.google.com/drive/1sYbrXNZh9nTeizS-AuCA8RSu94B_B-RF
 
-    ##### Initialize
-    Will copy template, dataset, example to your folder
+
+##### Initialize
+Will copy template, dataset, example to your folder
 
     ml_models --init  /yourworkingFolder/
 
 
-    ##### To test :
+##### To test :
     ml_optim
 
-    ##### To test model fitting
+
+##### To test model fitting
     ml_models
-```    
-
-#### Dependencies
-
-https://github.com/arita37/mlmodels/blob/dev/requirements.txt
-
+    
+        
 #### Actual test runs
 
 https://github.com/arita37/mlmodels/actions
@@ -231,12 +285,7 @@ https://github.com/arita37/mlmodels/blob/dev/README_usage.md
 
 https://github.com/arita37/mlmodels/blob/dev/README_usage_CLI.md
 
-```
-- ml_models    :  mlmodels/models.py
-- ml_optim     :  mlmodels/optim.py
-- ml_test      :  mlmodels/ztest.py
 
-```
 
 ####################################################################################
 

@@ -24,6 +24,10 @@ from mlmodels.util import get_recursive_files2
 
 
 
+log_git_push = " cd /home/runner/work/mlmodels/mlmodels_store/   && ls &&  git add --all &&  git commit -m 'log'   && git push --all   && cd /home/runner/work/mlmodels/mlmodels/ "
+
+
+
 def os_file_current_path():
     import inspect
     val = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
@@ -101,6 +105,27 @@ def test_jupyter(arg=None, config_mode="test_all"):
 
 
 
+def test_benchmark(arg=None):
+    print("os.getcwd", os.getcwd())
+
+    path = mlmodels.__path__[0]
+    print("############Check model ################################")
+    path = path.replace("\\", "//")
+    test_list = [ f"python {path}/benchmark.py --do timeseries "   ,
+                  f"python {path}/benchmark.py --do vision_mnist "   ,
+    ]
+
+    for cmd in test_list:
+        print("\n\n\n", flush=True)
+        print(cmd, flush=True)
+        os.system(cmd)
+
+
+
+
+
+
+
 
 
 def test_all(arg=None):
@@ -112,8 +137,8 @@ def test_all(arg=None):
     print(model_list)
 
     ## Block list
-    root = os_package_root_path()
-    cfg = json.load(open( arg.config_file, mode='r'))['test_all']
+    # root = os_package_root_path()
+    cfg = json.load(open(arg.config_file, mode='r'))['test_all']
     block_list = cfg['model_blocked']
     model_list = [t for t in model_list if t not in block_list]
     print("Used", model_list)
@@ -125,30 +150,8 @@ def test_all(arg=None):
         print("\n\n\n", flush=True)
         print(cmd, flush=True)
         os.system(cmd)
+        os.system(log_git_push)
 
-
-def test_all(arg=None):
-    print("os.getcwd", os.getcwd())
-
-    path = mlmodels.__path__[0]
-    print("############Check model ################################")
-    model_list = model_get_list(folder=None, block_list=[])
-    print(model_list)
-
-    ## Block list
-    root = os_package_root_path()
-    cfg = json.load(open(root + "/" + arg.config_file, mode='r'))['test_all']
-    block_list = cfg['model_blocked']
-    model_list = [t for t in model_list if t not in block_list]
-    print("Used", model_list)
-
-    path = path.replace("\\", "//")
-    test_list = [f"python {path}/" + t.replace(".", "//").replace("//py", ".py") for t in model_list]
-
-    for cmd in test_list:
-        print("\n\n\n", flush=True)
-        print(cmd, flush=True)
-        os.system(cmd)
 
 
 def test_json(arg):
@@ -214,7 +217,7 @@ def cli_load_arguments(config_file=None):
         Load CLI input, load config.toml , overwrite config.toml by CLI Input
     """
     import argparse
-    from util import load_config, path_norm, os_package_root_path
+    from mlmodels.util import load_config, path_norm, os_package_root_path
     if config_file is None  :
       config_file =  os_package_root_path() + "/config/test_config.json"
     print(config_file)

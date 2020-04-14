@@ -29,7 +29,7 @@ import pandas as pd
 from keras.callbacks import EarlyStopping, ModelCheckpoint
 from keras.layers import LSTM, Dense, TimeDistributed, Embedding, Bidirectional
 from keras.models import Model as KModel, Input
-from dataloader import KerasDataLoader
+from dataloader import DataLoader
 from keras_contrib.layers import CRF
 
 import numpy as np
@@ -153,7 +153,7 @@ def load(load_pars):
 ####################################################################################################
 
 def get_dataset(data_pars, return_preprocessor_function = False):
-    loader = KerasDataLoader(**data_pars)
+    loader = DataLoader(**data_pars)
     return (loader.get_data(), loader.preprocessor) if return_preprocessor_function else loader.get_data()
 
 def get_params(param_pars={}, **kw):
@@ -166,7 +166,6 @@ def get_params(param_pars={}, **kw):
     if choice == "json":
         data_path = path_norm(data_path)
         cf = json.load(open(data_path, mode='r'))
-        
         cf = cf[config_mode]
         return cf['model_pars'], cf['data_pars'], cf['compute_pars'], cf['out_pars']
 
@@ -208,7 +207,7 @@ def test(data_path="dataset/", pars_choice="json", config_mode="test"):
 
     log("#### Loading dataset   #############################################")
     Xtuple = get_dataset(data_pars)
-
+    
     log("#### Model init, fit   #############################################")
     from mlmodels.models import module_load_full, fit, predict
     module, model = module_load_full("model_keras.namentity_crm_bilstm_dataloader", model_pars, data_pars, compute_pars)

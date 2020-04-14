@@ -2,10 +2,13 @@ mlmodels\benchmark.py
 ----------------methods----------------
 
 ---------------functions---------------
+benchmark_run( bench_pars=None, args=None, config_mode="test",  )
 cli_load_arguments( config_file=None,  )
 config_model_list( folder=None,  )
+get_all_json_path(json_path,   )
 main(  )
-run_benchmark_all(json_path,  bench_pars=None,  )
+metric_eval( actual=None, pred=None, metric_name="mean_absolute_error",  )
+preprocess_timeseries_m5( data_path=None, dataset_name=None, pred_length=10, item_id=None,  )
 
 
 mlmodels\data.py
@@ -22,45 +25,23 @@ import_data_tch( name="", mode="train", node_id=0, data_folder_root="",  )
 
 mlmodels\dataloader.py
 ----------------methods----------------
-AbstractDataLoader.__init__(self, input_pars, loader, preprocessor, output,   )
+AbstractDataLoader.__getitem__(self, key,   )
+AbstractDataLoader.__init__(self, input_pars, loader, preprocessor, output,   **args)
 AbstractDataLoader._image_directory_load(self, directory, generator,   )
 AbstractDataLoader._interpret_input_pars(self, input_pars,   )
 AbstractDataLoader._interpret_output(self, output,   )
-AbstractDataLoader._interpret_processor(self, preprocessor, data,   )
 AbstractDataLoader._load_data(self, loader,   )
-AbstractDataLoader._preprocessor(self, data, pars,   )
-AbstractDataLoader.preprocess_new_data(self, data,   )
-EncoderMissingEncoderError.__init__(self, encoder_pars,   )
-EncoderMissingIndexError.__init__(self, encoder_pars,   )
+AbstractDataLoader.get_data(self,   )
 GluonTSDataLoader.__init__(self,   *args, **kwargs)
-InvalidDataLoaderFunctionError.__init__(self, loader,   )
-InvalidDataPreprocessorError.__init__(self, preprocessor,   )
-InvalidDataPreprocessorParameterError.__init__(self, parameter,   )
-InvalidEncoderError.__init__(self, preprocessor,   )
-InvalidEncoderParameterError.__init__(self, parameter,   )
 KerasDataLoader.__init__(self,   *args, **kwargs)
-MissingDataPreprocessorError.__init__(self,   )
-MissingLocationKeyError.__init__(self,   )
-NonCallableDataPreprocessorError.__init__(self, preprocessor,   )
-NonCallableEncoderError.__init__(self, preprocessor,   )
-NonIntegerBatchSizeError.__init__(self,   )
-NonfileURLError.__init__(self,   )
-NumpyGeneratorError.__init__(self,   )
-OutputShapeError.__init__(self, specified, actual,   )
-PreprocssingOutputDict.__getitem__(self, key,   )
-PreprocssingOutputDict.__init__(self,   *args, **kwargs)
-PreprocssingOutputDict.__repr__(self,   )
-PreprocssingOutputDict.__setitem__(self, key, value,   )
-PreprocssingOutputDict.__str__(self,   )
-PreprocssingOutputDict.values(self,   )
 PyTorchDataLoader.__init__(self,   *args, **kwargs)
+PyTorchDataLoader._interpret_output(self, output,   )
+PyTorchDataLoader._load_data(self, loader,   )
 TensorflowDataLoader.__init__(self,   *args, **kwargs)
-UndeterminableDataLoaderError.__init__(self,   )
-UndeterminableLocationTypeError.__init__(self,   )
-UnknownLocationTypeError.__init__(self, location_type,   )
 
 ---------------functions---------------
-load_function(f,   )
+open_read(file,   )
+pickle_load(file,   )
 
 
 mlmodels\distri_torch.py
@@ -71,6 +52,15 @@ load_arguments(  )
 metric_average(val, name,   )
 test(  )
 train(epoch,   )
+
+
+mlmodels\metrics.py
+----------------methods----------------
+
+---------------functions---------------
+log( n=0, m=1,  *s)
+metrics_eval( metric_list=["mean_squared_error"], ytrue=None, ypred=None, ypred_proba=None,  )
+test(  )
 
 
 mlmodels\models.py
@@ -150,6 +140,29 @@ save_model(model, path,   )
 test( data_path="/dataset/", pars_choice="colnum",  )
 
 
+mlmodels\preprocessor.py
+----------------methods----------------
+EncoderMissingEncoderError.__init__(self, encoder_pars,   )
+EncoderMissingIndexError.__init__(self, encoder_pars,   )
+EncoderOutputSizeError.__init__(self, output_name, output_size,   )
+MissingDataPreprocessorError.__init__(self,   )
+Preprocessor.__init__(self, preprocessor_dict,   )
+Preprocessor._interpret_encoder(self, encoder_pars,   )
+Preprocessor._interpret_preprocessor(self, pars,   )
+Preprocessor._interpret_preprocessor_dict(self, preprocessor_dict,   )
+Preprocessor.fit_transform(self, data,   )
+Preprocessor.transform(self, data,   )
+PreprocessorNotFittedError.__init__(self,   )
+PreprocssingOutputDict.__getitem__(self, key,   )
+PreprocssingOutputDict.__init__(self, data,   *args, **kwargs)
+PreprocssingOutputDict.__repr__(self,   )
+PreprocssingOutputDict.__setitem__(self, key, value,   )
+PreprocssingOutputDict.__str__(self,   )
+PreprocssingOutputDict.values(self,   )
+
+---------------functions---------------
+
+
 mlmodels\util.py
 ----------------methods----------------
 Model_empty.__init__(self,  model_pars=None, data_pars=None, compute_pars=None,  )
@@ -165,11 +178,14 @@ env_build(model_uri, env_pars,   )
 env_conda_build( env_pars=None,  )
 env_pip_check( env_pars=None,  )
 env_pip_requirement( env_pars=None,  )
+get_device_torch(  )
 get_model_uri(file,   )
 get_recursive_files(folderPath,  ext='/*model*/*.py',  )
 get_recursive_files2(folderPath, ext,   )
 get_recursive_files3(folderPath, ext,   )
 load(load_pars,   )
+load_callable_from_dict(function_dict,   )
+load_callable_from_uri(uri,   )
 load_config(args, config_file, config_mode,  verbose=0,  )
 load_gluonts( load_pars=None,  )
 load_keras(load_pars,  custom_pars=None,  )
@@ -184,7 +200,7 @@ os_folder_copy(src, dst,   )
 os_get_file( folder=None, block_list=[], pattern=r'*.py',  )
 os_package_root_path( filepath="", sublevel=0, path_add="",  )
 os_path_split(path,   )
-params_json_load(path,  config_mode="test",  )
+params_json_load(path,  config_mode="test", tlist=[ "model_pars", "data_pars", "compute_pars", "out_pars"],  )
 path_norm( path="",  )
 path_norm_dict(ddict,   )
 save( model=None, session=None, save_pars=None,  )
@@ -199,6 +215,23 @@ tf_deprecation(  )
 val(x, xdefault,   )
 
 
+mlmodels\util_log.py
+----------------methods----------------
+to_name.__init__(self, adict,   )
+
+---------------functions---------------
+create_appid(filename,   )
+create_logfilename(filename,   )
+create_uniqueid(  )
+load_arguments( config_file=None, arg_list=None,  )
+logger_handler_console( formatter=None,  )
+logger_handler_file( isrotate=False, rotate_time="midnight", formatter=None, log_file_used=None,  )
+logger_setup( logger_name=None, log_file=None, formatter=FORMATTER_1, isrotate=False, isconsole_output=True, logging_level=logging.DEBUG,  )
+logger_setup2( name=__name__, level=None,  )
+printlog( s="", s1="", s2="", s3="", s4="", s5="", s6="", s7="", s8="", s9="", s10="", app_id="", logfile=None, iswritelog=True,  )
+writelog( m="", f=None,  )
+
+
 mlmodels\ztest.py
 ----------------methods----------------
 
@@ -207,7 +240,7 @@ cli_load_arguments( config_file=None,  )
 main(  )
 os_file_current_path(  )
 test_all( arg=None,  )
-test_all( arg=None,  )
+test_benchmark( arg=None,  )
 test_custom(  )
 test_import(arg,   )
 test_json(arg,   )
@@ -242,34 +275,16 @@ mlmodels\config\json\model_tch\raw\vae_pretraining_encoder\text_beta.py
 ---------------functions---------------
 
 
-mlmodels\model_chatbot\__init__.py
+mlmodels\example\arun_hyper.py
 ----------------methods----------------
 
 ---------------functions---------------
 
 
-mlmodels\model_chatbot\diag_gpt\Chatbot_run.py
+mlmodels\example\arun_model.py
 ----------------methods----------------
 
 ---------------functions---------------
-generate(  )
-get_bot_response(  )
-home(  )
-recalc( p=None,  )
-reinput(user_msg,   )
-top_p_filtering(logits,  top_p=0.9, filter_value=-float('Inf'),  )
-
-
-mlmodels\model_chatbot\diag_gpt\myChatbot.py
-----------------methods----------------
-
----------------functions---------------
-generate(  )
-get_bot_response(  )
-home(  )
-recalc( p=None,  )
-reinput(user_msg,   )
-top_p_filtering(logits,  top_p=0.9, filter_value=-float('Inf'),  )
 
 
 mlmodels\model_dev\__init__.py
@@ -991,12 +1006,12 @@ Model.__init__(self,  model_pars=None, data_pars=None, compute_pars=None,  )
 
 ---------------functions---------------
 fit( model=None, data_pars={}, compute_pars={}, out_pars={},  **kw)
-fit_metrics(model,  data_pars=None, compute_pars=None, out_pars=None,  **kw)
-get_dataset(data_params,   )
+fit_metrics(model,  data_pars=None, compute_pars=None, out_pars=None, model_pars=None,  **kw)
+get_dataset(data_pars,   )
 get_params( param_pars={},  **kw)
 load( load_pars={},  **kw)
 metrics_plot(metrics_params,   )
-predict( model=None, model_pars=None, data_pars=None,  **kwargs)
+predict( model=None, model_pars=None, sess=None, data_pars=None, compute_pars=None, out_pars=None,  **kwargs)
 reset_model(  )
 save( model=None, session=None, save_pars={},  )
 test( data_path="dataset/", pars_choice="test0", config_mode="test",  )
@@ -1008,7 +1023,7 @@ Model.__init__(self,  model_pars=None, data_pars=None, compute_pars=None,  )
 
 ---------------functions---------------
 fit(model,  data_pars=None, compute_pars=None, out_pars=None,  **kw)
-fit_metrics(model,  session=None, data_pars=None, compute_pars=None, out_pars=None,  **kw)
+fit_metrics(model,  data_pars=None, compute_pars=None, out_pars=None,  **kw)
 get_dataset( data_pars=None,  **kw)
 get_params( param_pars={},  **kw)
 load( load_pars=None,  )
@@ -1034,6 +1049,22 @@ save( model=None, session=None, save_pars={},  )
 test( data_path="dataset/", pars_choice="json", config_mode="test",  )
 
 
+mlmodels\model_keras\keras_gan.py
+----------------methods----------------
+Model.__init__(self,  model_pars=None, data_pars=None, compute_pars=None, out_pars=None,  )
+
+---------------functions---------------
+fit(model,  data_pars=None, compute_pars=None, out_pars=None,  **kwargs)
+fit_metrics(model,  data_pars=None, compute_pars=None, out_pars=None,  )
+get_config_file(  )
+get_dataset( data_pars=None,  **kw)
+get_params( param_pars=None,  **kw)
+load(load_pars,   )
+predict(model,  session=None, data_pars=None, compute_pars=None, out_pars=None,  )
+save(model,  session=None, save_pars=None,  )
+test( data_path="dataset/", pars_choice="json", config_mode="test",  )
+
+
 mlmodels\model_keras\namentity_crm_bilstm.py
 ----------------methods----------------
 Model.__init__(self,  model_pars=None, data_pars=None, compute_pars=None,  **kwargs)
@@ -1048,6 +1079,39 @@ load(load_pars,   )
 predict(model,  sess=None, data_pars=None, out_pars=None, compute_pars=None,  **kw)
 reset_model(  )
 save( model=None, session=None, save_pars=None,  )
+test( data_path="dataset/", pars_choice="json", config_mode="test",  )
+
+
+mlmodels\model_keras\namentity_crm_bilstm_dataloader.py
+----------------methods----------------
+Model.__init__(self,  model_pars=None, data_pars=None, compute_pars=None,  **kwargs)
+
+---------------functions---------------
+fit(model,  data_pars=None, compute_pars=None, out_pars=None,  **kw)
+fit_metrics(model,  data_pars=None, compute_pars=None, out_pars=None,  **kw)
+get_dataset(data_pars,  return_preprocessor_function=False,  )
+get_params( param_pars={},  **kw)
+load(load_pars,   )
+predict(model,  sess=None, data_pars=None, out_pars=None, compute_pars=None,  **kw)
+reset_model(  )
+save( model=None, session=None, save_pars=None,  )
+test( data_path="dataset/", pars_choice="json", config_mode="test",  )
+
+
+mlmodels\model_keras\nbeats.py
+----------------methods----------------
+Model.__init__(self,  model_pars=None, data_pars=None, compute_pars=None,  )
+
+---------------functions---------------
+fit(model,  data_pars=None, compute_pars=None, out_pars=None,  **kw)
+fit_metrics(model,  session=None, data_pars=None, compute_pars=None, out_pars=None,  **kw)
+get_dataset( data_pars=None,  **kw)
+get_params( param_pars={},  **kw)
+load( load_pars=None,  )
+main(  )
+predict(model,  session=None, data_pars=None, out_pars=None, compute_pars=None,  **kw)
+reset_model(  )
+save( model=None, save_pars=None, session=None,  )
 test( data_path="dataset/", pars_choice="json", config_mode="test",  )
 
 
@@ -1148,7 +1212,9 @@ mlmodels\model_keras\raw\__init__.py
 mlmodels\model_keras\raw\char_cnn\data_utils.py
 ----------------methods----------------
 Data.__init__(self, data_source,  alphabet="abcdefghijklmnopqrstuvwxyz0123456789-,  )
+Data.fill_to_length_input(self, s,   )
 Data.get_all_data(self,   )
+Data.get_all_data_npz(self,   )
 Data.load_data(self,   )
 Data.str_to_indexes(self, s,   )
 
@@ -1410,6 +1476,342 @@ HAN.get_model(self,   )
 
 
 mlmodels\model_keras\raw\HAN\main.py
+----------------methods----------------
+
+---------------functions---------------
+
+
+mlmodels\model_keras\raw\keras_gan\__init__.py
+----------------methods----------------
+
+---------------functions---------------
+
+
+mlmodels\model_keras\raw\keras_gan\aae\aae.py
+----------------methods----------------
+AdversarialAutoencoder.__init__(self,   )
+AdversarialAutoencoder.build_decoder(self,   )
+AdversarialAutoencoder.build_discriminator(self,   )
+AdversarialAutoencoder.build_encoder(self,   )
+AdversarialAutoencoder.sample_images(self, epoch,   )
+AdversarialAutoencoder.save_model(self,   )
+AdversarialAutoencoder.train(self, epochs,  batch_size=128, sample_interval=50,  )
+
+---------------functions---------------
+
+
+mlmodels\model_keras\raw\keras_gan\acgan\acgan.py
+----------------methods----------------
+ACGAN.__init__(self,   )
+ACGAN.build_discriminator(self,   )
+ACGAN.build_generator(self,   )
+ACGAN.sample_images(self, epoch,   )
+ACGAN.save_model(self,   )
+ACGAN.train(self, epochs,  batch_size=128, sample_interval=50,  )
+
+---------------functions---------------
+
+
+mlmodels\model_keras\raw\keras_gan\bgan\bgan.py
+----------------methods----------------
+BGAN.__init__(self,   )
+BGAN.boundary_loss(self, y_true, y_pred,   )
+BGAN.build_discriminator(self,   )
+BGAN.build_generator(self,   )
+BGAN.sample_images(self, epoch,   )
+BGAN.train(self, epochs,  batch_size=128, sample_interval=50,  )
+
+---------------functions---------------
+
+
+mlmodels\model_keras\raw\keras_gan\bigan\bigan.py
+----------------methods----------------
+BIGAN.__init__(self,   )
+BIGAN.build_discriminator(self,   )
+BIGAN.build_encoder(self,   )
+BIGAN.build_generator(self,   )
+BIGAN.sample_interval(self, epoch,   )
+BIGAN.train(self, epochs,  batch_size=128, sample_interval=50,  )
+
+---------------functions---------------
+
+
+mlmodels\model_keras\raw\keras_gan\ccgan\ccgan.py
+----------------methods----------------
+CCGAN.__init__(self,   )
+CCGAN.build_discriminator(self,   )
+CCGAN.build_generator(self,   )
+CCGAN.mask_randomly(self, imgs,   )
+CCGAN.sample_images(self, epoch, imgs,   )
+CCGAN.save_model(self,   )
+CCGAN.train(self, epochs,  batch_size=128, sample_interval=50,  )
+
+---------------functions---------------
+
+
+mlmodels\model_keras\raw\keras_gan\cgan\cgan.py
+----------------methods----------------
+CGAN.__init__(self,   )
+CGAN.build_discriminator(self,   )
+CGAN.build_generator(self,   )
+CGAN.sample_images(self, epoch,   )
+CGAN.train(self, epochs,  batch_size=128, sample_interval=50,  )
+
+---------------functions---------------
+
+
+mlmodels\model_keras\raw\keras_gan\cogan\cogan.py
+----------------methods----------------
+COGAN.__init__(self,   )
+COGAN.build_discriminators(self,   )
+COGAN.build_generators(self,   )
+COGAN.sample_images(self, epoch,   )
+COGAN.train(self, epochs,  batch_size=128, sample_interval=50,  )
+
+---------------functions---------------
+
+
+mlmodels\model_keras\raw\keras_gan\context_encoder\context_encoder.py
+----------------methods----------------
+ContextEncoder.__init__(self,   )
+ContextEncoder.build_discriminator(self,   )
+ContextEncoder.build_generator(self,   )
+ContextEncoder.mask_randomly(self, imgs,   )
+ContextEncoder.sample_images(self, epoch, imgs,   )
+ContextEncoder.save_model(self,   )
+ContextEncoder.train(self, epochs,  batch_size=128, sample_interval=50,  )
+
+---------------functions---------------
+
+
+mlmodels\model_keras\raw\keras_gan\cyclegan\cyclegan.py
+----------------methods----------------
+CycleGAN.__init__(self,   )
+CycleGAN.build_discriminator(self,   )
+CycleGAN.build_generator(self,   )
+CycleGAN.sample_images(self, epoch, batch_i,   )
+CycleGAN.train(self, epochs,  batch_size=1, sample_interval=50,  )
+
+---------------functions---------------
+
+
+mlmodels\model_keras\raw\keras_gan\cyclegan\data_loader.py
+----------------methods----------------
+DataLoader.__init__(self, dataset_name,  img_res=(128, 128),  )
+DataLoader.imread(self, path,   )
+DataLoader.load_batch(self,  batch_size=1, is_testing=False,  )
+DataLoader.load_data(self, domain,  batch_size=1, is_testing=False,  )
+DataLoader.load_img(self, path,   )
+
+---------------functions---------------
+
+
+mlmodels\model_keras\raw\keras_gan\dcgan\dcgan.py
+----------------methods----------------
+DCGAN.__init__(self,   )
+DCGAN.build_discriminator(self,   )
+DCGAN.build_generator(self,   )
+DCGAN.save_imgs(self, epoch,   )
+DCGAN.train(self, epochs,  batch_size=128, save_interval=50,  )
+
+---------------functions---------------
+
+
+mlmodels\model_keras\raw\keras_gan\discogan\data_loader.py
+----------------methods----------------
+DataLoader.__init__(self, dataset_name,  img_res=(128, 128),  )
+DataLoader.imread(self, path,   )
+DataLoader.load_batch(self,  batch_size=1, is_testing=False,  )
+DataLoader.load_data(self,  batch_size=1, is_testing=False,  )
+DataLoader.load_img(self, path,   )
+
+---------------functions---------------
+
+
+mlmodels\model_keras\raw\keras_gan\discogan\discogan.py
+----------------methods----------------
+DiscoGAN.__init__(self,   )
+DiscoGAN.build_discriminator(self,   )
+DiscoGAN.build_generator(self,   )
+DiscoGAN.sample_images(self, epoch, batch_i,   )
+DiscoGAN.train(self, epochs,  batch_size=128, sample_interval=50,  )
+
+---------------functions---------------
+
+
+mlmodels\model_keras\raw\keras_gan\dualgan\dualgan.py
+----------------methods----------------
+DUALGAN.__init__(self,   )
+DUALGAN.build_discriminator(self,   )
+DUALGAN.build_generator(self,   )
+DUALGAN.sample_generator_input(self, X, batch_size,   )
+DUALGAN.save_imgs(self, epoch, X_A, X_B,   )
+DUALGAN.train(self, epochs,  batch_size=128, sample_interval=50,  )
+DUALGAN.wasserstein_loss(self, y_true, y_pred,   )
+
+---------------functions---------------
+
+
+mlmodels\model_keras\raw\keras_gan\gan\gan.py
+----------------methods----------------
+GAN.__init__(self,   )
+GAN.build_discriminator(self,   )
+GAN.build_generator(self,   )
+GAN.sample_images(self, epoch,   )
+GAN.train(self, epochs,  batch_size=128, sample_interval=50,  )
+
+---------------functions---------------
+
+
+mlmodels\model_keras\raw\keras_gan\infogan\infogan.py
+----------------methods----------------
+INFOGAN.__init__(self,   )
+INFOGAN.build_disk_and_q_net(self,   )
+INFOGAN.build_generator(self,   )
+INFOGAN.mutual_info_loss(self, c, c_given_x,   )
+INFOGAN.sample_generator_input(self, batch_size,   )
+INFOGAN.sample_images(self, epoch,   )
+INFOGAN.save_model(self,   )
+INFOGAN.train(self, epochs,  batch_size=128, sample_interval=50,  )
+
+---------------functions---------------
+
+
+mlmodels\model_keras\raw\keras_gan\lsgan\lsgan.py
+----------------methods----------------
+LSGAN.__init__(self,   )
+LSGAN.build_discriminator(self,   )
+LSGAN.build_generator(self,   )
+LSGAN.sample_images(self, epoch,   )
+LSGAN.train(self, epochs,  batch_size=128, sample_interval=50,  )
+
+---------------functions---------------
+
+
+mlmodels\model_keras\raw\keras_gan\pix2pix\data_loader.py
+----------------methods----------------
+DataLoader.__init__(self, dataset_name,  img_res=(128, 128),  )
+DataLoader.imread(self, path,   )
+DataLoader.load_batch(self,  batch_size=1, is_testing=False,  )
+DataLoader.load_data(self,  batch_size=1, is_testing=False,  )
+
+---------------functions---------------
+
+
+mlmodels\model_keras\raw\keras_gan\pix2pix\pix2pix.py
+----------------methods----------------
+Pix2Pix.__init__(self,   )
+Pix2Pix.build_discriminator(self,   )
+Pix2Pix.build_generator(self,   )
+Pix2Pix.sample_images(self, epoch, batch_i,   )
+Pix2Pix.train(self, epochs,  batch_size=1, sample_interval=50,  )
+
+---------------functions---------------
+
+
+mlmodels\model_keras\raw\keras_gan\pixelda\data_loader.py
+----------------methods----------------
+DataLoader.__init__(self,  img_res=(128, 128),  )
+DataLoader.load_data(self, domain,  batch_size=1,  )
+DataLoader.normalize(self, images,   )
+DataLoader.setup_mnist(self, img_res,   )
+DataLoader.setup_mnistm(self, img_res,   )
+
+---------------functions---------------
+
+
+mlmodels\model_keras\raw\keras_gan\pixelda\pixelda.py
+----------------methods----------------
+PixelDA.__init__(self,   )
+PixelDA.build_classifier(self,   )
+PixelDA.build_discriminator(self,   )
+PixelDA.build_generator(self,   )
+PixelDA.sample_images(self, epoch,   )
+PixelDA.train(self, epochs,  batch_size=128, sample_interval=50,  )
+
+---------------functions---------------
+
+
+mlmodels\model_keras\raw\keras_gan\pixelda\test.py
+----------------methods----------------
+
+---------------functions---------------
+
+
+mlmodels\model_keras\raw\keras_gan\sgan\sgan.py
+----------------methods----------------
+SGAN.__init__(self,   )
+SGAN.build_discriminator(self,   )
+SGAN.build_generator(self,   )
+SGAN.train(self, epochs,  batch_size=128, sample_interval=50,  )
+
+---------------functions---------------
+
+
+mlmodels\model_keras\raw\keras_gan\srgan\data_loader.py
+----------------methods----------------
+DataLoader.__init__(self, dataset_name,  img_res=(128, 128),  )
+DataLoader.imread(self, path,   )
+DataLoader.load_data(self,  batch_size=1, is_testing=False,  )
+
+---------------functions---------------
+
+
+mlmodels\model_keras\raw\keras_gan\srgan\srgan.py
+----------------methods----------------
+SRGAN.__init__(self,   )
+SRGAN.build_discriminator(self,   )
+SRGAN.build_generator(self,   )
+SRGAN.build_vgg(self,   )
+SRGAN.sample_images(self, epoch,   )
+SRGAN.train(self, epochs,  batch_size=1, sample_interval=50,  )
+
+---------------functions---------------
+
+
+mlmodels\model_keras\raw\keras_gan\wgan\wgan.py
+----------------methods----------------
+WGAN.__init__(self,   )
+WGAN.build_critic(self,   )
+WGAN.build_generator(self,   )
+WGAN.sample_images(self, epoch,   )
+WGAN.train(self, epochs,  batch_size=128, sample_interval=50,  )
+WGAN.wasserstein_loss(self, y_true, y_pred,   )
+
+---------------functions---------------
+
+
+mlmodels\model_keras\raw\keras_gan\wgan_gp\wgan_gp.py
+----------------methods----------------
+RandomWeightedAverage._merge_function(self, inputs,   )
+WGANGP.__init__(self,   )
+WGANGP.build_critic(self,   )
+WGANGP.build_generator(self,   )
+WGANGP.gradient_penalty_loss(self, y_true, y_pred, averaged_samples,   )
+WGANGP.sample_images(self, epoch,   )
+WGANGP.train(self, epochs, batch_size,  sample_interval=50,  )
+WGANGP.wasserstein_loss(self, y_true, y_pred,   )
+
+---------------functions---------------
+
+
+mlmodels\model_keras\raw\nbeats_keras\model.py
+----------------methods----------------
+NBeatsNet.__getattr__(self, name,   )
+NBeatsNet.__init__(self,  input_dim=1, exo_dim=0, backcast_length=10, forecast_length=2, stack_types=(TREND_BLOCK, SEASONALITY_BLOCK), nb_blocks_per_stack=3, thetas_dim=(4, 8), share_weights_in_stack=False, hidden_layer_units=256, nb_harmonics=None,  )
+NBeatsNet._r(self, layer_with_weights, stack_id,   )
+NBeatsNet.compile_model(self, loss, learning_rate,   )
+NBeatsNet.create_block(self, x, e, stack_id, block_id, stack_type, nb_poly,   )
+NBeatsNet.has_exog(self,   )
+NBeatsNet.load(filepath,  custom_objects=None, compile=True,  )
+
+---------------functions---------------
+linear_space(backcast_length, forecast_length,  fwd_looking=True,  )
+seasonality_model(thetas, backcast_length, forecast_length, is_forecast,   )
+trend_model(thetas, backcast_length, forecast_length, is_forecast,   )
+
+
+mlmodels\model_keras\raw\nbeats_keras\__init__.py
 ----------------methods----------------
 
 ---------------functions---------------
@@ -2234,8 +2636,44 @@ Model.forward(self, x,   )
 ---------------functions---------------
 
 
-mlmodels\model_tch\03_nbeats.py
+mlmodels\model_tch\Autokeras.py
 ----------------methods----------------
+Model.__init__(self,  model_pars=None, data_pars=None, compute_pars=None, out_pars=None,  )
+
+---------------functions---------------
+fit(model,  data_pars=None, compute_pars=None, out_pars=None,  **kwargs)
+fit_metrics(model,  data_pars=None, compute_pars=None, out_pars=None,  )
+get_config_file(  )
+get_dataset( data_pars=None,  )
+get_dataset_imbd(data_pars,   )
+get_params( param_pars=None,  **kw)
+load(load_pars,   )
+predict(model,  session=None, data_pars=None, compute_pars=None, out_pars=None,  )
+save(model,  session=None, save_pars=None,  )
+test( data_path="dataset/", pars_choice="json", config_mode="test",  )
+
+
+mlmodels\model_tch\matchzoo_models.py
+----------------methods----------------
+Model.__init__(self,  model_pars=None, data_pars=None, compute_pars=None, out_pars=None,  )
+
+---------------functions---------------
+fit(model,  data_pars=None, compute_pars=None, out_pars=None,  **kwargs)
+fit_metrics(model,  data_pars=None, compute_pars=None, out_pars=None,  )
+get_config_file(  )
+get_dataset( data_pars=None,  **kw)
+get_dataset_wikiqa(data_pars, model,   )
+get_params( param_pars=None,  **kw)
+load(load_pars,   )
+predict(model,  session=None, data_pars=None, compute_pars=None, out_pars=None,  )
+save(model,  session=None, save_pars=None,  )
+test( data_path="dataset/", pars_choice="json", config_mode="test",  )
+
+
+mlmodels\model_tch\nbeats.py
+----------------methods----------------
+Model.__init__(self,  model_pars=None, data_pars=None, compute_pars=None,  )
+Model.split(arr, size,   )
 
 ---------------functions---------------
 data_generator(x_full, y_full, bs,   )
@@ -2251,7 +2689,7 @@ plot_predict(x_test, y_test, p, data_pars, compute_pars, out_pars,   )
 predict(model,  data_pars=None, compute_pars=None, out_pars=None,  **kw)
 save(model, session, save_pars,   )
 save_checkpoint(model, optimiser, grad_step,  CHECKPOINT_NAME="mycheckpoint",  )
-test( data_path="dataset/milk.csv",  )
+test( choice="json", data_path="nbeats.json", config_mode="test",  )
 
 
 mlmodels\model_tch\pplm.py
@@ -2266,10 +2704,26 @@ path_setup( out_folder="", sublevel=0, data_path="dataset/",  )
 predict(model,  sess=None, data_pars=None, compute_pars=None, out_pars=None,  **kw)
 
 
+mlmodels\model_tch\pytorch_vae.py
+----------------methods----------------
+Model.__init__(self,  model_pars=None, data_pars=None, compute_pars=None, out_pars=None,  )
+
+---------------functions---------------
+fit(model,  data_pars=None, compute_pars=None, out_pars=None,  **kwargs)
+fit_metrics(model,  data_pars=None, compute_pars=None, out_pars=None,  )
+get_dataset( data_pars=None,  **kw)
+get_params( param_pars=None,  **kw)
+load(load_pars,   )
+predict(model,  session=None, data_pars=None, compute_pars=None, out_pars=None, imax=1, return_ytrue=1,  )
+save(model,  session=None, save_pars=None,  )
+test( data_path="dataset/", pars_choice="json", config_mode="test",  )
+
+
 mlmodels\model_tch\textcnn.py
 ----------------methods----------------
 Model.__init__(self,  model_pars=None, data_pars=None, compute_pars=None,  )
 TextCNN.__init__(self,  model_pars=None, data_pars=None, compute_pars=None,  **kwargs)
+TextCNN.forward(self, x,   )
 TextCNN.rebuild_embed(self, vocab_built,   )
 TextCNN.tokenizer(text,   )
 
@@ -2281,7 +2735,7 @@ clean_str(string,   )
 create_data_iterator(tr_batch_size, val_batch_size, tabular_train, tabular_valid, d,   )
 create_tabular_dataset(path_train, path_valid,  lang='en', pretrained_emb='glove.6B.300d',  )
 fit(model,  sess=None, data_pars=None, compute_pars=None, out_pars=None,  **kwargs)
-fit_metrics(model,  session=None, data_pars=None, out_pars=None,  **kwargs)
+fit_metrics(model,  session=None, data_pars=None, compute_pars=None, out_pars=None,  **kwargs)
 get_config_file(  )
 get_data_file(  )
 get_dataset( data_pars=None, out_pars=None,  **kwargs)
@@ -2290,6 +2744,29 @@ load( load_pars=None,  )
 predict(model,  session=None, data_pars=None, compute_pars=None, out_pars=None,  )
 save(model,  session=None, save_pars=None,  )
 split_train_valid(path_data, path_train, path_valid,  frac=0.7,  )
+test( data_path="dataset/", pars_choice="json", config_mode="test",  )
+
+
+mlmodels\model_tch\textcnn_dataloader.py
+----------------methods----------------
+Model.__init__(self,  model_pars=None, data_pars=None, compute_pars=None,  )
+TextCNN.__init__(self,  model_pars=None, data_pars=None, compute_pars=None,  **kwargs)
+TextCNN.forward(self, x,   )
+TextCNN.rebuild_embed(self, vocab_built,   )
+
+---------------functions---------------
+_get_device(  )
+_train(m, device, train_itr, optimizer, epoch, max_epoch,   )
+_valid(m, device, test_itr,   )
+fit(model,  data_pars=None, compute_pars=None, out_pars=None,  **kwargs)
+fit_metrics(model,  data_pars=None, compute_pars=None, out_pars=None,  **kwargs)
+get_config_file(  )
+get_data_file(  )
+get_dataset( data_pars=None, out_pars=None, return_preprocessor_function=False,  **kwargs)
+get_params( param_pars=None,  **kw)
+load( load_pars=None,  )
+predict(model,  session=None, data_pars=None, compute_pars=None, out_pars=None,  )
+save(model,  session=None, save_pars=None,  )
 test( data_path="dataset/", pars_choice="json", config_mode="test",  )
 
 
@@ -2308,9 +2785,10 @@ get_dataset( data_pars=None,  **kw)
 get_dataset_mnist_torch(data_pars,   )
 get_params( param_pars=None,  **kw)
 load(load_pars,   )
-predict(model,  session=None, data_pars=None, compute_pars=None, out_pars=None,  )
+predict(model,  session=None, data_pars=None, compute_pars=None, out_pars=None, imax=1, return_ytrue=1,  )
 save(model,  session=None, save_pars=None,  )
 test( data_path="dataset/", pars_choice="json", config_mode="test",  )
+test2( data_path="dataset/", pars_choice="json", config_mode="test",  )
 
 
 mlmodels\model_tch\transformer_classifier.py
@@ -2377,6 +2855,36 @@ mlmodels\model_tch\__init__.py
 ----------------methods----------------
 
 ---------------functions---------------
+
+
+mlmodels\model_tch\model_chatbot\__init__.py
+----------------methods----------------
+
+---------------functions---------------
+
+
+mlmodels\model_tch\model_chatbot\diag_gpt\Chatbot_run.py
+----------------methods----------------
+
+---------------functions---------------
+generate(  )
+get_bot_response(  )
+home(  )
+recalc( p=None,  )
+reinput(user_msg,   )
+top_p_filtering(logits,  top_p=0.9, filter_value=-float('Inf'),  )
+
+
+mlmodels\model_tch\model_chatbot\diag_gpt\myChatbot.py
+----------------methods----------------
+
+---------------functions---------------
+generate(  )
+get_bot_response(  )
+home(  )
+recalc( p=None,  )
+reinput(user_msg,   )
+top_p_filtering(logits,  top_p=0.9, filter_value=-float('Inf'),  )
 
 
 mlmodels\model_tch\raw\01_cnn_classifier.py
@@ -3086,6 +3594,1116 @@ mlmodels\model_tch\raw\pplm\pplm_transformer\__init__.py
 ----------------methods----------------
 
 ---------------functions---------------
+
+
+mlmodels\model_tch\raw\pytorch_gan\models\aae\aae.py
+----------------methods----------------
+Decoder.__init__(self,   )
+Decoder.forward(self, z,   )
+Discriminator.__init__(self,   )
+Discriminator.forward(self, z,   )
+Encoder.__init__(self,   )
+Encoder.forward(self, img,   )
+
+---------------functions---------------
+reparameterization(mu, logvar,   )
+sample_image(n_row, batches_done,   )
+
+
+mlmodels\model_tch\raw\pytorch_gan\models\acgan\acgan.py
+----------------methods----------------
+Discriminator.__init__(self,   )
+Discriminator.forward(self, img,   )
+Generator.__init__(self,   )
+Generator.forward(self, noise, labels,   )
+
+---------------functions---------------
+sample_image(n_row, batches_done,   )
+weights_init_normal(m,   )
+
+
+mlmodels\model_tch\raw\pytorch_gan\models\began\began.py
+----------------methods----------------
+Discriminator.__init__(self,   )
+Discriminator.forward(self, img,   )
+Generator.__init__(self,   )
+Generator.forward(self, noise,   )
+
+---------------functions---------------
+weights_init_normal(m,   )
+
+
+mlmodels\model_tch\raw\pytorch_gan\models\bgan\bgan.py
+----------------methods----------------
+Discriminator.__init__(self,   )
+Discriminator.forward(self, img,   )
+Generator.__init__(self,   )
+Generator.forward(self, z,   )
+
+---------------functions---------------
+boundary_seeking_loss(y_pred, y_true,   )
+
+
+mlmodels\model_tch\raw\pytorch_gan\models\bicyclegan\bicyclegan.py
+----------------methods----------------
+
+---------------functions---------------
+reparameterization(mu, logvar,   )
+sample_images(batches_done,   )
+
+
+mlmodels\model_tch\raw\pytorch_gan\models\bicyclegan\datasets.py
+----------------methods----------------
+ImageDataset.__getitem__(self, index,   )
+ImageDataset.__init__(self, root, input_shape,  mode="train",  )
+ImageDataset.__len__(self,   )
+
+---------------functions---------------
+
+
+mlmodels\model_tch\raw\pytorch_gan\models\bicyclegan\models.py
+----------------methods----------------
+Encoder.__init__(self, latent_dim, input_shape,   )
+Encoder.forward(self, img,   )
+Generator.__init__(self, latent_dim, img_shape,   )
+Generator.forward(self, x, z,   )
+MultiDiscriminator.__init__(self, input_shape,   )
+MultiDiscriminator.compute_loss(self, x, gt,   )
+MultiDiscriminator.forward(self, x,   )
+UNetDown.__init__(self, in_size, out_size,  normalize=True, dropout=0.0,  )
+UNetDown.forward(self, x,   )
+UNetUp.__init__(self, in_size, out_size,   )
+UNetUp.forward(self, x, skip_input,   )
+
+---------------functions---------------
+weights_init_normal(m,   )
+
+
+mlmodels\model_tch\raw\pytorch_gan\models\ccgan\ccgan.py
+----------------methods----------------
+
+---------------functions---------------
+apply_random_mask(imgs,   )
+save_sample(saved_samples,   )
+
+
+mlmodels\model_tch\raw\pytorch_gan\models\ccgan\datasets.py
+----------------methods----------------
+ImageDataset.__getitem__(self, index,   )
+ImageDataset.__init__(self, root,  transforms_x=None, transforms_lr=None, mode='train',  )
+ImageDataset.__len__(self,   )
+
+---------------functions---------------
+
+
+mlmodels\model_tch\raw\pytorch_gan\models\ccgan\models.py
+----------------methods----------------
+Discriminator.__init__(self, input_shape,   )
+Discriminator.forward(self, img,   )
+Generator.__init__(self, input_shape,   )
+Generator.forward(self, x, x_lr,   )
+UNetDown.__init__(self, in_size, out_size,  normalize=True, dropout=0.0,  )
+UNetDown.forward(self, x,   )
+UNetUp.__init__(self, in_size, out_size,  dropout=0.0,  )
+UNetUp.forward(self, x, skip_input,   )
+
+---------------functions---------------
+
+
+mlmodels\model_tch\raw\pytorch_gan\models\cgan\cgan.py
+----------------methods----------------
+Discriminator.__init__(self,   )
+Discriminator.forward(self, img, labels,   )
+Generator.__init__(self,   )
+Generator.forward(self, noise, labels,   )
+
+---------------functions---------------
+sample_image(n_row, batches_done,   )
+
+
+mlmodels\model_tch\raw\pytorch_gan\models\cluster_gan\clustergan.py
+----------------methods----------------
+Discriminator_CNN.__init__(self, latent_dim, n_c, x_shape,  verbose=False,  )
+Discriminator_CNN.forward(self, zn, zc,   )
+Encoder_CNN.__init__(self,  shape=[],  )
+Encoder_CNN.extra_repr(self,   )
+Encoder_CNN.forward(self, x,   )
+
+---------------functions---------------
+calc_gradient_penalty(netD, real_data, generated_data,   )
+initialize_weights(net,   )
+sample_z( shape=64, latent_dim=10, n_c=10, fix_class=-1, req_grad=False,  )
+softmax(x,   )
+
+
+mlmodels\model_tch\raw\pytorch_gan\models\cogan\cogan.py
+----------------methods----------------
+CoupledDiscriminators.__init__(self,   )
+CoupledDiscriminators.forward(self, img1, img2,   )
+CoupledGenerators.__init__(self,   )
+CoupledGenerators.forward(self, noise,   )
+
+---------------functions---------------
+weights_init_normal(m,   )
+
+
+mlmodels\model_tch\raw\pytorch_gan\models\cogan\mnistm.py
+----------------methods----------------
+MNISTM.__getitem__(self, index,   )
+MNISTM.__init__(self, root,  mnist_root="data", train=True, transform=None, target_transform=None, download=False,  )
+MNISTM.__len__(self,   )
+MNISTM._check_exists(self,   )
+MNISTM.download(self,   )
+
+---------------functions---------------
+
+
+mlmodels\model_tch\raw\pytorch_gan\models\context_encoder\context_encoder.py
+----------------methods----------------
+
+---------------functions---------------
+save_sample(batches_done,   )
+weights_init_normal(m,   )
+
+
+mlmodels\model_tch\raw\pytorch_gan\models\context_encoder\datasets.py
+----------------methods----------------
+ImageDataset.__getitem__(self, index,   )
+ImageDataset.__init__(self, root,  transforms_=None, img_size=128, mask_size=64, mode="train",  )
+ImageDataset.__len__(self,   )
+ImageDataset.apply_center_mask(self, img,   )
+ImageDataset.apply_random_mask(self, img,   )
+
+---------------functions---------------
+
+
+mlmodels\model_tch\raw\pytorch_gan\models\context_encoder\models.py
+----------------methods----------------
+Discriminator.__init__(self,  channels=3,  )
+Discriminator.forward(self, img,   )
+Generator.__init__(self,  channels=3,  )
+Generator.forward(self, x,   )
+
+---------------functions---------------
+
+
+mlmodels\model_tch\raw\pytorch_gan\models\cyclegan\cyclegan.py
+----------------methods----------------
+
+---------------functions---------------
+sample_images(batches_done,   )
+
+
+mlmodels\model_tch\raw\pytorch_gan\models\cyclegan\datasets.py
+----------------methods----------------
+ImageDataset.__getitem__(self, index,   )
+ImageDataset.__init__(self, root,  transforms_=None, unaligned=False, mode="train",  )
+ImageDataset.__len__(self,   )
+
+---------------functions---------------
+to_rgb(image,   )
+
+
+mlmodels\model_tch\raw\pytorch_gan\models\cyclegan\models.py
+----------------methods----------------
+Discriminator.__init__(self, input_shape,   )
+Discriminator.forward(self, img,   )
+GeneratorResNet.__init__(self, input_shape, num_residual_blocks,   )
+GeneratorResNet.forward(self, x,   )
+ResidualBlock.__init__(self, in_features,   )
+ResidualBlock.forward(self, x,   )
+
+---------------functions---------------
+weights_init_normal(m,   )
+
+
+mlmodels\model_tch\raw\pytorch_gan\models\cyclegan\utils.py
+----------------methods----------------
+LambdaLR.__init__(self, n_epochs, offset, decay_start_epoch,   )
+LambdaLR.step(self, epoch,   )
+ReplayBuffer.__init__(self,  max_size=50,  )
+ReplayBuffer.push_and_pop(self, data,   )
+
+---------------functions---------------
+
+
+mlmodels\model_tch\raw\pytorch_gan\models\dcgan\dcgan.py
+----------------methods----------------
+Discriminator.__init__(self,   )
+Discriminator.forward(self, img,   )
+Generator.__init__(self,   )
+Generator.forward(self, z,   )
+
+---------------functions---------------
+weights_init_normal(m,   )
+
+
+mlmodels\model_tch\raw\pytorch_gan\models\discogan\datasets.py
+----------------methods----------------
+ImageDataset.__getitem__(self, index,   )
+ImageDataset.__init__(self, root,  transforms_=None, mode='train',  )
+ImageDataset.__len__(self,   )
+
+---------------functions---------------
+
+
+mlmodels\model_tch\raw\pytorch_gan\models\discogan\discogan.py
+----------------methods----------------
+
+---------------functions---------------
+sample_images(batches_done,   )
+
+
+mlmodels\model_tch\raw\pytorch_gan\models\discogan\models.py
+----------------methods----------------
+Discriminator.__init__(self, input_shape,   )
+Discriminator.forward(self, img,   )
+GeneratorUNet.__init__(self, input_shape,   )
+GeneratorUNet.forward(self, x,   )
+UNetDown.__init__(self, in_size, out_size,  normalize=True, dropout=0.0,  )
+UNetDown.forward(self, x,   )
+UNetUp.__init__(self, in_size, out_size,  dropout=0.0,  )
+UNetUp.forward(self, x, skip_input,   )
+
+---------------functions---------------
+weights_init_normal(m,   )
+
+
+mlmodels\model_tch\raw\pytorch_gan\models\dragan\dragan.py
+----------------methods----------------
+Discriminator.__init__(self,   )
+Discriminator.forward(self, img,   )
+Generator.__init__(self,   )
+Generator.forward(self, noise,   )
+
+---------------functions---------------
+compute_gradient_penalty(D, X,   )
+weights_init_normal(m,   )
+
+
+mlmodels\model_tch\raw\pytorch_gan\models\dualgan\datasets.py
+----------------methods----------------
+ImageDataset.__getitem__(self, index,   )
+ImageDataset.__init__(self, root,  transforms_=None, mode="train",  )
+ImageDataset.__len__(self,   )
+
+---------------functions---------------
+
+
+mlmodels\model_tch\raw\pytorch_gan\models\dualgan\dualgan.py
+----------------methods----------------
+
+---------------functions---------------
+compute_gradient_penalty(D, real_samples, fake_samples,   )
+sample_images(batches_done,   )
+
+
+mlmodels\model_tch\raw\pytorch_gan\models\dualgan\models.py
+----------------methods----------------
+Discriminator.__init__(self,  in_channels=3,  )
+Discriminator.forward(self, img,   )
+Generator.__init__(self,  channels=3,  )
+Generator.forward(self, x,   )
+UNetDown.__init__(self, in_size, out_size,  normalize=True, dropout=0.0,  )
+UNetDown.forward(self, x,   )
+UNetUp.__init__(self, in_size, out_size,  dropout=0.0,  )
+UNetUp.forward(self, x, skip_input,   )
+
+---------------functions---------------
+weights_init_normal(m,   )
+
+
+mlmodels\model_tch\raw\pytorch_gan\models\ebgan\ebgan.py
+----------------methods----------------
+Discriminator.__init__(self,   )
+Discriminator.forward(self, img,   )
+Generator.__init__(self,   )
+Generator.forward(self, noise,   )
+
+---------------functions---------------
+pullaway_loss(embeddings,   )
+weights_init_normal(m,   )
+
+
+mlmodels\model_tch\raw\pytorch_gan\models\esrgan\datasets.py
+----------------methods----------------
+ImageDataset.__getitem__(self, index,   )
+ImageDataset.__init__(self, root, hr_shape,   )
+ImageDataset.__len__(self,   )
+
+---------------functions---------------
+denormalize(tensors,   )
+
+
+mlmodels\model_tch\raw\pytorch_gan\models\esrgan\esrgan.py
+----------------methods----------------
+
+---------------functions---------------
+
+
+mlmodels\model_tch\raw\pytorch_gan\models\esrgan\models.py
+----------------methods----------------
+DenseResidualBlock.__init__(self, filters,  res_scale=0.2,  )
+DenseResidualBlock.forward(self, x,   )
+Discriminator.__init__(self, input_shape,   )
+Discriminator.forward(self, img,   )
+FeatureExtractor.__init__(self,   )
+FeatureExtractor.forward(self, img,   )
+GeneratorRRDB.__init__(self, channels,  filters=64, num_res_blocks=16, num_upsample=2,  )
+GeneratorRRDB.forward(self, x,   )
+ResidualInResidualDenseBlock.__init__(self, filters,  res_scale=0.2,  )
+ResidualInResidualDenseBlock.forward(self, x,   )
+
+---------------functions---------------
+
+
+mlmodels\model_tch\raw\pytorch_gan\models\esrgan\test_on_image.py
+----------------methods----------------
+
+---------------functions---------------
+
+
+mlmodels\model_tch\raw\pytorch_gan\models\gan\gan.py
+----------------methods----------------
+Discriminator.__init__(self,   )
+Discriminator.forward(self, img,   )
+Generator.__init__(self,   )
+Generator.forward(self, z,   )
+
+---------------functions---------------
+
+
+mlmodels\model_tch\raw\pytorch_gan\models\infogan\infogan.py
+----------------methods----------------
+Discriminator.__init__(self,   )
+Discriminator.forward(self, img,   )
+Generator.__init__(self,   )
+Generator.forward(self, noise, labels, code,   )
+
+---------------functions---------------
+sample_image(n_row, batches_done,   )
+to_categorical(y, num_columns,   )
+weights_init_normal(m,   )
+
+
+mlmodels\model_tch\raw\pytorch_gan\models\lsgan\lsgan.py
+----------------methods----------------
+Discriminator.__init__(self,   )
+Discriminator.forward(self, img,   )
+Generator.__init__(self,   )
+Generator.forward(self, z,   )
+
+---------------functions---------------
+weights_init_normal(m,   )
+
+
+mlmodels\model_tch\raw\pytorch_gan\models\munit\datasets.py
+----------------methods----------------
+ImageDataset.__getitem__(self, index,   )
+ImageDataset.__init__(self, root,  transforms_=None, mode="train",  )
+ImageDataset.__len__(self,   )
+
+---------------functions---------------
+
+
+mlmodels\model_tch\raw\pytorch_gan\models\munit\models.py
+----------------methods----------------
+AdaptiveInstanceNorm2d.__init__(self, num_features,  eps=1e-5, momentum=0.1,  )
+AdaptiveInstanceNorm2d.__repr__(self,   )
+AdaptiveInstanceNorm2d.forward(self, x,   )
+ContentEncoder.__init__(self,  in_channels=3, dim=64, n_residual=3, n_downsample=2,  )
+ContentEncoder.forward(self, x,   )
+Decoder.__init__(self,  out_channels=3, dim=64, n_residual=3, n_upsample=2, style_dim=8,  )
+Decoder.assign_adain_params(self, adain_params,   )
+Decoder.forward(self, content_code, style_code,   )
+Decoder.get_num_adain_params(self,   )
+Encoder.__init__(self,  in_channels=3, dim=64, n_residual=3, n_downsample=2, style_dim=8,  )
+Encoder.forward(self, x,   )
+LambdaLR.__init__(self, n_epochs, offset, decay_start_epoch,   )
+LambdaLR.step(self, epoch,   )
+LayerNorm.__init__(self, num_features,  eps=1e-5, affine=True,  )
+LayerNorm.forward(self, x,   )
+MLP.__init__(self, input_dim, output_dim,  dim=256, n_blk=3, activ="relu",  )
+MLP.forward(self, x,   )
+MultiDiscriminator.__init__(self,  in_channels=3,  )
+MultiDiscriminator.compute_loss(self, x, gt,   )
+MultiDiscriminator.forward(self, x,   )
+ResidualBlock.__init__(self, features,  norm="in",  )
+ResidualBlock.forward(self, x,   )
+StyleEncoder.__init__(self,  in_channels=3, dim=64, n_downsample=2, style_dim=8,  )
+StyleEncoder.forward(self, x,   )
+
+---------------functions---------------
+weights_init_normal(m,   )
+
+
+mlmodels\model_tch\raw\pytorch_gan\models\munit\munit.py
+----------------methods----------------
+
+---------------functions---------------
+sample_images(batches_done,   )
+
+
+mlmodels\model_tch\raw\pytorch_gan\models\pix2pix\datasets.py
+----------------methods----------------
+ImageDataset.__getitem__(self, index,   )
+ImageDataset.__init__(self, root,  transforms_=None, mode="train",  )
+ImageDataset.__len__(self,   )
+
+---------------functions---------------
+
+
+mlmodels\model_tch\raw\pytorch_gan\models\pix2pix\models.py
+----------------methods----------------
+Discriminator.__init__(self,  in_channels=3,  )
+Discriminator.forward(self, img_A, img_B,   )
+GeneratorUNet.__init__(self,  in_channels=3, out_channels=3,  )
+GeneratorUNet.forward(self, x,   )
+UNetDown.__init__(self, in_size, out_size,  normalize=True, dropout=0.0,  )
+UNetDown.forward(self, x,   )
+UNetUp.__init__(self, in_size, out_size,  dropout=0.0,  )
+UNetUp.forward(self, x, skip_input,   )
+
+---------------functions---------------
+weights_init_normal(m,   )
+
+
+mlmodels\model_tch\raw\pytorch_gan\models\pix2pix\pix2pix.py
+----------------methods----------------
+
+---------------functions---------------
+sample_images(batches_done,   )
+
+
+mlmodels\model_tch\raw\pytorch_gan\models\pixelda\mnistm.py
+----------------methods----------------
+MNISTM.__getitem__(self, index,   )
+MNISTM.__init__(self, root,  mnist_root="data", train=True, transform=None, target_transform=None, download=False,  )
+MNISTM.__len__(self,   )
+MNISTM._check_exists(self,   )
+MNISTM.download(self,   )
+
+---------------functions---------------
+
+
+mlmodels\model_tch\raw\pytorch_gan\models\pixelda\pixelda.py
+----------------methods----------------
+Classifier.__init__(self,   )
+Classifier.forward(self, img,   )
+Discriminator.__init__(self,   )
+Discriminator.forward(self, img,   )
+Generator.__init__(self,   )
+Generator.forward(self, img, z,   )
+ResidualBlock.__init__(self,  in_features=64, out_features=64,  )
+ResidualBlock.forward(self, x,   )
+
+---------------functions---------------
+weights_init_normal(m,   )
+
+
+mlmodels\model_tch\raw\pytorch_gan\models\relativistic_gan\relativistic_gan.py
+----------------methods----------------
+Discriminator.__init__(self,   )
+Discriminator.forward(self, img,   )
+Generator.__init__(self,   )
+Generator.forward(self, z,   )
+
+---------------functions---------------
+
+
+mlmodels\model_tch\raw\pytorch_gan\models\sgan\sgan.py
+----------------methods----------------
+Discriminator.__init__(self,   )
+Discriminator.forward(self, img,   )
+Generator.__init__(self,   )
+Generator.forward(self, noise,   )
+
+---------------functions---------------
+weights_init_normal(m,   )
+
+
+mlmodels\model_tch\raw\pytorch_gan\models\softmax_gan\softmax_gan.py
+----------------methods----------------
+Discriminator.__init__(self,   )
+Discriminator.forward(self, img,   )
+Generator.__init__(self,   )
+Generator.forward(self, z,   )
+
+---------------functions---------------
+log(x,   )
+
+
+mlmodels\model_tch\raw\pytorch_gan\models\srgan\datasets.py
+----------------methods----------------
+ImageDataset.__getitem__(self, index,   )
+ImageDataset.__init__(self, root, hr_shape,   )
+ImageDataset.__len__(self,   )
+
+---------------functions---------------
+
+
+mlmodels\model_tch\raw\pytorch_gan\models\srgan\models.py
+----------------methods----------------
+Discriminator.__init__(self, input_shape,   )
+Discriminator.forward(self, img,   )
+FeatureExtractor.__init__(self,   )
+FeatureExtractor.forward(self, img,   )
+GeneratorResNet.__init__(self,  in_channels=3, out_channels=3, n_residual_blocks=16,  )
+GeneratorResNet.forward(self, x,   )
+ResidualBlock.__init__(self, in_features,   )
+ResidualBlock.forward(self, x,   )
+
+---------------functions---------------
+
+
+mlmodels\model_tch\raw\pytorch_gan\models\srgan\srgan.py
+----------------methods----------------
+
+---------------functions---------------
+
+
+mlmodels\model_tch\raw\pytorch_gan\models\stargan\datasets.py
+----------------methods----------------
+CelebADataset.__getitem__(self, index,   )
+CelebADataset.__init__(self, root,  transforms_=None, mode="train", attributes=None,  )
+CelebADataset.__len__(self,   )
+CelebADataset.get_annotations(self,   )
+
+---------------functions---------------
+
+
+mlmodels\model_tch\raw\pytorch_gan\models\stargan\models.py
+----------------methods----------------
+Discriminator.__init__(self,  img_shape=(3, 128, 128), c_dim=5, n_strided=6,  )
+Discriminator.forward(self, img,   )
+GeneratorResNet.__init__(self,  img_shape=(3, 128, 128), res_blocks=9, c_dim=5,  )
+GeneratorResNet.forward(self, x, c,   )
+ResidualBlock.__init__(self, in_features,   )
+ResidualBlock.forward(self, x,   )
+
+---------------functions---------------
+weights_init_normal(m,   )
+
+
+mlmodels\model_tch\raw\pytorch_gan\models\stargan\stargan.py
+----------------methods----------------
+
+---------------functions---------------
+compute_gradient_penalty(D, real_samples, fake_samples,   )
+criterion_cls(logit, target,   )
+sample_images(batches_done,   )
+
+
+mlmodels\model_tch\raw\pytorch_gan\models\unit\datasets.py
+----------------methods----------------
+ImageDataset.__getitem__(self, index,   )
+ImageDataset.__init__(self, root,  transforms_=None, unaligned=False, mode="train",  )
+ImageDataset.__len__(self,   )
+
+---------------functions---------------
+
+
+mlmodels\model_tch\raw\pytorch_gan\models\unit\models.py
+----------------methods----------------
+Discriminator.__init__(self, input_shape,   )
+Discriminator.forward(self, img,   )
+Encoder.__init__(self,  in_channels=3, dim=64, n_downsample=2, shared_block=None,  )
+Encoder.forward(self, x,   )
+Encoder.reparameterization(self, mu,   )
+Generator.__init__(self,  out_channels=3, dim=64, n_upsample=2, shared_block=None,  )
+Generator.forward(self, x,   )
+LambdaLR.__init__(self, n_epochs, offset, decay_start_epoch,   )
+LambdaLR.step(self, epoch,   )
+ResidualBlock.__init__(self, features,   )
+ResidualBlock.forward(self, x,   )
+
+---------------functions---------------
+weights_init_normal(m,   )
+
+
+mlmodels\model_tch\raw\pytorch_gan\models\unit\unit.py
+----------------methods----------------
+
+---------------functions---------------
+compute_kl(mu,   )
+sample_images(batches_done,   )
+
+
+mlmodels\model_tch\raw\pytorch_gan\models\wgan\wgan.py
+----------------methods----------------
+Discriminator.__init__(self,   )
+Discriminator.forward(self, img,   )
+Generator.__init__(self,   )
+Generator.forward(self, z,   )
+
+---------------functions---------------
+
+
+mlmodels\model_tch\raw\pytorch_gan\models\wgan_div\wgan_div.py
+----------------methods----------------
+Discriminator.__init__(self,   )
+Discriminator.forward(self, img,   )
+Generator.__init__(self,   )
+Generator.forward(self, z,   )
+
+---------------functions---------------
+
+
+mlmodels\model_tch\raw\pytorch_gan\models\wgan_gp\wgan_gp.py
+----------------methods----------------
+Discriminator.__init__(self,   )
+Discriminator.forward(self, img,   )
+Generator.__init__(self,   )
+Generator.forward(self, z,   )
+
+---------------functions---------------
+compute_gradient_penalty(D, real_samples, fake_samples,   )
+
+
+mlmodels\model_tch\raw\pytorch_vae\experiment.py
+----------------methods----------------
+VAEXperiment.__init__(self, vae_model,   )
+VAEXperiment.configure_optimizers(self,   )
+VAEXperiment.data_transforms(self,   )
+VAEXperiment.sample_images(self,   )
+VAEXperiment.train_dataloader(self,   )
+VAEXperiment.val_dataloader(self,   )
+VAEXperiment.validation_end(self, outputs,   )
+VAEXperiment.validation_step(self, batch, batch_idx,  optimizer_idx=0,  )
+
+---------------functions---------------
+
+
+mlmodels\model_tch\raw\pytorch_vae\run.py
+----------------methods----------------
+
+---------------functions---------------
+
+
+mlmodels\model_tch\raw\pytorch_vae\utils.py
+----------------methods----------------
+
+---------------functions---------------
+data_loader(fn,   )
+
+
+mlmodels\model_tch\raw\pytorch_vae\models\base.py
+----------------methods----------------
+
+---------------functions---------------
+
+
+mlmodels\model_tch\raw\pytorch_vae\models\betatc_vae.py
+----------------methods----------------
+BetaTCVAE.__init__(self, in_channels,   )
+BetaTCVAE.encode(self, input,   )
+
+---------------functions---------------
+
+
+mlmodels\model_tch\raw\pytorch_vae\models\beta_vae.py
+----------------methods----------------
+BetaVAE.__init__(self, in_channels,   )
+
+---------------functions---------------
+
+
+mlmodels\model_tch\raw\pytorch_vae\models\cat_vae.py
+----------------methods----------------
+CategoricalVAE.__init__(self, in_channels,   )
+
+---------------functions---------------
+
+
+mlmodels\model_tch\raw\pytorch_vae\models\cvae.py
+----------------methods----------------
+ConditionalVAE.__init__(self, in_channels,   )
+
+---------------functions---------------
+
+
+mlmodels\model_tch\raw\pytorch_vae\models\dfcvae.py
+----------------methods----------------
+DFCVAE.__init__(self, in_channels,   )
+DFCVAE.encode(self, input,   )
+DFCVAE.loss_function(self,   *args, **kwargs)
+
+---------------functions---------------
+
+
+mlmodels\model_tch\raw\pytorch_vae\models\dip_vae.py
+----------------methods----------------
+DIPVAE.__init__(self, in_channels,   )
+
+---------------functions---------------
+
+
+mlmodels\model_tch\raw\pytorch_vae\models\fvae.py
+----------------methods----------------
+FactorVAE.__init__(self, in_channels,   )
+
+---------------functions---------------
+
+
+mlmodels\model_tch\raw\pytorch_vae\models\gamma_vae.py
+----------------methods----------------
+GammaVAE.I_function(self, a, b, c, d,   )
+GammaVAE.__init__(self, in_channels,   )
+GammaVAE.encode(self, input,   )
+GammaVAE.loss_function(self,   *args, **kwargs)
+GammaVAE.vae_gamma_kl_loss(self, a, b, c, d,   )
+GammaVAE.weight_init(self,   )
+
+---------------functions---------------
+init_(m,   )
+
+
+mlmodels\model_tch\raw\pytorch_vae\models\hvae.py
+----------------methods----------------
+HVAE.__init__(self, in_channels,   )
+
+---------------functions---------------
+
+
+mlmodels\model_tch\raw\pytorch_vae\models\info_vae.py
+----------------methods----------------
+InfoVAE.__init__(self, in_channels,   )
+
+---------------functions---------------
+
+
+mlmodels\model_tch\raw\pytorch_vae\models\iwae.py
+----------------methods----------------
+IWAE.__init__(self, in_channels,   )
+
+---------------functions---------------
+
+
+mlmodels\model_tch\raw\pytorch_vae\models\joint_vae.py
+----------------methods----------------
+JointVAE.__init__(self, in_channels,   )
+
+---------------functions---------------
+
+
+mlmodels\model_tch\raw\pytorch_vae\models\logcosh_vae.py
+----------------methods----------------
+LogCoshVAE.__init__(self, in_channels,   )
+
+---------------functions---------------
+
+
+mlmodels\model_tch\raw\pytorch_vae\models\lvae.py
+----------------methods----------------
+EncoderBlock.__init__(self, in_channels,   )
+LVAE.__init__(self, in_channels,   )
+LVAE.encode(self, input,   )
+LVAE.merge_gauss(self, mu_1,   )
+LadderBlock.__init__(self, in_channels,   )
+
+---------------functions---------------
+conv_out_shape(img_size,   )
+
+
+mlmodels\model_tch\raw\pytorch_vae\models\miwae.py
+----------------methods----------------
+MIWAE.__init__(self, in_channels,   )
+
+---------------functions---------------
+
+
+mlmodels\model_tch\raw\pytorch_vae\models\mssim_vae.py
+----------------methods----------------
+MSSIM.__init__(self, in_channels,   )
+MSSIM.ssim(self, img1,   )
+MSSIMVAE.__init__(self, in_channels,   )
+
+---------------functions---------------
+
+
+mlmodels\model_tch\raw\pytorch_vae\models\swae.py
+----------------methods----------------
+SWAE.__init__(self, in_channels,   )
+
+---------------functions---------------
+
+
+mlmodels\model_tch\raw\pytorch_vae\models\twostage_vae.py
+----------------methods----------------
+TwoStageVAE.__init__(self, in_channels,   )
+
+---------------functions---------------
+
+
+mlmodels\model_tch\raw\pytorch_vae\models\types_.py
+----------------methods----------------
+
+---------------functions---------------
+
+
+mlmodels\model_tch\raw\pytorch_vae\models\vampvae.py
+----------------methods----------------
+VampVAE.__init__(self, in_channels,   )
+
+---------------functions---------------
+
+
+mlmodels\model_tch\raw\pytorch_vae\models\vanilla_vae.py
+----------------methods----------------
+VanillaVAE.__init__(self, in_channels,   )
+
+---------------functions---------------
+
+
+mlmodels\model_tch\raw\pytorch_vae\models\vq_vae.py
+----------------methods----------------
+ResidualLayer.__init__(self, in_channels,   )
+VQVAE.__init__(self, in_channels,   )
+VectorQuantizer.__init__(self, num_embeddings,   )
+
+---------------functions---------------
+
+
+mlmodels\model_tch\raw\pytorch_vae\models\wae_mmd.py
+----------------methods----------------
+WAE_MMD.__init__(self, in_channels,   )
+
+---------------functions---------------
+
+
+mlmodels\model_tch\raw\pytorch_vae\models\__init__.py
+----------------methods----------------
+
+---------------functions---------------
+
+
+mlmodels\model_tch\raw\pytorch_vae\tests\bvae.py
+----------------methods----------------
+TestVAE.setUp(self,   )
+TestVAE.test_forward(self,   )
+TestVAE.test_loss(self,   )
+
+---------------functions---------------
+
+
+mlmodels\model_tch\raw\pytorch_vae\tests\test_betatcvae.py
+----------------methods----------------
+TestBetaTCVAE.setUp(self,   )
+TestBetaTCVAE.test_forward(self,   )
+TestBetaTCVAE.test_generate(self,   )
+TestBetaTCVAE.test_loss(self,   )
+TestBetaTCVAE.test_sample(self,   )
+
+---------------functions---------------
+
+
+mlmodels\model_tch\raw\pytorch_vae\tests\test_cat_vae.py
+----------------methods----------------
+TestVAE.setUp(self,   )
+TestVAE.test_forward(self,   )
+TestVAE.test_loss(self,   )
+TestVAE.test_sample(self,   )
+
+---------------functions---------------
+
+
+mlmodels\model_tch\raw\pytorch_vae\tests\test_dfc.py
+----------------methods----------------
+TestDFCVAE.setUp(self,   )
+TestDFCVAE.test_forward(self,   )
+TestDFCVAE.test_loss(self,   )
+TestDFCVAE.test_sample(self,   )
+
+---------------functions---------------
+
+
+mlmodels\model_tch\raw\pytorch_vae\tests\test_dipvae.py
+----------------methods----------------
+TestDIPVAE.setUp(self,   )
+TestDIPVAE.test_forward(self,   )
+TestDIPVAE.test_generate(self,   )
+TestDIPVAE.test_loss(self,   )
+TestDIPVAE.test_sample(self,   )
+
+---------------functions---------------
+
+
+mlmodels\model_tch\raw\pytorch_vae\tests\test_fvae.py
+----------------methods----------------
+TestFAE.setUp(self,   )
+TestFAE.test_forward(self,   )
+TestFAE.test_loss(self,   )
+TestFAE.test_optim(self,   )
+TestFAE.test_sample(self,   )
+
+---------------functions---------------
+
+
+mlmodels\model_tch\raw\pytorch_vae\tests\test_gvae.py
+----------------methods----------------
+TestGammaVAE.setUp(self,   )
+TestGammaVAE.test_forward(self,   )
+TestGammaVAE.test_loss(self,   )
+TestGammaVAE.test_sample(self,   )
+
+---------------functions---------------
+
+
+mlmodels\model_tch\raw\pytorch_vae\tests\test_hvae.py
+----------------methods----------------
+TestHVAE.setUp(self,   )
+TestHVAE.test_forward(self,   )
+TestHVAE.test_loss(self,   )
+
+---------------functions---------------
+
+
+mlmodels\model_tch\raw\pytorch_vae\tests\test_iwae.py
+----------------methods----------------
+TestIWAE.setUp(self,   )
+TestIWAE.test_forward(self,   )
+TestIWAE.test_loss(self,   )
+TestIWAE.test_sample(self,   )
+
+---------------functions---------------
+
+
+mlmodels\model_tch\raw\pytorch_vae\tests\test_joint_Vae.py
+----------------methods----------------
+TestVAE.setUp(self,   )
+TestVAE.test_forward(self,   )
+TestVAE.test_loss(self,   )
+TestVAE.test_sample(self,   )
+
+---------------functions---------------
+
+
+mlmodels\model_tch\raw\pytorch_vae\tests\test_logcosh.py
+----------------methods----------------
+TestVAE.setUp(self,   )
+TestVAE.test_forward(self,   )
+TestVAE.test_loss(self,   )
+
+---------------functions---------------
+
+
+mlmodels\model_tch\raw\pytorch_vae\tests\test_lvae.py
+----------------methods----------------
+TestLVAE.setUp(self,   )
+TestLVAE.test_forward(self,   )
+TestLVAE.test_loss(self,   )
+TestLVAE.test_sample(self,   )
+
+---------------functions---------------
+
+
+mlmodels\model_tch\raw\pytorch_vae\tests\test_miwae.py
+----------------methods----------------
+TestMIWAE.setUp(self,   )
+TestMIWAE.test_forward(self,   )
+TestMIWAE.test_generate(self,   )
+TestMIWAE.test_loss(self,   )
+TestMIWAE.test_sample(self,   )
+
+---------------functions---------------
+
+
+mlmodels\model_tch\raw\pytorch_vae\tests\test_mssimvae.py
+----------------methods----------------
+TestMSSIMVAE.setUp(self,   )
+TestMSSIMVAE.test_forward(self,   )
+TestMSSIMVAE.test_loss(self,   )
+TestMSSIMVAE.test_sample(self,   )
+
+---------------functions---------------
+
+
+mlmodels\model_tch\raw\pytorch_vae\tests\test_swae.py
+----------------methods----------------
+TestSWAE.setUp(self,   )
+TestSWAE.test_forward(self,   )
+TestSWAE.test_loss(self,   )
+
+---------------functions---------------
+
+
+mlmodels\model_tch\raw\pytorch_vae\tests\test_vae.py
+----------------methods----------------
+TestVAE.setUp(self,   )
+TestVAE.test_forward(self,   )
+TestVAE.test_loss(self,   )
+
+---------------functions---------------
+
+
+mlmodels\model_tch\raw\pytorch_vae\tests\test_vq_vae.py
+----------------methods----------------
+TestVQVAE.setUp(self,   )
+TestVQVAE.test_forward(self,   )
+TestVQVAE.test_generate(self,   )
+TestVQVAE.test_loss(self,   )
+TestVQVAE.test_sample(self,   )
+
+---------------functions---------------
+
+
+mlmodels\model_tch\raw\pytorch_vae\tests\test_wae.py
+----------------methods----------------
+TestWAE.setUp(self,   )
+TestWAE.test_forward(self,   )
+TestWAE.test_loss(self,   )
+
+---------------functions---------------
+
+
+mlmodels\model_tch\raw\pytorch_vae\tests\text_cvae.py
+----------------methods----------------
+TestCVAE.setUp(self,   )
+TestCVAE.test_loss(self,   )
+
+---------------functions---------------
+
+
+mlmodels\model_tch\raw\pytorch_vae\tests\text_vamp.py
+----------------methods----------------
+TestVVAE.setUp(self,   )
+TestVVAE.test_forward(self,   )
+TestVVAE.test_loss(self,   )
+
+---------------functions---------------
+
+
+mlmodels\model_tch\raw\textcnn\dataset.py
+----------------methods----------------
+
+---------------functions---------------
+clean_str(string,   )
+create_data_iterator(tr_batch_size, val_batch_size, tabular_train, tabular_valid, d,   )
+create_tabular_dataset(path_train, path_valid,  lang='en', pretrained_emb='glove.6B.300d',  )
+split_train_valid(path_data, path_train, path_valid,  frac=0.7,  )
+
+
+mlmodels\model_tch\raw\textcnn\main.py
+----------------methods----------------
+
+---------------functions---------------
+main(  )
+
+
+mlmodels\model_tch\raw\textcnn\model.py
+----------------methods----------------
+textCNN.__init__(self, vocab_built, dim_channel, kernel_wins, dropout_rate, num_class,   )
+textCNN.forward(self, x,   )
+
+---------------functions---------------
+
+
+mlmodels\model_tch\raw\textcnn\training.py
+----------------methods----------------
+
+---------------functions---------------
+train(m, device, train_itr, optimizer, epoch, max_epoch,   )
+valid(m, device, test_itr,   )
 
 
 mlmodels\model_tch\raw\vae\cli_generate_data.py
@@ -11069,6 +12687,29 @@ mlmodels\model_tf\rl\__init__.py
 ---------------functions---------------
 
 
+mlmodels\preprocess\keras_deepctr_tabular.py
+----------------methods----------------
+
+---------------functions---------------
+check_model(model, model_name, x, y,  check_model_io=True,  )
+gen_sequence(dim, max_len, sample_size,   )
+get_test_data( sample_size=1000, embedding_size=4, sparse_feature_num=1, dense_feature_num=1, sequence_feature=['sum', 'mean', 'max', 'weight'], classification=True, include_length=False, hash_flag=False, prefix='', use_group=False,  )
+has_arg(fn, name,  accept_all=False,  )
+layer_test(layer_cls,  kwargs={}, input_shape=None, input_dtype=None, input_data=None, expected_output=None, expected_output_dtype=None, fixed_batch_size=False, supports_masking=False,  )
+
+
+mlmodels\preprocess\torch_text_cnn.py
+----------------methods----------------
+
+---------------functions---------------
+clean_str(string,   )
+imdb_spacy_tokenizer(text,  lang="en",  )
+test_onehot_sentences(data, max_len,   )
+test_pandas_fillna(data,   **args)
+test_word_categorical_labels_per_sentence(data, max_len,   )
+test_word_count(data,   )
+
+
 mlmodels\preprocess\__init__.py
 ----------------methods----------------
 
@@ -11137,4 +12778,18 @@ predict(model, sess,  data_pars=None, out_pars=None, compute_pars=None, get_hidd
 reset_model(  )
 test( data_path="dataset/GOOG-year.csv", out_path="", reset=True,  )
 test2( data_path="dataset/GOOG-year.csv",  )
+
+
+mlmodels\ztest\benchmark3.py
+----------------methods----------------
+
+---------------functions---------------
+benchmark_run( bench_pars=None, args=None, config_mode="test",  )
+benchmark_run_mnist( bench_pars=None, args=None, config_mode="test",  )
+cli_load_arguments( config_file=None,  )
+config_model_list( folder=None,  )
+get_all_json_path(json_path,   )
+main(  )
+metric_eval( actual=None, pred=None, metric_name="mean_absolute_error",  )
+preprocess_timeseries_m5( data_path=None, dataset_name=None, pred_length=10, item_id=None,  )
 
