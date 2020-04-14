@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-=======
 # -*- coding: utf-8 -*-
 """
 Gluon
@@ -35,7 +33,6 @@ Things to do for benchamrking
 """
 
 
->>>>>>> 2052da0d504743e6931f6e4a28cc913819d68bd5
 import os
 import pandas as pd
 from mlmodels.util import env_pip_check
@@ -108,7 +105,7 @@ def get_params(choice="", data_path="dataset/timeseries/", config_mode="test", *
         data_path  = path_norm( "dataset/timeseries" )   
         out_path   = path_norm( "ztest/model_gluon/gluon_deepar/" )   
         model_path = os.path.join(out_path , "model")
-
+        print('model_path: ',model_path)
         data_pars = {"train_data_path": data_path + "/train_deepar.csv" , 
                      "test_data_path":  data_path + "/test_deepar.csv" , 
                      "train": True,

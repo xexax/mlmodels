@@ -6,7 +6,7 @@ on:
   push:
     branches: 
       - dev
-      - mybranch
+      - asma_damani
  
 jobs:
   build:
