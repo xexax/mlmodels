@@ -1,7 +1,3 @@
-# List of papers related 
-
-## 
-## Model List :
 
 ###Vision
 Towards Stabilizing Batch Statistics in Backward Propagation of Batch Normalization 
