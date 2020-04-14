@@ -254,7 +254,7 @@ Chen Li, Mai Xu, Lai Jiang, Shanyi Zhang, Xiaoming Tao
 2019 (modified: 03 Mar 2020)  http://openaccess.thecvf.com/content_CVPR_2019/papers/Li_Viewport_Proposal_CNN_for_360deg_Video_Quality_Assessment_CVPR_2019_paper.pdf
 https://github.com/Archer-Tatsu/V-CNN
 
-#### NLU 
+### NLU 
 
 Incorporating BERT into Neural Machine Translation 
 Jinhua Zhu, Yingce Xia, Lijun Wu, Di He, Tao Qin, Wengang Zhou, Houqiang Li, Tieyan Liu
@@ -316,7 +316,7 @@ Rithwik Kukunuri, Shivji Bhagat
 02 Dec 2019 (modified: 29 Dec 2019) https://openreview.net/pdf?id=H1lPS65z6B
 https://github.com/shv07/lookahead-optimizer
 
-#### NLI 
+### NLI 
 
 Learning Credal Sum Product Networks 
 Anonymous
