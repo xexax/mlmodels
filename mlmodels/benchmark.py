@@ -1,15 +1,14 @@
 # -*- coding: utf-8 -*-
 """
+ ml_test --do test_benchmark
 
+ 
 For all json in Json_path_list :
    Load_json, 
    Load_model, 
    run_model,
    get_metrics, 
    add_to_dataframe
-
-
-
 """
 import argparse
 import glob
@@ -18,116 +17,32 @@ import json
 import os
 import re
 import sys
+import numpy as np
+import pandas as pd
+import json
+import importlib
 from importlib import import_module
 from pathlib import Path
 from warnings import simplefilter
+from datetime import datetime
+
+
+
+
 
 ####################################################################################################
+from mlmodels.models import module_load
+from mlmodels.util import path_norm_dict,  params_json_load
 from mlmodels.util import (get_recursive_files, load_config, log, os_package_root_path, path_norm)
 
 
+
+
+####################################################################################################
 def get_all_json_path(json_path):
     return get_recursive_files(json_path, ext='/*.json')
 
 
-####################################################################################################
-def run_benchmark_all(bench_pars=None, json_path=None config_mode="test"):
-    from mlmodels.models import module_load
-    from mlmodels.util import path_norm_dict, path_norm, params_json_load
-    import json
-    import pandas as pd
-    from datetime import datetime
-
-    json_list = get_all_json_path(json_path)
-    metric_list = bench_pars['metric_list']
-    benchmark_df = pd.DataFrame(columns=["date_run", "model_uri", "json",  
-                                        "dataset_uri", "metric", "metric_name"])
-    for jsonf in json_list :
-        log ("### Running {} #####".format(jsonf))
-        #### Model URI and Config JSON
-        config_path = path_norm(jsonf)
-        config_mode = config_mode
-
-        #### PLEASE Include   model_pars['model_uri'] = "model_gluon.gluon_prophet.py"  in the JSON directly
-        model_pars, data_pars, compute_pars = params_json_load(config_path, config_mode= config_mode)
-         
-        """ 
-        #### Model Parameters
-        if "prophet" in jsonf:
-            model_pars, data_pars, compute_pars = \
-            params_json_load(config_path, config_mode= config_mode)
-            model_pars['model_uri'] = "model_gluon.gluon_prophet.py"
-            
-        elif "deepar" in jsonf:
-            model_pars, data_pars, compute_pars = \
-            params_json_load(config_path, config_mode= config_mode)
-            model_pars['model_uri'] = "model_gluon.gluon_deepar.py"
-        else:
-            model_pars, data_pars, compute_pars, out_pars = \
-            params_json_load(config_path, config_mode= config_mode)
-            
-        model_uri = model_pars['model_uri']  # "model_tch.torchhub.py"
-        """
-      
-      
-        #### Setup Model 
-        model_uri = model_pars['model_uri']  # "model_tch.torchhub.py" 
-        module = module_load(model_uri)
-        model = module.Model(model_pars, data_pars, compute_pars) 
-        
-        #### Fit
-        model, session = module.fit(model, data_pars, compute_pars, out_pars)           #### fit model
-        
-        
-
-        #### Inference  Please change to return ypred, ytrue
-        ypred, ytrue = module.predict(model=model, model_pars=model_pars, session=session, 
-                               data_pars=data_pars, compute_pars=compute_pars, 
-                               out_pars=out_pars, return_ytrue=1)   
-        
-
-
-        ### Calculate Metrics
-        for ind, metric in enumerate(metric_list):
-            """https://scikit-learn.org/stable/modules/generated/sklearn.metrics.get_scorer.html#sklearn.metrics.get_scorer
-            
-              
-            
-            """
-            from sklearn.metrics import get_scorer
-            scorer_metric = get_scorer(metric)
-            
-            metrics_val = scorer_metric(ytrue, ypred)
-            
-            
-            ##### NO Metrics IS INDEPENDANT Of model 
-            """
-            metrics_val = module.fit_metrics(model, data_pars, compute_pars, 
-                                            out_pars, model_pars, wmape=metric)   #### Check fit metrics
-            """
-            
-            
-            benchmark_df.loc[ind, "date_run"] = str(datetime.now())
-            benchmark_df.loc[ind, "model_uri"] = model_uri
-            benchmark_df.loc[ind, "json"] = jsonf
-            benchmark_df.loc[ind, "dataset_uri"] = "~/dataset/timeseries/HOBBIES_1_001_CA_1_validation.csv"
-            benchmark_df.loc[ind, "metric_name"] = metric
-            benchmark_df.loc[ind, "metric"] = metrics_val["wmape"]
-
-    log(benchmark_df)
-    ##### Output Format :
-    """
-     Dataframe :
-         [ "date_run", model_uri", "json",  "dataset_uri",  "metric", "metric_name" ]
-
-
-    """
-
-
-
-
-
-####################################################################################################
 def config_model_list(folder=None):
     # Get all the model.py into folder
     folder = os_package_root_path() if folder is None else folder
@@ -141,6 +56,101 @@ def config_model_list(folder=None):
     return mlist
 
 
+####################################################################################################
+def metric_eval(actual=None, pred=None, metric_name="mean_absolute_error"):
+    metric = getattr(importlib.import_module("sklearn.metrics"), metric_name)
+    return metric(actual, pred)
+
+ 
+def preprocess_timeseries_m5(data_path=None, dataset_name=None, pred_length=10, item_id=None):
+    data_path = path_norm(data_path)
+    df         = pd.read_csv(data_path + dataset_name)
+    col_to_del = ["item_id", "dept_id", "cat_id", "store_id", "state_id"]
+    temp_df    = df.drop(columns=col_to_del).copy()
+      
+    # 1, -1 are hardcoded because we have to explicitly mentioned days column 
+    temp_df    = pd.melt(temp_df, id_vars=["id"], value_vars=temp_df.columns[1: -1])
+
+    log("# select one itemid for which we have to forecast")
+    i_id       = item_id
+    temp_df    = temp_df.loc[temp_df["id"] == i_id]
+    temp_df.rename(columns={"variable": "Day", "value": "Demand"}, inplace=True)
+
+    log("# making df to compatible 3d shape, otherwise cannot be reshape to 3d compatible form")
+    pred_length = pred_length
+    temp_df     = temp_df.iloc[:pred_length * (temp_df.shape[0] // pred_length)]
+    temp_df.to_csv( f"{data_path}/{i_id}.csv", index=False)
+
+
+
+####################################################################################################
+def benchmark_run(bench_pars=None, args=None, config_mode="test"):
+      
+    dataset_uri  = args.data_path + f"{args.item_id}.csv"
+    json_path    = path_norm( args.path_json )
+    output_path  = path_norm( args.path_out )
+    json_list    = get_all_json_path(json_path)
+
+    metric_list  = bench_pars['metric_list']
+    bench_df     = pd.DataFrame(columns=["date_run", "model_uri", "json",
+                                     "dataset_uri", "metric", "metric_name"])
+
+    if len(json_list) < 1 :
+        raise Exception("empty model list json")
+    
+    log("Model List", json_list)
+    ii = -1
+    for jsonf in json_list :
+        log ( f"### Running {jsonf} #####")
+        #### Model URI and Config JSON
+        config_path = path_norm(jsonf)
+        model_pars, data_pars, compute_pars, out_pars = params_json_load(config_path, config_mode= config_mode)
+        model_uri    =  model_pars['model_uri']
+        
+        # if bench_pars.get("data_pars") :
+        
+
+        log("#### Setup Model    ")
+        module    = module_load(model_uri)   # "model_tch.torchhub.py"
+        model     = module.Model(model_pars=model_pars, data_pars=data_pars, compute_pars=compute_pars)
+        
+        log("#### Fit ")
+        try :
+           model, session = module.fit(model, data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)          
+        except :
+            model = model.model
+            model, session = module.fit(model, data_pars, compute_pars, out_pars)   
+
+
+        log("#### Inference Need return ypred, ytrue")
+        ypred, ytrue = module.predict(model=model, session=session, 
+                                      data_pars=data_pars, compute_pars=compute_pars, 
+                                      out_pars=out_pars, return_ytrue=1)   
+
+        ytrue = np.array(ytrue).reshape(-1, 1)
+        ypred = np.array(ypred).reshape(-1, 1)
+        
+        log("### Calculate Metrics          ")
+        for metric in metric_list:
+            ii = ii + 1
+            metric_val = metric_eval(actual=ytrue, pred=ypred,  metric_name=metric)
+            bench_df.loc[ii, "date_run"]    = str(datetime.now())
+            bench_df.loc[ii, "model_uri"]   = model_uri
+            bench_df.loc[ii, "json"]        = str([model_pars, data_pars, compute_pars ])
+            bench_df.loc[ii, "dataset_uri"] = dataset_uri
+            bench_df.loc[ii, "metric_name"] = metric
+            bench_df.loc[ii, "metric"]      = metric_val
+            log( bench_df.loc[ii,:])
+
+
+    log( f"benchmark file saved at {output_path}")  
+    os.makedirs( output_path, exist_ok=True)
+    bench_df.to_csv( f"{output_path}/benchmark.csv", index=False)
+    return bench_df
+
+
+
+
 
 
 ####################################################################################################
@@ -152,41 +162,132 @@ def cli_load_arguments(config_file=None):
     if config_file is None:
         cur_path = os.path.dirname(os.path.realpath(__file__))
         config_file = os.path.join(cur_path, "config/benchmark_config.json")
-    # print(config_file)
-
     p = argparse.ArgumentParser()
 
     def add(*w, **kw):
         p.add_argument(*w, **kw)
-
+    
     add("--config_file", default=config_file, help="Params File")
     add("--config_mode", default="test", help="test/ prod /uat")
     add("--log_file",    default="ztest/benchmark/mlmodels_log.log", help="log.log")
 
-    add("--do",          default="run", help="do ")
+
+    add("--do",          default="timeseries", help="do ")
+
+    ### Benchmark config
+    add("--benchmark_json", default="dataset/json/benchmark.json", help=" benchmark config")
+    add("--path_json",      default="dataset/json/benchmark_cnn/", help=" list of json")
+    add("--path_out",       default="example/benchmark/", help=".")
 
 
-    add("--path_json",   default="dataset/json/benchmark/", help="")
+    #### Input dataset
+    add("--data_path",   default="dataset/timeseries/", help="Dataset path")
+    add("--dataset_name",default="sales_train_validation.csv", help="dataset name")   
 
 
-    ##### out pars
-    add("--path_out",    default="ztest/benchmark/", help=".")
+    #### Specific to timeseries
+    add("--item_id",     default="HOBBIES_1_001_CA_1_validation", help="forecast for which item")
 
     arg = p.parse_args()
-    # arg = load_config(arg, arg.config_file, arg.config_mode, verbose=0)
     return arg
+
+
+
+
 
 
 def main():
     arg = cli_load_arguments()
-    if arg.do == "run":
-        log("Fit")
-        bench_pars = {"metric_list": ["wmape"]}
-        run_benchmark_all(bench_pars, arg.path_json) 
+
+
+    if arg.do == "preprocess_v1":
+        arg.data_path    = "dataset/timeseries/"
+        arg.dataset_name = "sales_train_validation.csv"
+        preprocess_timeseries_m5(data_path    = arg.data_path, 
+                                 dataset_name = arg.dataset_name, 
+                                 pred_length  = 100, item_id=arg.item_id)   
+
+
+    elif arg.do == "timeseries":
+        log("Time series model")
+        bench_pars = {"metric_list": ["mean_absolute_error", "mean_squared_error",
+                                       "median_absolute_error",  "r2_score"], 
+                      "pred_length": 100,
+                      
+                      #### Over-ride data
+                      "data_pars" : {
+                         "train_data_path": "dataset/timeseries/stock/qqq_us_train.csv",
+                         "test_data_path": "dataset/timeseries/stock/qqq_us_test.csv",
+                         "col_Xinput": ["Close"],
+                         "col_ytarget": "Close"
+                      }
+                      
+                      
+                      
+                      }
+
+
+        arg.data_path    = ""
+        arg.dataset_name = ""
+        arg.path_json    = "dataset/json/benchmark_timeseries/"
+        arg.path_out     = "example/benchmark/timeseries/"
+
+        benchmark_run(bench_pars, arg) 
+
+
+
+    elif arg.do == "vision_mnist":
+        log("Vision models")
+
+        arg.data_path    = ""
+        arg.dataset_name = ""
+        arg.path_json    = "dataset/json/benchmark_cnn/"
+        arg.path_out     = "example/benchmark/cnn/"
+
+        bench_pars = {"metric_list": ["accuracy_score"]}
+        benchmark_run(bench_pars=bench_pars, args=arg)
+
+
+
+    elif arg.do == "nlp_reuters":
+        """
+           User Reuters datasts
+           config files in  "dataset/json/benchmark_text/"
+
+
+
+        """
+        log("NLP Reuters")
+        arg.data_path    = ""
+        arg.dataset_name = ""
+        arg.path_json    = "dataset/json/benchmark_text/"
+        arg.path_out     = "example/benchmark/text/"
+
+        bench_pars = {"metric_list": ["accuracy, f1_score"]}
+        benchmark_run(bench_pars=bench_pars, args=arg)
+
+
+
+    elif arg.do == "custom":
+        log("NLP Reuters")
+        bench_pars = json.load(open( arg.benchmark_json, mode='r'))
+        log(bench_pars['metric_list'])
+        benchmark_run(bench_pars=bench_pars, args=arg)
+
+
+    else :
+        raise Exception("No options")
 
 
 if __name__ == "__main__":
     main()
+
+
+
+
+
+
+
 
 
 

@@ -6,210 +6,8 @@ import re
 from pathlib import Path
 import json
 
-
-"""
-from mlmodels.util import (os_package_root_path, log, path_norm
-    config_load_root, config_path_pretrained, config_path_dataset, config_set
-    )
-"""
-
-
-
-def metrics_evaluate(metric_name=["mean_squared_error"], ytrue=None, ypred=None, ypred_proba=None):
-
-    """
-      
-Scoring
-
-Function
-
-Comment
-
-Classification
-
-‘accuracy’
-
-metrics.accuracy_score
-
-‘balanced_accuracy’
-
-metrics.balanced_accuracy_score
-
-‘average_precision’
-
-metrics.average_precision_score
-
-‘neg_brier_score’
-
-metrics.brier_score_loss
-
-‘f1’
-
-metrics.f1_score
-
-for binary targets
-
-‘f1_micro’
-
-metrics.f1_score
-
-micro-averaged
-
-‘f1_macro’
-
-metrics.f1_score
-
-macro-averaged
-
-‘f1_weighted’
-
-metrics.f1_score
-
-weighted average
-
-‘f1_samples’
-
-metrics.f1_score
-
-by multilabel sample
-
-‘neg_log_loss’
-
-metrics.log_loss
-
-requires predict_proba support
-
-‘precision’ etc.
-
-metrics.precision_score
-
-suffixes apply as with ‘f1’
-
-‘recall’ etc.
-
-metrics.recall_score
-
-suffixes apply as with ‘f1’
-
-‘jaccard’ etc.
-
-metrics.jaccard_score
-
-suffixes apply as with ‘f1’
-
-‘roc_auc’
-
-metrics.roc_auc_score
-
-‘roc_auc_ovr’
-
-metrics.roc_auc_score
-
-‘roc_auc_ovo’
-
-metrics.roc_auc_score
-
-‘roc_auc_ovr_weighted’
-
-metrics.roc_auc_score
-
-‘roc_auc_ovo_weighted’
-
-metrics.roc_auc_score
-
-Clustering
-
-‘adjusted_mutual_info_score’
-
-metrics.adjusted_mutual_info_score
-
-‘adjusted_rand_score’
-
-metrics.adjusted_rand_score
-
-‘completeness_score’
-
-metrics.completeness_score
-
-‘fowlkes_mallows_score’
-
-metrics.fowlkes_mallows_score
-
-‘homogeneity_score’
-
-metrics.homogeneity_score
-
-‘mutual_info_score’
-
-metrics.mutual_info_score
-
-‘normalized_mutual_info_score’
-
-metrics.normalized_mutual_info_score
-
-‘v_measure_score’
-
-metrics.v_measure_score
-
-Regression
-
-‘explained_variance’
-
-metrics.explained_variance_score
-
-‘max_error’
-
-metrics.max_error
-
-‘neg_mean_absolute_error’
-
-metrics.mean_absolute_error
-
-‘neg_mean_squared_error’
-
-metrics.mean_squared_error
-
-‘neg_root_mean_squared_error’
-
-metrics.mean_squared_error
-
-‘neg_mean_squared_log_error’
-
-metrics.mean_squared_log_error
-
-‘neg_median_absolute_error’
-
-metrics.median_absolute_error
-
-‘r2’
-
-metrics.r2_score
-
-‘neg_mean_poisson_deviance’
-
-metrics.mean_poisson_deviance
-
-‘neg_mean_gamma_deviance’
-
-metrics.mean_gamma_deviance
-    
-    
-    """
-    from sklearn.metrics import get_scorer
-    
-    mdict = {   "metric-name": [],
-"metric val": [] }
-    for metric_name in metric_names :
-      metric_scorer = get_scorer(metric_name)
-    
-      if ypred_proba is not None :
-        m_val = metric_scorer(ytrue, ypred, ypred_proba)
-      else :
-        m_val = metric_scorer(ytrue, ypred)
-        
-      mdict["metric_val"].append(mval)
-      return mdict
-
+import importlib
+from inspect import getmembers
 
 
 ####################################################################################################
@@ -228,6 +26,18 @@ def log(*s, n=0, m=1):
 
 
 ####################################################################################################
+def get_device_torch():
+    import torch, numpy as np
+    if torch.cuda.is_available():
+        device = "cuda:{}".format(np.random.randint(torch.cuda.device_count()))
+    else:
+        device = "cpu"
+    print("use device", device)
+    return device
+
+
+
+
 def os_folder_copy(src, dst):
     """Copy a directory structure overwriting existing files"""
     import shutil
@@ -445,14 +255,15 @@ def config_set(ddict2):
 
 
 
-def params_json_load(path, config_mode="test"):
+def params_json_load(path, config_mode="test", 
+                     tlist= [ "model_pars", "data_pars", "compute_pars", "out_pars"] ):
     import json
     pars = json.load(open(path, mode="r"))
     pars = pars[config_mode]
 
     ### HyperParam, model_pars, data_pars,
     list_pars = []
-    for t in ["hypermodel_pars", "model_pars", "data_pars", "compute_pars", "out_pars"]:
+    for t in tlist :
         pdict = pars.get(t)
         if pdict:
             list_pars.append(pdict)
@@ -460,6 +271,12 @@ def params_json_load(path, config_mode="test"):
             log("error in json, cannot load ", t)
 
     return tuple(list_pars)
+
+
+
+
+
+
 
 
 
@@ -716,9 +533,12 @@ def load_keras(load_pars, custom_pars=None):
     path_file = path + "/" + filename if ".h5" not in path else path
     model = Model_empty()
     if custom_pars:
-        model.model = load_model(path_file, 
-                             custom_objects={"MDN": custom_pars["MDN"],
-                                             "mdn_loss_func": custom_pars["loss"]})
+        if custom_pars.get("custom_objects"):
+            model.model = load_model(path_file, custom_objects=custom_pars["custom_objects"])
+        else:
+            model.model = load_model(path_file,
+                                     custom_objects={"MDN": custom_pars["MDN"],
+                                                     "mdn_loss_func": custom_pars["loss"]})
     else:
         model.model = load_model(path_file)
     return model
@@ -752,9 +572,35 @@ def load_gluonts(load_pars=None):
 
 
 
-
-
-
+def load_callable_from_uri(uri):
+    assert(len(uri)>0 and ('::' in uri or '.' in uri))
+    if '::' in uri:
+        module_path, callable_name = uri.split('::')
+    else:
+        module_path, callable_name = uri.rsplit('.',1)
+    if os.path.isfile(module_path):
+        module_name = '.'.join(module_path.split('.')[:-1])
+        spec = importlib.util.spec_from_file_location(module_name, module_path)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+    else:
+        module = importlib.import_module(module_path)
+    return dict(getmembers(module))[callable_name]
+        
+def load_callable_from_dict(function_dict, return_other_keys=False):
+    function_dict = function_dict.copy()
+    uri = function_dict.pop('uri')
+    func = load_callable_from_uri(uri)
+    try:
+        assert(callable(func))
+    except:
+        raise TypeError(f'{func} is not callable')
+    arg = function_dict.pop('arg', {})
+    if not return_other_keys:
+        return func, arg
+    else:
+        return func, arg, function_dict
+    
 
 """
 def path_local_setup(current_file=None, out_folder="", sublevel=0, data_path="dataset/"):

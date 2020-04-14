@@ -1,12 +1,126 @@
 # Documentation
-
 List of Functions/Methods
 
 https://github.com/arita37/mlmodels/blob/dev/README_index_doc.py
 
+# 
+# 
+___________________________________________________________________________________________
+# VScode Online Editor (pre-installed)
+
+https://github.com/arita37/mlmodels/issues/101
 
 
-# Installation
+# 
+# 
+___________________________________________________________________________________________
+# Steps  for : Pull Request, a Fix or add a New Model :
+
+
+### Coding Style
+  Please use **Line = 110 characters**
+  "Pretty Code is better than strict PEP8, which is ugly to read..."
+  Please use BLACK Formatter.
+
+
+
+### 0) Read the examples :
+
+  https://github.com/arita37/mlmodels/issues/102
+
+  https://github.com/arita37/mlmodels/pull/100
+
+
+
+    
+### 1) Create a branch from DEV branch called : modelXXX
+    git checkout -b myfeat
+
+
+### 2) TEST : Change those files with your MODEL_NAME AND BRANCH NAME :
+
+  https://github.com/arita37/mlmodels/blob/dev/.github/workflows/test_specific_model.yml
+
+  https://github.com/arita37/mlmodels/blob/dev/pullrequest.json
+
+
+### 3) TEST : After each commit or PullRequest, automatic test is run on Github :
+  Please check here :
+  https://github.com/arita37/mlmodels/actions
+
+
+
+### 4) Create  mlmodels/model_XXXX/yyyyy.py   
+  Template
+  https://github.com/arita37/mlmodels/blob/dev/mlmodels/template/model_xxx.py
+
+  Example :
+  https://github.com/arita37/mlmodels/blob/dev/mlmodels/model_keras/textcnn.py  
+  https://github.com/arita37/mlmodels/blob/dev/mlmodels/model_tch/transformer_sentence.py
+
+
+  Please re-use existing functions
+  https://github.com/arita37/mlmodels/blob/dev/mlmodels/util.py
+  
+     from mlmodels.util import os_package_root_path, log, 
+                            path_norm, get_model_uri, path_norm_dict
+
+     ### Use path_norm to normalize your path.
+     data_path = path_norm("dataset/text/myfile.txt")
+        --> FULL_ PATH   /home/ubuntu/mlmodels/dataset/text/myfile.txt
+
+
+     ### Use path_norm to normalize your path.
+     data_path = path_norm("ztest/text/myfile.txt")
+        --> FULL_ PATH   /home/ubuntu/mlmodels/ztest/text/myfile.txt
+
+
+     data_path = path_norm("ztest/text/myfile.txt")
+        --> FULL_ PATH   /home/ubuntu/mlmodels/ztest/text/myfile.txt
+
+
+
+
+### 4) Create  mlmodels/model_XXXX/yyyy.json , following this template :
+  
+  https://github.com/arita37/mlmodels/blob/dev/mlmodels/template/models_config.json
+
+
+### 5)  Pull Request  arita37/mlmodels DEV ---> YourBranch  (or git pull --all )
+   You need to MERGE with recent changes in dev INTO your Branch to reduce conflicts at final steps.
+
+
+
+### 6) Run/Test on your local machine
+    source activate py36
+    cd mlmodels
+    python model_XXXX/yyyy.py  
+
+
+
+## 7)  Pull Request  arita37/mlmodels DEV ---> YourBranch  (or git pull --all )
+   You need to MERGE with recent changes in dev INTO your Branch to reduce conflicts at final steps.
+
+
+
+
+### 8) Check on Github your test runs
+https://github.com/arita37/mlmodels/actions?query=workflow%3Atest_custom_model
+
+
+
+
+### 9)  Send Pull Request
+
+
+
+
+
+
+# 
+# 
+# ___________________________________________________________________________________________
+# Manual Installation
     ### On Linux/MacOS
     pip install numpy<=1.17.0
     pip install -e .  -r requirements.txt
@@ -24,93 +138,10 @@ https://github.com/arita37/mlmodels/blob/dev/README_index_doc.py
     ### No Deps
     # pip install -e .  --no-deps
 
-___________________________________________________________________________________________
-# Steps  for : Pull Request, a Fix or add a New Model :
-
-
-### Coding Style
-  Please use **Line = 110 characters**
-  Only Loose PEP8, "Pretty Code is better than strict PEP8, which is ugly to read..."
-  Please use BLACK Formatter.
-
-
-
-### 0) Read the examples :
-
-  https://github.com/arita37/mlmodels/issues/102
-
-  https://github.com/arita37/mlmodels/pull/100
-
-
-
-    
-### 1) Create a branch from DEV branch called : keras_modelXXX
-  
-
-
-### 2) Change this file with your MODEL_NAME AND BRANCH NAME :
-
-  https://github.com/arita37/mlmodels/blob/dev/.github/workflows/test_specific_model.yml
-
-  https://github.com/arita37/mlmodels/blob/dev/pullrequest.json
-
-
-### 3) After each commit or PullRequest, automatic test is run on Github :
-  Please check here :
-  https://github.com/arita37/mlmodels/actions
-
-
-
-### 3) Create  mlmodels/model_XXXX/yyyyy.py   
-  Template
-  https://github.com/arita37/mlmodels/blob/dev/mlmodels/template/model_xxx.py
-
-  Example :
-  https://github.com/arita37/mlmodels/blob/dev/mlmodels/model_keras/textcnn.py
-  
-  https://github.com/arita37/mlmodels/blob/dev/mlmodels/model_tch/transformer_sentence.py
-
-
-  Please re-use existing functions
-  https://github.com/arita37/mlmodels/blob/dev/mlmodels/util.py
-  
-     from mlmodels.util import os_package_root_path, log, 
-                            path_norm, get_model_uri, path_norm_dict
-
-     ### Use path_norm to normalize your path.
-     data_path = path_norm("dataset/text/myfile.txt") -->   PATH.../mlmodels/dataset/text/myfile.txt
-
-
-
-### 4) Create  mlmodels/model_XXXX/yyyy.json , following this template :
-  
-  https://github.com/arita37/mlmodels/blob/dev/mlmodels/template/models_config.json
-
-
-
-### 5) Run/Test on your local machine
-    source activate py36
-    cd mlmodels
-    python model_XXXX/yyyy.py  
-
-
-
-### 6) Check on Github your runs
-
-https://github.com/arita37/mlmodels/actions?query=workflow%3Atest_custom_model
-
-
-
-### 7)  Do Pull Request to dev Branc.
-
 
 
 
 ___________________________________________________________________________________________
-
-
-
-
 # How to add a new model
 ### Source code structure as below
 - `docs`: documentation
