@@ -2,8 +2,8 @@
 
 ## 
 ### Collected by Lok Raj Ghimire
-### Itme Seties:
-###2018 (Itme Seties)
+### Time Series:
+###2018 (Time Series)
 PocketFlow: An Automated Framework for Compressing and Accelerating Deep Neural Networks .  Jiaxiang Wu, Yao Zhang, Haoli Bai, Huasong Zhong, Jinlong Hou, Wei Liu, Wenbing Huang, Junzhou Huang  https://openreview.net/pdf?id=H1fWoYhdim  
 https://github.com/Tencent/PocketFlow 
 
@@ -16,7 +16,7 @@ https://github.com/YuliaRubanova/TrackSig
 Combination of Supervised and Reinforcement Learning For Vision-Based Autonomous Control. Dmitry Kangin, Nicolas Pugeault https://openreview.net/pdf?id=BkeC_J-R- 
 https://github.com/openai/baselines 
 
-###2019 (Itme Seties WITH CODE)
+###2019 (Time Series WITH CODE)
 Reproducibility Challenge: Meta-LearningRepresentations for Continual Learning. Mihaela Georgieva Stoycheva, Sergio Liberman Bronfman, Konstantinos Saitas Zarkias  https://openreview.net/pdf?id=H1giraczTS 
  https://github.com/sergiolib/reproduce_oml  
 
@@ -29,7 +29,7 @@ Unsupervised Scalable Representation Learning for Multivariate Time Series. Feli
 Neural Tangents: Fast and Easy Infinite Neural Networks in Python.  Roman Novak, Lechao Xiao, Jiri Hron, Jaehoon Lee, Alexander A. Alemi, Jascha Sohl-Dickstein, Samuel S. Schoenholz https://openreview.net/pdf?id=SklD9yrFPS  
 https://github.com/google/neural-tangents 
 
-###2020 Itme Seties with code (with code)
+###2020 Time Series with code (with code)
 
 Optimistic Exploration even with a Pessimistic Initialisation.  Tabish Rashid, Bei Peng, Wendelin Boehmer, Shimon Whiteson  https://openreview.net/pdf?id=r1xGP6VYwH  
 https://github.com/deepmind/bsuite  
@@ -52,7 +52,7 @@ https://github.com/jfutoma/MGP-RNN
 Practical lossless compression with latent variables using bits back coding.  James Townsend, Thomas Bird, David Barber https://openreview.net/pdf?id=ryE98iR5tm  
 https://github.com/bits-back/bits-back  
 
-### 2020 Itme Seties(without codes)
+### 2020 Time Series(without codes)
 
 mFLICA: An R package for Inferring Leadership of Coordination From Time Series. Chainarong Amornbunchornvej.  https://arxiv.org/pdf/2004.06092.pdf    
 
@@ -243,7 +243,7 @@ Self-Supervised Learning of Generative Spin-Glasses with Normalizing Flows. Gavi
 
 Video Cloze Procedure for Self-Supervised Spatio-Temporal Learning. Dezhao Luo, Chang Liu, Yu Zhou, Dongbao Yang, Can Ma, Qixiang Ye, Weiping Wang  https://arxiv.org/pdf/2001.00294.pdf    
 
-### 201 NLP (with code)
+### 2018 NLP (with code)
 Baseline: Strong, Extensible, Reproducible, Deep Learning Baselines for NLP.  Daniel Pressel, Brian Lester, Sagnik Ray Choudhury, Matt Barta, Yanjie Zhao, Amy Hemmeter https://openreview.net/pdf?id=r1xEb7J15Q  
 https://github.com/dpressel/baseline  
 
