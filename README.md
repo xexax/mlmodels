@@ -105,57 +105,7 @@ HBMP:  Sentence Embeddings in NLI with Iterative Refinement Encoders
 https://www.cambridge.org/core/journals/natural-language-engineering/article/sentence-embeddings-in-nli-with-iterative-refinement-encoders/AC811644D52446E414333B20FEACE00F
 
 ### TABULAR :
-Neural Tangents: Fast and Easy Infinite Neural Networks in Python 
-https://openreview.net/pdf?id=SklD9yrFPS
-https://github.com/google/neural-tangents
 
-Optimistic Exploration even with a Pessimistic Initialisation 
-https://openreview.net/pdf?id=r1xGP6VYwH
-https://github.com/deepmind/bsuite
-
-Exploration in Reinforcement Learning with Deep Covering Options 
-https://openreview.net/pdf?id=SkeIyaVtwB
-https://github.com/haarnoja/sac/blob/master/sac/algos/diayn.py
-
-Optimistic Exploration even with a Pessimistic Initialisation 
-https://openreview.net/pdf?id=r1xGP6VYwH
-https://github.com/deepmind/bsuite
-
-Efficient Inference and Exploration for Reinforcement Learning 
-https://openreview.net/pdf?id=rygw7aNYDS
-https://github.com/deepmind/bsuite
-
-TabNet: Attentive Interpretable Tabular Learning 
-https://openreview.net/pdf?id=BylRkAEKDH
-https://github.com/catboost/benchmarks/tree/master/quality_benchmarks
-
-Regularization Learning Networks: Deep Learning for Tabular Datasets 
-http://papers.nips.cc/paper/7412-regularization-learning-networks-deep-learning-for-tabular-datasets.pdf
-https://github.com/irashavitt/regularization_learning_networks
-
-TabNN: A Universal Neural Network Solution for Tabular Data 
-https://openreview.net/pdf?id=r1eJssCqY7
-https://github.com/Microsoft/LightGBM/tree/master/examples
-
-DORA The Explorer: Directed Outreaching Reinforcement Action-Selection 
-https://openreview.net/pdf?id=ry1arUgCW
-https://github.com/nathanwang000/deep_exploration_with_E_network 
-
-Mask Scoring R-CNN. 
-http://openaccess.thecvf.com/content_CVPR_2019/papers/Huang_Mask_Scoring_R-CNN_CVPR_2019_paper.pdf
-https://github.com/zjhuang22/maskscoring_rcnn
-
-Temporal Anomaly Detection: Calibrating the Surprise. 
-https://www.aaai.org/ojs/index.php/AAAI/article/view/4261/4139
-https://github.com/eyalgut/TLR
-
-Automatic Fusion of Segmentation and Tracking Labels 
-https://link.springer.com/chapter/10.1007%2F978-3-030-11024-6_34
-https://github.com/xulman/CTC-FijiPlugins
-
-Viewport Proposal CNN for 360deg Video Quality Assessment. 
-http://openaccess.thecvf.com/content_CVPR_2019/papers/Li_Viewport_Proposal_CNN_for_360deg_Video_Quality_Assessment_CVPR_2019_paper.pdf
-https://github.com/Archer-Tatsu/V-CNN
 
 #### LightGBM
 
@@ -238,152 +188,70 @@ FiBiNET: Combining Feature Importance and Bilinear feature Interaction for Click
 
 
 ### VISION :
-Towards Stabilizing Batch Statistics in Backward Propagation of Batch Normalization 
-https://openreview.net/pdf?id=SkgGjRVKDS
-https://github.com/megvii-model/MABN
 
-Fast Neural Network Adaptation via Parameter Remapping and Architecture Search 
-https://openreview.net/pdf?id=rklTmyBKPH
-https://github.com/JaminFong/FNA
-
-Certified Defenses for Adversarial Patches 
-https://openreview.net/pdf?id=HyeaSkrYPH
-https://github.com/Ping-C/certifiedpatchdefense
-
-Adaptively Connected Neural Networks. 
- http://openaccess.thecvf.com/content_CVPR_2019/papers/Wang_Adaptively_Connected_Neural_Networks_CVPR_2019_paper.pdf
-https://github.com/wanggrun/Adaptively-Connected-Neural-Networks
-
-Tracking by Animation: Unsupervised Learning of Multi-Object Attentive Trackers. 
-http://openaccess.thecvf.com/content_CVPR_2019/papers/He_Tracking_by_Animation_Unsupervised_Learning_of_Multi-Object_Attentive_Trackers_CVPR_2019_paper.pdf
-https://github.com/zhen-he/tracking-by-animation
-
-EDVR: Video Restoration With Enhanced Deformable Convolutional Networks. 
-http://openaccess.thecvf.com/content_CVPRW_2019/papers/NTIRE/Wang_EDVR_Video_Restoration_With_Enhanced_Deformable_Convolutional_Networks_CVPRW_2019_paper.pdf
-https://github.com/xinntao/EDVR
-
-LiveBot: Generating Live Video Comments Based on Visual and Textual Contexts. 
-https://aaai.org/ojs/index.php/AAAI/article/view/4656/4534
-https://github.com/lancopku/livebot
-
-A Hybrid Method for Tracking of Objects by UAVs. 
-http://openaccess.thecvf.com/content_CVPRW_2019/papers/UAVision/Saribas_A_Hybrid_Method_for_Tracking_of_Objects_by_UAVs_CVPRW_2019_paper.pdf
-https://github.com/bdrhn9/hybrid-tracker
-
-DeepCO3: Deep Instance Co-Segmentation by Co-Peak Search and Co-Saliency Detection. 
-http://openaccess.thecvf.com/content_CVPR_2019/papers/Hsu_DeepCO3_Deep_Instance_Co-Segmentation_by_Co-Peak_Search_and_Co-Saliency_Detection_CVPR_2019_paper.pdf
-https://github.com/KuangJuiHsu/DeepCO3/
-
-Art2Real: Unfolding the Reality of Artworks via Semantically-Aware Image-To-Image Translation. 
-http://openaccess.thecvf.com/content_CVPR_2019/papers/Tomei_Art2Real_Unfolding_the_Reality_of_Artworks_via_Semantically-Aware_Image-To-Image_Translation_CVPR_2019_paper.pdf
-https://github.com/aimagelab/art2real
-
-ELASTIC: Improving CNNs With Dynamic Scaling Policies. 
-http://openaccess.thecvf.com/content_CVPR_2019/papers/Wang_ELASTIC_Improving_CNNs_With_Dynamic_Scaling_Policies_CVPR_2019_paper.pdf
-https://github.com/allenai/elastic
-
-Hybrid Attention-Based Prototypical Networks for Noisy Few-Shot Relation Classification. 
-https://www.aaai.org/ojs/index.php/AAAI/article/view/4604/4482
-https://github.com/thunlp/
-
-Recursive Visual Attention in Visual Dialog. 
-http://openaccess.thecvf.com/content_CVPR_2019/papers/Niu_Recursive_Visual_Attention_in_Visual_Dialog_CVPR_2019_paper.pdf
-https://github.com/yuleiniu/rva
-
-Synthesis of High-Quality Visible Faces from Polarimetric Thermal Faces using Generative Adversarial Networks. 
-https://link.springer.com/content/pdf/10.1007/s11263-019-01175-3.pdf
-https://github.com/hezhangsprinter
-
-MnasNet: Platform-Aware Neural Architecture Search for Mobile. 
-http://openaccess.thecvf.com/content_CVPR_2019/papers/Tan_MnasNet_Platform-Aware_Neural_Architecture_Search_for_Mobile_CVPR_2019_paper.pdf
-https://github.com/tensorflow/tpu/tree/master/models/official/mnasnet
-
-Auto-Encoding Scene Graphs for Image Captioning. 
-http://openaccess.thecvf.com/content_CVPR_2019/papers/Yang_Auto-Encoding_Scene_Graphs_for_Image_Captioning_CVPR_2019_paper.pdf
-https://github.com/yangxuntu/SGAE
-
-Visualizing the Decision-making Process in Deep Neural Decision Forest. 
-http://openaccess.thecvf.com/content_CVPRW_2019/papers/Explainable%20AI/Li_Visualizing_the_Decision-making_Process_in_Deep_Neural_Decision_Forest_CVPRW_2019_paper.pdf
-https://github.com/Nicholasli1995/
-
-Holistic CNN Compression via Low-Rank Decomposition with Knowledge Transfer. 
-https://ieeexplore.ieee.org/document/8478366
-https://github.com/ShaohuiLin/LRDKT
-
-PointNetLK: Robust & Efficient Point Cloud Registration Using PointNet. 
-http://openaccess.thecvf.com/content_CVPR_2019/papers/Aoki_PointNetLK_Robust__Efficient_Point_Cloud_Registration_Using_PointNet_CVPR_2019_paper.pdf
-https://github.com/hmgoforth/PointNetLK
-
-Learning to Parse Wireframes in Images of Man-Made Environments 
-http://openaccess.thecvf.com/content_cvpr_2018/papers/Huang_Learning_to_Parse_CVPR_2018_paper.pdf
-https://github.com/huangkuns/wireframe
-
-Deep Model Transferability from Attribution Maps 
-http://papers.nips.cc/paper/8849-deep-model-transferability-from-attribution-maps.pdf
-https://github.com/zju-vipa/
-
-RE] Gate Decorator: Global Filter Pruning Method for Accelerating Deep Convolutional Neural Networks 
-https://openreview.net/pdf?id=hR_leftqaM
-https://github.com/youzhonghui/gate-decorator-pruning/blob/b95f86a7d921432e2a149151137addd005e8e836/run/vgg16/prune.json#L26).
-
-Direction Concentration Learning: Enhancing Congruency in Machine Learning  
-https://openreview.net/pdf?id=Bp2Q4BpwdN
-https://github.com/luoyan407/congruency
-
-Deformable Convolutional Networks 
-https://ieeexplore.ieee.org/document/8237351
-https://github.com/msracver/Deformable-ConvNets
-
-Improving Visual Relation Detection using Depth Maps 
-https://openreview.net/pdf?id=HkxcUxrFPS
-https://github.com/Sina-Baharlou/Depth-VRD
 
   Vision Models (pre-trained) :  
 alexnet: SqueezeNet: AlexNet-level accuracy with 50x fewer parameters and <0.5MB model size
 https://arxiv.org/pdf/1602.07360
+
 densenet121: Adversarial Perturbations Prevail in the Y-Channel of the YCbCr Color Space
 https://arxiv.org/pdf/2003.00883.pdf
+
 densenet169: Classification of TrashNet Dataset Based on Deep Learning Models
 https://ieeexplore.ieee.org/abstract/document/8622212
+
 densenet201: Utilization of DenseNet201 for diagnosis of breast abnormality
 https://link.springer.com/article/10.1007/s00138-019-01042-8
+
 densenet161: Automated classification of histopathology images using transfer learning
 https://doi.org/10.1016/j.artmed.2019.101743
+
 inception_v3: Menfish Classification Based on Inception_V3 Convolutional Neural Network
 https://iopscience.iop.org/article/10.1088/1757-899X/677/5/052099/pdf 
+
 resnet18: Leveraging the VTA-TVM Hardware-Software Stack for FPGA Acceleration of 8-bit ResNet-18 Inference
 https://dl.acm.org/doi/pdf/10.1145/3229762.3229766
+
 resnet34: Automated Pavement Crack Segmentation Using Fully Convolutional U-Net with a Pretrained ResNet-34 Encoder
 https://arxiv.org/pdf/2001.01912
+
 resnet50: Extremely Large Minibatch SGD: Training ResNet-50 on ImageNet in 15 Minutes
 https://arxiv.org/pdf/1711.04325
+
 resnet101: Classification of Cervical MR Images using ResNet101
 https://www.ijresm.com/Vol.2_2019/Vol2_Iss6_June19/IJRESM_V2_I6_69.pdf
+
 resnet152: Deep neural networks show an equivalent and often superior performance to dermatologists in onychomycosis diagnosis: Automatic construction of onychomycosis datasets by region-based convolutional deep neural network
 https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5774804/pdf/pone.0191493.pdf
 
 
 resnext50_32x4d: Automatic Grading of Individual Knee Osteoarthritis Features in Plain Radiographs using Deep Convolutional Neural Networks
 https://arxiv.org/pdf/1907.08020
+
 resnext101_32x8d: DEEP LEARNING BASED PLANT PART DETECTION IN GREENHOUSE SETTINGS
 https://efita-org.eu/wp-content/uploads/2020/02/7.-efita25.pdf
 
 wide_resnet50_2: Identiﬁcac¸˜ao de Esp´ecies de ´Arvores por Imagens de Tronco Utilizando Aprendizado de Ma´quina Profundo
 http://www.ic.unicamp.br/~reltech/PFG/2019/PFG-19-50.pdf
+
 wide_resnet101_2: Identification of Tree Species by Trunk Images Using Deep Machine Learning
 http://www.ic.unicamp.br/~reltech/PFG/2019/PFG-19-50.pdf
+
 squeezenet1_0: Classification of Ice Crystal Habits Observed From Airborne Cloud Particle Imager by Deep Transfer Learning
 https://agupubs.onlinelibrary.wiley.com/doi/epdf/10.1029/2019EA000636
 
 squeezenet1_1: Benchmarking parts based face processing in-the-wild for gender recognition and head pose estimation
 https://doi.org/10.1016/j.patrec.2018.09.023
+
 vgg11: ernausNet: U-Net with VGG11 Encoder Pre-Trained on ImageNet for Image Segmentation
 https://arxiv.org/pdf/1801.05746
+
 vgg13: Convolutional Neural Network for Raindrop Detection
 https://ieeexplore.ieee.org/abstract/document/8768613
 
 vgg16: Automatic detection of lumen and media in the IVUS images using U-Net with VGG16 Encoder
 https://arxiv.org/pdf/1806.07554
+
 vgg19: A New Transfer Learning Based on VGG-19 Network for Fault Diagnosis
 https://ieeexplore.ieee.org/abstract/document/8791884
 
@@ -392,17 +260,27 @@ https://dl.acm.org/doi/pdf/10.1145/3338533.3366575
 
 vgg13_bn: DETOX: A Redundancy-based Framework for Faster and More Robust Gradient Aggregation
 http://papers.nips.cc/paper/9220-detox-a-redundancy-based-framework-for-faster-and-more-robust-gradient-aggregation.pdf
+
 vgg16_bn: Partial Convolution based Padding
 https://arxiv.org/pdf/1811.11718
+
+
 vgg19_bn: NeurIPS 2019 Disentanglement Challenge: Improved Disentanglement through Learned Aggregation of Convolutional Feature Maps
 https://arxiv.org/pdf/2002.12356
 
+
 googlenet: On the Performance of GoogLeNet and AlexNet Applied to Sketches
 https://www.aaai.org/ocs/index.php/AAAI/AAAI16/paper/view/12278/11712
+
+
 shufflenet_v2_x0_5: Exemplar Normalization for Learning Deep Representation
 https://arxiv.org/pdf/2003.08761
+
+
 shufflenet_v2_x1_0: Tree Species Identification by Trunk Images Using Deep Machine Learning
 http://www.ic.unicamp.br/~reltech/PFG/2019/PFG-19-50.pdf
+
+
 mobilenet_v2: MobileNetV2: Inverted Residuals and Linear Bottlenecks
 http://openaccess.thecvf.com/content_cvpr_2018/papers/Sandler_MobileNetV2_Inverted_Residuals_CVPR_2018_paper.pdf
 
