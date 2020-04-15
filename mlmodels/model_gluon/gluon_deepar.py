@@ -53,8 +53,14 @@ class Model(object):
 
 
 def _config_process(data_path, config_mode="test"):
-    data_path = Path(os.path.realpath(
+
+    if choice=='test01':
+        data_path = Path(os.path.realpath(
         __file__)).parent.parent / "model_gluon/deepar_run.json" if data_path == "dataset/" else data_path
+
+    elif choice=='test02':
+        data_path = Path(os.path.realpath(
+        __file__)).parent.parent / "model_gluon/deepar.json" if data_path == "dataset/" else data_path
 
     with open(data_path, encoding='utf-8') as config_f:
         config = json.load(config_f)
@@ -65,43 +71,76 @@ def _config_process(data_path, config_mode="test"):
 
 def get_params(choice="", data_path="dataset/timeseries/", config_mode="test", **kw):
     if choice == "json":
-        return _config_process(data_path, config_mode=config_mode)
+        return _config_process(data_path, config_mode=config_mode, choice=choice)
 
-    if choice == "test01" :
-        log("#### Path params   ###################################################")
-        data_path  = path_norm( "dataset/timeseries" )   
-        out_path   = path_norm( "ztest/model_gluon/gluon_deepar/" )   
-        model_path = os.path.join(out_path , "model")
+    log("#### Path params   ###################################################")
+    data_path  = path_norm( "dataset/timeseries" )   
+    out_path   = path_norm( "ztest/model_gluon/gluon_deepar/" )   
+    model_path = os.path.join(out_path , "model")
 
+    if choice == "test01" :        
+        log("#### Data params   ###################################################")
         data_pars = {"train_data_path": data_path + "/train_deepar.csv",
                      "test_data_path":  data_path + "/test_deepar.csv", 
                      "train": True,
                      'prediction_length': 12, 'freq': '5min', 
-                     "save_fig": "./series.png", "modelpath": model_path}
-        
-        log("#### Model params   ################################################")
-        model_pars = {"prediction_length": data_pars["prediction_length"], "freq": data_pars["freq"],
-                      "num_layers": 2, "num_cells": 40, "cell_type": 'lstm', "dropout_rate": 0.1,
-                      "use_feat_dynamic_real": False, "use_feat_static_cat": False, "use_feat_static_real": False,
-                      "scaling": True, "num_parallel_samples": 100}
+                     "save_fig": "./series.png", "modelpath": model_path,
+                     "choice":choice}
 
-        compute_pars = {"batch_size": 32, "clip_gradient": 100, "ctx": None, "epochs": 10, "init": "xavier",
-                        "learning_rate": 1e-3,
-                        "learning_rate_decay_factor": 0.5, "hybridize": False, "num_batches_per_epoch": 10,
-                        'num_samples': 100,
-                        "minimum_learning_rate": 5e-05, "patience": 10, "weight_decay": 1e-08}
-
+        log("#### output params   ###################################################")
         out_pars = {"outpath": out_path + "result", 
                     "plot_prob": True, "quantiles": [0.5]}
 
+    elif choice == "test02" :
+        log("#### Data params   ###################################################")
+        data_pars = {"train_data_path": data_path + "/GLUON-train.csv",
+                    "test_data_path":  data_path + "/GLUON-test.csv", 
+                    "train": False,
+                    'prediction_length': 48, 'freq': '1H', 
+                    "start": pd.Timestamp("01-01-1750", freq='1H'), 
+                    "num_series":37,
+                    "save_fig": "./series.png", "modelpath": model_path,
+                    "choice":choice}
+
+        log("#### output params   ###################################################")
+        out_pars = {"outpath": out_path + "result", 
+                    "plot_prob": True, "quantiles": [0.1, 0.5, 0.9]}
+
+    log("#### Model params   ################################################")
+    model_pars = {"prediction_length": data_pars["prediction_length"], "freq": data_pars["freq"],
+                "num_layers": 2, "num_cells": 40, "cell_type": 'lstm', "dropout_rate": 0.1,
+                "use_feat_dynamic_real": False, "use_feat_static_cat": False, "use_feat_static_real": False,
+                "scaling": True, "num_parallel_samples": 100}
+
+    log("#### Compute params   ################################################")
+    compute_pars = {"batch_size": 32, "clip_gradient": 100, "ctx": None, "epochs": 10, "init": "xavier",
+                    "learning_rate": 1e-3,
+                    "learning_rate_decay_factor": 0.5, "hybridize": False, "num_batches_per_epoch": 10,
+                    'num_samples': 100,
+                    "minimum_learning_rate": 5e-05, "patience": 10, "weight_decay": 1e-08}
+    
     return model_pars, data_pars, compute_pars, out_pars
 
 
-def get_dataset(data_pars):
-    data_path = data_pars['train_data_path']
-    df = pd.read_csv(data_path, header=0, index_col=0)   
-    gluonts_ds = ListDataset([{"start": df.index[0],"target": df.value[:"2015-04-05 00:00:00"]}],
+def get_dataset(data_pars):    
+    if data_pars["choice"]=='test01':
+        data_path = data_pars['train_data_path']
+        df = pd.read_csv(data_path, header=0, index_col=0)  
+        gluonts_ds = ListDataset([{"start": df.index[0],"target": df.value[:"2015-04-05 00:00:00"]}],
                                 freq="5min")
+
+    elif data_pars["choice"]=='test02':
+        data_path = data_pars['train_data_path'] if data_pars['train'] else data_pars['test_data_path']
+        #### read from csv file
+        if data_pars.get("uri_type") == "pickle":
+            data_set = pd.read_pickle(data_path)
+        else:
+            data_set = pd.read_csv(data_path)
+        ### convert to gluont format
+        gluonts_ds = ListDataset([{FieldName.TARGET: data_set.iloc[i].values, FieldName.START: data_pars['start']}
+                              for i in range(data_pars['num_series'])], freq=data_pars['freq'])
+
+
     if VERBOSE:
         entry = next(iter(gluonts_ds))
         train_series = to_pandas(entry)
@@ -147,14 +186,18 @@ def load(path):
 def predict(model, sess=None, data_pars=None, compute_pars=None, out_pars=None, **kwargs):
         ##  Model is class
         ## load test dataset
-    data_path = data_pars['test_data_path'] 
+    if data_pars['choice']=='test01':
+        data_path = data_pars['test_data_path'] 
 
-    df = pd.read_csv(data_path, header=0, index_col=0)
-   
-    test_ds = ListDataset([{"start": df.index[0],
-                            "target": df.value[:"2015-04-15 00:00:00"]}],
-                          freq="5min")
-
+        df = pd.read_csv(data_path, header=0, index_col=0)
+    
+        test_ds = ListDataset([{"start": df.index[0],
+                                "target": df.value[:"2015-04-15 00:00:00"]}],
+                            freq="5min")
+    elif data_pars['choice']=='test02':
+        data_pars['train'] = False
+        test_ds = get_dataset(data_pars)
+    
     forecast_it, ts_it = make_evaluation_predictions(
             dataset=test_ds,  # test dataset
             predictor=model,  # predictor
