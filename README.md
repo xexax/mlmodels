@@ -31,7 +31,7 @@ of mlmodels.
 
 
 ## Model List :
-Time Series:
+### Time Series:
 
 Nbeats: 2019, Time Series NNetwork, https://arxiv.org/abs/1905.10437
 
@@ -42,7 +42,9 @@ Facebook Prophet 2017, Time Series prediction,
 ARMDN Advanced Time series Prediction : 2019, Associative and Recurrent Mixture Density Networks for time series.
 
 LSTM prediction
-NLP :
+
+
+### NLP :
 
 Sentence Transformers : 2019, Embedding of full sentences using BERT, https://arxiv.org/pdf/1908.10084.pdf
 
@@ -106,11 +108,9 @@ https://www.cambridge.org/core/journals/natural-language-engineering/article/sen
 
 ### TABULAR :
 
-
 #### LightGBM
 
 #### AutoML Gluon  :  2020, AutoML in Gluon, MxNet using LightGBM, CatBoost
-
 
 #### Auto-Keras  :  2020, Automatic Keras model selection
 
@@ -143,9 +143,6 @@ svm.l1_min_c\
 neighbors.KNeighborsClassifier\
 neighbors.KNeighborsRegressor\
 neighbors.KNeighborsTransformer\
-
-
-
 
 
 #### Binary Neural Prediction from tabular data:
