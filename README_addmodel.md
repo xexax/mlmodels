@@ -20,15 +20,62 @@ Thank you for taking interest in this project :grinning:. Read following instruc
 ## List of Functions/Methods
 https://github.com/arita37/mlmodels/blob/dev/README_index_doc.py
 
+<<<<<<< HEAD
 ## Using Online Editor (Gitpod) for mlmodels
 (https://github.com/arita37/mlmodels/issues/101)
+=======
+# 
+# 
+___________________________________________________________________________________________
+# VScode Online Editor (pre-installed)
+
+https://github.com/arita37/mlmodels/issues/101
+
+
+# 
+# 
+___________________________________________________________________________________________
+# Steps for: Pull Request, A Fix or Adding a New Model:
+
+
+### Coding Style
+   - Please don't exceed 100 characters per line.
+   - "Pretty Code is better than strict PEP8, which is ugly to read...". [Read More](https://realpython.com/python-pep8/)
+   - Please use [Black](https://github.com/psf/black) formatter Python package.
+
+
+
+### 0) Read the examples :
+
+  [Issue#102](https://github.com/arita37/mlmodels/issues/102)
+  [Issue#100](https://github.com/arita37/mlmodels/pull/100)
+
+
+
+    
+### 1) Fork from arita37/mlmodels. Create a new branch from DEV branch (modelXXX, e.g., model_deepar) to work on.
+    git checkout -b myfeat
+>>>>>>> 225a9b5bb798242d244e692837a8af6c441dac6c
 
 ## Code Style: 
    - Please don't exceed the limit of 100 characters per line.
    - Format your code according to PEP8 ([Read More](https://realpython.com/python-pep8/)). Automatic format tests are run when you commit or do a PR.
    - You can use [Black](https://github.com/psf/black)/[pep8](https://www.python.org/dev/peps/pep-0008/) formatter Python packages.
 
+<<<<<<< HEAD
 ## Read The Examples
+=======
+### 2) TEST : Change in these files where needed with your MODEL_NAME and BRANCH NAME :
+
+  [test_specific_model](https://github.com/arita37/mlmodels/blob/dev/.github/workflows/test_specific_model.yml)
+
+  [pullrequest.json] (https://github.com/arita37/mlmodels/blob/dev/pullrequest.json)
+
+
+### 3) TEST : After each commit or PullRequest, automatic test is run on Github :
+  Please check here :
+  https://github.com/arita37/mlmodels/actions
+>>>>>>> 225a9b5bb798242d244e692837a8af6c441dac6c
 
   - [Issue#102](https://github.com/arita37/mlmodels/issues/102)
   - [Issue#100](https://github.com/arita37/mlmodels/pull/100)

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import os
 import pandas as pd
-from mlmodels.util import env_pip_check
+
 from gluonts.model.deepar import DeepAREstimator
 from gluonts.trainer import Trainer
 from gluonts.dataset.common import ListDataset
@@ -13,15 +13,28 @@ from gluonts.model.predictor import Predictor
 import matplotlib.pyplot as plt
 from pathlib import Path
 import json
-from mlmodels.util import os_package_root_path, path_norm, log
+
+
+#########################################################################################################
+from mlmodels.util import os_package_root_path, log, path_norm, get_model_uri
+
 
 VERBOSE = False
+MODEL_URI = get_model_uri(__file__)
 
+
+
+
+
+
+
+
+#########################################################################################################
 class Model(object):
     def __init__(self, model_pars=None, data_pars=None, 
                  compute_pars=None, **kwargs):
         ## Empty model for Seaialization
-        if model_pars is None and compute_pars is None:
+        if model_pars is None :
             self.model = None
 
         else:
@@ -53,20 +66,19 @@ class Model(object):
 
 
 def _config_process(data_path, config_mode="test"):
-
     if choice=='test01':
-        data_path = Path(os.path.realpath(
-        __file__)).parent.parent / "model_gluon/deepar_run.json" if data_path == "dataset/" else data_path
+        data_path = path_norm(  "model_gluon/deepar_run.json" )
 
     elif choice=='test02':
-        data_path = Path(os.path.realpath(
-        __file__)).parent.parent / "model_gluon/deepar.json" if data_path == "dataset/" else data_path
+        data_path = path_norm( "model_gluon/deepar.json")
+
 
     with open(data_path, encoding='utf-8') as config_f:
         config = json.load(config_f)
         config = config[config_mode]
 
     return config["model_pars"], config["data_pars"], config["compute_pars"], config["out_pars"]
+
 
 
 def get_params(choice="", data_path="dataset/timeseries/", config_mode="test", **kw):
@@ -77,6 +89,7 @@ def get_params(choice="", data_path="dataset/timeseries/", config_mode="test", *
     data_path  = path_norm( "dataset/timeseries" )   
     out_path   = path_norm( "ztest/model_gluon/gluon_deepar/" )   
     model_path = os.path.join(out_path , "model")
+
 
     if choice == "test01" :        
         log("#### Data params   ###################################################")
@@ -90,6 +103,7 @@ def get_params(choice="", data_path="dataset/timeseries/", config_mode="test", *
         log("#### output params   ###################################################")
         out_pars = {"outpath": out_path + "result", 
                     "plot_prob": True, "quantiles": [0.5]}
+
 
     elif choice == "test02" :
         log("#### Data params   ###################################################")
@@ -298,3 +312,11 @@ def test(data_path="dataset/", choice=""):
 if __name__ == '__main__':
     VERBOSE = True
     test(data_path="dataset/timeseries", choice="test01")
+
+    test(data_path="dataset/timeseries", choice="test02")
+
+
+    test(data_path="model_gluon/gluon_deepar,json", choice="json")
+
+
+
