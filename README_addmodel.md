@@ -1,4 +1,5 @@
 # Contributing Guide
+### Pull Request, Make a Fix or Add a New Model
 Thank you for taking interest in this project :grinning:. Read following instructions before adding a new model.
 - [Code Style](#code-style)
 - [Read The Examples](#read-the-examples)
@@ -12,6 +13,9 @@ Thank you for taking interest in this project :grinning:. Read following instruc
 - [Issue A Pull Request](#issue-a-pull-request)
 - [Source Code Structure As Below](#source-code-structure-as-below)
 - [How to define a custom model](#how-to-define-a-custom-model)
+- [CLI Tools](#cli-tools)
+- [Interface](#interface)
+- [Naming convention](#naming-convention)
 
 ## List of Functions/Methods
 https://github.com/arita37/mlmodels/blob/dev/README_index_doc.py
@@ -251,7 +255,8 @@ then for each staging, declare some specific parameters for model, dataset and a
  
 #######################################################################################
 
-## ③ CLI tools: package provide below tools
+## CLI tools 
+Package provides below tools
 https://github.com/arita37/mlmodels/blob/dev/README_usage.md
 
 ```
@@ -263,7 +268,7 @@ https://github.com/arita37/mlmodels/blob/dev/README_usage.md
 
 ```
 #######################################################################################
-### ④ Interface
+### Interface
 
 models.py 
 ```
@@ -285,7 +290,7 @@ optim.py
                 save_folder="/mymodel/", log_folder="", ntrials=2) 
 ```
 
-#### Generic parameters 
+Generic parameters 
 ```
    Define in models_config.json
    model_params      :  Relative to model definition 
@@ -297,7 +302,7 @@ optim.py
    
 
    #######################################################################################
-   ### ⑥ Naming convention
+   ### Naming convention
    
    ### Function naming
    ```
