@@ -10,8 +10,8 @@ import pandas as pd
 
 
 
-
 import numpy as np
+from sklearn.preprocessing import MinMaxScaler
 
 class Preprocess_nbeats:
 
@@ -35,7 +35,16 @@ class Preprocess_nbeats:
     def get_data(self):
         return self.data
         
+class SklearnMinMaxScaler:
 
+    def __init__(self, **args):
+        self.preprocessor = MinMaxScaler(**args)
+    def compute(self,df):
+        self.preprocessor.fit(df)
+        self.data = self.preprocessor.transform(df)
+        
+    def get_data(self):
+        return self.data
 
 
 
@@ -49,6 +58,8 @@ def pd_clean(df,  pars={}) :
   df = df.fillna(0)
   return df
 
+def pd_fillna(df,**args):
+    return df.fillna(**args)
 
 
 def pd_reshape(test, features, target, pred_len, m_feat) :
