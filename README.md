@@ -127,7 +127,7 @@ linear_model.LassoLars\
 linear_model.LassoLarsCV\
 linear_model.LassoLarsIC\
 linear_model.OrthogonalMatchingPursuit\
-linear_model.OrthogonalMatchingPursuitCV\
+linear_model.OrthogonalMatchingPursuitCV
 
 
 svm.LinearSVC\
@@ -137,13 +137,12 @@ svm.NuSVR\
 svm.OneClassSVM\
 svm.SVC\
 svm.SVR\
-svm.l1_min_c\
+svm.l1_min_c
 
 
 neighbors.KNeighborsClassifier\
 neighbors.KNeighborsRegressor\
-neighbors.KNeighborsTransformer\
-
+neighbors.KNeighborsTransformer
 
 #### Binary Neural Prediction from tabular data:
 
