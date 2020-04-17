@@ -25,6 +25,7 @@ jobs:
            git config --local user.name "arita37"
            git config --global hub.protocol ssh
            bin/hub pull-request --base arita37:dev --head arita37:feat_dataloader -m "Daily Sync with arita37/Dev"
+           bin/hub pull-request --base arita37:dev --head AsmaDamani:asma_damani  -m "Daily Sync with arita37/Dev"
            
            
            
