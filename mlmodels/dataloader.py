@@ -175,19 +175,19 @@ def _check_output_shape(self, inter_output, shape, max_len):
             and tuple(shape) != inter_output.shape
         ):
             raise Exception(
-                f"Expected shape {tuple(shape)} does not match shape data shape {intermediate_output.shape[1:]}"
+                f"Expected shape {tuple(shape)} does not match shape data shape {inter_output.shape[1:]}"
             )
         if case == 1:
             for s, o in zip(shape, inter_output):
                 if hasattr(o, "shape") and tuple(s) != o.shape[1:]:
                     raise Exception(
-                        f"Expected shape {tuple(shape)} does not match shape data shape {intermediate_output.shape[1:]}"
+                        f"Expected shape {tuple(shape)} does not match shape data shape {inter_output.shape[1:]}"
                     )
         if case == 3:
             for s, o in zip(shape, tuple(inter_output.values())):
                 if hasattr(o, "shape") and tuple(s) != o.shape[1:]:
                     raise Exception(
-                        f"Expected shape {tuple(shape)} does not match shape data shape {intermediate_output.shape[1:]}"
+                        f"Expected shape {tuple(shape)} does not match shape data shape {inter_output.shape[1:]}"
                     )
     self.output_shape = shape
     return inter_output
@@ -196,11 +196,11 @@ def _check_output_shape(self, inter_output, shape, max_len):
 class DataLoader:
 
     default_loaders = {
-        ".csv": {"uri": "pandas::read_csv"},
-        ".npy": {"uri": "numpy::load"},
-        ".npz": {"uri": "np:load", "arg": {"allow_pickle": True}},
-        ".pkl": {"uri": "dataloader::pickle_load"},
-        "image_dir": {"uri": "dataloader::image_dir_load"},
+        ".csv": {"uri": "pandas::read_csv", "pass_data_pars":False},
+        ".npy": {"uri": "numpy::load", "pass_data_pars":False},
+        ".npz": {"uri": "np:load", "arg": {"allow_pickle": True}, "pass_data_pars":False},
+        ".pkl": {"uri": "dataloader::pickle_load", "pass_data_pars":False},
+        "image_dir": {"uri": "dataloader::image_dir_load", "pass_data_pars":False},
     }
     _interpret_input_pars = _interpret_input_pars
     _check_output_shape   = _check_output_shape
@@ -213,7 +213,7 @@ class DataLoader:
         self.final_output              = None
         self.final_output_split        = None
 
-        self.loader                    = data_pars['loader']
+        self.loader                    = data_pars.get('loader',{})
         self.preprocessor              = data_pars.get('preprocessor',{})
         self.split_xy                  = data_pars.get('split_xy',{})
         self.split_train_test          = data_pars.get('split_train_test',{})
@@ -238,19 +238,22 @@ class DataLoader:
             loaded_data = data_loader(self.path, **data_loader_args)
 
         # Delegate data preprocessing
-        (
-            preprocessor_class,
-            preprocessor_class_args,
-            other_keys,
-        ) = load_callable_from_dict(self.preprocessor, return_other_keys=True)
-        if other_keys.get("pass_data_pars", True):
-            self.preprocessor = preprocessor_class(
-                self.data_pars, **preprocessor_class_args
-            )
+        if self.preprocessor == {}:
+            self.inter_output = loaded_data
         else:
-            preprocessor = preprocessor_class(**preprocessor_class_args)
-        preprocessor.compute(loaded_data)
-        self.inter_output = preprocessor.get_data()
+            (
+                preprocessor_class,
+                preprocessor_class_args,
+                other_keys,
+            ) = load_callable_from_dict(self.preprocessor, return_other_keys=True)
+            if other_keys.get("pass_data_pars", True):
+                self.preprocessor = preprocessor_class(
+                    self.data_pars, **preprocessor_class_args
+                )
+            else:
+                preprocessor = preprocessor_class(**preprocessor_class_args)
+            preprocessor.compute(loaded_data)
+            self.inter_output = preprocessor.get_data()
 
 
         # Delegate data splitting
@@ -261,13 +264,12 @@ class DataLoader:
             else:
                 self.inter_output = split_xy(self.inter_output,**split_xy_args)
                 
-        #Check output shape, trim to max_len
+        # Check output shape, trim to max_len
         shape = self.output.get('shape', None)
         max_len = self.output.get('max_len',None)
         self.inter_output = self._check_output_shape(self.inter_output,shape,max_len)
         
-
-        #Delegate train-test splitting
+        # Delegate train-test splitting
         if self.split_train_test != {}:
             outputs_to_split = self.inter_output if self.col_miscinput is None else self.inter_output[:-1]
             split_train_test, split_train_test_args, other_keys = load_callable_from_dict(self.split_train_test, return_other_keys=True)
@@ -285,7 +287,7 @@ class DataLoader:
                 self.inter_output_split = self.inter_output_split + ([],)
         
                 
-        #delegate output saving
+        # Delegate output saving
         if self.save_inter_output != {}:
             if self.inter_output_split is None:
                 outputs_to_save = self.inter_output
@@ -298,7 +300,7 @@ class DataLoader:
             else:
                 save_inter_output(outputs_to_save,path,**save_inter_output_args)
         
-        #Delegate output formatting
+        # Delegate output formatting
         format_dict = self.output.get('format_func',{})
         format_func = lambda x: x
         if format_dict != {}:
@@ -311,12 +313,12 @@ class DataLoader:
                 )
             else:
                 format_func = partial(format_func, **format_func_args)
-        if self.split_train_test is not None:
+        if self.split_train_test != {}:
             self.final_output_split = tuple(
-                format_func(o) for o in self.intermediate_output_split
+                format_func(o) for o in self.inter_output_split
             )
         else:
-            self.final_output = format_func(self.intermediate_output)
+            self.final_output = format_func(self.inter_output)
 
 
     def get_data(self, intermediate=False):
