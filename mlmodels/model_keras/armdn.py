@@ -112,6 +112,7 @@ class Model:
 
 
 
+
 def fit(model=None, data_pars={}, compute_pars={}, out_pars={}, **kw):
     """
 
