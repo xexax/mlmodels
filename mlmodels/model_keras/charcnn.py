@@ -142,6 +142,7 @@ def fit(model, data_pars=None, compute_pars=None, out_pars=None, **kw):
 
 
 
+
 def fit_metrics(model, data_pars=None, compute_pars=None, out_pars=None, **kw):
     """
        Return metrics ofw the model when fitted.
