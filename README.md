@@ -33,15 +33,15 @@ of mlmodels.
 ## Model List :
 ### Time Series:
 
-Nbeats: 2019, Time Series NNetwork, https://arxiv.org/abs/1905.10437
+Montreal AI, Nbeats: 2019, Advanced interpretable Time Series Neural Network, https://arxiv.org/abs/1905.10437
 
-Amazon Deep AR: 2019, Time Series NNetwork, https://arxiv.org/abs/1905.10437
+Amazon Deep AR: 2019, Multi-variate Time Series NNetwork, https://arxiv.org/abs/1905.10437
 
 Facebook Prophet 2017, Time Series prediction,
 
-ARMDN Advanced Time series Prediction : 2019, Associative and Recurrent Mixture Density Networks for time series.
+ARMDN, Advanced Multi-variate Time series Prediction : 2019, Associative and Recurrent Mixture Density Networks for time series.
 
-LSTM prediction
+LSTM Neural Network prediction
 
 
 ### NLP :
