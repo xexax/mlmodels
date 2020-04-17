@@ -52,12 +52,17 @@ from util import load_callable_from_dict
 #### Specific packages   ##### Be ware of tensorflow version
 #### I fpossible, we dont use to have dependance on tensorflow, torch, ...
 
+
+"""  Not used
 import tensorflow as tf
 import torch
 import torchtext
 import keras
 
 import tensorflow.data
+"""
+
+
 
 
 
@@ -132,9 +137,8 @@ def _interpret_input_pars(self, input_pars):
     self.col_Xinput = input_pars.get("col_Xinput", None)
     self.col_Yinput = input_pars.get("col_Yinput", None)
     self.col_miscinput = input_pars.get("col_miscinput", None)
-
     validation_split_function = [
-        {"uri": "sklearn.model_selection::train_test_split", "args": {}},
+        {"uri": "sklearn.model_selection::train_test_split", "arg": {}},
         "test_size",
     ]
     self.validation_split_function = input_pars.get(
