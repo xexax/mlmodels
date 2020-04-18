@@ -21,8 +21,8 @@ https://github.com/arita37/mlmodels/blob/dev/README_index_doc.py
 (https://github.com/arita37/mlmodels/issues/101)
 
 ## Code Style: 
-   - Please don't exceed the limit of 100 characters per line.
-   - Format your code according to PEP8 ([Read More](https://realpython.com/python-pep8/)). Automatic format tests are run when you commit or do a PR.
+   - You can use to 120 characters per line : Better code readability
+   - Do Not FOLLOW PEP8, make your code EASY TO READ : Align  "=" together, .... 
    - You can use [Black](https://github.com/psf/black)/[pep8](https://www.python.org/dev/peps/pep-0008/) formatter Python packages.
 
 ## Read The Examples
@@ -35,7 +35,7 @@ Fork from arita37/mlmodels. Create a new branch from DEV branchto work on. Name 
 
 `git checkout -b model_XXX` or `git checkout -b issue100`
 
-## Configure for Tests
+## Configure for Tests  (No Test, No PR Accepted)
 Change in these files where needed with your MODEL_NAME and BRANCH NAME :
 - [`test_specific_model`](https://github.com/arita37/mlmodels/blob/dev/.github/workflows/PLEASE_CHANGE_test_specific_model.yml)
 - [`pullrequest.json`](https://github.com/arita37/mlmodels/blob/dev/pullrequest.json)
