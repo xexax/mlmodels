@@ -37,7 +37,7 @@ Fork from arita37/mlmodels. Create a new branch from DEV branchto work on. Name 
 
 ## Configure for Tests
 Change in these files where needed with your MODEL_NAME and BRANCH NAME :
-- [`test_specific_model`](https://github.com/arita37/mlmodels/blob/dev/.github/workflows/test_specific_model.yml)
+- [`test_specific_model`](https://github.com/arita37/mlmodels/blob/dev/.github/workflows/PLEASE_CHANGE_test_specific_model.yml)
 - [`pullrequest.json`](https://github.com/arita37/mlmodels/blob/dev/pullrequest.json)
 
 ## Create Python Script For New Model
