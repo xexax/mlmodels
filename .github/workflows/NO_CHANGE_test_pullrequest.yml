@@ -2,7 +2,7 @@ name:  test_pullrequest
 
 on:
   pull_request:
-    branches: asma_damani
+    branches: dev
 
  
 
