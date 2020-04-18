@@ -93,7 +93,7 @@ jobs:
 
     ########  Test running 
     - name: ml_test
-      run:  cd  /home/runner/work/mlmodels/mlmodels/mlmdodels && python test_dataloader.py     2>&1 | tee -a  cd /home/runner/work/mlmodels/mlmodels_store/Logs/log_dataloader_$(date '+%Y-%m-%d_%H:%M:%S,%3N').txt
+      run:  cd  /home/runner/work/mlmodels/mlmodels/mlmodels && python test_dataloader.py     2>&1 | tee -a  cd /home/runner/work/mlmodels/mlmodels_store/Logs/log_dataloader_$(date '+%Y-%m-%d_%H:%M:%S,%3N').txt
 
       
         
