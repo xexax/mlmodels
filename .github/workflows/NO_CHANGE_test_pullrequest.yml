@@ -75,5 +75,13 @@ jobs:
 
 
     ##### Please change BELOW to your model name  
-    - name: ml_test gluon_deepar
-      run: ml_test --do gluon_deepar --config_file gluon_deepar.json
+    - name: ml_test 
+      run: ml_test --do test_all 
+
+
+
+
+
+
+
+      
