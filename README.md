@@ -54,6 +54,9 @@ TextCNN Pytorch : 2016, Text CNN Classifier, https://arxiv.org/abs/1801.06287
 
 TextCNN Keras : 2016, Text CNN Classifier, https://arxiv.org/abs/1801.06287
 
+Bi-directionnal Conditional Random Field LSTM for Name Entiryt Recognition,  https://www.aclweb.org/anthology/Y18-1061.pdf
+
+
 DRMM:  Deep Relevance Matching Model for Ad-hoc Retrieval.https://dl.acm.org/doi/pdf/10.1145/2983323.2983769?download=true
 
 DRMMTKS:  Deep Top-K Relevance Matching Model for Ad-hoc Retrieval. 
