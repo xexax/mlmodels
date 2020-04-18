@@ -1,4 +1,4 @@
-name: "Benchmark"
+name: "Your_model_name"
 
 on:
   push:
