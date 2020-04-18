@@ -1,5 +1,5 @@
   
-name:  pr_flow
+name:  pullrequest_auto
 
 on:
   schedule:
