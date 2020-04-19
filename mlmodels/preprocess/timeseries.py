@@ -2,6 +2,22 @@
 
   Ensemble of preprocessor for time series
 
+
+
+https://docs-time.giotto.ai/
+
+
+https://pypi.org/project/tslearn/#documentation
+
+
+https://pypi.org/project/skits/
+
+
+
+Gluon TS
+
+
+
 """
 
 from mlmodels.util import path_norm
@@ -12,6 +28,26 @@ import pandas as pd
 
 import numpy as np
 from sklearn.preprocessing import MinMaxScaler
+from collections import OrderedDict
+
+def glutonts_to_pandas(dataset_name_list):
+    from gluonts.dataset.repository.datasets import get_dataset
+    # datasets = ["m4_hourly", "m4_daily", "m4_weekly", "m4_monthly", "m4_quarterly", "m4_yearly", ]
+    ds_dict = OrderedDict()
+    for t in dataset_name_list :
+      ds = get_dataset(t)
+
+      ####  convert
+      ds1 = ds.to_pandas()
+
+      ds1 = 0
+      ds_dict[t] = ds1
+
+    return ds_dict
+
+
+
+
 
 class Preprocess_nbeats:
 
