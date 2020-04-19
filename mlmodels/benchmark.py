@@ -123,13 +123,14 @@ def benchmark_run(bench_pars=None, args=None, config_mode="test"):
 
 
         log("#### Inference Need return ypred, ytrue")
-        ypred, ytrue = module.predict(model=model, session=session, 
+        if data_pars.get("train"):
+            data_pars["train"] = 0
+        ypred, ytrue = module.predict(model=model, session=session,
                                       data_pars=data_pars, compute_pars=compute_pars, 
                                       out_pars=out_pars, return_ytrue=1)   
 
         ytrue = np.array(ytrue).reshape(-1, 1)
         ypred = np.array(ypred).reshape(-1, 1)
-        
         log("### Calculate Metrics          ")
         for metric in metric_list:
             ii = ii + 1
@@ -276,6 +277,13 @@ def main():
 
     elif arg.do == "text_classification":
         log("text_classification")
+        arg.data_path = ""
+        arg.dataset_name = ""
+        arg.path_json = "dataset/json/benchmark_text/"
+        arg.path_out = "example/benchmark/text_classification/"
+
+        bench_pars = {"metric_list": ["accuracy_score"]}
+        benchmark_run(bench_pars=bench_pars, args=arg)
 
     else :
         raise Exception("No options")
