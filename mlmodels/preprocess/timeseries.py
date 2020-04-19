@@ -30,22 +30,69 @@ import numpy as np
 from sklearn.preprocessing import MinMaxScaler
 from collections import OrderedDict
 
-def glutonts_to_pandas(dataset_name_list):
-    from gluonts.dataset.repository.datasets import get_dataset
+def glutonts_to_pandas(dataset_name_list=["m4_hourly", "m4_daily", "m4_weekly", "m4_monthly", "m4_quarterly", "m4_yearly", ]):
+    """
+     n general, the datasets provided by GluonTS are objects that consists of three main members:
+
+dataset.train is an iterable collection of data entries used for training. Each entry corresponds to one time series
+dataset.test is an iterable collection of data entries used for inference. The test dataset is an extended version of the train dataset that contains a window in the end of each time series that was not seen during training. This window has length equal to the recommended prediction length.
+dataset.metadata contains metadata of the dataset such as the frequency of the time series, a recommended prediction horizon, associated features, etc.
+In [5]:
+entry = next(iter(dataset.train))
+train_series = to_pandas(entry)
+train_series.plot()
+
     # datasets = ["m4_hourly", "m4_daily", "m4_weekly", "m4_monthly", "m4_quarterly", "m4_yearly", ]
+
+
+    """
+    from gluonts.dataset.repository.datasets import get_dataset
+    from gluonts.dataset.util import to_pandas
+
     ds_dict = OrderedDict()
     for t in dataset_name_list :
-      ds = get_dataset(t)
+      ds1 = get_dataset(t)
+      
+      ds_dict[t]['train'] = to_pandas( next(iter(ds1.train)) ) 
+      ds_dict[t]['test'] = to_pandas( next(iter(ds1.test))  ) 
+      ds_dict[t]['metadata'] = ds1.metadata 
 
-      ####  convert
-      ds1 = ds.to_pandas()
-
-      ds1 = 0
-      ds_dict[t] = ds1
 
     return ds_dict
 
 
+
+
+def pandas_to_gluonts(df, pars=None) :
+    """
+    Custom datasets¶
+    At this point, it is important to emphasize that GluonTS does not require this specific format for a custom dataset that a user may have. The only requirements for a custom dataset are to be iterable and have a “target” and a “start” field. To make this more clear, assume the common case where a dataset is in the form of a numpy.array and the index of the time series in a pandas.Timestamp (possibly different for each time series):
+
+    In [8]:
+    N = 10  # number of time series
+    T = 100  # number of timesteps
+    prediction_length = 24
+    freq = "1H"
+    custom_dataset = np.random.normal(size=(N, T))
+    start = pd.Timestamp("01-01-2019", freq=freq)  # can be different for each time series
+    Now, you can split your dataset and bring it in a GluonTS appropriate format with just two lines of code:
+
+    In [9]:
+    from gluonts.dataset.common import ListDataset
+    In [10]:
+    # train dataset: cut the last window of length "prediction_length", add "target" and "start" fields
+    train_ds = ListDataset([{'target': x, 'start': start}
+                            for x in custom_dataset[:, :-prediction_length]],
+                           freq=freq)
+
+    # test dataset: use the whole dataset, add "target" and "start" fields
+    test_ds = ListDataset([{'target': x, 'start': start}
+                           for x in custom_dataset],
+                          freq=freq)
+    """
+    ds = None
+    
+    return ds 
 
 
 
