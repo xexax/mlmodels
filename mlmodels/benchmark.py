@@ -57,7 +57,7 @@ def preprocess_timeseries_m5(data_path=None, dataset_name=None, pred_length=10, 
     df         = pd.read_csv(data_path + dataset_name)
     col_to_del = ["item_id", "dept_id", "cat_id", "store_id", "state_id"]
     temp_df    = df.drop(columns=col_to_del).copy()
-    
+
     # 1, -1 are hardcoded because we have to explicitly mentioned days column 
     temp_df    = pd.melt(temp_df, id_vars=["id"], value_vars=temp_df.columns[1: -1])
 
@@ -70,7 +70,7 @@ def preprocess_timeseries_m5(data_path=None, dataset_name=None, pred_length=10, 
     pred_length = pred_length
     temp_df     = temp_df.iloc[:pred_length * (temp_df.shape[0] // pred_length)]
     temp_df.to_csv( f"{data_path}/{i_id}.csv", index=False)
-    
+
 ####################################################################################################
 def benchmark_run(bench_pars=None, args=None, config_mode="test"):
       
@@ -158,7 +158,7 @@ def cli_load_arguments(config_file=None):
     add("--path_json",      default="dataset/json/benchmark_cnn/", help=" list of json")
     add("--path_out",       default="example/benchmark/", help=".")
 
-    #### Input dataset--
+    #### Input dataset
     add("--data_path",   default="dataset/timeseries/", help="Dataset path")
     add("--dataset_name",default="sales_train_validation.csv", help="dataset name")   
 
@@ -167,7 +167,6 @@ def cli_load_arguments(config_file=None):
 
     arg = p.parse_args()
     return arg
-
 
 def main():
     arg = cli_load_arguments()
@@ -236,7 +235,6 @@ def main():
 
     else :
         raise Exception("No options")
-
 
 if __name__ == "__main__":
     main()
