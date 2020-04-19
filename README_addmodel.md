@@ -23,7 +23,7 @@ https://github.com/arita37/mlmodels/blob/dev/README_index_doc.py
 ## Code Style: 
    - You can use to 120 characters per line : Better code readability
    - Do Not FOLLOW PEP8, make your code EASY TO READ : Align  "=" together, .... 
-   - You can use [Black](https://github.com/psf/black)/[pep8](https://www.python.org/dev/peps/pep-0008/) formatter Python packages.
+   - Do NOT reformat existing files.
 
 ## Read The Examples
 
