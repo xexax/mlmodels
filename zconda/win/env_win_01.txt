@@ -10,3 +10,7 @@ pip install git+https://www.github.com/keras-team/keras-contrib.git
 
 pip install scipy==1.4.2
 
+
+
+pip install cli_code
+

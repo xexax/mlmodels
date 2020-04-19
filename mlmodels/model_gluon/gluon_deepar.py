@@ -43,13 +43,13 @@ class Model(object):
 
             m = self.compute_pars
             trainer = Trainer(batch_size=m['batch_size'], clip_gradient=m['clip_gradient'], 
-                              ctx=m["ctx"],
-                              epochs=m["epochs"],
-                              learning_rate=m["learning_rate"], init=m['init'],
-                              learning_rate_decay_factor=m['learning_rate_decay_factor'],
-                              minimum_learning_rate=m['minimum_learning_rate'], hybridize=m["hybridize"],
-                              num_batches_per_epoch=m["num_batches_per_epoch"],
-                              patience=m['patience'], weight_decay=m['weight_decay']
+                              ctx                        = m["ctx"],
+                              epochs                     = m["epochs"],
+                              learning_rate              = m["learning_rate"], init=m['init'],
+                              learning_rate_decay_factor = m['learning_rate_decay_factor'],
+                              minimum_learning_rate      = m['minimum_learning_rate'], hybridize=m["hybridize"],
+                              num_batches_per_epoch      = m["num_batches_per_epoch"],
+                              patience                   = m['patience'], weight_decay=m['weight_decay']
                               )
 
             ##set up the model
@@ -63,6 +63,8 @@ class Model(object):
                                          use_feat_static_real=m['use_feat_static_real'],
                                          scaling=m['scaling'], num_parallel_samples=m['num_parallel_samples'],
                                          trainer=trainer)
+
+
 
 
 def _config_process(data_path, config_mode="test"):
@@ -150,6 +152,7 @@ def get_dataset(data_pars):
             data_set = pd.read_pickle(data_path)
         else:
             data_set = pd.read_csv(data_path)
+
         ### convert to gluont format
         gluonts_ds = ListDataset([{FieldName.TARGET: data_set.iloc[i].values, FieldName.START: data_pars['start']}
                               for i in range(data_pars['num_series'])], freq=data_pars['freq'])
@@ -316,7 +319,7 @@ if __name__ == '__main__':
     test(data_path="dataset/timeseries", choice="test02")
 
 
-    test(data_path="model_gluon/gluon_deepar,json", choice="json")
+    test(data_path="model_gluon/gluon_deepar.json", choice="json")
 
 
 
