@@ -1,10 +1,5 @@
 """
-
-
-
-  Ensemble of preprocessor for time series, generic and re-usable
-
-
+Ensemble of preprocessor for time series, generic and re-usable
 
 https://docs-time.giotto.ai/
 
@@ -217,6 +212,7 @@ class SklearnMinMaxScaler:
 
 def pd_load(path) :
    return pd.read_csv(path_norm(path ))
+
 
 
 
