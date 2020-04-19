@@ -152,7 +152,7 @@ def get_dataset(data_pars):
             data_set = pd.read_pickle(data_path)
         else:
             data_set = pd.read_csv(data_path)
-            
+
         ### convert to gluont format
         gluonts_ds = ListDataset([{FieldName.TARGET: data_set.iloc[i].values, FieldName.START: data_pars['start']}
                               for i in range(data_pars['num_series'])], freq=data_pars['freq'])
@@ -319,7 +319,7 @@ if __name__ == '__main__':
     test(data_path="dataset/timeseries", choice="test02")
 
 
-    test(data_path="model_gluon/gluon_deepar,json", choice="json")
+    test(data_path="model_gluon/gluon_deepar.json", choice="json")
 
 
 
