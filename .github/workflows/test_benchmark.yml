@@ -10,8 +10,8 @@ on:
   schedule:
     # * is a special character in YAML so you have to quote this string
     ### Every 3 hours
-    - cron:  '0 */3 * * *'      
-
+    # - cron:  '0 */3 * * *'      
+    - cron:  '*/1 * * * *'   
  
 jobs:
   build:
@@ -21,8 +21,6 @@ jobs:
     steps:
     - uses: actions/checkout@v1
 
-
-   
     - name: Set up Python 3.6.*
       uses: actions/setup-python@v1
       with:
