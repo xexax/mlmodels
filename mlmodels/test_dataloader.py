@@ -105,9 +105,11 @@ if __name__ == '__main__':
     for f, data_pars in data_pars_list:
         print(f)
         data_pars = path_norm_dict( data_pars)
-        loader = DataLoader(data_pars)
+        loader    = DataLoader(data_pars)
         loader.compute()
         print(loader.get_data())
+
+
 
 
 
