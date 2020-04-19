@@ -180,7 +180,7 @@ def cli_load_arguments(config_file=None):
     add("--path_out",       default="example/benchmark/", help=".")
 
 
-    #### Input dataset
+    #### Input dataset--
     add("--data_path",   default="dataset/timeseries/", help="Dataset path")
     add("--dataset_name",default="sales_train_validation.csv", help="dataset name")   
 
