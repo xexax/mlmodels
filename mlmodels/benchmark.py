@@ -274,6 +274,8 @@ def main():
         log(bench_pars['metric_list'])
         benchmark_run(bench_pars=bench_pars, args=arg)
 
+    elif arg.do == "text_classification":
+        log("text_classification")
 
     else :
         raise Exception("No options")
