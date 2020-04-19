@@ -16,7 +16,7 @@ https://github.com/arita37/mlmodels/blob/dev/mlmodels/example/README_usage.md
 
 
 *  Colab demo for Install :
-https://colab.research.google.com/drive/1sYbrXNZh9nTeizS-AuCA8RSu94B_B-RF
+https://colab.research.google.com/drive/1gplUtiWQpS4ei5SvoNZMKUCZFD8G8Xz8
 
 
 ## Benefits :
@@ -33,15 +33,15 @@ of mlmodels.
 ## Model List :
 ### Time Series:
 
-Nbeats: 2019, Time Series NNetwork, https://arxiv.org/abs/1905.10437
+Montreal AI, Nbeats: 2019, Advanced interpretable Time Series Neural Network, https://arxiv.org/abs/1905.10437
 
-Amazon Deep AR: 2019, Time Series NNetwork, https://arxiv.org/abs/1905.10437
+Amazon Deep AR: 2019, Multi-variate Time Series NNetwork, https://arxiv.org/abs/1905.10437
 
 Facebook Prophet 2017, Time Series prediction,
 
-ARMDN Advanced Time series Prediction : 2019, Associative and Recurrent Mixture Density Networks for time series.
+ARMDN, Advanced Multi-variate Time series Prediction : 2019, Associative and Recurrent Mixture Density Networks for time series.
 
-LSTM prediction
+LSTM Neural Network prediction
 
 
 ### NLP :
@@ -53,6 +53,9 @@ Transformers Classifier : Using Transformer for Text Classification, https://arx
 TextCNN Pytorch : 2016, Text CNN Classifier, https://arxiv.org/abs/1801.06287
 
 TextCNN Keras : 2016, Text CNN Classifier, https://arxiv.org/abs/1801.06287
+
+Bi-directionnal Conditional Random Field LSTM for Name Entiryt Recognition,  https://www.aclweb.org/anthology/Y18-1061.pdf
+
 
 DRMM:  Deep Relevance Matching Model for Ad-hoc Retrieval.https://dl.acm.org/doi/pdf/10.1145/2983323.2983769?download=true
 
@@ -127,7 +130,7 @@ linear_model.LassoLars\
 linear_model.LassoLarsCV\
 linear_model.LassoLarsIC\
 linear_model.OrthogonalMatchingPursuit\
-linear_model.OrthogonalMatchingPursuitCV\
+linear_model.OrthogonalMatchingPursuitCV
 
 
 svm.LinearSVC\
@@ -137,13 +140,12 @@ svm.NuSVR\
 svm.OneClassSVM\
 svm.SVC\
 svm.SVR\
-svm.l1_min_c\
+svm.l1_min_c
 
 
 neighbors.KNeighborsClassifier\
 neighbors.KNeighborsRegressor\
-neighbors.KNeighborsTransformer\
-
+neighbors.KNeighborsTransformer
 
 #### Binary Neural Prediction from tabular data:
 
@@ -293,13 +295,13 @@ https://github.com/arita37/mlmodels/blob/dev/README_model_list.md
 
 ## ① Installation
 
-Using pre-installed online Setup :
+### (A) Using pre-installed Setup (one click) :
 
 https://github.com/arita37/mlmodels/issues/101
 
 
 
-Manual Install as editable package in Linux
+### (B) Manual Install as editable package in Linux
 
 ```
 conda create -n py36 python=3.6.5 -y
@@ -311,17 +313,17 @@ cd mlmodels
 git checkout dev
 ```
 
-### Check this Colab for install :
+### (C) Using Colab :
 https://colab.research.google.com/drive/1sYbrXNZh9nTeizS-AuCA8RSu94B_B-RF
 
 
-##### Initialize
+### Initialize template and Tests
 Will copy template, dataset, example to your folder
 
     ml_models --init  /yourworkingFolder/
 
 
-##### To test :
+##### To test Hyper-parameter search:
     ml_optim
 
 
@@ -339,39 +341,39 @@ https://github.com/arita37/mlmodels/actions
 
 ![ All model testing (Linux) ](https://github.com/arita37/mlmodels/workflows/code_structure_linux/badge.svg)
 
-#######################################################################################
+_______________________________________________________________________________________
 
-## Usage in Jupyter
+## Usage in Jupyter/Colab
 
 https://github.com/arita37/mlmodels/blob/dev/README_usage.md
 
-#######################################################################################
+_______________________________________________________________________________________
 
-## CLI tools:
+## Command Line tools:
 
 https://github.com/arita37/mlmodels/blob/dev/README_usage_CLI.md
 
 
 
-####################################################################################
+_______________________________________________________________________________________
 
 ## Model List
 
 https://github.com/arita37/mlmodels/blob/dev/README_model_list.md
 
-#######################################################################################
+_______________________________________________________________________________________
 
 ## How to add a new model
 
 https://github.com/arita37/mlmodels/blob/dev/README_addmodel.md
 
-#######################################################################################
+_______________________________________________________________________________________
 
 ## Index of functions/methods
 
-https://github.com/arita37/mlmodels/blob/dev/README_index_doc.txt
+https://github.com/arita37/mlmodels/blob/dev/README_index_doc.py
 
-####################################################################################
+_______________________________________________________________________________________
 
 
 
@@ -854,7 +856,7 @@ print(ypred)
 
 
 
-### Using ARMDN Time Series : Ass for MNIST dataset  ([Example notebook](mlmodels/example/model_timeseries_armdn.ipynb), [JSON file](mlmodels/model_keras/armdn.json))
+### Using ARMDN Time Series   ([Example notebook](mlmodels/example/model_timeseries_armdn.ipynb), [JSON file](mlmodels/model_keras/armdn.json))
 
 
 
