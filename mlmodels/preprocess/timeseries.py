@@ -1,6 +1,8 @@
 """
 
-  Ensemble of preprocessor for time series
+
+
+  Ensemble of preprocessor for time series, generic and re-usable
 
 
 
@@ -173,6 +175,12 @@ train_ds = ListDataset([
 
 
 class Preprocess_nbeats:
+    """
+      it should go to nbeats.py BECAUSE Specialized code.
+
+
+
+    """
 
     def __init__(self,backcast_length, forecast_length):
         self.backcast_length = backcast_length
@@ -212,7 +220,7 @@ def pd_load(path) :
 
 
 
-def pd_interpolate(df, cols, pars={"method": "linear", limit_area="inside"  }):
+def pd_interpolate(df, cols, pars={"method": "linear", "limit_area": "inside"  }):
     """
         Series.interpolate(self, method='linear', axis=0, limit=None, inplace=False, limit_direction='forward', limit_area=None, downcast=None, **kwargs)[source]¶
         Please note that only method='linear' is supported for DataFrame/Series with a MultiIndex.
