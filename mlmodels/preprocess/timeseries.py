@@ -19,17 +19,18 @@ Gluon TS
 
 
 """
-
-from mlmodels.util import path_norm
+import os, sys
 import pandas as pd
-
-
-
-
 import numpy as np
 from sklearn.preprocessing import MinMaxScaler
 from collections import OrderedDict
 
+
+from mlmodels.util import path_norm
+
+
+
+##############################################################################################
 def glutonts_to_pandas(dataset_name_list=["m4_hourly", "m4_daily", "m4_weekly", "m4_monthly", "m4_quarterly", "m4_yearly", ]):
     """
      n general, the datasets provided by GluonTS are objects that consists of three main members:
@@ -138,10 +139,65 @@ def pd_load(path) :
 
 
 
+def pd_interpolate(df, cols, pars={"method": "linear", limit_area="inside"  }):
+    """
+        Series.interpolate(self, method='linear', axis=0, limit=None, inplace=False, limit_direction='forward', limit_area=None, downcast=None, **kwargs)[source]¶
+        Please note that only method='linear' is supported for DataFrame/Series with a MultiIndex.
 
-def pd_clean(df,  pars={}) :
-  df = df.fillna(0)
+        Parameters
+        Interpolation technique to use. One of:
+
+        ‘linear’: Ignore the index and treat the values as equally spaced. This is the only method supported on MultiIndexes.
+        ‘time’: Works on daily and higher resolution data to interpolate given length of interval.
+        ‘index’, ‘values’: use the actual numerical values of the index.
+        ‘pad’: Fill in NaNs using existing values.
+        ‘nearest’, ‘zero’, ‘slinear’, ‘quadratic’, ‘cubic’, ‘spline’, ‘barycentric’, ‘polynomial’: Passed to scipy.interpolate.interp1d. These methods use the numerical values of the index. Both ‘polynomial’ and ‘spline’ require that you also specify an order (int), e.g. df.interpolate(method='polynomial', order=5).
+        ‘krogh’, ‘piecewise_polynomial’, ‘spline’, ‘pchip’, ‘akima’: Wrappers around the SciPy interpolation methods of similar names. See Notes.
+        ‘from_derivatives’: Refers to scipy.interpolate.BPoly.from_derivatives which replaces ‘piecewise_polynomial’ interpolation method in scipy 0.18.
+
+        axis{0 or ‘index’, 1 or ‘columns’, None}, default None
+        Axis to interpolate along.
+
+        limitint, optional
+        Maximum number of consecutive NaNs to fill. Must be greater than 0.
+
+        inplacebool, default False
+        Update the data in place if possible.
+
+        limit_direction{‘forward’, ‘backward’, ‘both’}, default ‘forward’
+        If limit is specified, consecutive NaNs will be filled in this direction.
+
+        limit_area{None, ‘inside’, ‘outside’}, default None
+        If limit is specified, consecutive NaNs will be filled with this restriction.
+        None: No fill restriction.
+        ‘inside’: Only fill NaNs surrounded by valid values (interpolate).
+        ‘outside’: Only fill NaNs outside valid values (extrapolate).
+
+        New in version 0.23.0.
+        downcastoptional, ‘infer’ or None, defaults to None
+        Downcast dtypes if possible.
+
+        **kwargs
+        Keyword arguments to pass on to the interpolating function.
+
+
+    """
+    for t in cols :
+        df[t] = df[t].interpolate( **pars)
+
+    return df
+
+
+
+def pd_clean(df, cols=None,  pars={'na_value': 0.0 }) :
+  cols = df.columns if cols is None else cols
+  for t in cols :
+    df = df.fillna( pars['na_value'])
+
   return df
+
+
+
 
 def pd_fillna(df,**args):
     return df.fillna(**args)
