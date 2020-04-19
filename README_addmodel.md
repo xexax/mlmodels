@@ -85,11 +85,16 @@ Run/Test newly added model on your local machine or on [Gitpod](https://gitpod.i
     cd mlmodels
     python model_XXXX/yyyy.py  
 
-## Issue A Pull Request
-Once you have made the changes issue a PR.
 
 ## Check Your Test Runs
 https://github.com/arita37/mlmodels/actions?query=workflow%3Atest_custom_model
+
+
+
+## Issue A Pull Request
+Once you have made the changes issue a PR.
+
+
 
 ___________________________________________________________________________________________
 # Manual Installation
