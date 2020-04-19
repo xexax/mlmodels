@@ -1,14 +1,14 @@
-# Contributing Guide
+# Contributing Guidelines
 ### Pull Requests, Fixes, New Models
 Thank you for taking interest in this project :grinning:. Read following instructions before adding a new model.
 - [Code Style](#code-style)
 - [Read The Examples](#read-the-examples)
 - [Fork](#fork)
-- [Configure For tests](#configure-for-tests)
-- [Create Python Script For New Model](#create-python-script-for-new-model)
+- [MANDATORY For TESTS](#configure-for-tests)
+- [Create python code](#create-python-script-for-new-model)
 - [Create JSON for parameters](#create-json-for-parameters)
 - [Keep Your Branch Updated](#keep-your-branch-updated)
-- [Run Model](#run-model)
+- [Run/test your Model](#run-model)
 - [Check Your Test Runs](#check-your-test-runs)
 - [Issue A Pull Request](#issue-a-pull-request)
 - [Source Code Structure As Below](#source-code-structure-as-below)
