@@ -4,7 +4,8 @@ name:  test_dataloader
 on:
   push:
     branches: 
-      #- dev
+      - dev
+      - feat_dataloader
 
 #on:
 #  schedule:
