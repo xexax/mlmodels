@@ -75,10 +75,21 @@ a = dict_df['m4_hourly']['train']
 
 def pandas_to_gluonts(df, pars=None) :
     """
+       df.index : Should timestamp
+       start date : part of index
+       freq: Multiple of TimeStamp
+        
+    
+    
     Custom datasets¶
-    At this point, it is important to emphasize that GluonTS does not require this specific format for a custom dataset that a user may have. The only requirements for a custom dataset are to be iterable and have a “target” and a “start” field. To make this more clear, assume the common case where a dataset is in the form of a numpy.array and the index of the time series in a pandas.Timestamp (possibly different for each time series):
+    At this point, it is important to emphasize that GluonTS does not require 
+    this specific format for a custom dataset that a user may have. 
+    The only requirements for a custom dataset are to be iterable and have a “target” 
+    and a “start” field. To make this more clear, assume the common case 
+    where a dataset is in the form of a numpy.array and the index of the time series in a pandas
+    .Timestamp (possibly different for each time series):
 
-    In [8]:
+  
     N = 10  # number of time series
     T = 100  # number of timesteps
     prediction_length = 24
@@ -88,9 +99,9 @@ def pandas_to_gluonts(df, pars=None) :
     Now, you can split your dataset and bring it in a GluonTS appropriate format with
     just two lines of code:
 
-    In [9]:
+
     from gluonts.dataset.common import ListDataset
-    In [10]:
+
     # train dataset: cut the last window of length "prediction_length", add "target" and "start" fields
     train_ds = ListDataset([{'target': x, 'start': start}
                             for x in custom_dataset[:, :-prediction_length]],
@@ -117,45 +128,46 @@ train_ds = ListDataset([
                                          m5_dates,
                                          train_cal_features_list,
                                          stat_cat)
-], freq="D")
+    ], freq="D")
 
    data = common.ListDataset([{"start": df.index[0],
                             "target": df.value[:"2015-04-05 00:00:00"]}],
                           freq="5min")
 
-
+    #ds = ListDataset([{FieldName.TARGET: df.iloc[i].values,  
+    #    FieldName.START:  pars['start']}  
+    #                   for i in range(cols)], 
+    #                   freq = pars['freq'])
 
     """
-            ### convert to gluont format
+    ### convert to gluont format
     from gluonts.dataset.common import ListDataset
     from gluonts.dataset.field_names import FieldName       
 
-    col_date    = pars.get('col_date')
     col_num     = pars.get('col_num')
     col_cat     = pars.get('col_cat')
     col_ytarget = pars.get('col_y')
-
+    freq        = pars.get("freq")
+    ytarget = df[col_ytarget].values    
     df_num  = df[col_num].values if col_num is not None else None
     df_cat  = df[col_cat].values if col_cat is not None else None
-    ytarget = df[ytarget].values
-    dates   = df.index.values if col_date is None else df[col_date].values 
     
+    
+    ### One start date per time columns
+    start_date    = pars.get('start_date') 
+    if start_date is None :
+          start_date = df.index[0]          
+    start_dates   = [ start_date for _ in range(col_ytarget) ]
+
     ds = ListDataset([
-        {   FieldName.TARGET        : target,
+        {   FieldName.TARGET          : target,  #Multi-variate time series
           FieldName.START             : start,
-          FieldName.FEAT_DYNAMIC_REAL : fdr,
-          FieldName.FEAT_STATIC_CAT   : fsc
+          FieldName.FEAT_DYNAMIC_REAL : fdr,    ### Moving with time series
+          FieldName.FEAT_STATIC_CAT   : fsc     #### Static over time, like product_id
         }
-        for (target, start, fdr, fsc) in zip(ytarget, dates, df_num, df_cat) ], 
-        freq = pars['freq'])
+        for (target, start, fdr, fsc) in zip(ytarget, start_dates, df_num, df_cat) ], 
+        freq = freq)
 
-
-    
-    #ds = ListDataset([{FieldName.TARGET: df.iloc[i].values,  
-    #    FieldName.START:  pars['start']}
-    #                   for i in range(cols)], 
-    #                   freq = pars['freq'])
-    
     return ds 
 
 

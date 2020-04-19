@@ -45,10 +45,17 @@ sales_train_val        = pd.read_csv(f'{m5_input_path}/sales_train_val.csv')
 sample_submission      = pd.read_csv(f'{m5_input_path}/sample_submission.csv')
 sell_prices            = pd.read_csv(f'{m5_input_path}/sell_prices.csv')
 
+
+
+
+
+
 """
-We start the data convertion process by building dynamic features (features that change over time, just like the target values). 
+We start the data convertion process by building dynamic features 
+(features that change over time, just like the target values). 
 Here, we are mainly interested in the event indicators event_type_1 and event_type_2. 
-We will mostly drop dynamic time features as GluonTS will automatically add some of these as part of many models' transformation chains.
+We will mostly drop dynamic time features as GluonTS will automatically add 
+some of these as part of many models' transformation chains.
 
 
 """
