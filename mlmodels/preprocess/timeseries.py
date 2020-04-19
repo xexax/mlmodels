@@ -92,7 +92,54 @@ def pandas_to_gluonts(df, pars=None) :
     test_ds = ListDataset([{'target': x, 'start': start}
                            for x in custom_dataset],
                           freq=freq)
+
+        test_target_values = train_target_values.copy()
+    train_target_values = [ts[:-single_prediction_length] for ts in train_df.values]
+
+m5_dates = [pd.Timestamp("2011-01-29", freq='1D') for _ in range(len(sales_train_validation))]
+
+train_ds = ListDataset([
+    {
+        FieldName.TARGET: target,
+        FieldName.START: start,
+        FieldName.FEAT_DYNAMIC_REAL: fdr,
+        FieldName.FEAT_STATIC_CAT: fsc
+    }
+    for (target, start, fdr, fsc) in zip(train_target_values,
+                                         m5_dates,
+                                         train_cal_features_list,
+                                         stat_cat)
+], freq="D")
+
+
+
     """
+            ### convert to gluont format
+    from gluonts.dataset.common import ListDataset
+    from gluonts.dataset.field_names import FieldName       
+
+    
+
+
+
+    ds = ListDataset([
+    {
+        FieldName.TARGET: target,
+        FieldName.START: start,
+        FieldName.FEAT_DYNAMIC_REAL: fdr,
+        FieldName.FEAT_STATIC_CAT: fsc
+    }
+    for (target, start, fdr, fsc) in zip(ytarget,
+                                         dates,
+                                         cols_dynamic,
+                                         col_static)
+    ], freq = pars['freq']
+
+
+    ds = ListDataset([{FieldName.TARGET: df.iloc[i].values,  
+        FieldName.START:  pars['start']}
+                       for i in range(cols)], 
+                       freq = pars['freq'])
     ds = None
     
     return ds 
