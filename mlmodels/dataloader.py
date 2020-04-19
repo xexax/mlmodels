@@ -1,14 +1,10 @@
 # -*- coding: utf-8 -*-
 """
 
-
-
 https://www.tensorflow.org/api_docs/python/tf/compat/v1
 tf.compat.v1   IS ALL TF 1.0
 
 tf.compat.v2    iS TF 2.0
-
-
 
 Typical user workflow
 

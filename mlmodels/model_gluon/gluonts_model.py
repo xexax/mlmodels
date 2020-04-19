@@ -35,13 +35,21 @@ VERBOSE = False
 MODEL_URI = get_model_uri(__file__)
 
 
+MODELS_DICT = {
+"deepar" : DeepAREstimator
+,"deepstate": None
+,"feedforward" : SimpleFeedForwardEstimator
+,"tranformer" : TransformerEstimator
+}
+
+
+
 
 
 
 #########################################################################################################
 class Model(object):
-    def __init__(self, model_pars=None, data_pars=None, 
-                 compute_pars=None, **kwargs):
+    def __init__(self, model_pars=None, data_pars=None,  compute_pars=None, **kwargs):
         ## Empty model for Seaialization
         if model_pars is None :
             self.model = None
@@ -62,16 +70,32 @@ class Model(object):
                               )
 
             ##set up the model
-            m = self.model_pars
-            self.model = DeepAREstimator(prediction_length=m['prediction_length'], freq=m['freq'],
-                                         num_layers=m['num_layers'],
-                                         num_cells=m["num_cells"],
-                                         cell_type=m["cell_type"], dropout_rate=m["dropout_rate"],
-                                         use_feat_dynamic_real=m["use_feat_dynamic_real"],
-                                         use_feat_static_cat=m['use_feat_static_cat'],
-                                         use_feat_static_real=m['use_feat_static_real'],
-                                         scaling=m['scaling'], num_parallel_samples=m['num_parallel_samples'],
-                                         trainer=trainer)
+            #### To add other models In a generic way
+            self.model = MODELS_DICT[model_pars["model_name"]]( trainer=trainer, **model_pars['model_pars'] )
+
+            """
+               self.model = DeepAREstimator(prediction_length=m['prediction_length'], freq=m['freq'],
+                                 num_layers=m['num_layers'],
+                                 num_cells=m["num_cells"],
+                                 cell_type=m["cell_type"], dropout_rate=m["dropout_rate"],
+                                 use_feat_dynamic_real=m["use_feat_dynamic_real"],
+                                 use_feat_static_cat=m['use_feat_static_cat'],
+                                 use_feat_static_real=m['use_feat_static_real'],
+                                 scaling=m['scaling'], num_parallel_samples=m['num_parallel_samples'],
+                                 trainer=trainer)
+           
+           
+           
+           
+           
+           
+           
+           """
+           
+
+
+
+
 
 
 
