@@ -313,7 +313,7 @@ git checkout dev
 ```
 
 ### (C) Using Colab :
-https://colab.research.google.com/drive/1sYbrXNZh9nTeizS-AuCA8RSu94B_B-RF
+https://colab.research.google.com/drive/1gplUtiWQpS4ei5SvoNZMKUCZFD8G8Xz8
 
 
 ### Initialize template and Tests
