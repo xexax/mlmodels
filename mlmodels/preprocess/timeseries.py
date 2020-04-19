@@ -29,6 +29,8 @@ from collections import OrderedDict
 from mlmodels.util import path_norm
 
 
+import gluonts
+
 
 ##############################################################################################
 def glutonts_to_pandas(dataset_name_list=["m4_hourly", "m4_daily", "m4_weekly", "m4_monthly", "m4_quarterly", "m4_yearly", ]):
@@ -50,11 +52,12 @@ train_series.plot()
     from gluonts.dataset.repository.datasets import get_dataset
     from gluonts.dataset.util import to_pandas
 
-    ds_dict = OrderedDict()
+    ds_dict = {}
     for t in dataset_name_list :
       ds1 = get_dataset(t)
-      
-      ds_dict[t]['train'] = to_pandas( next(iter(ds1.train)) ) 
+      print(ds1.train)
+      ds_dict[t] = {}
+      ds_dict[t]['train'] = to_pandas( next(iter(ds1.train)) )
       ds_dict[t]['test'] = to_pandas( next(iter(ds1.test))  ) 
       ds_dict[t]['metadata'] = ds1.metadata 
 
@@ -63,7 +66,11 @@ train_series.plot()
 
 
 
+dict_df = glutonts_to_pandas(dataset_name_list=["m4_hourly"])
 
+
+
+a = dict_df['m4_hourly']['train']
 
 
 def pandas_to_gluonts(df, pars=None) :
@@ -78,7 +85,8 @@ def pandas_to_gluonts(df, pars=None) :
     freq = "1H"
     custom_dataset = np.random.normal(size=(N, T))
     start = pd.Timestamp("01-01-2019", freq=freq)  # can be different for each time series
-    Now, you can split your dataset and bring it in a GluonTS appropriate format with just two lines of code:
+    Now, you can split your dataset and bring it in a GluonTS appropriate format with
+    just two lines of code:
 
     In [9]:
     from gluonts.dataset.common import ListDataset
@@ -111,6 +119,10 @@ train_ds = ListDataset([
                                          stat_cat)
 ], freq="D")
 
+   data = common.ListDataset([{"start": df.index[0],
+                            "target": df.value[:"2015-04-05 00:00:00"]}],
+                          freq="5min")
+
 
 
     """
@@ -118,29 +130,31 @@ train_ds = ListDataset([
     from gluonts.dataset.common import ListDataset
     from gluonts.dataset.field_names import FieldName       
 
+    col_date    = pars.get('col_date')
+    col_num     = pars.get('col_num')
+    col_cat     = pars.get('col_cat')
+    col_ytarget = pars.get('col_y')
+
+    df_num  = df[col_num].values if col_num is not None else None
+    df_cat  = df[col_cat].values if col_cat is not None else None
+    ytarget = df[ytarget].values
+    dates   = df.index.values if col_date is None else df[col_date].values 
     
-
-
-
     ds = ListDataset([
-    {
-        FieldName.TARGET: target,
-        FieldName.START: start,
-        FieldName.FEAT_DYNAMIC_REAL: fdr,
-        FieldName.FEAT_STATIC_CAT: fsc
-    }
-    for (target, start, fdr, fsc) in zip(ytarget,
-                                         dates,
-                                         cols_dynamic,
-                                         col_static)
-    ], freq = pars['freq']
+        {   FieldName.TARGET        : target,
+          FieldName.START             : start,
+          FieldName.FEAT_DYNAMIC_REAL : fdr,
+          FieldName.FEAT_STATIC_CAT   : fsc
+        }
+        for (target, start, fdr, fsc) in zip(ytarget, dates, df_num, df_cat) ], 
+        freq = pars['freq'])
 
 
-    ds = ListDataset([{FieldName.TARGET: df.iloc[i].values,  
-        FieldName.START:  pars['start']}
-                       for i in range(cols)], 
-                       freq = pars['freq'])
-    ds = None
+    
+    #ds = ListDataset([{FieldName.TARGET: df.iloc[i].values,  
+    #    FieldName.START:  pars['start']}
+    #                   for i in range(cols)], 
+    #                   freq = pars['freq'])
     
     return ds 
 
