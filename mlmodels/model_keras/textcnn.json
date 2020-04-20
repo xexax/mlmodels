@@ -26,7 +26,7 @@
 
 
 		"out_pars": {
-			"path": "./output/textcnn_keras/",
+			"path": "./output/textcnn_keras/model.h5",
 			"model_path": "./output/textcnn_keras/model.h5",
 		}
 	},
