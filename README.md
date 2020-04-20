@@ -2,9 +2,9 @@
 
 - Model ZOO with Lightweight Functional interface to wrap access to Recent and State of Art Deep Learning, ML models and Hyper-Parameter Search, cross platforms such as Tensorflow, Pytorch, Gluon, Keras, sklearn, light-GBM,...
 
-- Logic follows sklearn : fit, predict, transform, metrics, save, load
+- Logic follows  : fit, predict, transform, metrics, save, load
 
-- Goal is to transform Script/Research code into Re-usable/batch/ code with minimal code change ...
+- Goal is to transform Script/Research code into Re-usable/batch/ code with **minimal** code change ...
 
 - Why Functional interface instead of pure OOP ?
   Functional reduces the amount of code needed, focus more on the computing part (vs design part),
@@ -313,7 +313,7 @@ git checkout dev
 ```
 
 ### (C) Using Colab :
-https://colab.research.google.com/drive/1sYbrXNZh9nTeizS-AuCA8RSu94B_B-RF
+https://colab.research.google.com/drive/1gplUtiWQpS4ei5SvoNZMKUCZFD8G8Xz8
 
 
 ### Initialize template and Tests
