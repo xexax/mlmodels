@@ -1,13 +1,9 @@
 # -*- coding: utf-8 -*-
 """
-
-
 DeepStateEstimator,
     This implements the deep state space model described in
     [RSG+18]_.
 
-    Parameters
-    ----------
     freq
         Frequency of the data to train on and predict
     prediction_length
@@ -37,13 +33,9 @@ DeepStateEstimator,
         See: https://stats.stackexchange.com/questions/120806/frequency
         -value-for-seconds-minutes-intervals-data-in-r
 
-
-
-WaveNetEstimator,
+WaveNetEstimator
         Model with Wavenet architecture and quantized target.
 
-        Parameters
-        ----------
         freq
             Frequency of the data to train on and predict
         prediction_length
@@ -88,8 +80,6 @@ class DeepFactorEstimator(GluonEstimator):
     and an arbitrary local model to model the time series on a per time series basis.  In the current implementation,
     the local model is a RNN (DF-RNN).
 
-    Parameters
-    ----------
     freq
         Time series frequency.
     prediction_length
@@ -125,8 +115,8 @@ class DeepFactorEstimator(GluonEstimator):
 
 
 
-    GaussianProcessEstimator shows how to build a local time series model using
-    Gaussian Processes (GP).
+GaussianProcessEstimator shows how to build a local time series model using
+Gaussian Processes (GP).
 
     Each time series has a GP with its own
     hyper-parameters.  For the radial basis function (RBF) Kernel, the
@@ -140,8 +130,6 @@ class DeepFactorEstimator(GluonEstimator):
     are the time series values. In this model, the time features are hour of
     the day and day of the week.
 
-    Parameters
-    ----------
     freq
         Time series frequency.
     prediction_length
@@ -177,7 +165,6 @@ class DeepFactorEstimator(GluonEstimator):
 class Seq2SeqEstimator(GluonEstimator):
     Quantile-Regression Sequence-to-Sequence Estimator
 
-
     @validated()
     def __init__(
         self,
@@ -199,15 +186,12 @@ class Seq2SeqEstimator(GluonEstimator):
 
 class TransformerEstimator(GluonEstimator):
         Construct a Transformer estimator.
-
         This implements a Transformer model, close to the one described in
         [Vaswani2017]_.
-
         .. [Vaswani2017] Vaswani, Ashish, et al. "Attention is all you need."
             Advances in neural information processing systems. 2017.
 
-        Parameters
-        ----------
+
         freq
             Frequency of the data to train on and predict
         prediction_length
@@ -317,9 +301,6 @@ MODELS_DICT = {
 
 
 
-
-
-
 #########################################################################################################
 class Model(object):
     def __init__(self, model_pars=None, data_pars=None,  compute_pars=None, **kwargs):
@@ -355,77 +336,9 @@ def get_params(choice="", data_path="dataset/timeseries/", config_mode="test", *
       config    = json.load(open(data_path, encoding='utf-8'))
       config    = config[config_mode]
       return config["model_pars"], config["data_pars"], config["compute_pars"], config["out_pars"]
+    else :
+        raise Exception("Error no JSON FILE") 
 
-
-    if choice == "test01" :        
-        data_path = path_norm(  "model_gluon/deepar_run.json" )
-        out_path   = path_norm( "ztest/model_gluon/gluon_deepar/" )   
-        model_path = os.path.join(out_path , "model")
-
-
-        log("#### Model params   ################################################")
-        model_pars = {"prediction_length": data_pars["prediction_length"], "freq": data_pars["freq"],
-                    "num_layers": 2, "num_cells": 40, "cell_type": 'lstm', "dropout_rate": 0.1,
-                    "use_feat_dynamic_real": False, "use_feat_static_cat": False, "use_feat_static_real": False,
-                    "scaling": True, "num_parallel_samples": 100}
-
-
-        log("#### Data params   ###################################################")
-        data_pars = {"train_data_path": data_path + "/train_deepar.csv",
-                     "test_data_path":  data_path + "/test_deepar.csv", 
-                     "train": True,
-                     'prediction_length': 12, 'freq': '5min', 
-                     "save_fig": "./series.png", "modelpath": model_path,
-                     "choice":choice}
-
-        log("#### output params   ###################################################")
-        out_pars = {"outpath": out_path + "result", 
-                    "plot_prob": True, "quantiles": [0.5]}
-
-
-        log("#### Compute params   ################################################")
-        compute_pars = {"batch_size": 32, "clip_gradient": 100, "ctx": None, "epochs": 10, "init": "xavier",
-                        "learning_rate": 1e-3,
-                        "learning_rate_decay_factor": 0.5, "hybridize": False, "num_batches_per_epoch": 10,
-                        'num_samples': 100,
-                        "minimum_learning_rate": 5e-05, "patience": 10, "weight_decay": 1e-08}
-
-    
-    elif choice == "test02" :
-        data_path = path_norm( "model_gluon/deepar.json")
-        out_path   = path_norm( "ztest/model_gluon/gluon_deepar/" )   
-        model_path = os.path.join(out_path , "model")
-
-
-        log("#### Model params   ################################################")
-        model_pars = {"prediction_length": data_pars["prediction_length"], "freq": data_pars["freq"],
-                    "num_layers": 2, "num_cells": 40, "cell_type": 'lstm', "dropout_rate": 0.1,
-                    "use_feat_dynamic_real": False, "use_feat_static_cat": False, "use_feat_static_real": False,
-                    "scaling": True, "num_parallel_samples": 100}
-
-
-        log("#### Data params   ###################################################")
-        data_pars = {"train_data_path": data_path + "/GLUON-train.csv",
-                    "test_data_path":  data_path + "/GLUON-test.csv", 
-                    "train": False,
-                    'prediction_length': 48, 'freq': '1H', 
-                    "start": pd.Timestamp("01-01-1750", freq='1H'), 
-                    "num_series":37,
-                    "save_fig": "./series.png", "modelpath": model_path,
-                    "choice":choice}
-
-        log("#### output params   ###################################################")
-        out_pars = {"outpath": out_path + "result", 
-                    "plot_prob": True, "quantiles": [0.1, 0.5, 0.9]}
-
-
-        log("#### Compute params   ################################################")
-        compute_pars = {"batch_size": 32, "clip_gradient": 100, "ctx": None, "epochs": 10, "init": "xavier",
-                        "learning_rate": 1e-3,
-                        "learning_rate_decay_factor": 0.5, "hybridize": False, "num_batches_per_epoch": 10,
-                        'num_samples': 100,
-                        "minimum_learning_rate": 5e-05, "patience": 10, "weight_decay": 1e-08}
-    
     return model_pars, data_pars, compute_pars, out_pars
 
 
@@ -464,7 +377,8 @@ def fit(modeule,model, sess=None, data_pars=None, model_pars=None, compute_pars=
         model_gluon = model.model
         gluont_ds = get_dataset(data_pars)
         predictor = model_gluon.train(gluont_ds)
-        return predictor
+        model.model = predictor
+        return model
 
 
 def predict(model, sess=None, data_pars=None, compute_pars=None, out_pars=None, **kwargs):
@@ -477,14 +391,16 @@ def predict(model, sess=None, data_pars=None, compute_pars=None, out_pars=None, 
     
         test_ds = ListDataset([{"start": df.index[0],
                                 "target": df.value[:"2015-04-15 00:00:00"]}],
-                            freq="5min")
+                               freq="5min")
+
     elif data_pars['choice']=='test02':
         data_pars['train'] = False
         test_ds = get_dataset(data_pars)
     
+    model_gluon = model
     forecast_it, ts_it = make_evaluation_predictions(
             dataset=test_ds,  # test dataset
-            predictor=model,  # predictor
+            predictor=model_gluon,  # predictor
             num_samples=compute_pars['num_samples'],  # number of sample paths we want for evaluation
         )
 
@@ -582,10 +498,10 @@ def plot_predict(item_metrics, out_pars=None):
 
 
 #######################################################################################################################
-def test(data_path="dataset/", choice=""):
-    ### Local test
+def test(data_path="dataset/", choice="", config_mode="test"):
+    model_uri = MODEL_URI
     log("#### Loading params   ##############################################")
-    model_pars, data_pars, compute_pars, out_pars = get_params(choice=choice, data_path=data_path)
+    model_pars, data_pars, compute_pars, out_pars = get_params(choice=choice, data_path=data_path, config_mode=config_mode)
     print(model_pars, data_pars, compute_pars, out_pars)
 
     log("#### Loading dataset   #############################################")
@@ -593,7 +509,7 @@ def test(data_path="dataset/", choice=""):
 
     log("#### Model init, fit   #############################################")
     from mlmodels.models import module_load_full
-    module, model = module_load_full("model_gluon.gluon_deepar", model_pars, data_pars, compute_pars)
+    module, model = module_load_full(model_uri, model_pars, data_pars, compute_pars)
     print(module, model)
 
     model = fit(module, model, data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)
@@ -618,12 +534,93 @@ def test(data_path="dataset/", choice=""):
 
 if __name__ == '__main__':
     VERBOSE = True
-    test(data_path="dataset/timeseries", choice="test01")
 
-    test(data_path="dataset/timeseries", choice="test02")
+    test(data_path="model_gluon/gluonts_model.json", choice="json", config_mode="test")
 
-
-    test(data_path="model_gluon/gluon_deepar.json", choice="json")
+    test(data_path="model_gluon/gluon_deepar.json", choice="json", config_mode="test01")
 
 
 
+
+
+
+
+
+
+
+
+
+"""
+
+
+        data_path = path_norm(  "model_gluon/deepar_run.json" )
+        out_path   = path_norm( "ztest/model_gluon/gluon_deepar/" )   
+        model_path = os.path.join(out_path , "model")
+
+
+        log("#### Model params   ################################################")
+        model_pars = {"prediction_length": data_pars["prediction_length"], "freq": data_pars["freq"],
+                    "num_layers": 2, "num_cells": 40, "cell_type": 'lstm', "dropout_rate": 0.1,
+                    "use_feat_dynamic_real": False, "use_feat_static_cat": False, "use_feat_static_real": False,
+                    "scaling": True, "num_parallel_samples": 100}
+
+
+        log("#### Data params   ###################################################")
+        data_pars = {"train_data_path": data_path + "/train_deepar.csv",
+                     "test_data_path":  data_path + "/test_deepar.csv", 
+                     "train": True,
+                     'prediction_length': 12, 'freq': '5min', 
+                     "save_fig": "./series.png", "modelpath": model_path,
+                     "choice":choice}
+
+        log("#### output params   ###################################################")
+        out_pars = {"outpath": out_path + "result", 
+                    "plot_prob": True, "quantiles": [0.5]}
+
+
+        log("#### Compute params   ################################################")
+        compute_pars = {"batch_size": 32, "clip_gradient": 100, "ctx": None, "epochs": 10, "init": "xavier",
+                        "learning_rate": 1e-3,
+                        "learning_rate_decay_factor": 0.5, "hybridize": False, "num_batches_per_epoch": 10,
+                        'num_samples': 100,
+                        "minimum_learning_rate": 5e-05, "patience": 10, "weight_decay": 1e-08}
+
+
+
+
+        data_path = path_norm( "model_gluon/deepar.json")
+        out_path   = path_norm( "ztest/model_gluon/gluon_deepar/" )   
+        model_path = os.path.join(out_path , "model")
+
+
+        log("#### Model params   ################################################")
+        model_pars = {"prediction_length": data_pars["prediction_length"], "freq": data_pars["freq"],
+                    "num_layers": 2, "num_cells": 40, "cell_type": 'lstm', "dropout_rate": 0.1,
+                    "use_feat_dynamic_real": False, "use_feat_static_cat": False, "use_feat_static_real": False,
+                    "scaling": True, "num_parallel_samples": 100}
+
+
+        log("#### Data params   ###################################################")
+        data_pars = {"train_data_path": data_path + "/GLUON-train.csv",
+                    "test_data_path":  data_path + "/GLUON-test.csv", 
+                    "train": False,
+                    'prediction_length': 48, 'freq': '1H', 
+                    "start": pd.Timestamp("01-01-1750", freq='1H'), 
+                    "num_series":37,
+                    "save_fig": "./series.png", "modelpath": model_path,
+                    "choice":choice}
+
+        log("#### output params   ###################################################")
+        out_pars = {"outpath": out_path + "result", 
+                    "plot_prob": True, "quantiles": [0.1, 0.5, 0.9]}
+
+
+        log("#### Compute params   ################################################")
+        compute_pars = {"batch_size": 32, "clip_gradient": 100, "ctx": None, "epochs": 10, "init": "xavier",
+                        "learning_rate": 1e-3,
+                        "learning_rate_decay_factor": 0.5, "hybridize": False, "num_batches_per_epoch": 10,
+                        'num_samples': 100,
+                        "minimum_learning_rate": 5e-05, "patience": 10, "weight_decay": 1e-08}
+
+
+"""
