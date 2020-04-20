@@ -344,18 +344,20 @@ def get_params(choice="", data_path="dataset/timeseries/", config_mode="test", *
 
 
 def get_dataset(data_pars):    
-    if data_pars["choice"]=='test01':
+    if data_pars.get("choice") =='test01':
         data_path  = data_pars['train_data_path']
         df         = pd.read_csv(data_path, header=0, index_col=0)
 
         gluonts_ds = ListDataset([{"start": df.index[0],"target": df.value[:"2015-04-05 00:00:00"]}],
                                 freq="5min")
 
-    elif data_pars["choice"]=='test02':
+    else :
         data_path  = data_pars['train_data_path'] if data_pars['train'] else data_pars['test_data_path']
         data_set   = pd.read_csv(data_path)
+        start_date = pd.Timestamp( data_pars['start'], freq=data_pars['freq']), 
 
-        gluonts_ds = ListDataset([{FieldName.TARGET: data_set.iloc[i].values, FieldName.START: data_pars['start']}
+        gluonts_ds = ListDataset([{FieldName.TARGET: data_set.iloc[i].values, 
+                                   FieldName.START: start_date}
                               for i in range(data_pars['num_series'])], freq=data_pars['freq'])
 
 
@@ -537,7 +539,7 @@ if __name__ == '__main__':
 
     test(data_path="model_gluon/gluonts_model.json", choice="json", config_mode="test")
 
-    test(data_path="model_gluon/gluon_deepar.json", choice="json", config_mode="test01")
+    # test(data_path="model_gluon/gluon_deepar.json", choice="json", config_mode="test01")
 
 
 
