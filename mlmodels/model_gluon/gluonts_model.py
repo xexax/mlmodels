@@ -354,7 +354,7 @@ def get_dataset(data_pars):
     else :
         data_path  = data_pars['train_data_path'] if data_pars['train'] else data_pars['test_data_path']
         data_set   = pd.read_csv(data_path)
-        start_date = pd.Timestamp( data_pars['start'], freq=data_pars['freq']), 
+        start_date = pd.Timestamp( data_pars['start'], freq=data_pars['freq'])
 
         gluonts_ds = ListDataset([{FieldName.TARGET: data_set.iloc[i].values, 
                                    FieldName.START: start_date}
