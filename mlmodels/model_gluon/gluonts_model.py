@@ -339,7 +339,6 @@ def get_params(choice="", data_path="dataset/timeseries/", config_mode="test", *
     else :
         raise Exception("Error no JSON FILE") 
 
-    return model_pars, data_pars, compute_pars, out_pars
 
 
 
