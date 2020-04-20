@@ -285,7 +285,7 @@ from mlmodels.util import os_package_root_path, log, path_norm, get_model_uri
 
 
 VERBOSE = False
-MODEL_URI = get_model_uri(__file__)
+MODEL_URI = "ok" get_model_uri(__file__)
 
 
 MODELS_DICT = {
@@ -335,7 +335,9 @@ def get_params(choice="", data_path="dataset/timeseries/", config_mode="test", *
       data_path = path_norm( data_path )
       config    = json.load(open(data_path, encoding='utf-8'))
       config    = config[config_mode]
+      
       return config["model_pars"], config["data_pars"], config["compute_pars"], config["out_pars"]
+  
     else :
         raise Exception("Error no JSON FILE") 
 
@@ -348,7 +350,7 @@ def get_dataset(data_pars):
         df         = pd.read_csv(data_path, header=0, index_col=0)
 
         gluonts_ds = ListDataset([{"start": df.index[0],"target": df.value[:"2015-04-05 00:00:00"]}],
-                                freq="5min")
+                                   freq="5min")
 
     else :
         data_path  = data_pars['train_data_path'] if data_pars['train'] else data_pars['test_data_path']
