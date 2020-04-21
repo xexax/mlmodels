@@ -39,9 +39,15 @@ Amazon Deep AR: 2019, Multi-variate Time Series NNetwork, [[Link](https://arxiv.
 
 Facebook Prophet 2017, Time Series prediction,
 
+Wavenet (DeepMind), Time Series Forecast
+
+Transformer (Google), Time Series Forecast,
+
+DeepFactor, 2019, Time Series representaton and Forecast
+
 ARMDN, Advanced Multi-variate Time series Prediction : 2019, Associative and Recurrent Mixture Density Networks for time series.
 
-LSTM Neural Network prediction
+LSTM Neural Network time series prediction
 
 
 ### NLP :
