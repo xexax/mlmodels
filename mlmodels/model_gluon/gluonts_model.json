@@ -108,7 +108,7 @@
         },
         
       "out_pars": {
-         "path": "ztest/model_gluon/gluonts_deepar/",
+         "path": "ztest/model_gluon/gluonts_deepfactor/",
          "plot_prob": true, "quantiles": [0.5]
     }
     },   
@@ -175,7 +175,7 @@
         
         
       "out_pars": {
-         "path": "ztest/model_gluon/gluonts_deepar/",
+         "path": "ztest/model_gluon/gluonts_wavenet/",
          "plot_prob": true, "quantiles": [0.5]
     }
     },       
@@ -244,7 +244,7 @@
         
         
       "out_pars": {
-         "path": "ztest/model_gluon/gluonts_deepar/",
+         "path": "ztest/model_gluon/gluonts_transformer/",
          "plot_prob": true, "quantiles": [0.5]
     }
     },       
@@ -315,7 +315,7 @@
         
         
       "out_pars": {
-         "path": "ztest/model_gluon/gluonts_deepar/",
+         "path": "ztest/model_gluon/gluonts_deepstate/",
          "plot_prob": true, "quantiles": [0.5]
     }
     },
@@ -379,7 +379,7 @@
         
         
       "out_pars": {
-         "path": "ztest/model_gluon/gluonts_deepar/",
+         "path": "ztest/model_gluon/gluonts_gpforecaster/",
          "plot_prob": true, "quantiles": [0.5]
     }
     },
@@ -435,7 +435,7 @@
         },
         
       "out_pars": {
-         "path": "ztest/model_gluon/gluonts_deepar/",
+         "path": "ztest/model_gluon/gluonts_feedforward/",
          "plot_prob": true, "quantiles": [0.5]
     }
     },   
@@ -504,7 +504,7 @@
         },
         
       "out_pars": {
-         "path": "ztest/model_gluon/gluonts_deepar/",
+         "path": "ztest/model_gluon/gluonts_seq2seq/",
          "plot_prob": true, "quantiles": [0.5]
     }
     }
