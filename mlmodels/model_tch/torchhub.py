@@ -37,9 +37,6 @@ import torch.nn.functional as F
 from torchvision import datasets, transforms
 from torch import hub 
 
-# import mlmodels.models as M
-
-
 from mlmodels.util import os_package_root_path, log, path_norm, get_model_uri, path_norm_dict
 MODEL_URI = get_model_uri(__file__)
 
@@ -125,6 +122,24 @@ def get_dataset_mnist_torch(data_pars):
     return train_loader, valid_loader  
 
 
+def get_dataset_fashion_mnist_torch(data_pars):
+    train_loader = torch.utils.data.DataLoader( datasets.FashionMNIST(data_pars['data_path'], train=True, download=True,
+                    transform=transforms.Compose([
+                        transforms.Grayscale(num_output_channels=3),
+                        transforms.ToTensor(),
+                        transforms.Normalize((0.1307,), (0.3081,))
+                    ])),
+        batch_size=data_pars['train_batch_size'], shuffle=True)
+
+    valid_loader = torch.utils.data.DataLoader( datasets.FashionMNIST(data_pars['data_path'], train=False,
+                    transform=transforms.Compose([
+                        transforms.Grayscale(num_output_channels=3),
+                        transforms.ToTensor(),
+                        transforms.Normalize((0.1307,), (0.3081,))
+                    ])),
+        batch_size=data_pars['test_batch_size'], shuffle=True)
+    return train_loader, valid_loader  
+
 
 ###########################################################################################################
 ###########################################################################################################
@@ -191,16 +206,17 @@ def get_params(param_pars=None, **kw):
 
 
 
-
 def get_dataset(data_pars=None, **kw):
     data_path        = data_pars['data_path']
     train_batch_size = data_pars['train_batch_size']
     test_batch_size  = data_pars['test_batch_size']
 
-    if data_pars['dataset'] == 'MNIST':
-        train_loader, valid_loader  = get_dataset_mnist_torch(data_pars)
-        return train_loader, valid_loader  
-
+    if data_pars['dataset'] == 'FashionMNIST':
+        train_loader, valid_loader  = get_dataset_fashion_mnist_torch(data_pars)
+        return train_loader, valid_loader
+    elif data_pars['dataset'] == 'MNIST':
+        train_loader, valid_loader  = get_dataset_fashion_mnist_torch(data_pars)
+        return train_loader, valid_loader
     else:
         raise Exception("Dataloader not implemented")
         exit

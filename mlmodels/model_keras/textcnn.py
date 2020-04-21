@@ -68,7 +68,7 @@ def fit(model, data_pars=None, compute_pars=None, out_pars=None,   **kw):
   Xtrain, Xtest, ytrain, ytest = get_dataset(data_pars)
 
 
-  early_stopping = EarlyStopping(monitor='val_acc', patience=3, mode='max')
+  early_stopping = EarlyStopping(monitor='val_accuracy', patience=3, mode='max')
   model.model.fit(Xtrain, ytrain,
           batch_size=batch_size,
           epochs=epochs,
