@@ -73,7 +73,7 @@ WaveNetEstimator
 
 
 
-class DeepFactorEstimator(GluonEstimator):
+DeepFactorEstimator(GluonEstimator):
 
     DeepFactorEstimator is an implementation of the 2019 ICML paper "Deep Factors for Forecasting"
     https://arxiv.org/abs/1905.12417.  It uses a global RNN model to learn patterns across multiple related time series
@@ -117,7 +117,6 @@ class DeepFactorEstimator(GluonEstimator):
 
 GaussianProcessEstimator shows how to build a local time series model using
 Gaussian Processes (GP).
-
     Each time series has a GP with its own
     hyper-parameters.  For the radial basis function (RBF) Kernel, the
     learnable hyper-parameters are the amplitude and lengthscale. The periodic
@@ -161,13 +160,8 @@ Gaussian Processes (GP).
         This is a model optimization that does not affect the accuracy (default: 100).
 
 
-
-class Seq2SeqEstimator(GluonEstimator):
+Seq2SeqEstimator(GluonEstimator):
     Quantile-Regression Sequence-to-Sequence Estimator
-
-    @validated()
-    def __init__(
-        self,
         freq: str,
         prediction_length: int,
         cardinality: List[int],
@@ -184,14 +178,12 @@ class Seq2SeqEstimator(GluonEstimator):
         
 
 
-class TransformerEstimator(GluonEstimator):
+TransformerEstimator(GluonEstimator):
         Construct a Transformer estimator.
         This implements a Transformer model, close to the one described in
         [Vaswani2017]_.
         .. [Vaswani2017] Vaswani, Ashish, et al. "Attention is all you need."
             Advances in neural information processing systems. 2017.
-
-
         freq
             Frequency of the data to train on and predict
         prediction_length
@@ -274,7 +266,7 @@ from gluonts.evaluation.backtest import make_evaluation_predictions
 from gluonts.model.predictor import Predictor
 
 
-#########################################################################################################
+####################################################################################################
 from mlmodels.util import os_package_root_path, log, path_norm, get_model_uri, json_norm
 
 
@@ -283,44 +275,36 @@ MODEL_URI = get_model_uri(__file__)
 
 
 MODELS_DICT = {
-"deepar" : DeepAREstimator
-,"deepstate": DeepStateEstimator
-,"deepfactor": DeepFactorEstimator
+"deepar"         : DeepAREstimator
+,"deepstate"     : DeepStateEstimator
+,"deepfactor"    : DeepFactorEstimator
 ,"gp_forecaster" : GaussianProcessEstimator
-,"seq2seq" : Seq2SeqEstimator
-,"feedforward" : SimpleFeedForwardEstimator
-,"transformer" : TransformerEstimator
-,"wavenet" : WaveNetEstimator
+,"seq2seq"       : Seq2SeqEstimator
+,"feedforward"   : SimpleFeedForwardEstimator
+,"transformer"   : TransformerEstimator
+,"wavenet"       : WaveNetEstimator
 }
 
 
-#########################################################################################################
+####################################################################################################
 class Model(object):
     def __init__(self, model_pars=None, data_pars=None,  compute_pars=None, **kwargs):
-        ## Empty model for Seaialization
+        self.compute_pars = compute_pars
+        self.model_pars   = model_pars
+        
+        ##### Empty model for Seiialization
         if model_pars is None :
             self.model = None
 
         else:
-            self.compute_pars = compute_pars
-            self.model_pars = model_pars
-
-            m = self.compute_pars
-            m = json_norm(m) 
+            mpars = json_norm(model_pars['model_pars'] )      #"None" to None
+            cpars = json_norm(compute_pars['compute_pars'])
             
-            trainer = Trainer(batch_size=m['batch_size'], clip_gradient=m['clip_gradient'], 
-                              ctx                        = m.get("ctx", None),
-                              epochs                     = m["epochs"],
-                              learning_rate              = m["learning_rate"], init=m['init'],
-                              learning_rate_decay_factor = m['learning_rate_decay_factor'],
-                              minimum_learning_rate      = m['minimum_learning_rate'], hybridize=m["hybridize"],
-                              num_batches_per_epoch      = m["num_batches_per_epoch"],
-                              patience                   = m['patience'], weight_decay=m['weight_decay']
-                              )
+            ### Setup the compute
+            trainer = Trainer( **cpars  )
 
-
-            ##set up the model
-            self.model = MODELS_DICT[model_pars["model_name"]]( trainer=trainer, **model_pars['model_pars'] )
+            ### Setup the model
+            self.model = MODELS_DICT[model_pars["model_name"]]( trainer=trainer, **mpars )
 
 
 def get_params(choice="", data_path="dataset/timeseries/", config_mode="test", **kw):
@@ -348,18 +332,19 @@ def get_dataset(data_pars):
     df = pd_clean_v1(df)
 
     # start_date = pd.Timestamp( data_pars['start'], freq=data_pars['freq'])
-    pars = { "start" : data_pars['start'], "cols_target" : data_pars['col_ytarget'],
-             "freq" : data_pars['freq'],
-             "cols_cat" : data_pars["cols_cat"],
-             "cols_num" : data_pars["cols_num"]
+    pars = { "start" : data_pars['start'], 
+             "cols_target" : data_pars['col_ytarget'],
+             "freq"        : data_pars['freq'],
+             "cols_cat"    : data_pars["cols_cat"],
+             "cols_num"    : data_pars["cols_num"]
         }    
     gluonts_ds = pandas_to_gluonts(df, pars=pars) 
  
     if VERBOSE:
-        entry = next(iter(gluonts_ds))
+        entry        = next(iter(gluonts_ds))
         train_series = to_pandas(entry)
         train_series.plot()
-        save_fig = data_pars.get('save_fig', "save_fig.png")
+        save_fig     = data_pars.get('save_fig', "save_fig.png")
         # plt.savefig(save_fig)
     return gluonts_ds
 
@@ -370,10 +355,10 @@ def fit(model, sess=None, data_pars=None, model_pars=None, compute_pars=None, ou
           Classe Model --> model,   model.model contains thte sub-model
         """
         data_pars['train'] = True
-        model_gluon = model.model
-        gluont_ds = get_dataset(data_pars)
-        predictor = model_gluon.train(gluont_ds)
-        model.model = predictor
+        model_gluon        = model.model
+        gluont_ds          = get_dataset(data_pars)
+        predictor          = model_gluon.train(gluont_ds)
+        model.model        = predictor
         return model
 
 
@@ -384,9 +369,9 @@ def predict(model, sess=None, data_pars=None, compute_pars=None, out_pars=None, 
     model_gluon = model.model
     
     forecast_it, ts_it = make_evaluation_predictions(
-            dataset=test_ds,  # test dataset
-            predictor=model_gluon,  # predictor
-            num_samples=compute_pars['num_samples'],  # number of sample paths we want for evaluation
+            dataset     = test_ds,  # test dataset
+            predictor   = model_gluon,  # predictor
+            num_samples = compute_pars['num_samples'],  # number of sample paths we want for evaluation
         )
 
     forecasts, tss = list(forecast_it), list(ts_it)
@@ -412,7 +397,7 @@ def metrics(ypred, data_pars, compute_pars=None, out_pars=None, **kwargs):
         forecasts = ypred["forecasts"]
         tss = ypred["tss"]
 
-        ## evaluate
+        ## Evaluate
         evaluator = Evaluator(quantiles=out_pars['quantiles'])
         agg_metrics, item_metrics = evaluator(iter(tss), iter(forecasts), num_series=len(test_ds))
         metrics_dict = json.dumps(agg_metrics, indent=4)
@@ -421,14 +406,14 @@ def metrics(ypred, data_pars, compute_pars=None, out_pars=None, **kwargs):
 
 
 def fit_metrics(ypred, data_pars, compute_pars=None, out_pars=None, **kwargs):
-        ## load test dataset
+        ### load test dataset
         data_pars['train'] = False
         test_ds = get_dataset(data_pars)
 
         forecasts = ypred["forecasts"]
         tss = ypred["tss"]
 
-        ## evaluate
+        ### Evaluate
         evaluator = Evaluator(quantiles=out_pars['quantiles'])
         agg_metrics, item_metrics = evaluator(iter(tss), iter(forecasts), num_series=len(test_ds))
         metrics_dict = json.dumps(agg_metrics, indent=4)
@@ -479,7 +464,7 @@ def plot_predict(item_metrics, out_pars=None):
 
 
 
-#######################################################################################################################
+####################################################################################################
 def test(data_path="dataset/", choice="", config_mode="test"):
     model_uri = MODEL_URI
     log("#### Loading params   ##############################################")
@@ -517,10 +502,12 @@ def test(data_path="dataset/", choice="", config_mode="test"):
 if __name__ == '__main__':
     VERBOSE = True
 
-    ll = [ "deepar" , "deepfactor" , "transformer"  ,"wavenet",  
-           "deepstate" ,"gp_forecaster"  ,"seq2seq" ,
-           "feedforward" ]
+    ll = [ "deepar" , "deepfactor" , "transformer"  ,"wavenet",  ]
 
+    ## Not yet
+    ll2 = ["deepstate", "gp_forecaster"  ,"seq2seq" ,
+           "feedforward" ]
+    
     for t in ll  :
       test(data_path="model_gluon/gluonts_model.json", choice="json", config_mode= t )
 

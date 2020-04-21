@@ -35,12 +35,16 @@
             
             
         "compute_pars": {
-            "batch_size": 32, "clip_gradient": 100, "epochs": 1, "init": "xavier", "learning_rate": 1e-3, 
-            "learning_rate_decay_factor": 0.5, 
-            "hybridize": false,
-            "num_batches_per_epoch": 10,
             "num_samples": 100,
-            "minimum_learning_rate": 5e-05, "patience": 10, "weight_decay": 1e-08
+                
+            "compute_pars" : {
+                "batch_size": 32, "clip_gradient": 100, "epochs": 1, "init": "xavier", "learning_rate": 1e-3, 
+                "learning_rate_decay_factor": 0.5, 
+                "hybridize": false,
+                "num_batches_per_epoch": 10,
+
+                "minimum_learning_rate": 5e-05, "patience": 10, "weight_decay": 1e-08
+            }
         },
         
       "out_pars": {
@@ -91,12 +95,16 @@
             
             
         "compute_pars": {
-            "batch_size": 32, "clip_gradient": 100, "epochs": 1, "init": "xavier", "learning_rate": 1e-3, 
-            "learning_rate_decay_factor": 0.5, 
-            "hybridize": false,
-            "num_batches_per_epoch": 10,
             "num_samples": 100,
-            "minimum_learning_rate": 5e-05, "patience": 10, "weight_decay": 1e-08
+                
+            "compute_pars" : {
+                "batch_size": 32, "clip_gradient": 100, "epochs": 1, "init": "xavier", "learning_rate": 1e-3, 
+                "learning_rate_decay_factor": 0.5, 
+                "hybridize": false,
+                "num_batches_per_epoch": 10,
+
+                "minimum_learning_rate": 5e-05, "patience": 10, "weight_decay": 1e-08
+            }
         },
         
       "out_pars": {
@@ -153,12 +161,16 @@
             
             
         "compute_pars": {
-            "batch_size": 32, "clip_gradient": 100, "epochs": 1, "init": "xavier", "learning_rate": 1e-3, 
-            "learning_rate_decay_factor": 0.5, 
-            "hybridize": false,
-            "num_batches_per_epoch": 10,
             "num_samples": 100,
-            "minimum_learning_rate": 5e-05, "patience": 10, "weight_decay": 1e-08
+                
+            "compute_pars" : {
+                "batch_size": 32, "clip_gradient": 100, "epochs": 1, "init": "xavier", "learning_rate": 1e-3, 
+                "learning_rate_decay_factor": 0.5, 
+                "hybridize": false,
+                "num_batches_per_epoch": 10,
+
+                "minimum_learning_rate": 5e-05, "patience": 10, "weight_decay": 1e-08
+            }
         },
         
         
@@ -218,12 +230,16 @@
             
             
         "compute_pars": {
-            "batch_size": 32, "clip_gradient": 100, "epochs": 1, "init": "xavier", "learning_rate": 1e-3, 
-            "learning_rate_decay_factor": 0.5, 
-            "hybridize": false,
-            "num_batches_per_epoch": 10,
             "num_samples": 100,
-            "minimum_learning_rate": 5e-05, "patience": 10, "weight_decay": 1e-08
+                
+            "compute_pars" : {
+                "batch_size": 32, "clip_gradient": 100, "epochs": 1, "init": "xavier", "learning_rate": 1e-3, 
+                "learning_rate_decay_factor": 0.5, 
+                "hybridize": false,
+                "num_batches_per_epoch": 10,
+
+                "minimum_learning_rate": 5e-05, "patience": 10, "weight_decay": 1e-08
+            }
         },
         
         
@@ -239,7 +255,10 @@
          "model_pars": {
              "model_name" : "deepstate",
              "model_pars" : {
+             
+                "freq": "5min",
                 "prediction_length": 12,
+                "cardinality": [5],
                 
                 "add_trend": false,
                 "num_periods_to_train":  4,
@@ -285,12 +304,80 @@
             
             
         "compute_pars": {
-            "batch_size": 32, "clip_gradient": 100, "epochs": 1, "init": "xavier", "learning_rate": 1e-3, 
-            "learning_rate_decay_factor": 0.5, 
-            "hybridize": false,
-            "num_batches_per_epoch": 10,
             "num_samples": 100,
-            "minimum_learning_rate": 5e-05, "patience": 10, "weight_decay": 1e-08
+                
+            "compute_pars" : {
+                "batch_size": 32, "clip_gradient": 100, "epochs": 1, "init": "xavier", "learning_rate": 1e-3, 
+                "learning_rate_decay_factor": 0.5, 
+                "hybridize": false,
+                "num_batches_per_epoch": 10,
+
+                "minimum_learning_rate": 5e-05, "patience": 10, "weight_decay": 1e-08
+            }
+        },
+        
+        
+      "out_pars": {
+         "path": "ztest/model_gluon/gluonts_deepar/",
+         "plot_prob": true, "quantiles": [0.5]
+    }
+    },
+    
+    
+    
+
+     "gp_forecaster": {
+         "model_pars": {
+             "model_name" : "deepstate",
+             "model_pars" : {
+             
+                "freq": "5min",
+                "prediction_length": 12,
+                "cardinality": [5],
+                
+
+                "num_parallel_samples":  100
+             },
+             
+             "_comment" : {
+                 "max_iter_jitter": 10,
+                "jitter_method":  "iter",
+                "sample_noise": true,
+ 
+                "context_length": "Optional[int] = None",
+                "kernel_output": "KernelOutput = RBFKernelOutput()",
+                "dtype": "DType = np.float64",
+                "time_features": "Optional[List[TimeFeature]] = None"
+             }
+                  
+        },
+        "data_pars": {
+            "train": true, "dt_source": "https://raw.githubusercontent.com/numenta/NAB/master/data/realTweets/Twitter_volume_AMZN.csv",
+            "train_data_path": "dataset/timeseries/train_deepar.csv" , 
+            "test_data_path":  "dataset/timeseries/train_deepar.csv" , 
+            "prediction_length": 12, 
+
+            "freq": "5min",
+            "start" : "2015-02-26 21:42:53",        
+            "col_date"   : "timestamp",                
+            "col_ytarget" : ["value"],  "num_series" : 1,
+
+            "cols_cat": [],   "cols_num" : []
+                    
+            },
+            
+            
+        "compute_pars": {
+            "num_samples": 100,
+                
+            "compute_pars" : {
+                "batch_size": 32, "clip_gradient": 100, "epochs": 1, "init": "xavier", "learning_rate": 1e-3, 
+                "learning_rate_decay_factor": 0.5, 
+                "hybridize": false,
+                "num_batches_per_epoch": 10,
+
+                "minimum_learning_rate": 5e-05, "patience": 10, "weight_decay": 1e-08
+            }
         },
         
         
@@ -299,6 +386,10 @@
          "plot_prob": true, "quantiles": [0.5]
     }
     }
+    
+
+    
+    
 
 
 
