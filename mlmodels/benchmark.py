@@ -101,7 +101,7 @@ def benchmark_run(bench_pars=None, args=None, config_mode="test"):
 
             log("#### Setup Model    ")
             module    = module_load(model_uri)   # "model_tch.torchhub.py"
-            model     = module.Model(model_pars=model_pars, data_pars=data_pars, compute_pars=compute_pars)
+            model     = module.Model(model_pars, data_pars, compute_pars)
             
             log("#### Fit ")
             data_pars["train"] = True
@@ -164,9 +164,11 @@ def cli_load_arguments(config_file=None):
     add("--path_json",      default="dataset/json/benchmark_cnn/", help=" list of json")
     add("--path_out",       default="example/benchmark/", help=".")
 
+
     #### Input dataset
     add("--data_path",   default="dataset/timeseries/", help="Dataset path")
     add("--dataset_name",default="sales_train_validation.csv", help="dataset name")   
+
 
     #### Specific to timeseries
     add("--item_id",     default="HOBBIES_1_001_CA_1_validation", help="forecast for which item")
