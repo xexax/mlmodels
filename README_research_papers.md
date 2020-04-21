@@ -1,6 +1,12 @@
+## Collection of recent research papers on Deep Learning, Machine Learning application
 
 
-###Vision
+Papers related with Pytorch, Tensorflow implementations.
+
+
+### Vision
+
+
 Towards Stabilizing Batch Statistics in Backward Propagation of Batch Normalization 
 Junjie Yan, Ruosi Wan, Xiangyu Zhang, Wei Zhang, Yichen Wei, Jian Sun
 https://openreview.net/pdf?id=SkgGjRVKDS
