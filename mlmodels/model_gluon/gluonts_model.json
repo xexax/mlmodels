@@ -2,7 +2,10 @@
     "deepar": {
          "model_pars": {
              "model_name" : "deepar",
-             "model_pars" : { "num_layers": 2, 
+             "model_pars" : {
+                 "freq": "5min",
+                 "prediction_length": 12, 
+                 "num_layers": 2, 
                  "num_cells": 40, 
                  "cell_type": "lstm", 
                  "dropout_rate": 0.1,
@@ -22,19 +25,28 @@
             "prediction_length": 12, 
             "freq": "5min",
             "start" : "2015-02-26 21:42:53",
-            "num_series" : 1
+            "num_series" : 1,
+            
+            "col_ytarget" : ["value"],
+            "col_date"   : "timestamp",
+            "cols_cat": [],
+            "cols_num" : []
                     
             },
             
             
         "compute_pars": {
-            "batch_size": 32, "clip_gradient": 100, "epochs": 10, "init": "xavier", "learning_rate": 1e-3, 
+            "batch_size": 32, "clip_gradient": 100, "epochs": 1, "init": "xavier", "learning_rate": 1e-3, 
             "learning_rate_decay_factor": 0.5, 
+            "hybridize": false,
+            "num_batches_per_epoch": 10,
+            "num_samples": 100,
             "minimum_learning_rate": 5e-05, "patience": 10, "weight_decay": 1e-08
         },
         
       "out_pars": {
-         "outpath": "ztest/model_gluon/gluonts_deepar/"
+         "path": "ztest/model_gluon/gluonts_deepar/",
+         "plot_prob": true, "quantiles": [0.5]
     }
     },
     
@@ -95,7 +107,7 @@
                 "embedding_dimension": 20,
                 "num_parallel_samples":  100,
 
-                "num_bins": int = 1024,
+                "num_bins":  1024,
                 "hybridize_prediction_net":  false,
                 "n_residue": 24,
                 "n_skip": 32,
@@ -153,7 +165,7 @@
                 "post_seq":  "drn",
                 "act_type":  "softrelu",
                 "num_heads":  8,
-                "scaling":  True,
+                "scaling":  true,
                 "use_feat_dynamic_real":  false,
                 "use_feat_static_cat":  false
                                 
@@ -244,7 +256,7 @@
         
     "out_pars": {  "outpath": "ztest/model_gluon/gluonts_deepstate/" 
                 }
-    },  
+    }
 
 
 

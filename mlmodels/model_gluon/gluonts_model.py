@@ -285,7 +285,7 @@ from mlmodels.util import os_package_root_path, log, path_norm, get_model_uri
 
 
 VERBOSE = False
-MODEL_URI = "ok" get_model_uri(__file__)
+MODEL_URI = get_model_uri(__file__)
 
 
 MODELS_DICT = {
@@ -301,6 +301,13 @@ MODELS_DICT = {
 
 
 
+def json_norm(ddict):
+  for k,t in ddict.items(): 
+     if t == "None" :
+         ddict[k] = None
+  return ddict    
+         
+
 #########################################################################################################
 class Model(object):
     def __init__(self, model_pars=None, data_pars=None,  compute_pars=None, **kwargs):
@@ -313,8 +320,10 @@ class Model(object):
             self.model_pars = model_pars
 
             m = self.compute_pars
+            
+            
             trainer = Trainer(batch_size=m['batch_size'], clip_gradient=m['clip_gradient'], 
-                              ctx                        = m["ctx"],
+                              ctx                        = m.get("ctx", None),
                               epochs                     = m["epochs"],
                               learning_rate              = m["learning_rate"], init=m['init'],
                               learning_rate_decay_factor = m['learning_rate_decay_factor'],
@@ -350,20 +359,38 @@ def get_dataset(data_pars):
                                    freq="5min")
 
     else :
+        from mlmodels.preprocess.timeseries import pandas_to_gluonts, pd_clean_v1
+
         data_path  = data_pars['train_data_path'] if data_pars['train'] else data_pars['test_data_path']
-        data_set   = pd.read_csv(data_path)
-        start_date = pd.Timestamp( data_pars['start'], freq=data_pars['freq'])
+        data_path  = path_norm( data_path )
 
-        gluonts_ds = ListDataset([{FieldName.TARGET: data_set.iloc[i].values, 
+        df = pd.read_csv(data_path)
+        df = df.set_index( data_pars['col_date'] )
+        df = pd_clean_v1(df)
+
+        # start_date = pd.Timestamp( data_pars['start'], freq=data_pars['freq'])
+
+        pars = { "start" : data_pars['start'], "cols_target" : data_pars['col_ytarget'],
+             "freq" :"5min",
+             "cols_cat" : data_pars["cols_cat"],
+             "cols_num" : data_pars["cols_num"]
+            }    
+        gluonts_ds = pandas_to_gluonts(df, pars=pars) 
+ 
+        """
+        ll = [{FieldName.TARGET: data_set.iloc[i].values, 
                                    FieldName.START: start_date}
-                              for i in range(data_pars['num_series'])], freq=data_pars['freq'])
+                              for i in range(data_pars['num_series'])]
 
+       
+        gluonts_ds = ListDataset(ll, freq=data_pars['freq'])
+        """
 
     if VERBOSE:
         entry = next(iter(gluonts_ds))
         train_series = to_pandas(entry)
         train_series.plot()
-        save_fig = data_pars['save_fig']
+        save_fig = data_pars.get('save_fig', "save_fig.png")
         # plt.savefig(save_fig)
     return gluonts_ds
 
@@ -385,7 +412,7 @@ def predict(model, sess=None, data_pars=None, compute_pars=None, out_pars=None, 
     
     data_pars['train'] = False
     test_ds = get_dataset(data_pars)
-    model_gluon = model
+    model_gluon = model.model
     
     forecast_it, ts_it = make_evaluation_predictions(
             dataset=test_ds,  # test dataset
@@ -475,7 +502,7 @@ def plot_prob_forecasts(ypred, out_pars=None):
 def plot_predict(item_metrics, out_pars=None):
     item_metrics.plot(x='MSIS', y='MASE', kind='scatter')
     plt.grid(which="both")
-    outpath = out_pars['outpath']
+    outpath = out_pars['path']
     os.makedirs(outpath, exist_ok=True)
     plt.savefig(outpath)
     plt.clf()
@@ -502,7 +529,7 @@ def test(data_path="dataset/", choice="", config_mode="test"):
     print(model)
 
     log("#### save the trained model  ######################################")
-    save(model, data_pars["modelpath"])
+    save(model, out_pars["path"])
 
     log("#### Predict   ####################################################")
     ypred = predict(model, sess=None, data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)

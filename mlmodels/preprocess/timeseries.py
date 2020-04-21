@@ -157,8 +157,9 @@ def pandas_to_gluonts(df, pars=None) :
     sdate   = df.index[0]  if sdate is None or len(sdate) == 0   else sdate  
     start_dates  = [ pd.Timestamp(sdate, freq=freq) if isinstance(sdate, str) else sdate for _ in range(len(y_list)) ]
 
+    
 
-    # print(y_list, start_dates, dfnum_list, dfcat_list ) 
+    print(y_list, start_dates, dfnum_list, dfcat_list ) 
     ds_percol = [] 
     for i in range( m_series) :
         d = {  FieldName.TARGET             : y_list[i],       # start Timestamps
@@ -174,6 +175,12 @@ def pandas_to_gluonts(df, pars=None) :
     return ds 
 
 
+def tofloat(x):
+    try :
+        return float(x)
+    except :
+        return np.nan
+
 def tests():    
     df = pd.read_csv(path_norm("dataset/timeseries/TSLA.csv "))
     df = df.set_index("Date")
@@ -186,6 +193,19 @@ def tests():
     print(gluonts_to_pandas( gts ) )    
     #for t in gts :
     #   print( to_pandas(t)[:10] )
+
+
+
+    df = pd.read_csv(path_norm("dataset/timeseries/train_deepar.csv "))
+    df = df.set_index("timestamp")
+    df = pd_clean_v1(df)
+    pars = { "start" : "", "cols_target" : [ "value" ],
+             "freq" :"5min",
+             "cols_cat" : [],
+             "cols_num" : []
+            }    
+    gts = pandas_to_gluonts(df, pars=pars) 
+    print(gluonts_to_pandas( gts ) )    
 
 
     #### To_
@@ -276,13 +296,14 @@ def pd_interpolate(df, cols, pars={"method": "linear", "limit_area": "inside"  }
 
 
 
-def pd_clean_V1(df, cols=None,  pars=None) :
+def pd_clean_v1(df, cols=None,  pars=None) :
   if pars is None :
      pars = {"method" : "linear", "axis": 0,
              }
 
   cols = df.columns if cols is None else cols
   for t in cols :
+    df[t] = df[t].apply( tofloat )  
     df[t] = df[t].interpolate( **pars )
   return df
 
