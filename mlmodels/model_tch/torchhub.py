@@ -207,18 +207,26 @@ def get_params(param_pars=None, **kw):
 
 
 def get_dataset(data_pars=None, **kw):
+    import importlib
     data_path        = data_pars['data_path']
     train_batch_size = data_pars['train_batch_size']
     test_batch_size  = data_pars['test_batch_size']
+    try:
+        transform=transforms.Compose([
+                    transforms.Grayscale(num_output_channels=3),
+                    transforms.ToTensor(),
+                    transforms.Normalize((0.1307,), (0.3081,))
+                ])
+        dset = getattr(importlib.import_module("torchvision.datasets"), data_pars["dataset"])
+        train_loader = torch.utils.data.DataLoader( dset(data_pars['data_path'], train=True, download=True, transform= transform),
+                                                    batch_size=train_batch_size, shuffle=True)
+        
+        valid_loader = torch.utils.data.DataLoader( dset(data_pars['data_path'], train=False, download=True, transform= transform),
+                                                    batch_size=test_batch_size, shuffle=True)
 
-    if data_pars['dataset'] == 'FashionMNIST':
-        train_loader, valid_loader  = get_dataset_fashion_mnist_torch(data_pars)
-        return train_loader, valid_loader
-    elif data_pars['dataset'] == 'MNIST':
-        train_loader, valid_loader  = get_dataset_fashion_mnist_torch(data_pars)
-        return train_loader, valid_loader
-    else:
-        raise Exception("Dataloader not implemented")
+        return train_loader, valid_loader 
+    except :
+        raise Exception("Dataset doesn't exist")
         exit
 
 
