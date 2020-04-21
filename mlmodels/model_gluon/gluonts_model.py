@@ -328,8 +328,6 @@ class Model(object):
             self.model = MODELS_DICT[model_pars["model_name"]]( trainer=trainer, **model_pars['model_pars'] )
 
 
-
-
 def get_params(choice="", data_path="dataset/timeseries/", config_mode="test", **kw):
     if choice == "json":
       data_path = path_norm( data_path )
@@ -348,7 +346,6 @@ def get_dataset(data_pars):
     if data_pars.get("choice") =='test01':
         data_path  = data_pars['train_data_path']
         df         = pd.read_csv(data_path, header=0, index_col=0)
-
         gluonts_ds = ListDataset([{"start": df.index[0],"target": df.value[:"2015-04-05 00:00:00"]}],
                                    freq="5min")
 
@@ -372,11 +369,11 @@ def get_dataset(data_pars):
 
 
 
-def fit(modeule,model, sess=None, data_pars=None, model_pars=None, compute_pars=None, out_pars=None, session=None, **kwargs):
-        ##loading dataset
+def fit(model, sess=None, data_pars=None, model_pars=None, compute_pars=None, out_pars=None, session=None, **kwargs):
         """
           Classe Model --> model,   model.model contains thte sub-model
         """
+        data_pars['train'] = True
         model_gluon = model.model
         gluont_ds = get_dataset(data_pars)
         predictor = model_gluon.train(gluont_ds)
@@ -385,22 +382,11 @@ def fit(modeule,model, sess=None, data_pars=None, model_pars=None, compute_pars=
 
 
 def predict(model, sess=None, data_pars=None, compute_pars=None, out_pars=None, **kwargs):
-        ##  Model is class
-        ## load test dataset
-    if data_pars['choice']=='test01':
-        data_path = data_pars['test_data_path'] 
-
-        df = pd.read_csv(data_path, header=0, index_col=0)
     
-        test_ds = ListDataset([{"start": df.index[0],
-                                "target": df.value[:"2015-04-15 00:00:00"]}],
-                               freq="5min")
-
-    elif data_pars['choice']=='test02':
-        data_pars['train'] = False
-        test_ds = get_dataset(data_pars)
-    
+    data_pars['train'] = False
+    test_ds = get_dataset(data_pars)
     model_gluon = model
+    
     forecast_it, ts_it = make_evaluation_predictions(
             dataset=test_ds,  # test dataset
             predictor=model_gluon,  # predictor
@@ -409,9 +395,6 @@ def predict(model, sess=None, data_pars=None, compute_pars=None, out_pars=None, 
 
     forecasts, tss = list(forecast_it), list(ts_it)
     forecast_entry, ts_entry = forecasts[0], tss[0]
-
-    print("forcast:",forecasts)
-    print("tss:", tss)
 
     if VERBOSE:
         print(f"Number of sample paths: {forecast_entry.num_samples}")
@@ -515,14 +498,14 @@ def test(data_path="dataset/", choice="", config_mode="test"):
     module, model = module_load_full(model_uri, model_pars, data_pars, compute_pars)
     print(module, model)
 
-    model = fit(module, model, data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)
+    model = fit(model, sess=None, data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)
     print(model)
 
     log("#### save the trained model  ######################################")
     save(model, data_pars["modelpath"])
 
     log("#### Predict   ####################################################")
-    ypred = predict(model, data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)
+    ypred = predict(model, sess=None, data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)
     # print(ypred)
 
     log("#### metrics   ####################################################")
@@ -538,10 +521,10 @@ def test(data_path="dataset/", choice="", config_mode="test"):
 if __name__ == '__main__':
     VERBOSE = True
 
-    test(data_path="model_gluon/gluonts_model.json", choice="json", config_mode="test")
+    test(data_path="model_gluon/gluonts_model.json", choice="json", config_mode="deepar")
 
-    # test(data_path="model_gluon/gluon_deepar.json", choice="json", config_mode="test01")
 
+    test(data_path="model_gluon/gluonts_model.json", choice="json", config_mode="deepfactor")
 
 
 
