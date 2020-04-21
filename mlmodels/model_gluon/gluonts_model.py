@@ -245,15 +245,13 @@ class TransformerEstimator(GluonEstimator):
 
         
 """
-import os
+import os, copy
 import pandas as pd, numpy as np
 
 
 import matplotlib.pyplot as plt
 from pathlib import Path
 import json
-
-
 
 
 from gluonts.model.deepar import DeepAREstimator
@@ -267,8 +265,6 @@ from gluonts.model.wavenet import WaveNetEstimator, WaveNetSampler, WaveNet
 
 
 
-
-
 from gluonts.trainer import Trainer
 from gluonts.dataset.common import ListDataset
 from gluonts.dataset.field_names import FieldName
@@ -278,10 +274,8 @@ from gluonts.evaluation.backtest import make_evaluation_predictions
 from gluonts.model.predictor import Predictor
 
 
-
-
 #########################################################################################################
-from mlmodels.util import os_package_root_path, log, path_norm, get_model_uri
+from mlmodels.util import os_package_root_path, log, path_norm, get_model_uri, json_norm
 
 
 VERBOSE = False
@@ -295,18 +289,10 @@ MODELS_DICT = {
 ,"gp_forecaster" : GaussianProcessEstimator
 ,"seq2seq" : Seq2SeqEstimator
 ,"feedforward" : SimpleFeedForwardEstimator
-,"tranformer" : TransformerEstimator
+,"transformer" : TransformerEstimator
 ,"wavenet" : WaveNetEstimator
 }
 
-
-
-def json_norm(ddict):
-  for k,t in ddict.items(): 
-     if t == "None" :
-         ddict[k] = None
-  return ddict    
-         
 
 #########################################################################################################
 class Model(object):
@@ -320,7 +306,7 @@ class Model(object):
             self.model_pars = model_pars
 
             m = self.compute_pars
-            
+            m = json_norm(m) 
             
             trainer = Trainer(batch_size=m['batch_size'], clip_gradient=m['clip_gradient'], 
                               ctx                        = m.get("ctx", None),
@@ -350,42 +336,25 @@ def get_params(choice="", data_path="dataset/timeseries/", config_mode="test", *
 
 
 
-
 def get_dataset(data_pars):    
-    if data_pars.get("choice") =='test01':
-        data_path  = data_pars['train_data_path']
-        df         = pd.read_csv(data_path, header=0, index_col=0)
-        gluonts_ds = ListDataset([{"start": df.index[0],"target": df.value[:"2015-04-05 00:00:00"]}],
-                                   freq="5min")
 
-    else :
-        from mlmodels.preprocess.timeseries import pandas_to_gluonts, pd_clean_v1
+    from mlmodels.preprocess.timeseries import pandas_to_gluonts, pd_clean_v1
 
-        data_path  = data_pars['train_data_path'] if data_pars['train'] else data_pars['test_data_path']
-        data_path  = path_norm( data_path )
+    data_path  = data_pars['train_data_path'] if data_pars['train'] else data_pars['test_data_path']
+    data_path  = path_norm( data_path )
 
-        df = pd.read_csv(data_path)
-        df = df.set_index( data_pars['col_date'] )
-        df = pd_clean_v1(df)
+    df = pd.read_csv(data_path)
+    df = df.set_index( data_pars['col_date'] )
+    df = pd_clean_v1(df)
 
-        # start_date = pd.Timestamp( data_pars['start'], freq=data_pars['freq'])
-
-        pars = { "start" : data_pars['start'], "cols_target" : data_pars['col_ytarget'],
-             "freq" :"5min",
+    # start_date = pd.Timestamp( data_pars['start'], freq=data_pars['freq'])
+    pars = { "start" : data_pars['start'], "cols_target" : data_pars['col_ytarget'],
+             "freq" : data_pars['freq'],
              "cols_cat" : data_pars["cols_cat"],
              "cols_num" : data_pars["cols_num"]
-            }    
-        gluonts_ds = pandas_to_gluonts(df, pars=pars) 
+        }    
+    gluonts_ds = pandas_to_gluonts(df, pars=pars) 
  
-        """
-        ll = [{FieldName.TARGET: data_set.iloc[i].values, 
-                                   FieldName.START: start_date}
-                              for i in range(data_pars['num_series'])]
-
-       
-        gluonts_ds = ListDataset(ll, freq=data_pars['freq'])
-        """
-
     if VERBOSE:
         entry = next(iter(gluonts_ds))
         train_series = to_pandas(entry)
@@ -548,92 +517,19 @@ def test(data_path="dataset/", choice="", config_mode="test"):
 if __name__ == '__main__':
     VERBOSE = True
 
-    test(data_path="model_gluon/gluonts_model.json", choice="json", config_mode="deepar")
+    ll = [ "deepar" , "deepfactor" , "transformer"  ,"wavenet",  
+           "deepstate" ,"gp_forecaster"  ,"seq2seq" ,
+           "feedforward" ]
 
-
-    test(data_path="model_gluon/gluonts_model.json", choice="json", config_mode="deepfactor")
-
-
-
-
-
+    for t in ll  :
+      test(data_path="model_gluon/gluonts_model.json", choice="json", config_mode= t )
 
 
 
 
 
 
-"""
-
-
-        data_path = path_norm(  "model_gluon/deepar_run.json" )
-        out_path   = path_norm( "ztest/model_gluon/gluon_deepar/" )   
-        model_path = os.path.join(out_path , "model")
-
-
-        log("#### Model params   ################################################")
-        model_pars = {"prediction_length": data_pars["prediction_length"], "freq": data_pars["freq"],
-                    "num_layers": 2, "num_cells": 40, "cell_type": 'lstm', "dropout_rate": 0.1,
-                    "use_feat_dynamic_real": False, "use_feat_static_cat": False, "use_feat_static_real": False,
-                    "scaling": True, "num_parallel_samples": 100}
-
-
-        log("#### Data params   ###################################################")
-        data_pars = {"train_data_path": data_path + "/train_deepar.csv",
-                     "test_data_path":  data_path + "/test_deepar.csv", 
-                     "train": True,
-                     'prediction_length': 12, 'freq': '5min', 
-                     "save_fig": "./series.png", "modelpath": model_path,
-                     "choice":choice}
-
-        log("#### output params   ###################################################")
-        out_pars = {"outpath": out_path + "result", 
-                    "plot_prob": True, "quantiles": [0.5]}
-
-
-        log("#### Compute params   ################################################")
-        compute_pars = {"batch_size": 32, "clip_gradient": 100, "ctx": None, "epochs": 10, "init": "xavier",
-                        "learning_rate": 1e-3,
-                        "learning_rate_decay_factor": 0.5, "hybridize": False, "num_batches_per_epoch": 10,
-                        'num_samples': 100,
-                        "minimum_learning_rate": 5e-05, "patience": 10, "weight_decay": 1e-08}
 
 
 
 
-        data_path = path_norm( "model_gluon/deepar.json")
-        out_path   = path_norm( "ztest/model_gluon/gluon_deepar/" )   
-        model_path = os.path.join(out_path , "model")
-
-
-        log("#### Model params   ################################################")
-        model_pars = {"prediction_length": data_pars["prediction_length"], "freq": data_pars["freq"],
-                    "num_layers": 2, "num_cells": 40, "cell_type": 'lstm', "dropout_rate": 0.1,
-                    "use_feat_dynamic_real": False, "use_feat_static_cat": False, "use_feat_static_real": False,
-                    "scaling": True, "num_parallel_samples": 100}
-
-
-        log("#### Data params   ###################################################")
-        data_pars = {"train_data_path": data_path + "/GLUON-train.csv",
-                    "test_data_path":  data_path + "/GLUON-test.csv", 
-                    "train": False,
-                    'prediction_length': 48, 'freq': '1H', 
-                    "start": pd.Timestamp("01-01-1750", freq='1H'), 
-                    "num_series":37,
-                    "save_fig": "./series.png", "modelpath": model_path,
-                    "choice":choice}
-
-        log("#### output params   ###################################################")
-        out_pars = {"outpath": out_path + "result", 
-                    "plot_prob": True, "quantiles": [0.1, 0.5, 0.9]}
-
-
-        log("#### Compute params   ################################################")
-        compute_pars = {"batch_size": 32, "clip_gradient": 100, "ctx": None, "epochs": 10, "init": "xavier",
-                        "learning_rate": 1e-3,
-                        "learning_rate_decay_factor": 0.5, "hybridize": False, "num_batches_per_epoch": 10,
-                        'num_samples': 100,
-                        "minimum_learning_rate": 5e-05, "patience": 10, "weight_decay": 1e-08}
-
-
-"""
