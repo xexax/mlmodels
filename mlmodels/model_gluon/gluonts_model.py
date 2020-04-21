@@ -4,6 +4,7 @@ DeepStateEstimator,
     This implements the deep state space model described in
     [RSG+18]_.
 
+
     freq
         Frequency of the data to train on and predict
     prediction_length
