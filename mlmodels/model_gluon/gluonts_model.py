@@ -266,6 +266,15 @@ from gluonts.evaluation.backtest import make_evaluation_predictions
 from gluonts.model.predictor import Predictor
 
 
+#### Only for SeqtoSeq
+from gluonts.block.encoder import (
+    HierarchicalCausalConv1DEncoder,
+    RNNCovariateEncoder,
+    MLPEncoder,
+    Seq2SeqEncoder,
+)
+
+
 ####################################################################################################
 from mlmodels.util import os_package_root_path, log, path_norm, get_model_uri, json_norm
 
@@ -299,6 +308,10 @@ class Model(object):
         else:
             mpars = json_norm(model_pars['model_pars'] )      #"None" to None
             cpars = json_norm(compute_pars['compute_pars'])
+            
+            if model_pars["model_name"] == "seq2seq" :
+                mpars['encoder'] = MLPEncoder()
+            
             
             ### Setup the compute
             trainer = Trainer( **cpars  )
@@ -501,12 +514,13 @@ def test(data_path="dataset/", choice="", config_mode="test"):
 
 
 if __name__ == '__main__':
-    VERBOSE = True
+    VERBOSE = False
 
-    ll = [ "deepar" , "deepfactor" , "transformer"  ,"wavenet", "feedforward" ]
+    ll = [ "deepar" , "deepfactor" , "transformer"  ,"wavenet", "feedforward",
+           "gp_forecaster", "deepstate" ]
 
-    ## Not yet
-    ll2 = ["deepstate", "gp_forecaster"  , "seq2seq" ,
+    ## Not yet  Implemented, error in Glutonts
+    ll2 = [   "seq2seq" , 
             ]
     
     for t in ll  :

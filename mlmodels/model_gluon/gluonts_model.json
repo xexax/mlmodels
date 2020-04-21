@@ -164,8 +164,8 @@
             "num_samples": 100,
                 
             "compute_pars" : {
-                "batch_size": 32, "clip_gradient": 100, "epochs": 1, "init": "xavier", "learning_rate": 1e-3, 
-                "learning_rate_decay_factor": 0.5, 
+                "batch_size": 32, "clip_gradient": 100, "epochs": 1, "init": "xavier", 
+                "learning_rate": 1e-3,  "learning_rate_decay_factor": 0.5, 
                 "hybridize": false,
                 "num_batches_per_epoch": 10,
 
@@ -255,10 +255,9 @@
          "model_pars": {
              "model_name" : "deepstate",
              "model_pars" : {
-             
                 "freq": "5min",
                 "prediction_length": 12,
-                "cardinality": [5],
+                "cardinality": [1],
                 
                 "add_trend": false,
                 "num_periods_to_train":  4,
@@ -268,7 +267,7 @@
                 "num_parallel_samples":  100,
                 "dropout_rate":  0.1,
                 "use_feat_dynamic_real": false,
-                "use_feat_static_cat": true,
+                "use_feat_static_cat":false,
                 "scaling": true
 
              },
@@ -282,11 +281,12 @@
                 "embedding_dimension": "Optional[List[int]] = None",
                 "issm: Optional[ISSM]": "None",
                 "cardinality": "List[int]"
-
-
+                
              }
                   
         },
+        
+        
         "data_pars": {
             "train": true, "dt_source": "https://raw.githubusercontent.com/numenta/NAB/master/data/realTweets/Twitter_volume_AMZN.csv",
             "train_data_path": "dataset/timeseries/train_deepar.csv" , 
@@ -300,18 +300,15 @@
 
             "cols_cat": [],   "cols_num" : []
                     
-            },
-            
+        },
             
         "compute_pars": {
             "num_samples": 100,
-                
             "compute_pars" : {
                 "batch_size": 32, "clip_gradient": 100, "epochs": 1, "init": "xavier", "learning_rate": 1e-3, 
                 "learning_rate_decay_factor": 0.5, 
                 "hybridize": false,
                 "num_batches_per_epoch": 10,
-
                 "minimum_learning_rate": 5e-05, "patience": 10, "weight_decay": 1e-08
             }
         },
@@ -333,7 +330,7 @@
              
                 "freq": "5min",
                 "prediction_length": 12,
-                "cardinality": [5],
+                "cardinality": 2,
                 
                  "max_iter_jitter": 10,
                 "jitter_method":  "iter",
@@ -395,18 +392,16 @@
              "model_pars" : {
                 "freq": "5min",
                 "prediction_length": 12,
-
                 "batch_normalization": false,
                 "mean_scaling":  true,
-                
-                "num_parallel_samples":  100,
+                "num_parallel_samples":  100
 
              },
              
              "_comment" : {
                 "num_hidden_dimensions": "Optional[List[int]] = None",
                 "context_length": "Optional[int] = None",
-                "distr_output": "DistributionOutput = StudentTOutput()",
+                "distr_output": "DistributionOutput = StudentTOutput()"
              }
                   
         },
@@ -454,23 +449,28 @@
          "model_pars": {
              "model_name" : "seq2seq",
              "model_pars" : {
-                "freq": "5min",
-                "prediction_length": 12,                
-                "num_parallel_samples":  100,
+                "freq": "5min"
+                ,"prediction_length": 12                
+                ,"num_parallel_samples":  100
 
-                "embedding_dimension": 10,
-                "decoder_mlp_layer": [5,10,5],
-                "decoder_mlp_static_dim": 10,
-                "quantiles":  [0.1, 0.5, 0.9],
+                ,"cardinality": [2]   
+                ,"embedding_dimension": 10
+                ,"decoder_mlp_layer": [5,10,5]
+                ,"decoder_mlp_static_dim": 10
+                ,"quantiles":  [0.1, 0.5, 0.9]
+                
+                
+                
              },
              
              
              "_comment" : {
+                "encoder": "Seq2SeqEncoder",
                 "context_length": "Optional[int] = None",
                 "encoder": "Seq2SeqEncoder",
-                "scaler": "Scaler = NOPScaler()",
-                "trainer": "Trainer = Trainer()",
-                "cardinality": "List[int]",       
+                "scaler": "Scaler = NOPScaler()"
+
+                    
              }
                   
         },
