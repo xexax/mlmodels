@@ -305,7 +305,8 @@
         "compute_pars": {
             "num_samples": 100,
             "compute_pars" : {
-                "batch_size": 32, "clip_gradient": 100, "epochs": 1, "init": "xavier", "learning_rate": 1e-3, 
+                "batch_size": 32, "clip_gradient": 100, "epochs": 1, "init": "xavier", 
+                "learning_rate": 1e-3, 
                 "learning_rate_decay_factor": 0.5, 
                 "hybridize": false,
                 "num_batches_per_epoch": 10,

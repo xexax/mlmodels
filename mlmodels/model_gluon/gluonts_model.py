@@ -143,7 +143,7 @@ def fit(model, sess=None, data_pars=None, model_pars=None, compute_pars=None, ou
         return model
 
 
-def predict(model, sess=None, data_pars=None, compute_pars=None, out_pars=None, **kwargs):
+def predict(model, sess=None, data_pars=None, compute_pars=None, out_pars=None, **kw):
     
     data_pars['train'] = False
     test_ds = get_dataset(data_pars)
@@ -158,6 +158,11 @@ def predict(model, sess=None, data_pars=None, compute_pars=None, out_pars=None, 
     forecasts, tss = list(forecast_it), list(ts_it)
     forecast_entry, ts_entry = forecasts[0], tss[0]
 
+    ### External benchmark.py evaluation
+    if kw.get("return_ytrue") :
+        ypred, ytrue = forecasts, tss
+        return ypred, ytrue
+
     if VERBOSE:
         print(f"Number of sample paths: {forecast_entry.num_samples}")
         print(f"Dimension of samples: {forecast_entry.samples.shape}")
@@ -171,7 +176,7 @@ def predict(model, sess=None, data_pars=None, compute_pars=None, out_pars=None, 
 
 
 
-def metrics(ypred, data_pars, compute_pars=None, out_pars=None, **kwargs):
+def metrics(ypred, data_pars, compute_pars=None, out_pars=None, **kw):
         ## load test dataset
         data_pars['train'] = False
         test_ds = get_dataset(data_pars)
@@ -187,7 +192,7 @@ def metrics(ypred, data_pars, compute_pars=None, out_pars=None, **kwargs):
 
 
 
-def fit_metrics(ypred, data_pars, compute_pars=None, out_pars=None, **kwargs):
+def fit_metrics(ypred, data_pars, compute_pars=None, out_pars=None, **kw):
         ### load test dataset
         data_pars['train'] = False
         test_ds = get_dataset(data_pars)
