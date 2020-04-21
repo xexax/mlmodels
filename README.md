@@ -275,7 +275,7 @@ alexnet: SqueezeNet: AlexNet-level accuracy with 50x fewer parameters and <0.5MB
 29. mobilenet_v2: MobileNetV2: Inverted Residuals and Linear Bottlenecks
 [[Link](http://openaccess.thecvf.com/content_cvpr_2018/papers/Sandler_MobileNetV2_Inverted_Residuals_CVPR_2018_paper.pdf)]
 
-*** More resources are available [here](https://github.com/arita37/mlmodels/blob/dev/README_model_list.md) ***
+***More resources are available [here](https://github.com/arita37/mlmodels/blob/dev/README_model_list.md)***
 
 ######################################################################################
 
@@ -283,7 +283,7 @@ alexnet: SqueezeNet: AlexNet-level accuracy with 50x fewer parameters and <0.5MB
 
 ### (A) Using pre-installed Setup (one click) :
 
-https://github.com/arita37/mlmodels/issues/101
+[Read-more](https://github.com/arita37/mlmodels/issues/101)
 
 
 
@@ -300,7 +300,7 @@ git checkout dev
 ```
 
 ### (C) Using Colab :
-https://colab.research.google.com/drive/1sYbrXNZh9nTeizS-AuCA8RSu94B_B-RF
+[Read-more](https://colab.research.google.com/drive/1sYbrXNZh9nTeizS-AuCA8RSu94B_B-RF)
 
 
 ### Initialize template and Tests
@@ -326,7 +326,7 @@ ml_models
         
 #### Actual test runs
 
-https://github.com/arita37/mlmodels/actions
+[Read-more](https://github.com/arita37/mlmodels/actions)
 
 ![test_fast_linux](https://github.com/arita37/mlmodels/workflows/test_fast_linux/badge.svg)
 
@@ -338,13 +338,13 @@ ________________________________________________________________________________
 
 ## Usage in Jupyter/Colab
 
-https://github.com/arita37/mlmodels/blob/dev/README_usage.md
+[Read-more](https://github.com/arita37/mlmodels/blob/dev/README_usage.md)
 
 _______________________________________________________________________________________
 
 ## Command Line tools:
 
-https://github.com/arita37/mlmodels/blob/dev/README_usage_CLI.md
+[Read-more](https://github.com/arita37/mlmodels/blob/dev/README_usage_CLI.md)
 
 
 
@@ -352,19 +352,19 @@ ________________________________________________________________________________
 
 ## Model List
 
-https://github.com/arita37/mlmodels/blob/dev/README_model_list.md
+[Read-more](https://github.com/arita37/mlmodels/blob/dev/README_model_list.md)
 
 _______________________________________________________________________________________
 
 ## How to add a new model
 
-https://github.com/arita37/mlmodels/blob/dev/README_addmodel.md
+[Read-more](https://github.com/arita37/mlmodels/blob/dev/README_addmodel.md)
 
 _______________________________________________________________________________________
 
 ## Index of functions/methods
 
-https://github.com/arita37/mlmodels/blob/dev/README_index_doc.py
+[Read-more](https://github.com/arita37/mlmodels/blob/dev/README_index_doc.py)
 
 _______________________________________________________________________________________
 
