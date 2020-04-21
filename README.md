@@ -15,9 +15,6 @@
 [guide](https://github.com/arita37/mlmodels/blob/dev/mlmodels/example/README_usage.md)
 
 
-*  Colab demo for Install :
-[demo](https://colab.research.google.com/drive/1gplUtiWQpS4ei5SvoNZMKUCZFD8G8Xz8)
-
 
 ## Benefits :
 
@@ -319,7 +316,8 @@ git checkout dev
 ```
 
 ### (C) Using Colab :
-https://colab.research.google.com/drive/1gplUtiWQpS4ei5SvoNZMKUCZFD8G8Xz8
+[demo](https://colab.research.google.com/drive/1gplUtiWQpS4ei5SvoNZMKUCZFD8G8Xz8)
+
 
 
 ### Initialize template and Tests
