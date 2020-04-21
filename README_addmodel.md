@@ -1,14 +1,14 @@
-# Contributing Guide
+# Contributing Guidelines
 ### Pull Requests, Fixes, New Models
 Thank you for taking interest in this project :grinning:. Read following instructions before adding a new model.
 - [Code Style](#code-style)
 - [Read The Examples](#read-the-examples)
 - [Fork](#fork)
-- [Configure For tests](#configure-for-tests)
-- [Create Python Script For New Model](#create-python-script-for-new-model)
+- [MANDATORY For TESTS](#configure-for-tests)
+- [Create python code](#create-python-script-for-new-model)
 - [Create JSON for parameters](#create-json-for-parameters)
 - [Keep Your Branch Updated](#keep-your-branch-updated)
-- [Run Model](#run-model)
+- [Run/test your Model](#run-model)
 - [Check Your Test Runs](#check-your-test-runs)
 - [Issue A Pull Request](#issue-a-pull-request)
 - [Source Code Structure As Below](#source-code-structure-as-below)
@@ -23,7 +23,7 @@ https://github.com/arita37/mlmodels/blob/dev/README_index_doc.py
 ## Code Style: 
    - You can use to 120 characters per line : Better code readability
    - Do Not FOLLOW PEP8, make your code EASY TO READ : Align  "=" together, .... 
-   - You can use [Black](https://github.com/psf/black)/[pep8](https://www.python.org/dev/peps/pep-0008/) formatter Python packages.
+   - Do NOT reformat existing files.
 
 ## Read The Examples
 
@@ -85,11 +85,16 @@ Run/Test newly added model on your local machine or on [Gitpod](https://gitpod.i
     cd mlmodels
     python model_XXXX/yyyy.py  
 
-## Issue A Pull Request
-Once you have made the changes issue a PR.
 
 ## Check Your Test Runs
 https://github.com/arita37/mlmodels/actions?query=workflow%3Atest_custom_model
+
+
+
+## Issue A Pull Request
+Once you have made the changes issue a PR.
+
+
 
 ___________________________________________________________________________________________
 # Manual Installation

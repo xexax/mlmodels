@@ -1,13 +1,23 @@
 import os
 import json
 import pandas as pd
-from dataloader import DataLoader
-from util import load_callable_from_dict
-from keras.preprocessing.text import Tokenizer
-import keras
 import numpy as np
 import math
 
+
+
+from keras.preprocessing.text import Tokenizer
+import keras
+
+
+###########################################################################3
+from dataloader import DataLoader
+from mlmodels.util import load_callable_from_dict, path_norm, path_norm_dict
+### path_norm : find the ABSOLUTE PATH of the repobby heuristic.
+
+
+
+###########################################################################3
 def pandas_split_xy(out,data_pars):
     X_c    = data_pars['input_pars'].get('col_Xinput',[])
     y_c    = data_pars['input_pars'].get('col_yinput',[])
@@ -85,13 +95,21 @@ class SingleFunctionPreprocessor:
     def get_data(self):
         return self.data
 
+
 if __name__ == '__main__':
-    refactor_path = './dataset/json/refactor/'
+    refactor_path = path_norm('dataset/json/refactor/' )
     data_pars_list = [(f,json.loads(open(refactor_path+f).read())['test']['data_pars']) for f in os.listdir(refactor_path)]
+    
 
 
     for f, data_pars in data_pars_list:
         print(f)
-        loader = DataLoader(data_pars)
+        data_pars = path_norm_dict( data_pars)
+        loader    = DataLoader(data_pars)
         loader.compute()
         print(loader.get_data())
+
+
+
+
+
