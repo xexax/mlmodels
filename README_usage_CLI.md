@@ -62,7 +62,7 @@ ml_test
     
     
 #### Custom  Models
-    ml_models --do test  --model_uri []("D:\_devs\Python01\gitdev\mlmodels\mlmodels\model_tf_lstm.py")
+    ml_models --do test  --model_uri [here]("D:\_devs\Python01\gitdev\mlmodels\mlmodels\model_tf_lstm.py")
 
 
 
@@ -113,4 +113,13 @@ load_pars = { "path" : "ztest_1lstm/model/" }
 module      = module_load( model_uri= model_uri )     # Load file definition
 model,sess  = load(folder, model_type="model_tf")      # Create Model instance
 ypred       = predict(model, module, sess,  data_pars, compute_pars, out_pars)     
+
+
+
+
+
+
+
+```
+
 
