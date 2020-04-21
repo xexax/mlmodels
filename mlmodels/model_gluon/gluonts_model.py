@@ -503,11 +503,11 @@ def test(data_path="dataset/", choice="", config_mode="test"):
 if __name__ == '__main__':
     VERBOSE = True
 
-    ll = [ "deepar" , "deepfactor" , "transformer"  ,"wavenet",  ]
+    ll = [ "deepar" , "deepfactor" , "transformer"  ,"wavenet", "feedforward" ]
 
     ## Not yet
-    ll2 = ["deepstate", "gp_forecaster"  ,"seq2seq" ,
-           "feedforward" ]
+    ll2 = ["deepstate", "gp_forecaster"  , "seq2seq" ,
+            ]
     
     for t in ll  :
       test(data_path="model_gluon/gluonts_model.json", choice="json", config_mode= t )
