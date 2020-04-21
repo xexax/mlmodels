@@ -21,3 +21,22 @@ def wrap_torch_datasets(sets, args_list = None, **args):
     if args_list is None:
         return [torch.utils.data.DataLoader(x,**args) for x in sets]
     return [torch.utils.data.DataLoader(x,**a,**args) for a,x in zip(args_list,sets)]
+
+
+
+
+
+
+
+def torch_transform_mnist():
+    from torchvision import datasets, transforms
+    transform=transforms.Compose([
+                        transforms.Grayscale(num_output_channels=3),
+                        transforms.ToTensor(),
+                        transforms.Normalize((0.1307,), (0.3081,))
+    ])
+    return transform
+
+
+
+

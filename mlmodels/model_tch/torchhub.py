@@ -115,6 +115,7 @@ def get_dataset_mnist_torch(data_pars):
                     ])),
         batch_size=data_pars['train_batch_size'], shuffle=True)
 
+
     valid_loader = torch.utils.data.DataLoader( datasets.MNIST(data_pars['data_path'], train=False,
                     transform=transforms.Compose([
                         transforms.Grayscale(num_output_channels=3),
@@ -130,7 +131,8 @@ def get_dataset_torch(data_pars):
     import importlib
 
     if  data_pars["transform"]  :
-       transform = getattr(importlib.import_module("mlmodels.preprocess.image"), data_pars["transform"])
+       transform = getattr(importlib.import_module("mlmodels.preprocess.image"), data_pars.get("transform", "torch_transform_mnist" ))
+       #  torch_transform_mnist()
        #transforms.Compose([
        #                 transforms.Grayscale(num_output_channels=3),
        #                 transforms.ToTensor(),
@@ -139,8 +141,10 @@ def get_dataset_torch(data_pars):
     else :
        transform = None
 
-        
-    dset = getattr(importlib.import_module("torchvision.datasets"), data_pars["dataset"])
+    
+    dataset_module =  data_pars.get('dataset_module', "torchvision.datasets")   
+    dset = getattr(importlib.import_module(dataset_module), data_pars["dataset"])
+
     train_loader = torch.utils.data.DataLoader( dset(data_pars['data_path'], train=True, download=True, transform= transform),
                                                 batch_size=data_pars['train_batch_size'], shuffle=True)
     
@@ -148,6 +152,7 @@ def get_dataset_torch(data_pars):
                                                 batch_size=data_pars['train_batch_size'], shuffle=True)
 
     return train_loader, valid_loader  
+
 
 
 
