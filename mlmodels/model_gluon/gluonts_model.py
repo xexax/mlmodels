@@ -311,7 +311,7 @@ class Model(object):
             cpars = json_norm(compute_pars['compute_pars'])
             
             if model_pars["model_name"] == "seq2seq" :
-                mpars['encoder'] = MLPEncoder()
+                mpars['encoder'] = MLPEncoder()   #bug in seq2seq
             
             
             ### Setup the compute
@@ -526,7 +526,6 @@ if __name__ == '__main__':
     
     for t in ll  :
       test(data_path="model_gluon/gluonts_model.json", choice="json", config_mode= t )
-
 
 
 
