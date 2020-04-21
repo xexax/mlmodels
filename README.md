@@ -15,9 +15,6 @@
 [guide](https://github.com/arita37/mlmodels/blob/dev/mlmodels/example/README_usage.md)
 
 
-*  Colab demo for Install :
-[demo](https://colab.research.google.com/drive/1gplUtiWQpS4ei5SvoNZMKUCZFD8G8Xz8)
-
 
 ## Benefits :
 
@@ -39,9 +36,15 @@ Amazon Deep AR: 2019, Multi-variate Time Series NNetwork, [[Link](https://arxiv.
 
 Facebook Prophet 2017, Time Series prediction,
 
+Wavenet (DeepMind), Time Series Forecast
+
+Transformer (Google), Time Series Forecast,
+
+DeepFactor, 2019, Time Series representaton and Forecast
+
 ARMDN, Advanced Multi-variate Time series Prediction : 2019, Associative and Recurrent Mixture Density Networks for time series.
 
-LSTM Neural Network prediction
+LSTM Neural Network time series prediction
 
 
 ### NLP :
@@ -313,7 +316,8 @@ git checkout dev
 ```
 
 ### (C) Using Colab :
-https://colab.research.google.com/drive/1gplUtiWQpS4ei5SvoNZMKUCZFD8G8Xz8
+[demo](https://colab.research.google.com/drive/1gplUtiWQpS4ei5SvoNZMKUCZFD8G8Xz8)
+
 
 
 ### Initialize template and Tests
