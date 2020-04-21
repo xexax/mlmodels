@@ -215,8 +215,8 @@ def get_params(param_pars=None, **kw):
 
 
 
-def get_dataset(data_pars=None, **kw):
 
+def get_dataset(data_pars=None, **kw):
 
     if data_pars['dataset'] == 'MNIST':
         train_loader, valid_loader  = get_dataset_mnist_torch(data_pars)
