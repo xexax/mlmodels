@@ -96,9 +96,6 @@ https://github.com/arita37/mlmodels/blob/dev/mlmodels/example/model_lightgbm_tit
 
 
 
-#
----
-
 ## Examples of image classification
 
 
@@ -110,11 +107,13 @@ https://github.com/Ahmed3bbas/mlmodels/blob/dev/mlmodels/example/mnist_mlmodels_
 
 
 
-### ResNet18 trained on Fashion MNISt 
+### ResNet18 trained on Fashion MNIST
 
 https://github.com/Ahmed3bbas/mlmodels/blob/dev/mlmodels/example/fashion_MNIST_mlmodels.ipynb
 
 
+#
+---
 
 
 
