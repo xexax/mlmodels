@@ -626,6 +626,22 @@ model2 = module.load(load_pars ={ 'path': out_pars['path'] +"/model/"})
 ```
 ---
 
+## Examples of image classification
+
+
+
+### ResNet and ShuffleNet with differnt architecture size trained on MNIST 
+
+https://github.com/Ahmed3bbas/mlmodels/blob/dev/mlmodels/example/mnist_mlmodels_.ipynb
+
+
+
+
+### ResNet18 trained on Fashion MNISt 
+
+https://github.com/Ahmed3bbas/mlmodels/blob/dev/mlmodels/example/fashion_MNIST_mlmodels.ipynb
+
+
 
 
 
