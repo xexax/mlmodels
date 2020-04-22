@@ -103,43 +103,6 @@ def get_config_file():
     return path_norm('config/model_tch/Imagecnn.json')
 
 
-def get_dataset_mnist_torch(data_pars):
-    train_loader = torch.utils.data.DataLoader( datasets.MNIST(data_pars['data_path'], train=True, download=True,
-                    transform=transforms.Compose([
-                        transforms.Grayscale(num_output_channels=3),
-                        transforms.ToTensor(),
-                        transforms.Normalize((0.1307,), (0.3081,))
-                    ])),
-        batch_size=data_pars['train_batch_size'], shuffle=True)
-
-    valid_loader = torch.utils.data.DataLoader( datasets.MNIST(data_pars['data_path'], train=False,
-                    transform=transforms.Compose([
-                        transforms.Grayscale(num_output_channels=3),
-                        transforms.ToTensor(),
-                        transforms.Normalize((0.1307,), (0.3081,))
-                    ])),
-        batch_size=data_pars['test_batch_size'], shuffle=True)
-    return train_loader, valid_loader  
-
-
-def get_dataset_fashion_mnist_torch(data_pars):
-    train_loader = torch.utils.data.DataLoader( datasets.FashionMNIST(data_pars['data_path'], train=True, download=True,
-                    transform=transforms.Compose([
-                        transforms.Grayscale(num_output_channels=3),
-                        transforms.ToTensor(),
-                        transforms.Normalize((0.1307,), (0.3081,))
-                    ])),
-        batch_size=data_pars['train_batch_size'], shuffle=True)
-
-    valid_loader = torch.utils.data.DataLoader( datasets.FashionMNIST(data_pars['data_path'], train=False,
-                    transform=transforms.Compose([
-                        transforms.Grayscale(num_output_channels=3),
-                        transforms.ToTensor(),
-                        transforms.Normalize((0.1307,), (0.3081,))
-                    ])),
-        batch_size=data_pars['test_batch_size'], shuffle=True)
-    return train_loader, valid_loader  
-
 
 ###########################################################################################################
 ###########################################################################################################
@@ -208,6 +171,8 @@ def get_params(param_pars=None, **kw):
 
 def get_dataset(data_pars=None, **kw):
     import importlib
+    
+    from torchvision import datasets, transforms
     data_path        = data_pars['data_path']
     train_batch_size = data_pars['train_batch_size']
     test_batch_size  = data_pars['test_batch_size']
@@ -220,15 +185,13 @@ def get_dataset(data_pars=None, **kw):
         dset = getattr(importlib.import_module("torchvision.datasets"), data_pars["dataset"])
         train_loader = torch.utils.data.DataLoader( dset(data_pars['data_path'], train=True, download=True, transform= transform),
                                                     batch_size=train_batch_size, shuffle=True)
-        
+
         valid_loader = torch.utils.data.DataLoader( dset(data_pars['data_path'], train=False, download=True, transform= transform),
                                                     batch_size=test_batch_size, shuffle=True)
-
         return train_loader, valid_loader 
     except :
         raise Exception("Dataset doesn't exist")
         exit
-
 
 
 def fit(model, data_pars=None, compute_pars=None, out_pars=None, **kwargs):
