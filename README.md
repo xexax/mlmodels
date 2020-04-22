@@ -27,7 +27,7 @@ of MLMODELS. Emphasis is on traditional machine learning algorithms but recent s
 Processing of high-dimensional data is considered very useful using Deep Learning. For different applications, such as computer vision, natural language processing, object detection, facial recognition and speech recognition, deep learning created significant improvements and outstanding results.
 
 
-Here you can find usages [guide](https://github.com/arita37/mlmodels/blob/dev/mlmodels/example/README_usage.md) and [demo](https://colab.research.google.com/drive/1gplUtiWQpS4ei5SvoNZMKUCZFD8G8Xz8) of how to install Colab
+Here you can find usages [guide](https://github.com/arita37/mlmodels/blob/dev/mlmodels/example/README_usage.md)
 
 ## Model List :
 *	[Time Series](#Time-series)
