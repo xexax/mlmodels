@@ -1,9 +1,20 @@
 # mlmodels 
-Deep learning has been considered as a central component of machine learning. It is one of the most powerful approach. Processing of high-dimensional data is considered very useful using Deep Learning. For different applications, such as computer vision, natural language processing, object detection, facial recognition and speech recognition, deep learning created significant improvements and outstanding results. A collection of Deep Learning research papers is available in this repository.
+
 
 This repository is the ***Model ZOO for Pytorch, Tensorflow, Keras, Gluon, LightGBM, Keras, Sklearn models etc*** with Lightweight Functional interface to wrap access to Recent and State of Art Deep Learning, ML models and Hyper-Parameter Search, cross platforms that follows the logic of sklearn, such as fit, predict, transform, metrics, save, load etc. 
+Now, more than 60 recent models are available in those domains : 
+    Time Series, 
+    Text classification, 
+    Vision, 
+    Image Generation,Text generation, 
+    Gradient Boosting, Automatic Machine Learning tuning, 
+    Hyper-parameter search.
 
 With the goal to transform Script/Research code into re-usable batch/code with minimal code change, we used functional interface instead of pure OOP. This is because functional reduces the amount of code needed which is good to scientific computing. Thus, we can focus on the computing part than design. Also, it is easy to maintain for medium size project. 
+
+A collection of Deep Learning and Machine Learning research papers is available in this repository.
+
+
 ![alt text](mxnetf.png) ![alt text](pytorch.PNG) ![alt text](tenserflow.PNG)
 
 ## Benefits :
@@ -12,7 +23,9 @@ Having a standard framework for both machine learning models and deep learning m
 allows a step towards automatic Machine Learning. The collection of models, model zoo in Pytorch, Tensorflow, Keras
 allows removing dependency on one specific framework, and enable richer possibilities in model benchmarking and re-usage.
 Unique and simple interface, zero boilerplate code (!), and recent state of art models/frameworks are the main strength 
-of mlmodels.
+of MLMODELS. Emphasis is on traditional machine learning algorithms but recent state of art Deep Learning algorithms. 
+Processing of high-dimensional data is considered very useful using Deep Learning. For different applications, such as computer vision, natural language processing, object detection, facial recognition and speech recognition, deep learning created significant improvements and outstanding results.
+
 
 Here you can find usages [guide](https://github.com/arita37/mlmodels/blob/dev/mlmodels/example/README_usage.md) and [demo](https://colab.research.google.com/drive/1gplUtiWQpS4ei5SvoNZMKUCZFD8G8Xz8) of how to install Colab
 
