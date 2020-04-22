@@ -38,6 +38,13 @@ def get_device_torch():
 
 
 
+def load_function(package="mlmodels.util", name="path_norm"):
+  import importlib
+  return  getattr(importlib.import_module(package), name)
+
+
+
+
 def os_folder_copy(src, dst):
     """Copy a directory structure overwriting existing files"""
     import shutil

@@ -231,8 +231,10 @@ def predict(model, sess=None, data_pars=None, compute_pars=None, out_pars=None, 
     ### Save Results
 
     ### Return val
-    if compute_pars.get("return_pred_not") is not None:
-        return ypred
+    if kw.get("return_ytrue"):
+        return ypred, sentence1
+    else:
+        return ypred, None
 
 
 def reset_model():
