@@ -1,8 +1,338 @@
 # -*- coding: utf-8 -*-
 """
+Advanded GlutonTS models
+
+"""
+import os, copy
+import pandas as pd, numpy as np
+
+
+import matplotlib.pyplot as plt
+from pathlib import Path
+import json
+
+
+from gluonts.model.deepar import DeepAREstimator
+from gluonts.model.deepstate import DeepStateEstimator
+from gluonts.model.deep_factor import DeepFactorEstimator
+from gluonts.model.gp_forecaster import GaussianProcessEstimator
+from gluonts.model.seq2seq import Seq2SeqEstimator
+from gluonts.model.transformer import TransformerEstimator
+from gluonts.model.simple_feedforward import  SimpleFeedForwardEstimator
+from gluonts.model.wavenet import WaveNetEstimator, WaveNetSampler, WaveNet
+
+
+
+from gluonts.trainer import Trainer
+from gluonts.dataset.common import ListDataset
+from gluonts.dataset.field_names import FieldName
+from gluonts.dataset.util import to_pandas
+from gluonts.evaluation import Evaluator
+from gluonts.evaluation.backtest import make_evaluation_predictions
+from gluonts.model.predictor import Predictor
+
+
+#### Only for SeqtoSeq
+from gluonts.block.encoder import (
+    HierarchicalCausalConv1DEncoder,
+    RNNCovariateEncoder,
+    MLPEncoder,
+    Seq2SeqEncoder,  # Buggy, not implemented
+)
+
+
+####################################################################################################
+from mlmodels.util import os_package_root_path, log, path_norm, get_model_uri, json_norm
+
+
+VERBOSE = False
+MODEL_URI = get_model_uri(__file__)
+
+
+MODELS_DICT = {
+"deepar"         : DeepAREstimator
+,"deepstate"     : DeepStateEstimator
+,"deepfactor"    : DeepFactorEstimator
+,"gp_forecaster" : GaussianProcessEstimator
+,"seq2seq"       : Seq2SeqEstimator
+,"feedforward"   : SimpleFeedForwardEstimator
+,"transformer"   : TransformerEstimator
+,"wavenet"       : WaveNetEstimator
+}
+
+
+####################################################################################################
+class Model(object):
+    def __init__(self, model_pars=None, data_pars=None,  compute_pars=None, **kwargs):
+        self.compute_pars = compute_pars
+        self.model_pars   = model_pars
+        self.data_pars    = data_pars
+        
+
+        ##### Empty model for Seiialization
+        if model_pars is None :
+            self.model = None
+
+        else:
+            mpars = json_norm(model_pars['model_pars'] )      #"None" to None
+            cpars = json_norm(compute_pars['compute_pars'])
+            
+            if model_pars["model_name"] == "seq2seq" :
+                mpars['encoder'] = MLPEncoder()   #bug in seq2seq
+            
+            
+            ### Setup the compute
+            trainer = Trainer( **cpars  )
+
+            ### Setup the model
+            self.model = MODELS_DICT[model_pars["model_name"]]( trainer=trainer, **mpars )
+
+
+def get_params(choice="", data_path="dataset/timeseries/", config_mode="test", **kw):
+    if choice == "json":
+      data_path = path_norm( data_path )
+      config    = json.load(open(data_path, encoding='utf-8'))
+      config    = config[config_mode]
+      
+      return config["model_pars"], config["data_pars"], config["compute_pars"], config["out_pars"]
+  
+    else :
+        raise Exception("Error no JSON FILE") 
+
+
+
+def get_dataset(data_pars):    
+
+    from mlmodels.preprocess.timeseries import pandas_to_gluonts, pd_clean_v1
+
+    data_path  = data_pars['train_data_path'] if data_pars['train'] else data_pars['test_data_path']
+    data_path  = path_norm( data_path )
+
+    df = pd.read_csv(data_path)
+    df = df.set_index( data_pars['col_date'] )
+    df = pd_clean_v1(df)
+
+    # start_date = pd.Timestamp( data_pars['start'], freq=data_pars['freq'])
+    pars = { "start" : data_pars['start'], 
+             "cols_target" : data_pars['col_ytarget'],
+             "freq"        : data_pars['freq'],
+             "cols_cat"    : data_pars["cols_cat"],
+             "cols_num"    : data_pars["cols_num"]
+        }    
+    gluonts_ds = pandas_to_gluonts(df, pars=pars) 
+ 
+    if VERBOSE:
+        entry        = next(iter(gluonts_ds))
+        train_series = to_pandas(entry)
+        train_series.plot()
+        save_fig     = data_pars.get('save_fig', "save_fig.png")
+        # plt.savefig(save_fig)
+    return gluonts_ds
+
+
+
+def fit(model, sess=None, data_pars=None, model_pars=None, compute_pars=None, out_pars=None, session=None, **kwargs):
+        """
+          Classe Model --> model,   model.model contains thte sub-model
+        """
+        data_pars['train'] = True
+        model_gluon        = model.model
+        gluont_ds          = get_dataset(data_pars)
+        predictor          = model_gluon.train(gluont_ds)
+        model.model        = predictor
+        return model
+
+
+def predict(model, sess=None, data_pars=None, compute_pars=None, out_pars=None, **kw):
+    
+    data_pars['train'] = False
+    test_ds = get_dataset(data_pars)
+    model_gluon = model.model
+    
+    forecast_it, ts_it = make_evaluation_predictions(
+            dataset     = test_ds,  # test dataset
+            predictor   = model_gluon,  # predictor
+            num_samples = compute_pars['num_samples'],  # number of sample paths we want for evaluation
+        )
+
+    forecasts, tss = list(forecast_it), list(ts_it)
+    forecast_entry, ts_entry = forecasts[0], tss[0]
+
+    ### External benchmark.py evaluation
+    if kw.get("return_ytrue") :
+        ypred, ytrue = forecasts, tss
+        return ypred, ytrue
+
+    if VERBOSE:
+        print(f"Number of sample paths: {forecast_entry.num_samples}")
+        print(f"Dimension of samples: {forecast_entry.samples.shape}")
+        print(f"Start date of the forecast window: {forecast_entry.start_date}")
+        print(f"Frequency of the time series: {forecast_entry.freq}")
+        print(f"Mean of the future window:\n {forecast_entry.mean}")
+        print(f"0.5-quantile (median) of the future window:\n {forecast_entry.quantile(0.5)}")
+
+    dd = {"forecasts": forecasts, "tss": tss}
+    return dd
+
+
+
+def metrics(ypred, data_pars, compute_pars=None, out_pars=None, **kw):
+        ## load test dataset
+        data_pars['train'] = False
+        test_ds = get_dataset(data_pars)
+
+        forecasts = ypred["forecasts"]
+        tss = ypred["tss"]
+
+        ## Evaluate
+        evaluator = Evaluator(quantiles=out_pars['quantiles'])
+        agg_metrics, item_metrics = evaluator(iter(tss), iter(forecasts), num_series=len(test_ds))
+        metrics_dict = json.dumps(agg_metrics, indent=4)
+        return metrics_dict, item_metrics
+
+
+
+def fit_metrics(ypred, data_pars, compute_pars=None, out_pars=None, **kw):
+        ### load test dataset
+        data_pars['train'] = False
+        test_ds = get_dataset(data_pars)
+
+        forecasts = ypred["forecasts"]
+        tss = ypred["tss"]
+
+        ### Evaluate
+        evaluator = Evaluator(quantiles=out_pars['quantiles'])
+        agg_metrics, item_metrics = evaluator(iter(tss), iter(forecasts), num_series=len(test_ds))
+        metrics_dict = json.dumps(agg_metrics, indent=4)
+        return metrics_dict, item_metrics
+
+
+
+def save(model, path):
+    import pickle
+    path = path_norm(path + "/gluonts_model/")
+    os.makedirs(path, exist_ok = True)
+
+    model.model.serialize(Path(path) )   
+    d = {"model_pars"  :  model.model_pars, 
+         "compute_pars":  model.compute_pars,
+         "data_pars"   :  model.data_pars
+        }
+    pickle.dump(d, open(path + "/glutonts_model_pars.pkl", mode="wb"))
+    log(os.listdir(path))
+
+
+def load(path):
+    import pickle
+    path = path_norm(path  + "/gluonts_model/" )
+
+    predictor_deserialized = Predictor.deserialize(Path(path))
+    d = pickle.load( open(path + "/glutonts_model_pars.pkl", mode="rb")  )
+    
+    ### Setup Model
+    model = Model(model_pars= d['model_pars'], compute_pars= d['compute_pars'],
+                  data_pars= d['data_pars'])  
+
+    model.model = predictor_deserialized
+
+    return model
+
+
+def plot_prob_forecasts(ypred, out_pars=None):
+    forecast_entry = ypred["forecasts"][0]
+    ts_entry = ypred["tss"][0]
+
+    plot_length = 150
+    prediction_intervals = (50.0, 90.0)
+    legend = ["observations", "median prediction"] + [f"{k}% prediction interval" for k in prediction_intervals][::-1]
+
+    fig, ax = plt.subplots(1, 1, figsize=(10, 7))
+    ts_entry[-plot_length:].plot(ax=ax)  # plot the time series
+    forecast_entry.plot(prediction_intervals=prediction_intervals, color='g')
+    plt.grid(which="both")
+    plt.legend(legend, loc="upper left")
+    plt.show()
+
+
+def plot_predict(item_metrics, out_pars=None):
+    item_metrics.plot(x='MSIS', y='MASE', kind='scatter')
+    plt.grid(which="both")
+    outpath = out_pars['path']
+    os.makedirs(outpath, exist_ok=True)
+    plt.savefig(outpath)
+    plt.clf()
+    print('Saved image to {}.'.format(outpath))
+
+
+
+####################################################################################################
+def test_single(data_path="dataset/", choice="", config_mode="test"):
+    model_uri = MODEL_URI
+    log("#### Loading params   ##############################################")
+    log( MODEL_URI)
+    model_pars, data_pars, compute_pars, out_pars = get_params(choice=choice, data_path=data_path, config_mode=config_mode)
+    print(model_pars, data_pars, compute_pars, out_pars)
+
+    log("#### Loading dataset   #############################################")
+    gluont_ds = get_dataset(data_pars)
+
+    log("#### Model init, fit   #############################################")
+    from mlmodels.models import module_load_full
+    module, model = module_load_full(model_uri, model_pars, data_pars, compute_pars)
+    print(module, model)
+
+    model = fit(model, sess=None, data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)
+    print(model)
+
+    log("#### Save the trained model  ######################################")
+    save(model, out_pars["path"])
+
+
+    log("#### Load the trained model  ######################################")
+    model = load(out_pars["path"])
+
+    log("#### Predict   ####################################################")
+    ypred = predict(model, sess=None, data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)
+    # print(ypred)
+
+    log("#### metrics   ####################################################")
+    metrics_val, item_metrics = metrics(ypred, data_pars, compute_pars, out_pars)
+    print(metrics_val)
+
+    log("#### Plot   #######################################################")
+    if VERBOSE :
+      plot_prob_forecasts(ypred, out_pars)
+      plot_predict(item_metrics, out_pars)
+
+
+
+def test() :
+    ll = [ "deepar" , "deepfactor" , "transformer"  ,"wavenet", "feedforward",
+           "gp_forecaster", "deepstate" ]
+
+    ## Not yet  Implemented, error in Glutonts
+    ll2 = [   "seq2seq"  ]
+    
+    for t in ll  :
+      test_single(data_path="model_gluon/gluonts_model.json", choice="json", config_mode= t )
+
+
+
+if __name__ == '__main__':
+    VERBOSE = False
+
+    test()
+
+
+
+
+
+
+INFO = """
 DeepStateEstimator,
     This implements the deep state space model described in
     [RSG+18]_.
+
 
     freq
         Frequency of the data to train on and predict
@@ -73,7 +403,7 @@ WaveNetEstimator
 
 
 
-class DeepFactorEstimator(GluonEstimator):
+DeepFactorEstimator(GluonEstimator):
 
     DeepFactorEstimator is an implementation of the 2019 ICML paper "Deep Factors for Forecasting"
     https://arxiv.org/abs/1905.12417.  It uses a global RNN model to learn patterns across multiple related time series
@@ -117,7 +447,6 @@ class DeepFactorEstimator(GluonEstimator):
 
 GaussianProcessEstimator shows how to build a local time series model using
 Gaussian Processes (GP).
-
     Each time series has a GP with its own
     hyper-parameters.  For the radial basis function (RBF) Kernel, the
     learnable hyper-parameters are the amplitude and lengthscale. The periodic
@@ -161,13 +490,8 @@ Gaussian Processes (GP).
         This is a model optimization that does not affect the accuracy (default: 100).
 
 
-
-class Seq2SeqEstimator(GluonEstimator):
+Seq2SeqEstimator(GluonEstimator):
     Quantile-Regression Sequence-to-Sequence Estimator
-
-    @validated()
-    def __init__(
-        self,
         freq: str,
         prediction_length: int,
         cardinality: List[int],
@@ -184,14 +508,12 @@ class Seq2SeqEstimator(GluonEstimator):
         
 
 
-class TransformerEstimator(GluonEstimator):
+TransformerEstimator(GluonEstimator):
         Construct a Transformer estimator.
         This implements a Transformer model, close to the one described in
         [Vaswani2017]_.
         .. [Vaswani2017] Vaswani, Ashish, et al. "Attention is all you need."
             Advances in neural information processing systems. 2017.
-
-
         freq
             Frequency of the data to train on and predict
         prediction_length
@@ -244,386 +566,4 @@ class TransformerEstimator(GluonEstimator):
             This is a model optimization that does not affect the accuracy (default: 100)
 
         
-"""
-import os
-import pandas as pd, numpy as np
-
-
-import matplotlib.pyplot as plt
-from pathlib import Path
-import json
-
-
-
-
-from gluonts.model.deepar import DeepAREstimator
-from gluonts.model.deepstate import DeepStateEstimator
-from gluonts.model.deep_factor import DeepFactorEstimator
-from gluonts.model.gp_forecaster import GaussianProcessEstimator
-from gluonts.model.seq2seq import Seq2SeqEstimator
-from gluonts.model.transformer import TransformerEstimator
-from gluonts.model.simple_feedforward import  SimpleFeedForwardEstimator
-from gluonts.model.wavenet import WaveNetEstimator, WaveNetSampler, WaveNet
-
-
-
-
-
-from gluonts.trainer import Trainer
-from gluonts.dataset.common import ListDataset
-from gluonts.dataset.field_names import FieldName
-from gluonts.dataset.util import to_pandas
-from gluonts.evaluation import Evaluator
-from gluonts.evaluation.backtest import make_evaluation_predictions
-from gluonts.model.predictor import Predictor
-
-
-
-
-#########################################################################################################
-from mlmodels.util import os_package_root_path, log, path_norm, get_model_uri
-
-
-VERBOSE = False
-MODEL_URI = "ok" get_model_uri(__file__)
-
-
-MODELS_DICT = {
-"deepar" : DeepAREstimator
-,"deepstate": DeepStateEstimator
-,"deepfactor": DeepFactorEstimator
-,"gp_forecaster" : GaussianProcessEstimator
-,"seq2seq" : Seq2SeqEstimator
-,"feedforward" : SimpleFeedForwardEstimator
-,"tranformer" : TransformerEstimator
-,"wavenet" : WaveNetEstimator
-}
-
-
-
-#########################################################################################################
-class Model(object):
-    def __init__(self, model_pars=None, data_pars=None,  compute_pars=None, **kwargs):
-        ## Empty model for Seaialization
-        if model_pars is None :
-            self.model = None
-
-        else:
-            self.compute_pars = compute_pars
-            self.model_pars = model_pars
-
-            m = self.compute_pars
-            trainer = Trainer(batch_size=m['batch_size'], clip_gradient=m['clip_gradient'], 
-                              ctx                        = m["ctx"],
-                              epochs                     = m["epochs"],
-                              learning_rate              = m["learning_rate"], init=m['init'],
-                              learning_rate_decay_factor = m['learning_rate_decay_factor'],
-                              minimum_learning_rate      = m['minimum_learning_rate'], hybridize=m["hybridize"],
-                              num_batches_per_epoch      = m["num_batches_per_epoch"],
-                              patience                   = m['patience'], weight_decay=m['weight_decay']
-                              )
-
-
-            ##set up the model
-            self.model = MODELS_DICT[model_pars["model_name"]]( trainer=trainer, **model_pars['model_pars'] )
-
-
-
-
-def get_params(choice="", data_path="dataset/timeseries/", config_mode="test", **kw):
-    if choice == "json":
-      data_path = path_norm( data_path )
-      config    = json.load(open(data_path, encoding='utf-8'))
-      config    = config[config_mode]
-      
-      return config["model_pars"], config["data_pars"], config["compute_pars"], config["out_pars"]
-  
-    else :
-        raise Exception("Error no JSON FILE") 
-
-
-
-
-def get_dataset(data_pars):    
-    if data_pars.get("choice") =='test01':
-        data_path  = data_pars['train_data_path']
-        df         = pd.read_csv(data_path, header=0, index_col=0)
-
-        gluonts_ds = ListDataset([{"start": df.index[0],"target": df.value[:"2015-04-05 00:00:00"]}],
-                                   freq="5min")
-
-    else :
-        data_path  = data_pars['train_data_path'] if data_pars['train'] else data_pars['test_data_path']
-        data_set   = pd.read_csv(data_path)
-        start_date = pd.Timestamp( data_pars['start'], freq=data_pars['freq'])
-
-        gluonts_ds = ListDataset([{FieldName.TARGET: data_set.iloc[i].values, 
-                                   FieldName.START: start_date}
-                              for i in range(data_pars['num_series'])], freq=data_pars['freq'])
-
-
-    if VERBOSE:
-        entry = next(iter(gluonts_ds))
-        train_series = to_pandas(entry)
-        train_series.plot()
-        save_fig = data_pars['save_fig']
-        # plt.savefig(save_fig)
-    return gluonts_ds
-
-
-
-def fit(modeule,model, sess=None, data_pars=None, model_pars=None, compute_pars=None, out_pars=None, session=None, **kwargs):
-        ##loading dataset
-        """
-          Classe Model --> model,   model.model contains thte sub-model
-        """
-        model_gluon = model.model
-        gluont_ds = get_dataset(data_pars)
-        predictor = model_gluon.train(gluont_ds)
-        model.model = predictor
-        return model
-
-
-def predict(model, sess=None, data_pars=None, compute_pars=None, out_pars=None, **kwargs):
-        ##  Model is class
-        ## load test dataset
-    if data_pars['choice']=='test01':
-        data_path = data_pars['test_data_path'] 
-
-        df = pd.read_csv(data_path, header=0, index_col=0)
-    
-        test_ds = ListDataset([{"start": df.index[0],
-                                "target": df.value[:"2015-04-15 00:00:00"]}],
-                               freq="5min")
-
-    elif data_pars['choice']=='test02':
-        data_pars['train'] = False
-        test_ds = get_dataset(data_pars)
-    
-    model_gluon = model
-    forecast_it, ts_it = make_evaluation_predictions(
-            dataset=test_ds,  # test dataset
-            predictor=model_gluon,  # predictor
-            num_samples=compute_pars['num_samples'],  # number of sample paths we want for evaluation
-        )
-
-    forecasts, tss = list(forecast_it), list(ts_it)
-    forecast_entry, ts_entry = forecasts[0], tss[0]
-
-    print("forcast:",forecasts)
-    print("tss:", tss)
-
-    if VERBOSE:
-        print(f"Number of sample paths: {forecast_entry.num_samples}")
-        print(f"Dimension of samples: {forecast_entry.samples.shape}")
-        print(f"Start date of the forecast window: {forecast_entry.start_date}")
-        print(f"Frequency of the time series: {forecast_entry.freq}")
-        print(f"Mean of the future window:\n {forecast_entry.mean}")
-        print(f"0.5-quantile (median) of the future window:\n {forecast_entry.quantile(0.5)}")
-
-    dd = {"forecasts": forecasts, "tss": tss}
-    return dd
-
-
-def metrics(ypred, data_pars, compute_pars=None, out_pars=None, **kwargs):
-        ## load test dataset
-        data_pars['train'] = False
-        test_ds = get_dataset(data_pars)
-
-        forecasts = ypred["forecasts"]
-        tss = ypred["tss"]
-
-        ## evaluate
-        evaluator = Evaluator(quantiles=out_pars['quantiles'])
-        agg_metrics, item_metrics = evaluator(iter(tss), iter(forecasts), num_series=len(test_ds))
-        metrics_dict = json.dumps(agg_metrics, indent=4)
-        return metrics_dict, item_metrics
-
-
-
-def fit_metrics(ypred, data_pars, compute_pars=None, out_pars=None, **kwargs):
-        ## load test dataset
-        data_pars['train'] = False
-        test_ds = get_dataset(data_pars)
-
-        forecasts = ypred["forecasts"]
-        tss = ypred["tss"]
-
-        ## evaluate
-        evaluator = Evaluator(quantiles=out_pars['quantiles'])
-        agg_metrics, item_metrics = evaluator(iter(tss), iter(forecasts), num_series=len(test_ds))
-        metrics_dict = json.dumps(agg_metrics, indent=4)
-        return metrics_dict, item_metrics
-
-
-
-def save(model, path):
-    if os.path.exists(path):
-        model.model.serialize(Path(path))
-
-
-def load(path):
-    if os.path.exists(path):
-        predictor_deserialized = Predictor.deserialize(Path(path))
-
-    model = Model()  # Empty Model
-    model.model = predictor_deserialized
-    #### Add back the model parameters...
-
-    return model
-
-
-def plot_prob_forecasts(ypred, out_pars=None):
-    forecast_entry = ypred["forecasts"][0]
-    ts_entry = ypred["tss"][0]
-
-    plot_length = 150
-    prediction_intervals = (50.0, 90.0)
-    legend = ["observations", "median prediction"] + [f"{k}% prediction interval" for k in prediction_intervals][::-1]
-
-    fig, ax = plt.subplots(1, 1, figsize=(10, 7))
-    ts_entry[-plot_length:].plot(ax=ax)  # plot the time series
-    forecast_entry.plot(prediction_intervals=prediction_intervals, color='g')
-    plt.grid(which="both")
-    plt.legend(legend, loc="upper left")
-    plt.show()
-
-
-def plot_predict(item_metrics, out_pars=None):
-    item_metrics.plot(x='MSIS', y='MASE', kind='scatter')
-    plt.grid(which="both")
-    outpath = out_pars['outpath']
-    os.makedirs(outpath, exist_ok=True)
-    plt.savefig(outpath)
-    plt.clf()
-    print('Saved image to {}.'.format(outpath))
-
-
-
-#######################################################################################################################
-def test(data_path="dataset/", choice="", config_mode="test"):
-    model_uri = MODEL_URI
-    log("#### Loading params   ##############################################")
-    model_pars, data_pars, compute_pars, out_pars = get_params(choice=choice, data_path=data_path, config_mode=config_mode)
-    print(model_pars, data_pars, compute_pars, out_pars)
-
-    log("#### Loading dataset   #############################################")
-    gluont_ds = get_dataset(data_pars)
-
-    log("#### Model init, fit   #############################################")
-    from mlmodels.models import module_load_full
-    module, model = module_load_full(model_uri, model_pars, data_pars, compute_pars)
-    print(module, model)
-
-    model = fit(module, model, data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)
-    print(model)
-
-    log("#### save the trained model  ######################################")
-    save(model, data_pars["modelpath"])
-
-    log("#### Predict   ####################################################")
-    ypred = predict(model, data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)
-    # print(ypred)
-
-    log("#### metrics   ####################################################")
-    metrics_val, item_metrics = metrics(ypred, data_pars, compute_pars, out_pars)
-    print(metrics_val)
-
-    log("#### Plot   #######################################################")
-    plot_prob_forecasts(ypred, out_pars)
-    plot_predict(item_metrics, out_pars)
-
-
-
-if __name__ == '__main__':
-    VERBOSE = True
-
-    test(data_path="model_gluon/gluonts_model.json", choice="json", config_mode="test")
-
-    # test(data_path="model_gluon/gluon_deepar.json", choice="json", config_mode="test01")
-
-
-
-
-
-
-
-
-
-
-
-
-"""
-
-
-        data_path = path_norm(  "model_gluon/deepar_run.json" )
-        out_path   = path_norm( "ztest/model_gluon/gluon_deepar/" )   
-        model_path = os.path.join(out_path , "model")
-
-
-        log("#### Model params   ################################################")
-        model_pars = {"prediction_length": data_pars["prediction_length"], "freq": data_pars["freq"],
-                    "num_layers": 2, "num_cells": 40, "cell_type": 'lstm', "dropout_rate": 0.1,
-                    "use_feat_dynamic_real": False, "use_feat_static_cat": False, "use_feat_static_real": False,
-                    "scaling": True, "num_parallel_samples": 100}
-
-
-        log("#### Data params   ###################################################")
-        data_pars = {"train_data_path": data_path + "/train_deepar.csv",
-                     "test_data_path":  data_path + "/test_deepar.csv", 
-                     "train": True,
-                     'prediction_length': 12, 'freq': '5min', 
-                     "save_fig": "./series.png", "modelpath": model_path,
-                     "choice":choice}
-
-        log("#### output params   ###################################################")
-        out_pars = {"outpath": out_path + "result", 
-                    "plot_prob": True, "quantiles": [0.5]}
-
-
-        log("#### Compute params   ################################################")
-        compute_pars = {"batch_size": 32, "clip_gradient": 100, "ctx": None, "epochs": 10, "init": "xavier",
-                        "learning_rate": 1e-3,
-                        "learning_rate_decay_factor": 0.5, "hybridize": False, "num_batches_per_epoch": 10,
-                        'num_samples': 100,
-                        "minimum_learning_rate": 5e-05, "patience": 10, "weight_decay": 1e-08}
-
-
-
-
-        data_path = path_norm( "model_gluon/deepar.json")
-        out_path   = path_norm( "ztest/model_gluon/gluon_deepar/" )   
-        model_path = os.path.join(out_path , "model")
-
-
-        log("#### Model params   ################################################")
-        model_pars = {"prediction_length": data_pars["prediction_length"], "freq": data_pars["freq"],
-                    "num_layers": 2, "num_cells": 40, "cell_type": 'lstm', "dropout_rate": 0.1,
-                    "use_feat_dynamic_real": False, "use_feat_static_cat": False, "use_feat_static_real": False,
-                    "scaling": True, "num_parallel_samples": 100}
-
-
-        log("#### Data params   ###################################################")
-        data_pars = {"train_data_path": data_path + "/GLUON-train.csv",
-                    "test_data_path":  data_path + "/GLUON-test.csv", 
-                    "train": False,
-                    'prediction_length': 48, 'freq': '1H', 
-                    "start": pd.Timestamp("01-01-1750", freq='1H'), 
-                    "num_series":37,
-                    "save_fig": "./series.png", "modelpath": model_path,
-                    "choice":choice}
-
-        log("#### output params   ###################################################")
-        out_pars = {"outpath": out_path + "result", 
-                    "plot_prob": True, "quantiles": [0.1, 0.5, 0.9]}
-
-
-        log("#### Compute params   ################################################")
-        compute_pars = {"batch_size": 32, "clip_gradient": 100, "ctx": None, "epochs": 10, "init": "xavier",
-                        "learning_rate": 1e-3,
-                        "learning_rate_decay_factor": 0.5, "hybridize": False, "num_batches_per_epoch": 10,
-                        'num_samples': 100,
-                        "minimum_learning_rate": 5e-05, "patience": 10, "weight_decay": 1e-08}
-
-
 """

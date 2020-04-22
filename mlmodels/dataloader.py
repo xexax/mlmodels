@@ -18,6 +18,7 @@ def get_dataset(data_pars):
 
 
 
+
 """
 #### System utilities
 import os
@@ -68,6 +69,8 @@ import tensorflow.data
 
 def tf_dataset(dataset_pars):
     """
+        Save in numpy compressez format TF Datasets
+    
         dataset_pars ={ "dataset_id" : "mnist", "batch_size" : 5000, "n_train": 500, "n_test": 500, 
                             "out_path" : "dataset/vision/mnist2/" }
         tf_dataset(dataset_pars)
