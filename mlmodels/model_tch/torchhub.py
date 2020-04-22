@@ -106,6 +106,7 @@ def get_config_file():
     return path_norm('config/model_tch/Imagecnn.json')
 
 
+"""
 def get_dataset_mnist_torch(data_pars):
     train_loader = torch.utils.data.DataLoader( datasets.MNIST(data_pars['data_path'], train=True, download=True,
                     transform=transforms.Compose([
@@ -124,7 +125,7 @@ def get_dataset_mnist_torch(data_pars):
                     ])),
         batch_size=data_pars['test_batch_size'], shuffle=True)
     return train_loader, valid_loader  
-
+"""
 
 
 
@@ -135,7 +136,6 @@ def load_function(package="mlmodels.util", name="path_norm"):
 
 
 def get_dataset_torch(data_pars):
-    import importlib
 
     if  data_pars["transform"]  :
        transform = load_function(  data_pars.get("preprocess_module", "mlmodels.preprocess.image"), 
@@ -225,11 +225,11 @@ def get_params(param_pars=None, **kw):
 
 def get_dataset(data_pars=None, **kw):
 
-    if data_pars['dataset'] == 'MNIST':
-        train_loader, valid_loader  = get_dataset_mnist_torch(data_pars)
-        return train_loader, valid_loader  
+    #if data_pars['dataset'] == 'MNIST':
+    #    train_loader, valid_loader  = get_dataset_mnist_torch(data_pars)
+    #    return train_loader, valid_loader  
 
-    elif data_pars['dataset'] :
+    if data_pars['dataset'] :
         train_loader, valid_loader  = get_dataset_torch(data_pars)
         return train_loader, valid_loader  
 
