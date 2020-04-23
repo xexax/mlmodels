@@ -37,6 +37,9 @@ import torch.nn.functional as F
 from torchvision import datasets, transforms
 from torch import hub 
 
+# import mlmodels.models as M
+
+
 from mlmodels.util import os_package_root_path, log, path_norm, get_model_uri, path_norm_dict
 MODEL_URI = get_model_uri(__file__)
 
@@ -103,7 +106,6 @@ def get_config_file():
     return path_norm('config/model_tch/Imagecnn.json')
 
 
-
 def get_dataset_mnist_torch(data_pars):
     train_loader = torch.utils.data.DataLoader( datasets.MNIST(data_pars['data_path'], train=True, download=True,
                     transform=transforms.Compose([
@@ -125,24 +127,17 @@ def get_dataset_mnist_torch(data_pars):
 
 
 
-
-
-def load_function(package="mlmodels.util", name="path_norm"):
-  import importlib
-  return  getattr(importlib.import_module(package), name)
-
-
 def get_dataset_torch(data_pars):
+    import importlib
 
-    if  data_pars["transform"]  :
-       transform = load_function(  data_pars.get("preprocess_module", "mlmodels.preprocess.image"), 
-                                   data_pars.get("transform", "torch_transform_mnist" ))
-    else :
-       transform = None
+    # if  data_pars["transform"]  :
+    transform = getattr(importlib.import_module("mlmodels.preprocess.image"), "torch_transform_mnist" )()
+    # else :
+    #    transform = None
 
     
     dataset_module =  data_pars.get('dataset_module', "torchvision.datasets")   
-    dset = load_function(dataset_module, data_pars.get("dataset", "MNIST") )
+    dset = getattr(importlib.import_module(dataset_module), data_pars["dataset"])
 
     train_loader = torch.utils.data.DataLoader( dset(data_pars['data_path'], train=True, download=True, transform= transform),
                                                 batch_size=data_pars['train_batch_size'], shuffle=True)
@@ -220,44 +215,21 @@ def get_params(param_pars=None, **kw):
 
 
 
-def get_dataset2(data_pars=None, **kw):
-    import importlib
-    
-    from torchvision import datasets, transforms
-    data_path        = data_pars['data_path']
-    train_batch_size = data_pars['train_batch_size']
-    test_batch_size  = data_pars['test_batch_size']
-    try:
-        transform=transforms.Compose([
-                    transforms.Grayscale(num_output_channels=3),
-                    transforms.ToTensor(),
-                    transforms.Normalize((0.1307,), (0.3081,))
-                ])
-        dset = getattr(importlib.import_module("torchvision.datasets"), data_pars["dataset"])
-        train_loader = torch.utils.data.DataLoader( dset(data_pars['data_path'], train=True, download=True, transform= transform),
-                                                    batch_size=train_batch_size, shuffle=True)
-
-        valid_loader = torch.utils.data.DataLoader( dset(data_pars['data_path'], train=False, download=True, transform= transform),
-                                                    batch_size=test_batch_size, shuffle=True)
-        return train_loader, valid_loader 
-    except :
-        raise Exception("Dataset doesn't exist")
-
-
 
 def get_dataset(data_pars=None, **kw):
 
-    #if data_pars['dataset'] == 'MNIST':
-    #    train_loader, valid_loader  = get_dataset_mnist_torch(data_pars)
-    #    return train_loader, valid_loader  
+    if data_pars['dataset'] == 'MNIST':
+        train_loader, valid_loader  = get_dataset_mnist_torch(data_pars)
+        return train_loader, valid_loader  
 
-    if data_pars['dataset'] :
+    elif data_pars['dataset'] :
         train_loader, valid_loader  = get_dataset_torch(data_pars)
         return train_loader, valid_loader  
 
     else:
         raise Exception("Dataloader not implemented")
-        return 0
+        exit
+
 
 
 def fit(model, data_pars=None, compute_pars=None, out_pars=None, **kwargs):
