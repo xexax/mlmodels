@@ -2,19 +2,21 @@
     "test": {
         "model_pars": {
             "task": "ranking",
-            "loss": {
-                "RankHingeLoss" : {}
+            "loss" : {
+                "RankCrossEntropyLoss" : {"num_neg" : 10}
             },
             "metrics": {
                 "NormalizedDiscountedCumulativeGain" : {"k" : 3}, 
                 "NormalizedDiscountedCumulativeGain" : {"k" : 5},
                 "MeanAveragePrecision" : {}
             },
-            "model": "BERT",
-            "pretrained": 0,
-            "embedding_output_dim": 100,
-            "mode": "bert-base-uncased",
-            "dropout_rate": 0.2
+            "model": "DRMM",
+            "mask_value" : 0,
+            "hist_bin_size" : 30,
+            "mlp_num_layers" : 1,
+            "mlp_num_units" : 10,
+            "mlp_num_fan_out" : 1,
+            "mlp_activation_func" : "tanh"
         },
 
         "data_pars" :{
@@ -22,20 +24,15 @@
             "dataset": "WIKI_QA",
             "data_path": "dataset/nlp/",
             "mode" : "pair",
-            "num_dup" : 2,
-            "num_neg" : 1,
-            "train_batch_size": 4,
-            "test_batch_size": 1
+            "num_dup" : 5,
+            "num_neg" : 10,
+            "train_batch_size": 20,
+            "test_batch_size": 20
         },
 
         "compute_pars": {
-            "optimizer": "ADAMW",
-            "epochs": 10,
-            "lr": 5e-5,
-            "beta1": 0.9,
-            "beta2": 0.98,
-            "eps": 1e-8,
-            "optimize_parameters" : true
+            "optimizer": "ADADELTA",
+            "epochs": 10
         },
 
         "out_pars": {
