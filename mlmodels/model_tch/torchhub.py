@@ -1,17 +1,12 @@
 # -*- coding: utf-8 -*-
 """
 https://colab.research.google.com/github/pytorch/pytorch.github.io/blob/master/assets/hub/facebookresearch_pytorch-gan-zoo_pgan.ipynb
-
 https://github.com/pytorch/pytorch/blob/98362d11ffe81ca48748f6b0e1e417cb81ba5998/torch/hub.py#L330
-
-
         the following models only: alexnet, densenet121, densenet169, densenet201,\
         densenet161, inception_v3, resnet18, resnet34, resnet50, resnet101, resnet152,\
         resnext50_32x4d, resnext101_32x8d, wide_resnet50_2, wide_resnet101_2, squeezenet1_0,\
         squeezenet1_1, vgg11, vgg13, vgg16, vgg19, vgg11_bn, vgg13_bn, vgg16_bn, vgg19_bn,\
         googlenet, shufflenet_v2_x0_5, shufflenet_v2_x1_0, mobilenet_v2"
-
-
         assert _model in ['alexnet', 'densenet121', 'densenet169', 'densenet201', 'densenet161', 
         'inception_v3', 'resnet18', 'resnet34', 'resnet50', 'resnet101', 'resnet152', 
         'resnext50_32x4d', 'resnext101_32x8d', 'wide_resnet50_2', 'wide_resnet101_2',
@@ -24,7 +19,6 @@ https://github.com/pytorch/pytorch/blob/98362d11ffe81ca48748f6b0e1e417cb81ba5998
         resnext50_32x4d, resnext101_32x8d, wide_resnet50_2, wide_resnet101_2, squeezenet1_0,\
         squeezenet1_1, vgg11, vgg13, vgg16, vgg19, vgg11_bn, vgg13_bn, vgg16_bn, vgg19_bn,\
         googlenet, shufflenet_v2_x0_5, shufflenet_v2_x1_0, mobilenet_v2"
-
 """
 import os, json
 import copy
@@ -136,7 +130,7 @@ def get_dataset_torch(data_pars):
 
     if  data_pars["transform"]  :
        transform = load_function(  data_pars.get("preprocess_module", "mlmodels.preprocess.image"), 
-                                   data_pars.get("transform", "torch_transform_mnist" ))
+                                   data_pars.get("transform", "torch_transform_mnist" ))()
     else :
        transform = None
 
@@ -450,10 +444,4 @@ if __name__ == "__main__":
 
 
     test2(data_path="model_tch/torchhub_pgan.json", pars_choice="json", config_mode="test")
-
-
-
-
-
-
 
