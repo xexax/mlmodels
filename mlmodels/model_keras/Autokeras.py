@@ -107,7 +107,7 @@ def fit(model, data_pars=None, compute_pars=None, out_pars=None, **kwargs):
               # Split the training data and use the last 15% as validation data.
               validation_split=data_pars["validation_split"])
 
-    return model
+    return model, None
 
 
 def predict(model, session=None, data_pars=None, compute_pars=None, out_pars=None, **kwargs):
