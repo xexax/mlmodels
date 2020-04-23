@@ -105,6 +105,7 @@ def benchmark_run(bench_pars=None, args=None, config_mode="test"):
             
             log("#### Fit ")
             data_pars["train"] = True
+            print(">>>model: ", model, type(model))
             model, session = module.fit(model, data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)          
 
 
@@ -113,7 +114,6 @@ def benchmark_run(bench_pars=None, args=None, config_mode="test"):
             ypred, ytrue = module.predict(model=model, session=session,
                                           data_pars=data_pars, compute_pars=compute_pars, 
                                           out_pars=out_pars, return_ytrue=1)   
-
 
             ytrue = np.array(ytrue).reshape(-1, 1)
             ypred = np.array(ypred).reshape(-1, 1)
@@ -129,8 +129,10 @@ def benchmark_run(bench_pars=None, args=None, config_mode="test"):
                 bench_df.loc[ii, "metric"]      = metric_val
                 log( bench_df.loc[ii,:])
         
-        except Exception as e: 
-          log( jsonf, e)
+        except Exception as e:
+            import traceback
+            traceback.print_exc()
+            log( jsonf, e)
 
     log( f"benchmark file saved at {output_path}")  
     os.makedirs( output_path, exist_ok=True)
@@ -157,7 +159,7 @@ def cli_load_arguments(config_file=None):
     add("--config_mode", default="test", help="test/ prod /uat")
     add("--log_file",    default="ztest/benchmark/mlmodels_log.log", help="log.log")
 
-    add("--do",          default="timeseries", help="do ")
+    add("--do",          default="vision_fashion_mnist", help="do ")
 
     ### Benchmark config
     add("--benchmark_json", default="dataset/json/benchmark.json", help=" benchmark config")
@@ -218,8 +220,20 @@ def main():
 
         arg.data_path    = ""
         arg.dataset_name = ""
-        arg.path_json    = "dataset/json/benchmark_cnn/"
-        arg.path_out     = "example/benchmark/cnn/"
+        arg.path_json    = "dataset/json/benchmark_cnn/mnist"
+        arg.path_out     = "example/benchmark/cnn/mnist"
+
+        bench_pars = {"metric_list": ["accuracy_score"]}
+        benchmark_run(bench_pars=bench_pars, args=arg)
+
+
+    elif arg.do == "vision_fashion_mnist":
+        log("Vision models")
+
+        arg.data_path    = ""
+        arg.dataset_name = ""
+        arg.path_json    = "dataset/json/benchmark_cnn/fashion_mnist"
+        arg.path_out     = "example/benchmark/cnn/fashion_mnist/"
 
         bench_pars = {"metric_list": ["accuracy_score"]}
         benchmark_run(bench_pars=bench_pars, args=arg)
@@ -252,7 +266,7 @@ def main():
         log("text_classification")
         arg.data_path = ""
         arg.dataset_name = ""
-        arg.path_json = "dataset/json/benchmark_text/"
+        arg.path_json = "dataset/json/benchmark_text_classification/"
         arg.path_out = "example/benchmark/text_classification/"
 
         bench_pars = {"metric_list": ["accuracy_score"]}
