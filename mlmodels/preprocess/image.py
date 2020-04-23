@@ -123,27 +123,8 @@ def get_dataset_torch(data_pars):
      ImageNet CIFAR STL10 SVHN PhotoTour SBU Flickr VOC Cityscapes SBD USPS Kinetics-400 HMDB51 UCF101 CelebA
 
      Sentiment Analysis
-    SST
-    IMDb
-    Question Classification
-    TREC
-    Entailment
-    SNLI
-    MultiNLI
-    Language Modeling
-    WikiText-2
-    WikiText103
-    PennTreebank
-    Machine Translation
-    Multi30k
-    IWSLT
-    WMT14
-    Sequence Tagging
-    UDPOS
-    CoNLL2000Chunking
-    Question Answering
-    BABI20
-
+    SST IMDb Question Classification TREC Entailment SNLI MultiNLI Language Modeling WikiText-2 WikiText103 
+    PennTreebank Machine Translation Multi30k IWSLT WMT14 Sequence Tagging UDPOS CoNLL2000Chunking Question Answering BABI20
     """
 
 
@@ -151,7 +132,7 @@ def get_dataset_torch(data_pars):
 
     if  data_pars["transform"]  :
        transform = load_function(  data_pars.get("preprocess_module", "mlmodels.preprocess.image"), 
-                                   data_pars.get("transform", "torch_transform_mnist" ))
+                                   data_pars.get("transform", "torch_transform_mnist" ))()
     else :
        transform = None
 

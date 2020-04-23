@@ -97,7 +97,7 @@ def get_config_file():
     return path_norm('config/model_tch/Imagecnn.json')
 
 
-
+"""
 def get_dataset_mnist_torch(data_pars):
     train_loader = torch.utils.data.DataLoader( datasets.MNIST(data_pars['data_path'], train=True, download=True,
                     transform=transforms.Compose([
@@ -116,7 +116,7 @@ def get_dataset_mnist_torch(data_pars):
                     ])),
         batch_size=data_pars['test_batch_size'], shuffle=True)
     return train_loader, valid_loader  
-
+"""
 
 
 
