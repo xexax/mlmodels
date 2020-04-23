@@ -101,14 +101,14 @@ https://github.com/arita37/mlmodels/blob/dev/mlmodels/example/model_lightgbm_tit
 
 ### ResNet and ShuffleNet with diffeernt architecture size trained on MNIST [(colab)](https://colab.research.google.com/drive/1bTe0sYrVKWwitz0DtAkLFjdglfSBPQFs#scrollTo=s3V0oo8QvAwZ)
 
-https://github.com/Ahmed3bbas/mlmodels/blob/dev/mlmodels/example/mnist_mlmodels_.ipynb
+https://github.com/arita37/mlmodels/blob/dev/mlmodels/example/mnist_mlmodels_.ipynb
 
 
 
 
 ### ResNet18 trained on Fashion MNIST [(colab)](https://colab.research.google.com/drive/1LL5dpbINeNOagvzY_K9ziIEdkaZU0lv0#scrollTo=ZSLJnpclsAFI)
 
-https://github.com/Ahmed3bbas/mlmodels/blob/dev/mlmodels/example/fashion_MNIST_mlmodels.ipynb
+https://github.com/arita37/mlmodels/blob/dev/mlmodels/example/fashion_MNIST_mlmodels.ipynb
 
 
 #
