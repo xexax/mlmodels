@@ -20,7 +20,7 @@ import tensorflow as tf
 import numpy as np
 import pandas as pd
 
-
+import keras.backend as K
 from keras.callbacks import EarlyStopping
 from keras.preprocessing import sequence
 from keras.datasets import imdb
@@ -54,6 +54,7 @@ class Model:
     self.model.compile(compute_pars['engine'],  # adam 
     	               compute_pars['loss'], 
     	               metrics= compute_pars['metrics'])
+    self.model.summary()
     
 
 
@@ -96,7 +97,6 @@ def predict(model, sess=None, data_pars=None, out_pars=None, compute_pars=None, 
 
   #### Do prediction
   ypred = model.model.predict(X)
-  ypred = tf.math.argmax(ypred, axis=1)
 
   ### Return val
   if kw.get("return_ytrue"):

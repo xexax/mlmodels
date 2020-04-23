@@ -104,11 +104,65 @@ def get_config_file():
 
 
 
+def get_dataset_mnist_torch(data_pars):
+    train_loader = torch.utils.data.DataLoader( datasets.MNIST(data_pars['data_path'], train=True, download=True,
+                    transform=transforms.Compose([
+                        transforms.Grayscale(num_output_channels=3),
+                        transforms.ToTensor(),
+                        transforms.Normalize((0.1307,), (0.3081,))
+                    ])),
+        batch_size=data_pars['train_batch_size'], shuffle=True)
+
+
+    valid_loader = torch.utils.data.DataLoader( datasets.MNIST(data_pars['data_path'], train=False,
+                    transform=transforms.Compose([
+                        transforms.Grayscale(num_output_channels=3),
+                        transforms.ToTensor(),
+                        transforms.Normalize((0.1307,), (0.3081,))
+                    ])),
+        batch_size=data_pars['test_batch_size'], shuffle=True)
+    return train_loader, valid_loader  
+
+
+
+
+
+def load_function(package="mlmodels.util", name="path_norm"):
+  import importlib
+  return  getattr(importlib.import_module(package), name)
+
+
+def get_dataset_torch(data_pars):
+
+    if  data_pars["transform"]  :
+       transform = load_function(  data_pars.get("preprocess_module", "mlmodels.preprocess.image"), 
+                                   data_pars.get("transform", "torch_transform_mnist" ))
+    else :
+       transform = None
+
+    
+    dataset_module =  data_pars.get('dataset_module', "torchvision.datasets")   
+    dset = load_function(dataset_module, data_pars.get("dataset", "MNIST") )
+
+    train_loader = torch.utils.data.DataLoader( dset(data_pars['data_path'], train=True, download=True, transform= transform),
+                                                batch_size=data_pars['train_batch_size'], shuffle=True)
+    
+    valid_loader = torch.utils.data.DataLoader( dset(data_pars['data_path'], train=False, download=True, transform= transform),
+                                                batch_size=data_pars['train_batch_size'], shuffle=True)
+
+    return train_loader, valid_loader  
+
+
+
+
+
+
 ###########################################################################################################
 ###########################################################################################################
 class Model:
     def __init__(self, model_pars=None, data_pars=None, compute_pars=None, out_pars=None):
         self.model_pars = copy.deepcopy(model_pars)  
+        self.compute_pars = copy.deepcopy(compute_pars)
         m = model_pars 
 
         ### Model Structure        ################################
@@ -116,13 +170,9 @@ class Model:
             self.model = None
             return None
 
-        #### Progressive GAN
+        #### Progressive GAN       ################################
         if m['repo_uri'] == 'facebookresearch/pytorch_GAN_zoo:hub' :
-           """
-               'DCGAN',
-
-           """ 
-
+           #'DCGAN',
            self.model = torch.hub.load(m['repo_uri'],
                                        m.get('model', 'PGAN'), 
                                        model_name = m.get('model_name', 'celebAHQ-512'),
@@ -131,7 +181,7 @@ class Model:
            return None
         
 
-        #### Other CNN modles
+        #### Other CNN models    ################################
         num_classes = m['num_classes']
         _model      = m['model']
         self.model  = hub.load( m['repo_uri'], _model, 
@@ -169,7 +219,8 @@ def get_params(param_pars=None, **kw):
 
 
 
-def get_dataset(data_pars=None, **kw):
+
+def get_dataset2(data_pars=None, **kw):
     import importlib
     
     from torchvision import datasets, transforms
@@ -191,7 +242,22 @@ def get_dataset(data_pars=None, **kw):
         return train_loader, valid_loader 
     except :
         raise Exception("Dataset doesn't exist")
-        exit
+
+
+
+def get_dataset(data_pars=None, **kw):
+
+    #if data_pars['dataset'] == 'MNIST':
+    #    train_loader, valid_loader  = get_dataset_mnist_torch(data_pars)
+    #    return train_loader, valid_loader  
+
+    if data_pars['dataset'] :
+        train_loader, valid_loader  = get_dataset_torch(data_pars)
+        return train_loader, valid_loader  
+
+    else:
+        raise Exception("Dataloader not implemented")
+        return 0
 
 
 def fit(model, data_pars=None, compute_pars=None, out_pars=None, **kwargs):
