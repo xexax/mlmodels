@@ -32,12 +32,21 @@ def load_function(package="mlmodels.util", name="path_norm"):
 
 def get_dataset_torch(data_pars):
     """"
-     MNIST Fashion-MNIST KMNIST EMNIST QMNIST  FakeData COCO Captions Detection LSUN ImageFolder DatasetFolder 
-     ImageNet CIFAR STL10 SVHN PhotoTour SBU Flickr VOC Cityscapes SBD USPS Kinetics-400 HMDB51 UCF101 CelebA
+      torchvison.datasets
+         MNIST Fashion-MNIST KMNIST EMNIST QMNIST  FakeData COCO Captions Detection LSUN ImageFolder DatasetFolder 
+         ImageNet CIFAR STL10 SVHN PhotoTour SBU Flickr VOC Cityscapes SBD USPS Kinetics-400 HMDB51 UCF101 CelebA
 
-     Sentiment Analysis
-       SST IMDb Question Classification TREC Entailment SNLI MultiNLI Language Modeling WikiText-2 WikiText103 
-       PennTreebank Machine Translation Multi30k IWSLT WMT14 Sequence Tagging UDPOS CoNLL2000Chunking Question Answering BABI20
+      torchtext.datasets
+         Sentiment Analysis
+         SST IMDb Question Classification TREC Entailment SNLI MultiNLI 
+         Language Modeling WikiText-2 WikiText103 
+         PennTreebank 
+         Machine Translation 
+            Multi30k IWSLT WMT14 
+         Sequence Tagging 
+            UDPOS CoNLL2000Chunking 
+         Question Answering 
+            BABI20
     """
     import torch
     d = data_pars
@@ -49,25 +58,26 @@ def get_dataset_torch(data_pars):
        transform = None
 
 
+
+    train_loader, valid_loader = None, None
     if d['train_path'] :
       # Load from files  
       pass
+      if d['test_path'] :
+        # Load from files  
+        pass
 
 
-    if d['test_path'] :
-      # Load from files  
-      pass
+    elif d['dataset'] :
+        dataset_module =  d.get('dataset_module', "torchvision.datasets")   
+        dset = load_function(dataset_module), d["dataset"]
 
+        train_loader = torch.utils.data.DataLoader( dset(d['data_path'], train=True, download=True, transform= transform),
+                                                    batch_size=d['train_batch_size'], shuffle=True)
+        
+        valid_loader = torch.utils.data.DataLoader( dset(d['data_path'], train=False, download=True, transform= transform),
+                                                    batch_size=d['train_batch_size'], shuffle=True)
 
-    
-    dataset_module =  d.get('dataset_module', "torchvision.datasets")   
-    dset = load_function(dataset_module), d["dataset"]
-
-    train_loader = torch.utils.data.DataLoader( dset(d['data_path'], train=True, download=True, transform= transform),
-                                                batch_size=d['train_batch_size'], shuffle=True)
-    
-    valid_loader = torch.utils.data.DataLoader( dset(d['data_path'], train=False, download=True, transform= transform),
-                                                batch_size=d['train_batch_size'], shuffle=True)
 
     return train_loader, valid_loader  
 
