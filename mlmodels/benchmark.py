@@ -233,7 +233,7 @@ def main():
         arg.data_path    = ""
         arg.dataset_name = ""
         arg.path_json    = "dataset/json/benchmark_cnn/fashion_mnist"
-        arg.path_out     = "example/benchmark/cnn/fashion_mnist"
+        arg.path_out     = "example/benchmark/cnn/fashion_mnist/"
 
         bench_pars = {"metric_list": ["accuracy_score"]}
         benchmark_run(bench_pars=bench_pars, args=arg)

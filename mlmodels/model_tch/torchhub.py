@@ -1,17 +1,12 @@
 # -*- coding: utf-8 -*-
 """
 https://colab.research.google.com/github/pytorch/pytorch.github.io/blob/master/assets/hub/facebookresearch_pytorch-gan-zoo_pgan.ipynb
-
 https://github.com/pytorch/pytorch/blob/98362d11ffe81ca48748f6b0e1e417cb81ba5998/torch/hub.py#L330
-
-
         the following models only: alexnet, densenet121, densenet169, densenet201,\
         densenet161, inception_v3, resnet18, resnet34, resnet50, resnet101, resnet152,\
         resnext50_32x4d, resnext101_32x8d, wide_resnet50_2, wide_resnet101_2, squeezenet1_0,\
         squeezenet1_1, vgg11, vgg13, vgg16, vgg19, vgg11_bn, vgg13_bn, vgg16_bn, vgg19_bn,\
         googlenet, shufflenet_v2_x0_5, shufflenet_v2_x1_0, mobilenet_v2"
-
-
         assert _model in ['alexnet', 'densenet121', 'densenet169', 'densenet201', 'densenet161', 
         'inception_v3', 'resnet18', 'resnet34', 'resnet50', 'resnet101', 'resnet152', 
         'resnext50_32x4d', 'resnext101_32x8d', 'wide_resnet50_2', 'wide_resnet101_2',
@@ -24,7 +19,6 @@ https://github.com/pytorch/pytorch/blob/98362d11ffe81ca48748f6b0e1e417cb81ba5998
         resnext50_32x4d, resnext101_32x8d, wide_resnet50_2, wide_resnet101_2, squeezenet1_0,\
         squeezenet1_1, vgg11, vgg13, vgg16, vgg19, vgg11_bn, vgg13_bn, vgg16_bn, vgg19_bn,\
         googlenet, shufflenet_v2_x0_5, shufflenet_v2_x1_0, mobilenet_v2"
-
 """
 import os, json
 import copy
@@ -36,9 +30,6 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torchvision import datasets, transforms
 from torch import hub 
-
-# import mlmodels.models as M
-
 
 from mlmodels.util import os_package_root_path, log, path_norm, get_model_uri, path_norm_dict
 MODEL_URI = get_model_uri(__file__)
@@ -106,6 +97,7 @@ def get_config_file():
     return path_norm('config/model_tch/Imagecnn.json')
 
 
+
 def get_dataset_mnist_torch(data_pars):
     train_loader = torch.utils.data.DataLoader( datasets.MNIST(data_pars['data_path'], train=True, download=True,
                     transform=transforms.Compose([
@@ -127,17 +119,24 @@ def get_dataset_mnist_torch(data_pars):
 
 
 
-def get_dataset_torch(data_pars):
-    import importlib
 
-    # if  data_pars["transform"]  :
-    transform = getattr(importlib.import_module("mlmodels.preprocess.image"), "torch_transform_mnist" )()
-    # else :
-    #    transform = None
+
+def load_function(package="mlmodels.util", name="path_norm"):
+  import importlib
+  return  getattr(importlib.import_module(package), name)
+
+
+def get_dataset_torch(data_pars):
+
+    if  data_pars["transform"]  :
+       transform = load_function(  data_pars.get("preprocess_module", "mlmodels.preprocess.image"), 
+                                   data_pars.get("transform", "torch_transform_mnist" ))()
+    else :
+       transform = None
 
     
     dataset_module =  data_pars.get('dataset_module', "torchvision.datasets")   
-    dset = getattr(importlib.import_module(dataset_module), data_pars["dataset"])
+    dset = load_function(dataset_module, data_pars.get("dataset", "MNIST") )
 
     train_loader = torch.utils.data.DataLoader( dset(data_pars['data_path'], train=True, download=True, transform= transform),
                                                 batch_size=data_pars['train_batch_size'], shuffle=True)
@@ -215,21 +214,44 @@ def get_params(param_pars=None, **kw):
 
 
 
+def get_dataset2(data_pars=None, **kw):
+    import importlib
+    
+    from torchvision import datasets, transforms
+    data_path        = data_pars['data_path']
+    train_batch_size = data_pars['train_batch_size']
+    test_batch_size  = data_pars['test_batch_size']
+    try:
+        transform=transforms.Compose([
+                    transforms.Grayscale(num_output_channels=3),
+                    transforms.ToTensor(),
+                    transforms.Normalize((0.1307,), (0.3081,))
+                ])
+        dset = getattr(importlib.import_module("torchvision.datasets"), data_pars["dataset"])
+        train_loader = torch.utils.data.DataLoader( dset(data_pars['data_path'], train=True, download=True, transform= transform),
+                                                    batch_size=train_batch_size, shuffle=True)
+
+        valid_loader = torch.utils.data.DataLoader( dset(data_pars['data_path'], train=False, download=True, transform= transform),
+                                                    batch_size=test_batch_size, shuffle=True)
+        return train_loader, valid_loader 
+    except :
+        raise Exception("Dataset doesn't exist")
+
+
 
 def get_dataset(data_pars=None, **kw):
 
-    if data_pars['dataset'] == 'MNIST':
-        train_loader, valid_loader  = get_dataset_mnist_torch(data_pars)
-        return train_loader, valid_loader  
+    #if data_pars['dataset'] == 'MNIST':
+    #    train_loader, valid_loader  = get_dataset_mnist_torch(data_pars)
+    #    return train_loader, valid_loader  
 
-    elif data_pars['dataset'] :
+    if data_pars['dataset'] :
         train_loader, valid_loader  = get_dataset_torch(data_pars)
         return train_loader, valid_loader  
 
     else:
         raise Exception("Dataloader not implemented")
-        exit
-
+        return 0
 
 
 def fit(model, data_pars=None, compute_pars=None, out_pars=None, **kwargs):
@@ -422,10 +444,4 @@ if __name__ == "__main__":
 
 
     test2(data_path="model_tch/torchhub_pgan.json", pars_choice="json", config_mode="test")
-
-
-
-
-
-
 
