@@ -89,7 +89,7 @@ def get_dataset_torch(data_pars):
 
     """
     import torch
-    from torch.util.data import DataLoader
+    from torch.utils.data import DataLoader
     d = data_pars
 
     transform = None
