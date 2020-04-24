@@ -216,7 +216,7 @@ def get_params(param_pars=None, **kw):
 
 
 
-
+"""
 def get_dataset2(data_pars=None, **kw):
     import importlib
     
@@ -239,7 +239,7 @@ def get_dataset2(data_pars=None, **kw):
         return train_loader, valid_loader 
     except :
         raise Exception("Dataset doesn't exist")
-
+"""
 
 
 def get_dataset(data_pars=None, **kw):
