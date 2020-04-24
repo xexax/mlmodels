@@ -1,5 +1,5 @@
 {
-    "test": {
+    "train": {
         "model_pars": {
             "task": "ranking",
             "loss": {
@@ -11,31 +11,46 @@
                 "MeanAveragePrecision" : {}
             },
             "model": "BERT",
-            "pretrained": 0,
-            "embedding_output_dim": 100,
-            "mode": "bert-base-uncased",
-            "dropout_rate": 0.2
+            "params" : {
+                "mode": "bert-base-uncased",
+                "dropout_rate": 0.2
+            }
         },
-
         "data_pars" :{
-            "num_classes": 2,
             "dataset": "WIKI_QA",
             "data_path": "dataset/nlp/",
-            "mode" : "pair",
-            "num_dup" : 2,
-            "num_neg" : 1,
-            "train_batch_size": 4,
-            "test_batch_size": 1
+            "preprocess" : {
+                "train" : {
+                    "transform" : true,
+                    "mode" : "pair",
+                    "num_dup" : 2,
+                    "num_neg" : 1,
+                    "batch_size" : 20,
+                    "stage" : "train",
+                    "resample" : true,
+                    "sort" : false,
+                    "dataloader_callback" : "PADDING"
+                },
+                "test" : {
+                    "transform" : true,
+                    "batch_size" : 20,
+                    "stage" : "dev",
+                    "dataloader_callback" : "PADDING"
+                }
+            }
         },
 
         "compute_pars": {
-            "optimizer": "ADAMW",
-            "epochs": 10,
-            "lr": 5e-5,
-            "beta1": 0.9,
-            "beta2": 0.98,
-            "eps": 1e-8,
-            "optimize_parameters" : true
+            "optimizer" : {
+                "ADAMW" : {
+                    "lr" : 5e-5,
+                    "beta1": 0.9,
+                    "beta2": 0.98,
+                    "eps": 1e-8
+                }
+            },
+            "optimize_parameters" : true,
+            "epochs": 10
         },
 
         "out_pars": {

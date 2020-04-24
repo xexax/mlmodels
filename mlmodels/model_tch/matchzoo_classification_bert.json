@@ -1,27 +1,40 @@
 {
-    "test": {
+    "train": {
         "model_pars": {
             "task": "classification",
             "num_classes": 2,
             "metrics": {"acc" : {}},
             "model": "BERT",
-            "embedding_output_dim": 100,
-            "mode": "bert-base-uncased",
-            "dropout_rate": 0.2
+            "params" : {
+                "mode": "bert-base-uncased",
+                "dropout_rate": 0.2
+            }
         },
-
         "data_pars" :{
             "dataset": "WIKI_QA",
             "data_path": "dataset/nlp/",
-            "mode" : "point",
-            "train_batch_size": 20,
-            "test_batch_size": 20
+            "preprocess" : {
+                "train" : {
+                    "transform" : true,
+                    "mode" : "point",
+                    "batch_size" : 20,
+                    "stage" : "train",
+                    "sort" : false,
+                    "dataloader_callback" : "PADDING"
+                },
+                "test" : {
+                    "transform" : true,
+                    "mode" : "point",
+                    "batch_size" : 20,
+                    "stage" : "dev",
+                    "sort" : false,
+                    "dataloader_callback" : "PADDING"
+                }
+            }
         },
-
         "compute_pars": {
             "optimizer" : {
-                "ADAMW" : 
-                {
+                "ADAMW" : {
                     "lr": 5e-5,
                     "beta1": 0.9,
                     "beta2": 0.98,
