@@ -25,7 +25,7 @@
             "epoch": 2
         },
         "data_pars": {
-            "dataset": "FashionMNIST",
+            "dataset": "torchvision.datasets:FashionMNIST",
             "data_path": "dataset/vision/",
             "train_batch_size": 100,
             "test_batch_size": 10,
