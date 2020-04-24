@@ -136,7 +136,7 @@ def load_function(uri_name="path_norm"):
 def get_dataset_torch(data_pars):
 
     transform = None
-    if  data_pars.get("transform_uri")  :
+    if  data_pars.get("transform_uri")   :
        transform = load_function( data_pars.get("transform_uri", "mlmodels.preprocess.image:torch_transform_mnist" ))()
        
 
@@ -149,6 +149,7 @@ def get_dataset_torch(data_pars):
                                                 batch_size=data_pars['train_batch_size'], shuffle=True)
 
     return train_loader, valid_loader  
+
 
 
 
