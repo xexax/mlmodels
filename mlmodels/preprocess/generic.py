@@ -27,9 +27,17 @@ def torch_datasets_wrapper(sets, args_list = None, **args):
 
 
 
-def load_function(package="mlmodels.util", name="path_norm"):
+def load_function(uri_name="path_norm"):
+  """
+     Can load remote part
+
+  """  
   import importlib
+  pkg = uri_name.split(":")
+  package, name = pkg[0], pkg[1]
   return  getattr(importlib.import_module(package), name)
+
+
 
 
 def get_dataset_torch(data_pars):
@@ -47,32 +55,26 @@ def get_dataset_torch(data_pars):
 
 
     ##### MNIST case 
-    "dataset_module"   : "torchvision.datasets"
-    "dataset"          : MNIST
-    "transform_module" : "mlmodels.preprocess.image"
-    "transform"        : "torch_transform_mnist"
-
+    "dataset"       : "torchvision.datasets:MNIST"
+    "transform_uri" : "mlmodels.preprocess.image:torch_transform_mnist"
 
 
     ##### Pandas CSV case
-    "dataset_module"   : "mlmodels.preprocess.torch"
-    "dataset"          : "pandasDataset"
-    "transform_module" : "mlmodels.preprocess.text"
-    "transform"        : "torch_fillna"
+    "dataset"        : "mlmodels.preprocess.torch:pandasDataset"
+    "transform_uri"  : "mlmodels.preprocess.text:torch_fillna"
 
 
     """
     import torch
     d = data_pars
 
-    transform = None    
-    if  d["transform"]  :
-       transform = load_function(  d.get("transform_module", "mlmodels.preprocess.image"), 
-                                   d.get("transform", "torch_transform_mnist" ))()
+    transform = None
+    if  data_pars.get("transform_uri")   :
+       transform = load_function( d.get("transform_uri", "mlmodels.preprocess.image:torch_transform_mnist" ))()
+
 
     #### from mlmodels.preprocess.image import pandasDataset
-    dataset_module =  d.get('dataset_module', "torchvision.datasets")   
-    dset = load_function(dataset_module, d["dataset"] )
+    dset = load_function(d.get("dataset", "torchvision.datasets:MNIST") )
 
 
     if d['train_path'] and  d['test_path'] :
