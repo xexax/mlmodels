@@ -60,7 +60,7 @@ def get_dataset_torch(data_pars):
 
 
     ##### Pandas CSV case
-    "dataset"        : "mlmodels.preprocess.torch:pandasDataset"
+    "dataset"        : "mlmodels.preprocess.generic:pandasDataset"
     "transform_uri"  : "mlmodels.preprocess.text:torch_fillna"
 
 
@@ -168,9 +168,6 @@ class pandasDataset(Dataset):
 
     def shuffle(self, random_state=123):
             self._df = self._df.sample(frac=1.0, random_state=random_state)
-
-
-
 
 
 
