@@ -52,24 +52,9 @@ def metric_eval(actual=None, pred=None, metric_name="mean_absolute_error"):
     metric = getattr(importlib.import_module("sklearn.metrics"), metric_name)
     return metric(actual, pred)
 
-def preprocess_timeseries_m5(data_path=None, dataset_name=None, pred_length=10, item_id=None):
-    data_path = path_norm(data_path)
-    df         = pd.read_csv(data_path + dataset_name)
-    col_to_del = ["item_id", "dept_id", "cat_id", "store_id", "state_id"]
-    temp_df    = df.drop(columns=col_to_del).copy()
 
-    # 1, -1 are hardcoded because we have to explicitly mentioned days column 
-    temp_df    = pd.melt(temp_df, id_vars=["id"], value_vars=temp_df.columns[1: -1])
-
-    log("# select one itemid for which we have to forecast")
-    i_id       = item_id
-    temp_df    = temp_df.loc[temp_df["id"] == i_id]
-    temp_df.rename(columns={"variable": "Day", "value": "Demand"}, inplace=True)
-
-    log("# making df to compatible 3d shape, otherwise cannot be reshape to 3d compatible form")
-    pred_length = pred_length
-    temp_df     = temp_df.iloc[:pred_length * (temp_df.shape[0] // pred_length)]
-    temp_df.to_csv( f"{data_path}/{i_id}.csv", index=False)
+#def preprocess_timeseries_m5(data_path=None, dataset_name=None, pred_length=10, item_id=None):
+# Move to preprocess/timeseries.py
 
 
 
@@ -85,13 +70,13 @@ def benchmark_run(bench_pars=None, args=None, config_mode="test"):
                                          "dataset_uri", "metric", "metric_name"])
 
     if ".json" in json_path :
-       ### All config in ONE BIG JSON 
+       ### All config in ONE BIG JSON #####################################
        ddict     = json.load(open(json_path, mode='r'))
        json_list = [  x for k,x in ddict.items() ]
 
 
     else :    
-       ### All configs in Separate files 
+       ### All configs in Separate files ##################################
        json_list = []
        json_list_tmp = get_all_json_path(json_path)
        for jsonf in json_list_tmp :
@@ -201,16 +186,23 @@ def cli_load_arguments(config_file=None):
 
 def main():
     arg = cli_load_arguments()
-
+    """
     if arg.do == "preprocess_v1":
         arg.data_path    = "dataset/timeseries/"
         arg.dataset_name = "sales_train_validation.csv"
         preprocess_timeseries_m5(data_path    = arg.data_path, 
                                  dataset_name = arg.dataset_name, 
                                  pred_length  = 100, item_id=arg.item_id)   
+    """ 
+
+    if  ".json" in arg.do  :  #== "custom":
+        log("Custom benchmark")
+        bench_pars = json.load(open( arg.do, mode='r'))
+        log(bench_pars['metric_list'])
+        log(benchmark_run(bench_pars=bench_pars, args=arg))
 
 
-    elif arg.do == "timeseries":
+   elif arg.do == "timeseries":
         log("Time series model")
         bench_pars = {"metric_list": ["mean_absolute_error", "mean_squared_error",
                                        "median_absolute_error",  "r2_score"], 
@@ -228,8 +220,8 @@ def main():
 
         arg.data_path    = ""
         arg.dataset_name = ""
-        arg.path_json    = "dataset/json/benchmark_timeseries/test01/"
-        arg.path_out     = "example/benchmark/timeseries/test01/"
+        arg.path_json    = "dataset/json/benchmark_timeseries/test02/"
+        arg.path_out     = "example/benchmark/timeseries/test02/"
 
         log(benchmark_run(bench_pars, arg)) 
 
@@ -271,13 +263,6 @@ def main():
         arg.path_out     = "example/benchmark/text/"
 
         bench_pars = {"metric_list": ["accuracy, f1_score"]}
-        log(benchmark_run(bench_pars=bench_pars, args=arg))
-
-
-    elif arg.do == "custom":
-        log("Custom benchmark")
-        bench_pars = json.load(open( arg.benchmark_json, mode='r'))
-        log(bench_pars['metric_list'])
         log(benchmark_run(bench_pars=bench_pars, args=arg))
 
 
