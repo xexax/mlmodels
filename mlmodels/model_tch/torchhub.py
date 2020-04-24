@@ -129,7 +129,7 @@ def load_function(package="mlmodels.util", name="path_norm"):
 
 def get_dataset_torch(data_pars):
 
-    if  data_pars["transform"]  :
+    if  data_pars.get("transform")  :
        transform = load_function(  data_pars.get("preprocess_module", "mlmodels.preprocess.image"), 
                                    data_pars.get("transform", "torch_transform_mnist" ))()
     else :
@@ -444,5 +444,5 @@ if __name__ == "__main__":
     test(data_path="model_tch/torchhub_cnn.json", pars_choice="json", config_mode="test")
 
 
-    test2(data_path="model_tch/torchhub_pgan.json", pars_choice="json", config_mode="test")
+    # test2(data_path="model_tch/torchhub_pgan.json", pars_choice="json", config_mode="test")
 
