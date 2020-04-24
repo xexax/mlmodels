@@ -134,7 +134,7 @@ class pandasDataset(Dataset):
 
         self.df = df
 
-        process_custom = load_function( "mlmodels.preprocess.generic",    )()
+        process_custom = load_function( "mlmodels.preprocess.generic",  data_pars['pre_transform']  )()
         
 
         # Split
