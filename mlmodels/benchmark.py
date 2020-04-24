@@ -141,6 +141,7 @@ def benchmark_run(bench_pars=None, args=None, config_mode="test"):
 
 
 
+
 ####################################################################################################
 ############CLI Command ############################################################################
 def cli_load_arguments(config_file=None):
@@ -159,7 +160,7 @@ def cli_load_arguments(config_file=None):
     add("--config_mode", default="test", help="test/ prod /uat")
     add("--log_file",    default="ztest/benchmark/mlmodels_log.log", help="log.log")
 
-    add("--do",          default="timeseries", help="do ")
+    add("--do",          default="vision_fashion_mnist", help="do ")
 
     ### Benchmark config
     add("--benchmark_json", default="dataset/json/benchmark.json", help=" benchmark config")
@@ -212,7 +213,7 @@ def main():
         arg.path_json    = "dataset/json/benchmark_timeseries/"
         arg.path_out     = "example/benchmark/timeseries/"
 
-        benchmark_run(bench_pars, arg) 
+        log(benchmark_run(bench_pars, arg)) 
 
 
     elif arg.do == "vision_mnist":
@@ -220,11 +221,23 @@ def main():
 
         arg.data_path    = ""
         arg.dataset_name = ""
-        arg.path_json    = "dataset/json/benchmark_cnn/"
-        arg.path_out     = "example/benchmark/cnn/"
+        arg.path_json    = "dataset/json/benchmark_cnn/mnist"
+        arg.path_out     = "example/benchmark/cnn/mnist"
 
         bench_pars = {"metric_list": ["accuracy_score"]}
-        benchmark_run(bench_pars=bench_pars, args=arg)
+        log(benchmark_run(bench_pars=bench_pars, args=arg))
+
+
+    elif arg.do == "vision_fashion_mnist":
+        log("Vision models")
+
+        arg.data_path    = ""
+        arg.dataset_name = ""
+        arg.path_json    = "dataset/json/benchmark_cnn/fashion_mnist"
+        arg.path_out     = "example/benchmark/cnn/fashion_mnist/"
+
+        bench_pars = {"metric_list": ["accuracy_score"]}
+        log(benchmark_run(bench_pars=bench_pars, args=arg))
 
 
     elif arg.do == "nlp_reuters":
@@ -240,14 +253,14 @@ def main():
         arg.path_out     = "example/benchmark/text/"
 
         bench_pars = {"metric_list": ["accuracy, f1_score"]}
-        benchmark_run(bench_pars=bench_pars, args=arg)
+        log(benchmark_run(bench_pars=bench_pars, args=arg))
 
 
     elif arg.do == "custom":
-        log("NLP Reuters")
+        log("Custom benchmark")
         bench_pars = json.load(open( arg.benchmark_json, mode='r'))
         log(bench_pars['metric_list'])
-        benchmark_run(bench_pars=bench_pars, args=arg)
+        log(benchmark_run(bench_pars=bench_pars, args=arg))
 
 
     elif arg.do == "text_classification":
@@ -258,7 +271,7 @@ def main():
         arg.path_out = "example/benchmark/text_classification/"
 
         bench_pars = {"metric_list": ["accuracy_score"]}
-        benchmark_run(bench_pars=bench_pars, args=arg)
+        log(benchmark_run(bench_pars=bench_pars, args=arg))
 
 
     else :
@@ -266,3 +279,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+
+
