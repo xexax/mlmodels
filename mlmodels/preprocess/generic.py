@@ -77,7 +77,7 @@ def get_dataset_torch(data_pars):
     dset = load_function(d.get("dataset", "torchvision.datasets:MNIST") )
 
 
-    if d['train_path'] and  d['test_path'] :
+    if d.get('train_path') and  d.get('test_path') :
         ###### Custom Build Dataset   ####################################################
         dset_inst = dset(d['train_path'], train=True, download=True, transform= transform, data_pars=data_pars)
         train_loader = torch.utils.data.DataLoader( dset_inst, batch_size=d['train_batch_size'], shuffle= d.get('shuffle', True))

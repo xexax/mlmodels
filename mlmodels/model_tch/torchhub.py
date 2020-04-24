@@ -120,12 +120,9 @@ def get_dataset_mnist_torch(data_pars):
 
 
 
-
+"""
 def load_function(uri_name="path_norm"):
-  """
-     Can load remote part
-
-  """  
+  # Can load remote part  
   import importlib
   pkg = uri_name.split(":")
   package, name = pkg[0], pkg[1]
@@ -149,7 +146,7 @@ def get_dataset_torch(data_pars):
                                                 batch_size=data_pars['train_batch_size'], shuffle=True)
 
     return train_loader, valid_loader  
-
+"""
 
 
 
@@ -250,14 +247,16 @@ def get_dataset(data_pars=None, **kw):
     #if data_pars['dataset'] == 'MNIST':
     #    train_loader, valid_loader  = get_dataset_mnist_torch(data_pars)
     #    return train_loader, valid_loader  
+    from mlmodels.preprocess.generic import get_dataset_torch
 
     if data_pars['dataset'] :
         train_loader, valid_loader  = get_dataset_torch(data_pars)
         return train_loader, valid_loader  
 
     else:
-        raise Exception("Dataloader not implemented")
+        raise Exception("dataset not provided ")
         return 0
+
 
 
 def fit(model, data_pars=None, compute_pars=None, out_pars=None, **kwargs):
