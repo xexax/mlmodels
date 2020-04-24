@@ -29,13 +29,36 @@ def torch_datasets_wrapper(sets, args_list = None, **args):
 
 def load_function(uri_name="path_norm"):
   """
-     Can load remote part
+     "mlmodels.preprocess.generic:pandasDataset"
+
+      Absolute drive path
+     "MyFolder/mlmodels/preprocess/generic.py:pandasDataset"
+
 
   """  
-  import importlib
+  import importlib, sys
   pkg = uri_name.split(":")
   package, name = pkg[0], pkg[1]
-  return  getattr(importlib.import_module(package), name)
+
+  try:
+    #### Import from package mlmodels sub-folder
+    return  getattr(importlib.import_module(package), name)
+
+  except Exception as e1:
+    try:
+        ### Add Folder to Path and Load absoluate path module
+        path_parent = str(Path(package).parent.parent.absolute())
+        sys.path.append(path_parent)
+        #print(path_parent)
+
+        #### import Absilute Path model_tf.1_lstm
+        model_name   = Path(package).stem  # remove .py
+        package_name = str(Path(package).parts[-2]) + "." + str(model_name)
+        #print(package_name, model_name)
+        return  getattr(importlib.import_module(package_name), name)
+
+    except Exception as e2:
+        raise NameError(f"Module {pkg} notfound, {e1}, {e2}")
 
 
 
@@ -66,6 +89,7 @@ def get_dataset_torch(data_pars):
 
     """
     import torch
+    from torch.util.data import DataLoader
     d = data_pars
 
     transform = None
@@ -79,20 +103,20 @@ def get_dataset_torch(data_pars):
 
     if d.get('train_path') and  d.get('test_path') :
         ###### Custom Build Dataset   ####################################################
-        dset_inst = dset(d['train_path'], train=True, download=True, transform= transform, data_pars=data_pars)
-        train_loader = torch.utils.data.DataLoader( dset_inst, batch_size=d['train_batch_size'], shuffle= d.get('shuffle', True))
+        dset_inst    = dset(d['train_path'], train=True, download=True, transform= transform, data_pars=data_pars)
+        train_loader = DataLoader( dset_inst, batch_size=d['train_batch_size'], shuffle= d.get('shuffle', True))
         
-        dset_inst = dset(d['test_path'], train=False, download=True, transform= transform, data_pars=data_pars)
-        valid_loader = torch.utils.data.DataLoader( dset_inst, batch_size=d['train_batch_size'], shuffle= d.get('shuffle', True))
+        dset_inst    = dset(d['test_path'], train=False, download=True, transform= transform, data_pars=data_pars)
+        valid_loader = DataLoader( dset_inst, batch_size=d['train_batch_size'], shuffle= d.get('shuffle', True))
 
 
     else :
         ###### Pre Built Dataset available  #############################################
-        dset_inst = dset(d['data_path'], train=True, download=True, transform= transform)
-        train_loader = torch.utils.data.DataLoader( dset_inst, batch_size=d['train_batch_size'], shuffle= d.get('shuffle', True))
+        dset_inst    = dset(d['data_path'], train=True, download=True, transform= transform)
+        train_loader = DataLoader( dset_inst, batch_size=d['train_batch_size'], shuffle= d.get('shuffle', True))
         
-        dset_inst = dset(d['data_path'], train=False, download=True, transform= transform)
-        valid_loader = torch.utils.data.DataLoader( dset_inst, batch_size=d['train_batch_size'], shuffle= d.get('shuffle', True))
+        dset_inst    = dset(d['data_path'], train=False, download=True, transform= transform)
+        valid_loader = DataLoader( dset_inst, batch_size=d['train_batch_size'], shuffle= d.get('shuffle', True))
 
 
     return train_loader, valid_loader  
