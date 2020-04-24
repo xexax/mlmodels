@@ -115,23 +115,85 @@ def get_dataset_torch(data_pars):
 
 
 
+class pandasDataset(Dataset):
+    """
+    Defines a dataset composed of sentiment text and labels
+    Attributes:
+        df (Dataframe): Dataframe of the CSV from teh path
+        vocab (dict{str: int}: A vocabulary dictionary from word to indices for this dataset
+        sample_weights(ndarray, shape(len(labels),)): An array with each sample_weight[i] as the weight of the ith sample
+        data (list[int, [int]]): The data in the set
+    """
+   
+    def __init__(self, data_pars):
+        import torch
+        self.data_pars = data_pars
+        d = data_pars
+        path = d['path']
+        df = pd.read_csv(path, header=None, names=['stars', 'text'])
+
+        self.df = df
+
+        process_custom = load_function( "mlmodels.preprocess.generic",    )()
+        
+
+        # Split
+        X = df[ data_pars["colX"] ]
+        labels = df[ data_pars["coly"] ]
+
+        
+        # compute sample weights from inverse class frequencies
+        class_sample_count = np.unique(labels, return_counts=True)[1]
+        weight = 1. / class_sample_count
+        self.samples_weight = torch.from_numpy(weight[labels])
+
+
+        #### Data
+        self.data = list(zip(labels, X, df["lengths"]))
+
+    def __len__(self):
+        return len(self.data)
+
+    def __getitem__(self, i):
+        return self.data[i]
 
 
 
-from torchvision.datasets.vision import VisionDataset
-import warnings
-from PIL import Image
-import os
-import os.path
-import numpy as np
-import torch
-import codecs
-import string
-from torchvision.datasets.utils import download_url, download_and_extract_archive, extract_archive, \
-    verify_str_arg
+
+def get_loader(fix_length, vocab_threshold, batch_size):
+    train_dataset = SentimentDataset("data/train.csv", fix_length, vocab_threshold)
+
+    vocab = train_dataset.vocab
+
+    # valid_dataset = SentimentDataset("data/valid.csv", fix_length, vocab_threshold, vocab)
+
+    test_dataset = SentimentDataset("data/test.csv", fix_length, vocab_threshold, vocab)
+
+    train_dataloader = DataLoader(dataset=train_dataset,
+                                  batch_size=batch_size,
+                                  shuffle=True,
+                                  num_workers=4)
+
+    """
+    valid_dataloader = DataLoader(dataset=valid_dataset,
+                                  batch_size=batch_size,
+                                  shuffle=False,
+                                  num_workers=4)
+    """
+
+    test_dataloader = DataLoader(dataset=test_dataset,
+                                 batch_size=batch_size,
+                                 shuffle=False,
+                                 num_workers=4)
+
+    return train_dataloader, test_dataloader, vocab
 
 
 
+
+
+#########################################################################################################
+#########################################################################################################
 class MNIST(VisionDataset):
     """`MNIST <http://yann.lecun.com/exdb/mnist/>`_ Dataset.
     Args:
@@ -147,6 +209,18 @@ class MNIST(VisionDataset):
         target_transform (callable, optional): A function/transform that takes in the
             target and transforms it.
     """
+
+    from torchvision.datasets.vision import VisionDataset
+    import warnings
+    from PIL import Image
+    import os
+    import os.path
+    import numpy as np
+    import torch
+    import codecs
+    import string
+    from torchvision.datasets.utils import download_url, download_and_extract_archive, extract_archive,  verify_str_arg
+
 
     resources = [
         ("http://yann.lecun.com/exdb/mnist/train-images-idx3-ubyte.gz", "f68b3c2dcbeaaa9fbdd348bbdeb94873"),
