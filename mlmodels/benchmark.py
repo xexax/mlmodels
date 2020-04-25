@@ -63,7 +63,7 @@ def metric_eval(actual=None, pred=None, metric_name="mean_absolute_error"):
 ####################################################################################################
 def benchmark_run(bench_pars=None, args=None, config_mode="test"):
       
-    dataset_uri  = args.data_path + f"{args.item_id}.csv"
+    dataset_uri  = args.data_path + f"/{args.item_id}.csv"
     json_path    = path_norm( args.path_json )
     output_path  = path_norm( args.path_out )
 
@@ -82,13 +82,12 @@ def benchmark_run(bench_pars=None, args=None, config_mode="test"):
        json_list = []
        json_list_tmp = get_all_json_path(json_path)
        for jsonf in json_list_tmp :
-          ddict = json.load(open( path_norm(jsonf), mode='r'))[config_mode]
+          ddict = json.load(open( path_norm(jsonf), mode='r'))[config_mode]   # config_mode= "test"
           json_list.append(ddict) 
-
-
 
     if len(json_list) < 1 :
         raise Exception("empty model list json")
+
     
     log("Model List", json_list)
     ii = -1
@@ -104,7 +103,7 @@ def benchmark_run(bench_pars=None, args=None, config_mode="test"):
             model_uri    =  model_pars['model_uri']            
             print(model_pars)
 
-            log("#### Setup Model   ############################################# ")
+            log("#### Setup Model   ##############################################")
             module    = module_load(model_uri)   # "model_tch.torchhub.py"
             model     = module.Model(model_pars, data_pars, compute_pars)
             
@@ -116,9 +115,9 @@ def benchmark_run(bench_pars=None, args=None, config_mode="test"):
 
             log("#### Inference Need return ypred, ytrue #########################")
             data_pars["train"] = False
-            ypred, ytrue = module.predict(model=model, session=session,
-                                          data_pars=data_pars, compute_pars=compute_pars, 
-                                          out_pars=out_pars, return_ytrue=1)   
+            ypred, ytrue = module.predict(model=model, session=session, 
+                                          data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars, 
+                                          return_ytrue=1)   
 
             ytrue = np.array(ytrue).reshape(-1, 1)
             ypred = np.array(ypred).reshape(-1, 1)
@@ -204,7 +203,7 @@ def main():
         log(benchmark_run(bench_pars=bench_pars, args=arg))
 
 
-   elif arg.do == "timeseries":
+    elif arg.do == "timeseries":
         log("Time series model")
         bench_pars = {"metric_list": ["mean_absolute_error", "mean_squared_error",
                                        "median_absolute_error",  "r2_score"], 
