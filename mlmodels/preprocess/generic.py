@@ -102,12 +102,13 @@ def get_dataset_torch(data_pars):
     d = data_pars
 
     transform = None
-    if  data_pars.get("transform_uri")   :
+    t = data_pars.get("transform_uri", "")
+    if  len(t)  > 1 :
        transform = load_function( d.get("transform_uri", "mlmodels.preprocess.image:torch_transform_mnist" ))()
 
 
     #### from mlmodels.preprocess.image import pandasDataset
-    dset = load_function(d.get("dataset", "torchvision.datasets:MNIST") )
+    dset = load_function(d.get("dataset", "torchvision.datasets:MNIST") ) 
 
 
     if d.get('train_path') and  d.get('test_path') :
