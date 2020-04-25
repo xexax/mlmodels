@@ -223,8 +223,8 @@ def main():
 
         arg.data_path    = ""
         arg.dataset_name = ""
-        arg.path_json    = "dataset/json/benchmark_timeseries/test02/"
-        arg.path_out     = "example/benchmark/timeseries/test02/"
+        arg.path_json    = "dataset/json/benchmark_timeseries/test02/model_list.json"
+        arg.path_out     = "example/benchmark/timeseries/test02/model_list.json"
 
         log(benchmark_run(bench_pars, arg)) 
 
