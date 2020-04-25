@@ -10,6 +10,8 @@ python benchmark.py  --do  dataset/json/benchmark.json  --path_json  dataset/jso
 python benchmark.py  --do  dataset/json/benchmark.json  --path_json  dataset/json/benchmark_timeseries/test01/
 
 
+ml_benchmark
+
 
 
  
@@ -128,7 +130,7 @@ def benchmark_run(bench_pars=None, args=None, config_mode="test"):
 
             ytrue = np.array(ytrue).reshape(-1, 1)
             ypred = np.array(ypred).reshape(-1, 1)
-            log("### Calculate Metrics          ")
+            log("### Calculate Metrics    ########################################")
             for metric in metric_list:
                 ii = ii + 1
                 metric_val = metric_eval(actual=ytrue, pred=ypred,  metric_name=metric)
@@ -210,6 +212,7 @@ def main():
 
 
     """ 
+    log(arg.do)
 
     if  ".json" in arg.do  :  #== "custom":
         log("Custom benchmark")
@@ -219,32 +222,18 @@ def main():
 
 
     elif arg.do == "timeseries":
-        log("Time series model")
         bench_pars = {"metric_list": ["mean_absolute_error", "mean_squared_error",
                                        "median_absolute_error",  "r2_score"], 
-                      "pred_length": 100,
-                      
-                      #### Over-ride data
-                      "data_pars" : {
-                         "train_data_path": "dataset/timeseries/stock/qqq_us_train.csv",
-                         "test_data_path": "dataset/timeseries/stock/qqq_us_test.csv",
-                         "col_Xinput": ["Close"],
-                         "col_ytarget": "Close"
-                      }
-
                       }
 
         arg.data_path    = ""
         arg.dataset_name = ""
         arg.path_json    = "dataset/json/benchmark_timeseries/test02/model_list.json"
         arg.path_out     = "example/benchmark/timeseries/test02/model_list.json"
-
         log(benchmark_run(bench_pars, arg)) 
 
 
     elif arg.do == "vision_mnist":
-        log("Vision models")
-
         arg.data_path    = ""
         arg.dataset_name = ""
         arg.path_json    = "dataset/json/benchmark_cnn/mnist"
@@ -255,8 +244,6 @@ def main():
 
 
     elif arg.do == "vision_fashion_mnist":
-        log("Vision models")
-
         arg.data_path    = ""
         arg.dataset_name = ""
         arg.path_json    = "dataset/json/benchmark_cnn/fashion_mnist"
@@ -267,12 +254,6 @@ def main():
 
 
     elif arg.do == "nlp_reuters":
-        """
-           User Reuters datasts
-           config files in  "dataset/json/benchmark_text/"
-
-        """
-        log("NLP Reuters")
         arg.data_path    = ""
         arg.dataset_name = ""
         arg.path_json    = "dataset/json/benchmark_text/"
@@ -283,11 +264,10 @@ def main():
 
 
     elif arg.do == "text_classification":
-        log("text_classification")
-        arg.data_path = ""
+        arg.data_path    = ""
         arg.dataset_name = ""
-        arg.path_json = "dataset/json/benchmark_text_classification/"
-        arg.path_out = "example/benchmark/text_classification/"
+        arg.path_json    = "dataset/json/benchmark_text_classification/"
+        arg.path_out     = "example/benchmark/text_classification/"
 
         bench_pars = {"metric_list": ["accuracy_score"]}
         log(benchmark_run(bench_pars=bench_pars, args=arg))

@@ -181,8 +181,6 @@ def get_model_data(model_pars, data_pars):
 
 
 
-
-
 class pandasDataset(Dataset):
     """
     Defines a dataset composed of sentiment text and labels
