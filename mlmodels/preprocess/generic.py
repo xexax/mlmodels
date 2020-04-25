@@ -10,7 +10,7 @@ from pathlib import Path
 import pandas as pd, numpy as np
 
 
-from mlmodels.util import path_norm
+from mlmodels.util import path_norm, log
 
 from torch.utils.data import Dataset
 
