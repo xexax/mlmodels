@@ -77,14 +77,19 @@ def get_dataset_torch(data_pars):
          Question Answering  :  BABI20
 
 
-    ##### MNIST case 
+    ##### MNIST case : TorchVison TorchText Pre-Built
     "dataset"       : "torchvision.datasets:MNIST"
     "transform_uri" : "mlmodels.preprocess.image:torch_transform_mnist"
 
 
-    ##### Pandas CSV case
+    ##### Pandas CSV case : Custom MLMODELS One
     "dataset"        : "mlmodels.preprocess.generic:pandasDataset"
     "transform_uri"  : "mlmodels.preprocess.text:torch_fillna"
+
+
+    ##### External File processor :
+    "dataset"        : "MyFolder/preprocess/myfile.py:pandasDataset"
+    "transform_uri"  : "MyFolder/preprocess/myfile.py:torch_fillna"
 
 
     """
@@ -120,6 +125,54 @@ def get_dataset_torch(data_pars):
 
 
     return train_loader, valid_loader  
+
+
+
+
+def get_model_data(model_pars):
+    """"
+      Mostly Embedding data, it can be external data
+
+    ##### MNIST case : TorchVison TorchText Pre-Built
+    "dataset"       : "torchvision.datasets:MNIST"
+    "transform_uri" : "mlmodels.preprocess.image:torch_transform_mnist"
+
+
+    ##### Pandas CSV case : Custom MLMODELS One
+    "dataset"        : "mlmodels.preprocess.generic:pandasDataset"
+    "transform_uri"  : "mlmodels.preprocess.text:torch_fillna"
+
+
+    ##### External File processor :
+    "dataset"        : "MyFolder/preprocess/myfile.py:pandasDataset"
+    "transform_uri"  : "MyFolder/preprocess/myfile.py:torch_fillna"
+
+
+    """
+    import torch
+    from torch.utils.data import DataLoader
+    d = model_pars
+
+    transform = None
+    if  d.get("transform_uri")   :
+       transform = load_function( d.get("transform_uri", "mlmodels.preprocess.image:torch_transform_glove" ))()
+
+
+    #### from mlmodels.preprocess.image import pandasDataset
+    dset = load_function(d.get("dataset", "torchvision.datasets:glove") )
+
+    data = None
+    if d.get('embedding_path') :
+        ###### Custom Build Dataset   ####################################################
+        data    = dset(d['embedding_path'], train=True, download=True, transform= transform, model_pars=model_pars, data_pars=data_pars)
+        
+
+    else :
+        ###### Pre Built Dataset available  #############################################
+
+    return data
+
+
 
 
 
