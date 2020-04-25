@@ -57,7 +57,7 @@ from pytorch_transformers import AdamW
 from torch.optim import Adadelta
 OPTIMIZERS = {
     'ADAMW' : lambda prm, cp : AdamW(prm, lr=cp["lr"], betas=(cp["beta1"],cp["beta2"]), eps=cp["eps"]),
-    'ADADELTA' : lambda prm, cp : Adadelta(prm, lr=cp["lr"], rho=cp["rho"], eps=cp["eps"], weight_decay=["weight_decay"])
+    'ADADELTA' : lambda prm, cp : Adadelta(prm, lr=cp["lr"], rho=cp["rho"], eps=cp["eps"], weight_decay=cp["weight_decay"])
 }
 
 CALLBACKS = {
@@ -100,8 +100,7 @@ def get_glove_embedding_matrix(term_index, dimension):
     embedding_matrix = embedding_matrix / l2_norm[:, np.newaxis]
     return embedding_matrix
 
-def get_data_loader(model_name, preprocess_pars, raw_data):
-    preprocessor = MODELS[model_name].get_default_preprocessor()
+def get_data_loader(model_name, preprocessor, preprocess_pars, raw_data):
     if "transform" in preprocess_pars:
         pack_processed = preprocessor.transform(raw_data)
     elif "fit_transform" in preprocess_pars:
@@ -149,12 +148,11 @@ def get_data_loader(model_name, preprocess_pars, raw_data):
     )
     return dataloader
 
-def update_model_param(params, model, task):
+def update_model_param(params, model, task, preprocessor):
     model.params['task'] = task
     glove_embedding_matrix_dim = params["glove_embedding_matrix_dim"] if "glove_embedding_matrix_dim" in params else None
 
     if glove_embedding_matrix_dim:
-        preprocessor = model.get_default_preprocessor()
         term_index = preprocessor.context['vocab_unit'].state['term_index']
         embedding_matrix = get_glove_embedding_matrix(term_index, glove_embedding_matrix_dim)
         model.params['embedding'] = embedding_matrix
@@ -196,12 +194,23 @@ class Model:
         self.task = get_task(model_pars)
         
         train_pack_raw, test_pack_raw = get_raw_dataset(data_pars, self.task)
+        
         _preprocessor_pars = data_pars["preprocess"]
-        self.trainloader = get_data_loader(_model, _preprocessor_pars["train"], train_pack_raw)
-        self.testloader = get_data_loader(_model, _preprocessor_pars["test"], test_pack_raw)
+        if "basic_preprocessor" in _preprocessor_pars:
+            pars = _preprocessor_pars["basic_preprocessor"]
+            preprocessor = mz.preprocessors.BasicPreprocessor(
+                truncated_length_left=pars["truncated_length_left"],
+                truncated_length_right=pars["truncated_length_right"],
+                filter_low_freq=pars["filter_low_freq"]
+            )
+        else:
+            preprocessor = MODELS[model_name].get_default_preprocessor()
+
+        self.trainloader = get_data_loader(_model, preprocessor, _preprocessor_pars["train"], train_pack_raw)
+        self.testloader = get_data_loader(_model, preprocessor, _preprocessor_pars["test"], test_pack_raw)
 
         self.model = MODELS[_model]()
-        update_model_param(model_pars["params"], self.model, self.task)
+        update_model_param(model_pars["params"], self.model, self.task, preprocessor)
         
         self.model.build()
 
@@ -321,4 +330,4 @@ def train(data_path="dataset/", pars_choice="json", config_mode="train"):
 
 
 if __name__ == "__main__":
-    train(data_path="model_tch/matchzoo_ranking_drmm.json", pars_choice="json", config_mode="train")
+    train(data_path="model_tch/matchzoo_ranking_drmmtks.json", pars_choice="json", config_mode="train")
