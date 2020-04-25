@@ -29,7 +29,11 @@ def torch_datasets_wrapper(sets, args_list = None, **args):
 
 def load_function(uri_name="path_norm"):
   """
-     "mlmodels.preprocess.generic:pandasDataset"
+    ##### Pandas CSV case : Custom MLMODELS One
+    "dataset"        : "mlmodels.preprocess.generic:pandasDataset"
+
+    ##### External File processor :
+    "dataset"        : "MyFolder/preprocess/myfile.py:pandasDataset"
 
       Absolute drive path
      "MyFolder/mlmodels/preprocess/generic.py:pandasDataset"
@@ -37,6 +41,7 @@ def load_function(uri_name="path_norm"):
 
   """  
   import importlib, sys
+  from pathlib import Path
   pkg = uri_name.split(":")
   package, name = pkg[0], pkg[1]
 
@@ -93,7 +98,6 @@ def get_dataset_torch(data_pars):
 
 
     """
-    import torch
     from torch.utils.data import DataLoader
     d = data_pars
 
@@ -129,9 +133,9 @@ def get_dataset_torch(data_pars):
 
 
 
-def get_model_data(model_pars):
+def get_model_data(model_pars, data_pars):
     """"
-      Mostly Embedding data, it can be external data
+      Mostly Embedding data, it can be external data used in the model.
 
     ##### MNIST case : TorchVison TorchText Pre-Built
     "dataset"       : "torchvision.datasets:MNIST"
@@ -149,17 +153,17 @@ def get_model_data(model_pars):
 
 
     """
-    import torch
     from torch.utils.data import DataLoader
     d = model_pars
 
+    ### Embedding Transformer
     transform = None
     if  d.get("transform_uri")   :
        transform = load_function( d.get("transform_uri", "mlmodels.preprocess.text:torch_transform_glove" ))()
 
 
-    #### from mlmodels.preprocess.image import pandasDataset
-    dset = load_function(d.get("embedding", "torchvtext.embedding:glove") )
+    #### from mlmodels.preprocess.text import embeddingLoader
+    dset = load_function(d.get("embedding", "torchtext.embedding:glove") )
 
     data = None
     if d.get('embedding_path') :
