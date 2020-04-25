@@ -155,11 +155,11 @@ def get_model_data(model_pars):
 
     transform = None
     if  d.get("transform_uri")   :
-       transform = load_function( d.get("transform_uri", "mlmodels.preprocess.image:torch_transform_glove" ))()
+       transform = load_function( d.get("transform_uri", "mlmodels.preprocess.text:torch_transform_glove" ))()
 
 
     #### from mlmodels.preprocess.image import pandasDataset
-    dset = load_function(d.get("dataset", "torchvision.datasets:glove") )
+    dset = load_function(d.get("embedding", "torchvtext.embedding:glove") )
 
     data = None
     if d.get('embedding_path') :
@@ -169,6 +169,8 @@ def get_model_data(model_pars):
 
     else :
         ###### Pre Built Dataset available  #############################################
+        data    = dset(d['embedding_path'], train=True, download=True, transform= transform)
+
 
     return data
 
