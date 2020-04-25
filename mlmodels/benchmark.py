@@ -31,6 +31,7 @@ from mlmodels.models import module_load
 from mlmodels.util import path_norm_dict,  params_json_load
 from mlmodels.util import (get_recursive_files, load_config, log, os_package_root_path, path_norm)
 
+
 ####################################################################################################
 def get_all_json_path(json_path):
     return get_recursive_files(json_path, ext='/*.json')
@@ -53,7 +54,7 @@ def metric_eval(actual=None, pred=None, metric_name="mean_absolute_error"):
     return metric(actual, pred)
 
 
-#def preprocess_timeseries_m5(data_path=None, dataset_name=None, pred_length=10, item_id=None):
+# def preprocess_timeseries_m5(data_path=None, dataset_name=None, pred_length=10, item_id=None):
 # Move to preprocess/timeseries.py
 
 
@@ -99,14 +100,15 @@ def benchmark_run(bench_pars=None, args=None, config_mode="test"):
             #model_pars, data_pars, compute_pars, out_pars = params_json_load(config_path, config_mode= config_mode)
 
             model_pars, data_pars, compute_pars, out_pars = js['model_pars'], js['data_pars'], js['compute_pars'], js['out_pars'] 
-
-            model_uri    =  model_pars['model_uri']            
-            print(model_pars)
+            log(model_pars)
+       
 
             log("#### Setup Model   ##############################################")
+            model_uri =  model_pars['model_uri']     
             module    = module_load(model_uri)   # "model_tch.torchhub.py"
             model     = module.Model(model_pars, data_pars, compute_pars)
             
+
             log("#### Fit  #######################################################")
             data_pars["train"] = True
             print(">>>model: ", model, type(model))
@@ -160,25 +162,25 @@ def cli_load_arguments(config_file=None):
     def add(*w, **kw):
         p.add_argument(*w, **kw)
     
-    add("--config_file", default=config_file, help="Params File")
-    add("--config_mode", default="test", help="test/ prod /uat")
-    add("--log_file",    default="ztest/benchmark/mlmodels_log.log", help="log.log")
+    add("--config_file"    , default=config_file                        , help="Params File")
+    add("--config_mode"    , default="test"                             , help="test/ prod /uat")
+    add("--log_file"       , default="ztest/benchmark/mlmodels_log.log" , help="log.log")
 
-    add("--do",          default="vision_fashion_mnist", help="do ")
+    add("--do"             , default="vision_fashion_mnist"             , help="do ")
 
     ### Benchmark config
-    add("--benchmark_json", default="dataset/json/benchmark.json", help=" benchmark config")
-    add("--path_json",      default="dataset/json/benchmark_cnn/", help=" list of json")
-    add("--path_out",       default="example/benchmark/", help=".")
+    add("--benchmark_json" , default="dataset/json/benchmark.json"      , help=" benchmark config")
+    add("--path_json"      , default="dataset/json/benchmark_cnn/"      , help=" list of json")
+    add("--path_out"       , default="example/benchmark/"               , help=".")
 
 
     #### Input dataset
-    add("--data_path",   default="dataset/timeseries/", help="Dataset path")
-    add("--dataset_name",default="sales_train_validation.csv", help="dataset name")   
+    add("--data_path"      , default="dataset/timeseries/"              , help="Dataset path")
+    add("--dataset_name"   , default="sales_train_validation.csv"       , help="dataset name")
 
 
     #### Specific to timeseries
-    add("--item_id",     default="HOBBIES_1_001_CA_1_validation", help="forecast for which item")
+    add("--item_id"        , default="HOBBIES_1_001_CA_1_validation"    , help="forecast for which item")
 
     arg = p.parse_args()
     return arg
