@@ -113,9 +113,9 @@ def get_glove_embedding_matrix(term_index, dimension):
 
 
 
-def get_data_loader(model_name, preprocessor, preprocessor_pars, raw_data):
+def get_data_loader(model_name, preprocessor, preprocess_pars, raw_data):
 
-    pp = preprocessor_pars
+    pp = preprocess_pars
 
     if "transform" in pp:
         pack_processed = preprocessor.transform(raw_data)
@@ -349,3 +349,5 @@ def train(data_path, pars_choice, model_name):
 
 if __name__ == "__main__":
     train(data_path="model_tch/matchzoo_models.json", pars_choice="json", model_name="BERT_RANKING")
+
+

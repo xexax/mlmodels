@@ -1,6 +1,7 @@
 {
     "BERT_RANKING":{
        "model_pars":{
+          "model_uri" : "model_tch.matchzoo_models",
           "task":"ranking",
           "loss":{
              "RankHingeLoss":{
@@ -64,8 +65,15 @@
           "path":"ztest/model_tch/MATCHZOO/BERT/"
        }
     },
+
+
+
+
+
+
     "BERT_CLASSIFICATION":{
        "model_pars":{
+          "model_uri" : "model_tch.matchzoo_models",
           "task":"classification",
           "num_classes":2,
           "metrics":{
@@ -118,8 +126,12 @@
           "path":"ztest/model_tch/MATCHZOO/BERT/"
        }
     },
+
+
+
     "DRMM_RANKING":{
        "model_pars":{
+          "model_uri" : "model_tch.matchzoo_models",
           "task":"ranking",
           "loss":{
              "RankCrossEntropyLoss":{
@@ -178,12 +190,7 @@
        },
        "compute_pars":{
           "optimizer":{
-             "ADADELTA":{
-                "lr":1.0,
-                "rho":0.9,
-                "eps":1e-06,
-                "weight_decay":0.0
-             }
+             "ADADELTA":{"lr":1.0, "rho":0.9, "eps":1e-06, "weight_decay":0.0 }
           },
           "epochs":10
        },
@@ -192,8 +199,11 @@
           "path":"ztest/model_tch/MATCHZOO/BERT/"
        }
     },
+
+
     "DRMMKTS_RANKING":{
        "model_pars":{
+          "model_uri" : "model_tch.matchzoo_models",
           "task":"ranking",
           "loss":{
              "RankHingeLoss":{
@@ -251,12 +261,7 @@
        },
        "compute_pars":{
           "optimizer":{
-             "ADADELTA":{
-                "lr":1.0,
-                "rho":0.9,
-                "eps":1e-06,
-                "weight_decay":0.0
-             }
+             "ADADELTA":{"lr":1.0, "rho":0.9, "eps":1e-06, "weight_decay":0.0 }
           },
           "epochs":10
        },
