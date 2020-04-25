@@ -1,14 +1,17 @@
 # -*- coding: utf-8 -*-
 """
- ml_test --do test_benchmark
+ ml_benchmark  --do    --path_json
+
+
+#### One Single file for all models
+python benchmark.py  --do  dataset/json/benchmark.json  --path_json  dataset/json/benchmark_timeseries/test02/model_list.json
+                         
+#### Many json                            
+python benchmark.py  --do  dataset/json/benchmark.json  --path_json  dataset/json/benchmark_timeseries/test01/
+
 
  
-For all json in Json_path_list :
-   Load_json, 
-   Load_model, 
-   run_model,
-   get_metrics, 
-   add_to_dataframe
+
 """
 import argparse
 import glob
@@ -196,11 +199,19 @@ def main():
         preprocess_timeseries_m5(data_path    = arg.data_path, 
                                  dataset_name = arg.dataset_name, 
                                  pred_length  = 100, item_id=arg.item_id)   
+
+     #### One Single file for all models
+     python benchmark.py  --do  dataset/json/benchmark.json  --path_json  dataset/json/benchmark_timeseries/test02/model_list.json
+                                 
+     #### Many json                            
+     python benchmark.py  --do  dataset/json/benchmark.json  --path_json  dataset/json/benchmark_timeseries/test01/
+
+
     """ 
 
     if  ".json" in arg.do  :  #== "custom":
         log("Custom benchmark")
-        bench_pars = json.load(open( arg.do, mode='r'))
+        bench_pars = json.load(open( path_norm(arg.do), mode='r'))
         log(bench_pars['metric_list'])
         log(benchmark_run(bench_pars=bench_pars, args=arg))
 
