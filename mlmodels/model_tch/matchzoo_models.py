@@ -280,7 +280,7 @@ def fit_metrics(model, data_pars=None, compute_pars=None, out_pars=None):
 
 def save(model, session=None, save_pars=None):
     from mlmodels.util import save_tch
-    save_tch(model=model.model, save_pars=save_pars)
+    save_tch(model=model, save_pars=save_pars)
 
 
 def load(load_pars):
@@ -331,3 +331,10 @@ def train(data_path="dataset/", pars_choice="json", config_mode="train"):
 
 if __name__ == "__main__":
     train(data_path="model_tch/matchzoo_ranking_drmmtks.json", pars_choice="json", config_mode="train")
+
+
+
+
+
+
+
