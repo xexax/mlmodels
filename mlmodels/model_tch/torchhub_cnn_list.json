@@ -1,5 +1,5 @@
 {
-        "test": {
+        "resnet18": {
 
               "hypermodel_pars":   {
               "learning_rate": {"type": "log_uniform", "init": 0.01,  "range" : [0.001, 0.1] }
@@ -47,10 +47,10 @@
                 "checkpointdir": "ztest/model_tch/torchhub/restnet18/checkpoints/",
                 "path": "ztest/model_tch/torchhub/restnet18/"
             }
-        },
-    
-        "prod": {
-            "model_pars": {},
-            "data_pars": {}
         }
+
+
+
+
+        
     }
