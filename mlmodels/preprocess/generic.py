@@ -344,6 +344,21 @@ def tf_dataset(dataset_pars):
       
 
 
+########################################################################################
+########################################################################################
+def test(data_path="dataset/", pars_choice="json", config_mode="test"):
+    ### Local test
+
+    log("#### Loading params   ##############################################")
+
+
+
+if __name__ == "__main__":
+    test(data_path="model_tch/file.json", pars_choice="json", config_mode="test")
+
+
+
+
 
 
 
