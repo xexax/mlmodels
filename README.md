@@ -313,7 +313,7 @@ git checkout dev
 ```
 
 ### (C) Using Colab :
-[Read-more](https://colab.research.google.com/drive/1sYbrXNZh9nTeizS-AuCA8RSu94B_B-RF)
+[Read-more](https://github.com/arita37/mlmodels/blob/dev/README_usage.md)
 
 
 ### Initialize template and Tests

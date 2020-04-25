@@ -25,7 +25,10 @@
 
             "data_pars" :{
                 "dataset"       : "torchvision.datasets:MNIST"
-               ,"transform_uri" : "mlmodels.preprocess.image:torch_transform_mnist"
+               ,"transform_uri" : "mlmodels.preprocess.image.py:torch_transform_mnist"
+
+
+               ,"2nd___transform_uri" : "/mnt/hgfs/d/gitdev/mlmodels/mlmodels/preprocess/image.py:torch_transform_mnist"
 
 
                 ,"data_path": "dataset/vision/"
