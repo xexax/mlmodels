@@ -118,10 +118,10 @@ def get_data_loader(model_name, preprocessor, preprocessor_pars, raw_data):
     pp = preprocessor_pars
 
     if "transform" in pp:
-        pack_processed = preproor.transform(raw_data)
+        pack_processed = preprocessor.transform(raw_data)
 
     elif "fit_transform" in pp:
-        pack_processed = preproor.fit_transform(raw_data)
+        pack_processed = preprocessor.fit_transform(raw_data)
 
     mode                       = pp["mode"] if "mode" in pp else "point"
     num_dup                    = pp["num_dup"] if "num_dup" in pp else 1
@@ -132,7 +132,7 @@ def get_data_loader(model_name, preprocessor, preprocessor_pars, raw_data):
     if glove_embedding_matrix_dim:
         # Make sure you've transformed data before generating glove embedding,
         # else, term_index would be 0 and embedding matrix would be None.
-        term_index = preproor.context['vocab_unit'].state['term_index']
+        term_index = preprocessor.context['vocab_unit'].state['term_index']
         embedding_matrix = get_glove_embedding_matrix(term_index, glove_embedding_matrix_dim)
 
 
@@ -146,24 +146,24 @@ def get_data_loader(model_name, preprocessor, preprocessor_pars, raw_data):
     sort       = pp["sort"] if "sort" in pp else None
     batch_size = pp["batch_size"] if "batch_size" in pp else 1
     dataset    = mz.dataloader.Dataset(
-        data_pack=pack_processed,
-        mode=mode,
-        num_dup=num_dup,
-        num_neg=num_neg,
-        batch_size=batch_size,
-        resample=resample,
-        sort=sort,
-        callbacks=dataset_callback
+        data_pack  = pack_processed,
+        mode       = mode,
+        num_dup    = num_dup,
+        num_neg    = num_neg,
+        batch_size = batch_size,
+        resample   = resample,
+        sort       = sort,
+        callbacks  = dataset_callback
     )
 
     stage = pp["stage"] if "stage" in pp else None
     dataloader_callback = pp["dataloader_callback"] if "dataloader_callback" in pp else None
     dataloader_callback = CALLBACKS[dataloader_callback](model_name)
     dataloader = mz.dataloader.DataLoader(
-        device='cpu',
-        dataset=dataset,
-        stage=stage,
-        callback=dataloader_callback
+        device   = 'cpu',
+        dataset  = dataset,
+        stage    = stage,
+        callback = dataloader_callback
     )
     return dataloader
 
@@ -222,12 +222,12 @@ class Model:
         if "basic_preprocessor" in _preprocessor_pars:
             pars = _preprocessor_pars["basic_preprocessor"]
             preprocessor = mz.preprocessors.BasicPreprocessor(
-                truncated_length_left=pars["truncated_length_left"],
-                truncated_length_right=pars["truncated_length_right"],
-                filter_low_freq=pars["filter_low_freq"]
+                truncated_length_left  = pars["truncated_length_left"],
+                truncated_length_right = pars["truncated_length_right"],
+                filter_low_freq        = pars["filter_low_freq"]
             )
         else:
-            preprocessor = MODELS[model_name].get_default_preprocessor()
+            preprocessor = MODELS[_model].get_default_preprocessor()
 
         self.trainloader = get_data_loader(_model, preprocessor, _preprocessor_pars["train"], train_pack_raw)
         self.testloader = get_data_loader(_model, preprocessor, _preprocessor_pars["test"], test_pack_raw)
