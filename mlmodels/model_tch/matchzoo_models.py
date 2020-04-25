@@ -202,7 +202,7 @@ class Model:
                 filter_low_freq=pars["filter_low_freq"]
             )
         else:
-            preprocessor = MODELS[model_name].get_default_preprocessor()
+            preprocessor = MODELS[_model].get_default_preprocessor()
 
         self.trainloader = get_data_loader(_model, preprocessor, _preprocessor_pars["train"], train_pack_raw)
         self.testloader = get_data_loader(_model, preprocessor, _preprocessor_pars["test"], test_pack_raw)
@@ -212,25 +212,6 @@ class Model:
         
         self.model.build()
 
-def get_params(param_pars=None, **kw):
-    pp          = param_pars
-    choice      = pp['choice']
-    config_mode = pp['config_mode']
-    data_path   = pp['data_path']
-
-    if choice == "json":
-        data_path = path_norm(data_path)
-        cf = json.load(open(data_path, mode='r'))
-        cf = cf[config_mode]
-
-        ####Normalize path  : add /models/dataset/
-        cf['data_pars'] = path_norm_dict(cf['data_pars'])
-        cf['out_pars']  = path_norm_dict(cf['out_pars'])
-
-        return cf['model_pars'], cf['data_pars'], cf['compute_pars'], cf['out_pars']
-
-    else:
-        raise Exception(f"Not support choice {choice} yet")
 
 def fit(model, data_pars=None, compute_pars=None, out_pars=None, **kwargs):
     model0 = model.model
@@ -284,15 +265,33 @@ def load(load_pars):
     from mlmodels.util import load_tch
     return load_tch(load_pars)
 
+def get_params(param_pars=None, **kw):
+    pp          = param_pars
+    choice      = pp['choice']
+    model_name = pp['model_name']
+    data_path   = pp['data_path']
 
+    if choice == "json":
+        data_path = path_norm(data_path)
+        cf = json.load(open(data_path, mode='r'))
+        cf = cf[model_name]
+
+        ####Normalize path  : add /models/dataset/
+        cf['data_pars'] = path_norm_dict(cf['data_pars'])
+        cf['out_pars']  = path_norm_dict(cf['out_pars'])
+
+        return cf['model_pars'], cf['data_pars'], cf['compute_pars'], cf['out_pars']
+
+    else:
+        raise Exception(f"Not support choice {choice} yet")
 
 ###########################################################################################################
 ###########################################################################################################
-def train(data_path="dataset/", pars_choice="json", config_mode="train"):
+def train(data_path, pars_choice, model_name):
     ### Local test
 
     log("#### Loading params   ##############################################")
-    param_pars = {"choice":pars_choice,  "data_path":data_path,  "config_mode": config_mode}
+    param_pars = {"choice":pars_choice,  "data_path":data_path,  "model_name": model_name}
     model_pars, data_pars, compute_pars, out_pars = get_params(param_pars)
     log(  data_pars, out_pars )
 
@@ -327,4 +326,4 @@ def train(data_path="dataset/", pars_choice="json", config_mode="train"):
 
 
 if __name__ == "__main__":
-    train(data_path="model_tch/matchzoo_ranking_drmmtks.json", pars_choice="json", config_mode="train")
+    train(data_path="model_tch/matchzoo_models.json", pars_choice="json", model_name="BERT_RANKING")
