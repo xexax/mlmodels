@@ -3,7 +3,7 @@
         "model_pars": {
             "task": "ranking",
             "loss" : {
-                "RankCrossEntropyLoss" : {"num_neg" : 10}
+                "RankHingeLoss" : {}
             },
             "metrics": {
                 "NormalizedDiscountedCumulativeGain" : {"k" : 3}, 

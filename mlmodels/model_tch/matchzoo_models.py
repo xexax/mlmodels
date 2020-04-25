@@ -88,7 +88,7 @@ def get_task(model_pars):
         if metric == 'NormalizedDiscountedCumulativeGain' and metric_params != {}:
             task.metrics.append(METRICS[metric](k=metric_params["k"]))
         elif metric in METRICS:
-            task.metrics.append(METRICS[metric])
+            task.metrics.append(METRICS[metric]())
         else:
             raise Exception(f"No support of metric {metric} yet")
     return task
