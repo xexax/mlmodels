@@ -22,7 +22,7 @@ https://github.com/pytorch/pytorch/blob/98362d11ffe81ca48748f6b0e1e417cb81ba5998
 """
 import os, json
 import copy
-
+from pathlib import Path
 
 import torch
 import torch.optim as optim
@@ -97,58 +97,6 @@ def get_config_file():
     return path_norm('config/model_tch/Imagecnn.json')
 
 
-"""
-def get_dataset_mnist_torch(data_pars):
-    train_loader = torch.utils.data.DataLoader( datasets.MNIST(data_pars['data_path'], train=True, download=True,
-                    transform=transforms.Compose([
-                        transforms.Grayscale(num_output_channels=3),
-                        transforms.ToTensor(),
-                        transforms.Normalize((0.1307,), (0.3081,))
-                    ])),
-        batch_size=data_pars['train_batch_size'], shuffle=True)
-
-
-    valid_loader = torch.utils.data.DataLoader( datasets.MNIST(data_pars['data_path'], train=False,
-                    transform=transforms.Compose([
-                        transforms.Grayscale(num_output_channels=3),
-                        transforms.ToTensor(),
-                        transforms.Normalize((0.1307,), (0.3081,))
-                    ])),
-        batch_size=data_pars['test_batch_size'], shuffle=True)
-    return train_loader, valid_loader  
-"""
-
-
-
-
-def load_function(package="mlmodels.util", name="path_norm"):
-  import importlib
-  return  getattr(importlib.import_module(package), name)
-
-
-
-def get_dataset_torch(data_pars):
-
-    if  data_pars["transform"]  :
-       transform = load_function(  data_pars.get("preprocess_module", "mlmodels.preprocess.image"), 
-                                   data_pars.get("transform", "torch_transform_mnist" ))()
-    else :
-       transform = None
-
-    
-    dataset_module =  data_pars.get('dataset_module', "torchvision.datasets")   
-    dset = load_function(dataset_module, data_pars.get("dataset", "MNIST") )
-
-    train_loader = torch.utils.data.DataLoader( dset(data_pars['data_path'], train=True, download=True, transform= transform),
-                                                batch_size=data_pars['train_batch_size'], shuffle=True)
-    
-    valid_loader = torch.utils.data.DataLoader( dset(data_pars['data_path'], train=False, download=True, transform= transform),
-                                                batch_size=data_pars['train_batch_size'], shuffle=True)
-
-    return train_loader, valid_loader  
-
-
-
 
 
 
@@ -156,8 +104,9 @@ def get_dataset_torch(data_pars):
 ###########################################################################################################
 class Model:
     def __init__(self, model_pars=None, data_pars=None, compute_pars=None, out_pars=None):
-        self.model_pars = copy.deepcopy(model_pars)  
+        self.model_pars   = copy.deepcopy(model_pars)
         self.compute_pars = copy.deepcopy(compute_pars)
+        self.data_pars    = copy.deepcopy(data_pars)
         m = model_pars 
 
         ### Model Structure        ################################
@@ -215,44 +164,21 @@ def get_params(param_pars=None, **kw):
 
 
 
-def get_dataset2(data_pars=None, **kw):
-    import importlib
-    
-    from torchvision import datasets, transforms
-    data_path        = data_pars['data_path']
-    train_batch_size = data_pars['train_batch_size']
-    test_batch_size  = data_pars['test_batch_size']
-    try:
-        transform=transforms.Compose([
-                    transforms.Grayscale(num_output_channels=3),
-                    transforms.ToTensor(),
-                    transforms.Normalize((0.1307,), (0.3081,))
-                ])
-        dset = getattr(importlib.import_module("torchvision.datasets"), data_pars["dataset"])
-        train_loader = torch.utils.data.DataLoader( dset(data_pars['data_path'], train=True, download=True, transform= transform),
-                                                    batch_size=train_batch_size, shuffle=True)
-
-        valid_loader = torch.utils.data.DataLoader( dset(data_pars['data_path'], train=False, download=True, transform= transform),
-                                                    batch_size=test_batch_size, shuffle=True)
-        return train_loader, valid_loader 
-    except :
-        raise Exception("Dataset doesn't exist")
-
-
-
 def get_dataset(data_pars=None, **kw):
 
     #if data_pars['dataset'] == 'MNIST':
     #    train_loader, valid_loader  = get_dataset_mnist_torch(data_pars)
     #    return train_loader, valid_loader  
+    from mlmodels.preprocess.generic import get_dataset_torch
 
     if data_pars['dataset'] :
         train_loader, valid_loader  = get_dataset_torch(data_pars)
         return train_loader, valid_loader  
 
     else:
-        raise Exception("Dataloader not implemented")
+        raise Exception("dataset not provided ")
         return 0
+
 
 
 def fit(model, data_pars=None, compute_pars=None, out_pars=None, **kwargs):
@@ -351,13 +277,44 @@ def fit_metrics(model, data_pars=None, compute_pars=None, out_pars=None):
 
 
 def save(model, session=None, save_pars=None):
+    import pickle
     from mlmodels.util import save_tch
-    save_tch(model=model, save_pars=save_pars)
+    save2 = copy.deepcopy(save_pars)
+    path = path_norm( save_pars['path'] + "/torch_model/")
+    os.makedirs(Path(path), exist_ok = True)
+
+
+    ### Specialized part
+    save2['path'] = path
+    save_tch(model=model, save_pars=save2)
+
+
+    ### Setup Model
+    d = {"model_pars"  :  model.model_pars, 
+         "compute_pars":  model.compute_pars,
+         "data_pars"   :  model.data_pars
+        }
+    pickle.dump(d, open(path + "/torch_model_pars.pkl", mode="wb"))
+    log(path, os.listdir(path))
 
 
 def load(load_pars):
     from mlmodels.util import load_tch
-    return load_tch(load_pars)
+    import pickle
+    load_pars2 = copy.deepcopy(load_pars)
+    path = path_norm( load_pars['path']  + "/torch_model/" )
+
+    ### Setup Model
+    d = pickle.load( open(path + "/torch_model_pars.pkl", mode="rb")  )
+    model = Model(model_pars= d['model_pars'], compute_pars= d['compute_pars'],
+                  data_pars= d['data_pars'])  
+
+    ### Specialized part
+    load_pars2['path'] = path
+    model2 = load_tch(load_pars2)
+    model.model = model2.model
+
+    return model
 
 
 
@@ -393,11 +350,14 @@ def test(data_path="dataset/", pars_choice="json", config_mode="test"):
     log("#### Plot   ########################################################")
 
 
-    log("#### Save/Load   ###################################################")
+    log("#### Save  #########################################################")
     save_pars = { "path": out_pars["path"]  }
     save(model=model, save_pars=save_pars)
+
+
+    log("#### Load   ########################################################")
     model2 = load( save_pars )
-    ypred = predict(model2, data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)
+    # ypred = predict(model2, data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)
     print(model2)
 
 
@@ -441,8 +401,94 @@ def test2(data_path="dataset/", pars_choice="json", config_mode="test"):
 
 
 if __name__ == "__main__":
-    test(data_path="model_tch/torchhub_cnn.json", pars_choice="json", config_mode="test")
+
+    #### CNN Type
+    test(data_path="model_tch/torchhub_cnn_list.json", pars_choice="json", config_mode="resnet18")
 
 
-    test2(data_path="model_tch/torchhub_pgan.json", pars_choice="json", config_mode="test")
+    #### GAN Type
+    test2(data_path="model_tch/torchhub_gan_list.json", pars_choice="json", config_mode="PGAN")
+
+
+
+
+
+
+
+"""
+def get_dataset2(data_pars=None, **kw):
+    import importlib
+    
+    from torchvision import datasets, transforms
+    data_path        = data_pars['data_path']
+    train_batch_size = data_pars['train_batch_size']
+    test_batch_size  = data_pars['test_batch_size']
+    try:
+        transform=transforms.Compose([
+                    transforms.Grayscale(num_output_channels=3),
+                    transforms.ToTensor(),
+                    transforms.Normalize((0.1307,), (0.3081,))
+                ])
+        dset = getattr(importlib.import_module("torchvision.datasets"), data_pars["dataset"])
+        train_loader = torch.utils.data.DataLoader( dset(data_pars['data_path'], train=True, download=True, transform= transform),
+                                                    batch_size=train_batch_size, shuffle=True)
+
+        valid_loader = torch.utils.data.DataLoader( dset(data_pars['data_path'], train=False, download=True, transform= transform),
+                                                    batch_size=test_batch_size, shuffle=True)
+        return train_loader, valid_loader 
+    except :
+        raise Exception("Dataset doesn't exist")
+"""
+
+
+"""
+def get_dataset_mnist_torch(data_pars):
+    train_loader = torch.utils.data.DataLoader( datasets.MNIST(data_pars['data_path'], train=True, download=True,
+                    transform=transforms.Compose([
+                        transforms.Grayscale(num_output_channels=3),
+                        transforms.ToTensor(),
+                        transforms.Normalize((0.1307,), (0.3081,))
+                    ])),
+        batch_size=data_pars['train_batch_size'], shuffle=True)
+
+
+    valid_loader = torch.utils.data.DataLoader( datasets.MNIST(data_pars['data_path'], train=False,
+                    transform=transforms.Compose([
+                        transforms.Grayscale(num_output_channels=3),
+                        transforms.ToTensor(),
+                        transforms.Normalize((0.1307,), (0.3081,))
+                    ])),
+        batch_size=data_pars['test_batch_size'], shuffle=True)
+    return train_loader, valid_loader  
+"""
+
+
+
+"""
+def load_function(uri_name="path_norm"):
+  # Can load remote part  
+  import importlib
+  pkg = uri_name.split(":")
+  package, name = pkg[0], pkg[1]
+  return  getattr(importlib.import_module(package), name)
+
+
+
+def get_dataset_torch(data_pars):
+
+    transform = None
+    if  data_pars.get("transform_uri")   :
+       transform = load_function( data_pars.get("transform_uri", "mlmodels.preprocess.image:torch_transform_mnist" ))()
+       
+
+    dset = load_function(data_pars.get("dataset", "torchvision.datasets:MNIST") )
+
+    train_loader = torch.utils.data.DataLoader( dset(data_pars['data_path'], train=True, download=True, transform= transform),
+                                                batch_size=data_pars['train_batch_size'], shuffle=True)
+    
+    valid_loader = torch.utils.data.DataLoader( dset(data_pars['data_path'], train=False, download=True, transform= transform),
+                                                batch_size=data_pars['train_batch_size'], shuffle=True)
+
+    return train_loader, valid_loader  
+"""
 

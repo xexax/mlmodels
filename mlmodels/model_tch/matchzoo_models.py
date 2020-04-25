@@ -10,11 +10,14 @@ https://github.com/NTMC-Community/MatchZoo-py/blob/master/tutorials/classificati
 import os, json
 import importlib
 import torch
-import matchzoo as mz
 import numpy as np
 import pandas as pd
+
+import matchzoo as mz
 from mlmodels.util import os_package_root_path, log, path_norm, get_model_uri, path_norm_dict
 
+
+###########################################################################################################
 MODEL_URI = get_model_uri(__file__)
 
 MODELS = {
@@ -64,9 +67,13 @@ CALLBACKS = {
     'PADDING' : lambda mn : MODELS[mn].get_default_padding_callback()
 }
 
+
+###########################################################################################################
 def get_task(model_pars):
     _task = model_pars['task']
     assert _task in TASKS.keys()
+
+    #### Task
     if _task == "ranking":
         _loss = list(model_pars["loss"].keys())[0]
         _loss_params = model_pars["loss"][_loss]
@@ -75,11 +82,14 @@ def get_task(model_pars):
         elif _loss == 'RankCrossEntropyLoss':
             loss =  LOSSES[_loss](num_neg=_loss_params["num_neg"])
         task = mz.tasks.Ranking(losses=loss)
+
     elif _task == "classification" :
         task = mz.tasks.Classification(num_classes=model_pars["num_classes"])
+
     else:
         raise Exception(f"No support task {task} yet")
 
+    #### Metrics
     _metrics = model_pars['metrics']
     task.metrics = []
     for metric in _metrics.keys():
@@ -93,6 +103,7 @@ def get_task(model_pars):
             raise Exception(f"No support of metric {metric} yet")
     return task
 
+
 def get_glove_embedding_matrix(term_index, dimension):
     glove_embedding = mz.datasets.embeddings.load_glove_embedding(dimension=dimension)
     embedding_matrix = glove_embedding.build_matrix(term_index)
@@ -100,12 +111,18 @@ def get_glove_embedding_matrix(term_index, dimension):
     embedding_matrix = embedding_matrix / l2_norm[:, np.newaxis]
     return embedding_matrix
 
-def get_data_loader(model_name, preprocessor, preprocess_pars, raw_data):
-    if "transform" in preprocess_pars:
-        pack_processed = preprocessor.transform(raw_data)
-    elif "fit_transform" in preprocess_pars:
-        pack_processed = preprocessor.fit_transform(raw_data)
 
+
+def get_data_loader(model_name, preprocessor, preprocessor_pars, raw_data):
+
+    pp = preprocessor_pars
+
+    if "transform" in pp:
+        pack_processed = preprocessor.transform(raw_data)
+
+    elif "fit_transform" in pp:
+        pack_processed = preprocessor.fit_transform(raw_data)
+    
     mode = preprocess_pars.get("mode", "point")
     num_dup = preprocess_pars.get("num_dup", 1)
     num_neg = preprocess_pars.get("num_neg", 1)
@@ -116,6 +133,7 @@ def get_data_loader(model_name, preprocessor, preprocess_pars, raw_data):
         # else, term_index would be 0 and embedding matrix would be None.
         term_index = preprocessor.context['vocab_unit'].state['term_index']
         embedding_matrix = get_glove_embedding_matrix(term_index, glove_embedding_matrix_dim)
+
 
     if dataset_callback == "HISTOGRAM":
         # For now, hardcode callback. Hard to generalize
@@ -141,12 +159,14 @@ def get_data_loader(model_name, preprocessor, preprocess_pars, raw_data):
     dataloader_callback = preprocess_pars.get("dataloader_callback")
     dataloader_callback = CALLBACKS[dataloader_callback](model_name)
     dataloader = mz.dataloader.DataLoader(
-        device='cpu',
-        dataset=dataset,
-        stage=stage,
-        callback=dataloader_callback
+        device   = 'cpu',
+        dataset  = dataset,
+        stage    = stage,
+        callback = dataloader_callback
     )
     return dataloader
+
+
 
 def update_model_param(params, model, task, preprocessor):
     model.params['task'] = task
@@ -163,8 +183,10 @@ def update_model_param(params, model, task, preprocessor):
     for key, value in params.items():
         model.params[key] = value
 
+
 def get_config_file():
     return os.path.join(os_package_root_path(__file__, 1), 'config', 'model_tch', 'Imagecnn.json')
+
 
 def get_raw_dataset(data_pars, task):
     if data_pars["dataset"] == "WIKI_QA":
@@ -197,9 +219,9 @@ class Model:
         if "basic_preprocessor" in _preprocessor_pars:
             pars = _preprocessor_pars["basic_preprocessor"]
             preprocessor = mz.preprocessors.BasicPreprocessor(
-                truncated_length_left=pars["truncated_length_left"],
-                truncated_length_right=pars["truncated_length_right"],
-                filter_low_freq=pars["filter_low_freq"]
+                truncated_length_left  = pars["truncated_length_left"],
+                truncated_length_right = pars["truncated_length_right"],
+                filter_low_freq        = pars["filter_low_freq"]
             )
         else:
             preprocessor = MODELS[_model].get_default_preprocessor()
@@ -258,7 +280,7 @@ def fit_metrics(model, data_pars=None, compute_pars=None, out_pars=None):
 
 def save(model, session=None, save_pars=None):
     from mlmodels.util import save_tch
-    save_tch(model=model.model, save_pars=save_pars)
+    save_tch(model=model, save_pars=save_pars)
 
 
 def load(load_pars):

@@ -1,16 +1,29 @@
 """"
-
 Related to data procesisng
+
+TO DO :
+
+   Normalize datasetloader and embedding loading
+
+
+
+1) embeddings can be trainable or fixed  : True
+
+2) embedding are model data, not not split train/test 
+
+
 
 
 
 """
-import os, Path
+import os
+from pathlib import Path
 import pandas as pd, numpy as np
 
 
-from mlmodels.util import path_norm
+from mlmodels.util import path_norm, log
 
+from torch.utils.data import Dataset
 
 
 ###############################################################################################################
@@ -25,9 +38,45 @@ def torch_datasets_wrapper(sets, args_list = None, **args):
 
 
 
-def load_function(package="mlmodels.util", name="path_norm"):
-  import importlib
-  return  getattr(importlib.import_module(package), name)
+def load_function(uri_name="path_norm"):
+  """
+    ##### Pandas CSV case : Custom MLMODELS One
+    "dataset"        : "mlmodels.preprocess.generic:pandasDataset"
+
+    ##### External File processor :
+    "dataset"        : "MyFolder/preprocess/myfile.py:pandasDataset"
+
+      Absolute drive path
+     "MyFolder/mlmodels/preprocess/generic.py:pandasDataset"
+
+
+  """  
+  import importlib, sys
+  from pathlib import Path
+  pkg = uri_name.split(":")
+  package, name = pkg[0], pkg[1]
+
+  try:
+    #### Import from package mlmodels sub-folder
+    return  getattr(importlib.import_module(package), name)
+
+  except Exception as e1:
+    try:
+        ### Add Folder to Path and Load absoluate path module
+        path_parent = str(Path(package).parent.parent.absolute())
+        sys.path.append(path_parent)
+        #print(path_parent)
+
+        #### import Absilute Path model_tf.1_lstm
+        model_name   = Path(package).stem  # remove .py
+        package_name = str(Path(package).parts[-2]) + "." + str(model_name)
+        #print(package_name, model_name)
+        return  getattr(importlib.import_module(package_name), name)
+
+    except Exception as e2:
+        raise NameError(f"Module {pkg} notfound, {e1}, {e2}")
+
+
 
 
 def get_dataset_torch(data_pars):
@@ -37,52 +86,264 @@ def get_dataset_torch(data_pars):
          ImageNet CIFAR STL10 SVHN PhotoTour SBU Flickr VOC Cityscapes SBD USPS Kinetics-400 HMDB51 UCF101 CelebA
 
       torchtext.datasets
-         Sentiment Analysis
-         SST IMDb Question Classification TREC Entailment SNLI MultiNLI 
-         Language Modeling WikiText-2 WikiText103 
-         PennTreebank 
-         Machine Translation 
-            Multi30k IWSLT WMT14 
-         Sequence Tagging 
-            UDPOS CoNLL2000Chunking 
-         Question Answering 
-            BABI20
+         Sentiment Analysis:    SST IMDb Question Classification TREC Entailment SNLI MultiNLI 
+         Language Modeling:     WikiText-2 WikiText103  PennTreebank 
+         Machine Translation :  Multi30k IWSLT WMT14 
+         Sequence Tagging    :  UDPOS CoNLL2000Chunking 
+         Question Answering  :  BABI20
+
+
+    ##### MNIST case : TorchVison TorchText Pre-Built
+    "dataset"       : "torchvision.datasets:MNIST"
+    "transform_uri" : "mlmodels.preprocess.image:torch_transform_mnist"
+
+
+    ##### Pandas CSV case : Custom MLMODELS One
+    "dataset"        : "mlmodels.preprocess.generic:pandasDataset"
+    "transform_uri"  : "mlmodels.preprocess.text:torch_fillna"
+
+
+    ##### External File processor :
+    "dataset"        : "MyFolder/preprocess/myfile.py:pandasDataset"
+    "transform_uri"  : "MyFolder/preprocess/myfile.py:torch_fillna"
+
+
     """
-    import torch
+    from torch.utils.data import DataLoader
     d = data_pars
-    
-    if  d["transform"]  :
-       transform = load_function(  d.get("preprocess_module", "mlmodels.preprocess.image"), 
-                                   d.get("transform", "torch_transform_mnist" ))()
-    else :
-       transform = None
+
+    transform = None
+    if  len(data_pars.get("transform_uri", ""))  > 1 :
+       transform = load_function( d.get("transform_uri", "mlmodels.preprocess.image:torch_transform_mnist" ))()
 
 
-
-    train_loader, valid_loader = None, None
-    if d['train_path'] :
-      # Load from files  
-      pass
-      if d['test_path'] :
-        # Load from files  
-        pass
+    #### from mlmodels.preprocess.image import pandasDataset
+    dset = load_function(d.get("dataset", "torchvision.datasets:MNIST") ) 
 
 
-    elif d['dataset'] :
-        dataset_module =  d.get('dataset_module', "torchvision.datasets")   
-        dset = load_function(dataset_module), d["dataset"]
-
-        train_loader = torch.utils.data.DataLoader( dset(d['data_path'], train=True, download=True, transform= transform),
-                                                    batch_size=d['train_batch_size'], shuffle=True)
+    if d.get('train_path') and  d.get('test_path') :
+        ###### Custom Build Dataset   ####################################################
+        dset_inst    = dset(d['train_path'], train=True, download=True, transform= transform, data_pars=data_pars)
+        train_loader = DataLoader( dset_inst, batch_size=d['train_batch_size'], shuffle= d.get('shuffle', True))
         
-        valid_loader = torch.utils.data.DataLoader( dset(d['data_path'], train=False, download=True, transform= transform),
-                                                    batch_size=d['train_batch_size'], shuffle=True)
+        dset_inst    = dset(d['test_path'], train=False, download=True, transform= transform, data_pars=data_pars)
+        valid_loader = DataLoader( dset_inst, batch_size=d['train_batch_size'], shuffle= d.get('shuffle', True))
+
+
+    else :
+        ###### Pre Built Dataset available  #############################################
+        dset_inst    = dset(d['data_path'], train=True, download=True, transform= transform)
+        train_loader = DataLoader( dset_inst, batch_size=d['train_batch_size'], shuffle= d.get('shuffle', True))
+        
+        dset_inst    = dset(d['data_path'], train=False, download=True, transform= transform)
+        valid_loader = DataLoader( dset_inst, batch_size=d['train_batch_size'], shuffle= d.get('shuffle', True))
 
 
     return train_loader, valid_loader  
 
 
 
+
+def get_model_data(model_pars, data_pars):
+    """"
+      Mostly Embedding data, it can be external data used in the model.
+
+    ##### MNIST case : TorchVison TorchText Pre-Built
+    "dataset"       : "torchvision.datasets:MNIST"
+    "transform_uri" : "mlmodels.preprocess.image:torch_transform_mnist"
+
+
+    ##### Pandas CSV case : Custom MLMODELS One
+    "dataset"        : "mlmodels.preprocess.generic:pandasDataset"
+    "transform_uri"  : "mlmodels.preprocess.text:torch_fillna"
+
+
+    ##### External File processor :
+    "dataset"        : "MyFolder/preprocess/myfile.py:pandasDataset"
+    "transform_uri"  : "MyFolder/preprocess/myfile.py:torch_fillna"
+
+
+    """
+    from torch.utils.data import DataLoader
+    d = model_pars
+
+    ### Embedding Transformer
+    transform = None
+    if  len(data_pars.get("transform_uri", ""))  > 1 :
+       transform = load_function( d.get("transform_uri", "mlmodels.preprocess.text:torch_transform_glove" ))()
+
+
+    #### from mlmodels.preprocess.text import embeddingLoader
+    dset = load_function(d.get("embedding", "torchtext.embedding:glove") )
+
+    data = None
+    if len(d.get('embedding_path', "")) > 1 :
+        ###### Custom Build Dataset   ####################################################
+        data    = dset(d['embedding_path'], train=True, download=True, transform= transform, model_pars=model_pars, data_pars=data_pars)
+        
+
+    else :
+        ###### Pre Built Dataset available  #############################################
+        data    = dset(d['embedding_path'], train=True, download=True, transform= transform)
+
+
+    return data
+
+
+
+
+
+def text_create_tabular_dataset(path_train, path_valid,   lang='en', pretrained_emb='glove.6B.300d'):
+    import spacy
+    import torchtext
+    from torchtext.data import Field
+    from torchtext.data import TabularDataset
+    from torchtext.vocab import GloVe
+    from torchtext.data import Iterator, BucketIterator
+    import torchtext.datasets
+    from time import sleep
+    import re
+
+    def clean_str(string):
+        """
+        Tokenization/string cleaning for all datasets except for SST.
+        Original taken from https://github.com/yoonkim/CNN_sentence/blob/master/process_data.py
+        """
+        string = re.sub(r"[^A-Za-z0-9(),!?\'\`]", " ", string)
+        string = re.sub(r"\'s", " \'s", string)
+        string = re.sub(r"\'ve", " \'ve", string)
+        string = re.sub(r"n\'t", " n\'t", string)
+        string = re.sub(r"\'re", " \'re", string)
+        string = re.sub(r"\'d", " \'d", string)
+        string = re.sub(r"\'ll", " \'ll", string)
+        string = re.sub(r",", " , ", string)
+        string = re.sub(r"!", " ! ", string)
+        string = re.sub(r"\(", " \( ", string)
+        string = re.sub(r"\)", " \) ", string)
+        string = re.sub(r"\?", " \? ", string)
+        string = re.sub(r"\s{2,}", " ", string)
+        return string.strip()
+
+
+
+    disable = [
+        'tagger', 'parser', 'ner', 'textcat'
+        'entity_ruler', 'sentencizer', 
+        'merge_noun_chunks', 'merge_entities',
+        'merge_subtokens']
+    try :
+      spacy_en = spacy.load( f'{lang}_core_web_sm', disable= disable)
+
+    except :
+       #### Very hacky to get Glove Data 
+       log( f"Download {lang}")
+       os.system( f"python -m spacy download {lang}")
+       sleep(60)
+       spacy_en = spacy.load( f'{lang}_core_web_sm', disable= disable)  
+
+
+    def tokenizer(text):
+        return [tok.text for tok in spacy_en.tokenizer(text)]
+
+    # Creating field for text and label
+    TEXT = Field(sequential=True, tokenize=tokenizer, lower=True)
+    LABEL = Field(sequential=False)
+
+    print('Preprocessing the text...')
+    # clean the text
+    TEXT.preprocessing = torchtext.data.Pipeline(clean_str)
+
+    print('Creating tabular datasets...It might take a while to finish!')
+    train_datafield = [('text', TEXT), ('label', LABEL)]
+    tabular_train = TabularDataset(
+        path=path_train, format='csv',
+        skip_header=True, fields=train_datafield)
+
+    valid_datafield = [('text', TEXT), ('label', LABEL)]
+
+    tabular_valid = TabularDataset(path=path_valid, 
+                                   format='csv',
+                                   skip_header=True,
+                                   fields=valid_datafield)
+
+    print('Building vocaulary...')
+    TEXT.build_vocab(tabular_train, vectors=pretrained_emb)
+    LABEL.build_vocab(tabular_train)
+
+    return tabular_train, tabular_valid, TEXT.vocab
+
+
+
+
+
+class pandasDataset(Dataset):
+    """
+    Defines a dataset composed of sentiment text and labels
+    Attributes:
+        df (Dataframe): Dataframe of the CSV from teh path
+        sample_weights(ndarray, shape(len(labels),)): An array with each sample_weight[i] as the weight of the ith sample
+        data (list[int, [int]]): The data in the set
+    """
+   
+    def __init__(self,root="", train=True, transform=None, target_transform=None,
+                 download=False, data_pars=None, ):
+        import torch
+        self.data_pars        = data_pars
+        self.transform        = transform
+        self.target_transform = target_transform
+        self.download         = download
+        d = data_pars
+
+
+        path = d['train_path'] if train else d['test_path']
+        filename = d['filename']
+        colX =d['colX']
+
+
+        # df = torch.load(os.path.join(path, filename))
+        df = pd.read_csv(os.path.join(path, filename))
+        self.df = df
+
+
+        #### Split  ####################
+        X = df[ colX ]
+        labels = df[ d["coly"] ]
+
+
+        #### Compute sample weights from inverse class frequencies
+        class_sample_count = np.unique(labels, return_counts=True)[1]
+        weight = 1. / class_sample_count
+        self.samples_weight = torch.from_numpy(weight[labels])
+
+
+        #### Data Joining  ############
+        self.data = list(zip(X, labels))
+
+
+    def __len__(self):
+        return len(self.data)
+
+
+    def __getitem__(self, index):
+        """
+        Args:
+            index (int): Index
+        Returns:
+            tuple: (image, target) where target is index of the target class.
+        """
+        X, target = self.data[index], int(self.targets[index])
+
+
+        if self.transform is not None:
+            X = self.transform(X)
+
+        if self.target_transform is not None:
+            target = self.target_transform(target)
+
+        return X, target
+
+    def shuffle(self, random_state=123):
+            self._df = self._df.sample(frac=1.0, random_state=random_state)
 
 
 
@@ -180,6 +441,21 @@ def tf_dataset(dataset_pars):
     print(out_path, os.listdir( out_path ))
         
       
+
+
+########################################################################################
+########################################################################################
+def test(data_path="dataset/", pars_choice="json", config_mode="test"):
+    ### Local test
+
+    log("#### Loading params   ##############################################")
+
+
+
+if __name__ == "__main__":
+    test(data_path="model_tch/file.json", pars_choice="json", config_mode="test")
+
+
 
 
 
