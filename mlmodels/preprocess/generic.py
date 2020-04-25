@@ -29,7 +29,11 @@ def torch_datasets_wrapper(sets, args_list = None, **args):
 
 def load_function(uri_name="path_norm"):
   """
-     "mlmodels.preprocess.generic:pandasDataset"
+    ##### Pandas CSV case : Custom MLMODELS One
+    "dataset"        : "mlmodels.preprocess.generic:pandasDataset"
+
+    ##### External File processor :
+    "dataset"        : "MyFolder/preprocess/myfile.py:pandasDataset"
 
       Absolute drive path
      "MyFolder/mlmodels/preprocess/generic.py:pandasDataset"
@@ -37,6 +41,7 @@ def load_function(uri_name="path_norm"):
 
   """  
   import importlib, sys
+  from pathlib import Path
   pkg = uri_name.split(":")
   package, name = pkg[0], pkg[1]
 
@@ -77,18 +82,22 @@ def get_dataset_torch(data_pars):
          Question Answering  :  BABI20
 
 
-    ##### MNIST case 
+    ##### MNIST case : TorchVison TorchText Pre-Built
     "dataset"       : "torchvision.datasets:MNIST"
     "transform_uri" : "mlmodels.preprocess.image:torch_transform_mnist"
 
 
-    ##### Pandas CSV case
+    ##### Pandas CSV case : Custom MLMODELS One
     "dataset"        : "mlmodels.preprocess.generic:pandasDataset"
     "transform_uri"  : "mlmodels.preprocess.text:torch_fillna"
 
 
+    ##### External File processor :
+    "dataset"        : "MyFolder/preprocess/myfile.py:pandasDataset"
+    "transform_uri"  : "MyFolder/preprocess/myfile.py:torch_fillna"
+
+
     """
-    import torch
     from torch.utils.data import DataLoader
     d = data_pars
 
@@ -120,6 +129,54 @@ def get_dataset_torch(data_pars):
 
 
     return train_loader, valid_loader  
+
+
+
+
+def get_model_data(model_pars, data_pars):
+    """"
+      Mostly Embedding data, it can be external data used in the model.
+
+    ##### MNIST case : TorchVison TorchText Pre-Built
+    "dataset"       : "torchvision.datasets:MNIST"
+    "transform_uri" : "mlmodels.preprocess.image:torch_transform_mnist"
+
+
+    ##### Pandas CSV case : Custom MLMODELS One
+    "dataset"        : "mlmodels.preprocess.generic:pandasDataset"
+    "transform_uri"  : "mlmodels.preprocess.text:torch_fillna"
+
+
+    ##### External File processor :
+    "dataset"        : "MyFolder/preprocess/myfile.py:pandasDataset"
+    "transform_uri"  : "MyFolder/preprocess/myfile.py:torch_fillna"
+
+
+    """
+    from torch.utils.data import DataLoader
+    d = model_pars
+
+    ### Embedding Transformer
+    transform = None
+    if  d.get("transform_uri")   :
+       transform = load_function( d.get("transform_uri", "mlmodels.preprocess.text:torch_transform_glove" ))()
+
+
+    #### from mlmodels.preprocess.text import embeddingLoader
+    dset = load_function(d.get("embedding", "torchtext.embedding:glove") )
+
+    data = None
+    if d.get('embedding_path') :
+        ###### Custom Build Dataset   ####################################################
+        data    = dset(d['embedding_path'], train=True, download=True, transform= transform, model_pars=model_pars, data_pars=data_pars)
+        
+
+    else :
+        ###### Pre Built Dataset available  #############################################
+        data    = dset(d['embedding_path'], train=True, download=True, transform= transform)
+
+
+    return data
 
 
 
@@ -289,6 +346,21 @@ def tf_dataset(dataset_pars):
     print(out_path, os.listdir( out_path ))
         
       
+
+
+########################################################################################
+########################################################################################
+def test(data_path="dataset/", pars_choice="json", config_mode="test"):
+    ### Local test
+
+    log("#### Loading params   ##############################################")
+
+
+
+if __name__ == "__main__":
+    test(data_path="model_tch/file.json", pars_choice="json", config_mode="test")
+
+
 
 
 
