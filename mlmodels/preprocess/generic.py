@@ -102,8 +102,7 @@ def get_dataset_torch(data_pars):
     d = data_pars
 
     transform = None
-    t = data_pars.get("transform_uri", "")
-    if  len(t)  > 1 :
+    if  len(data_pars.get("transform_uri", ""))  > 1 :
        transform = load_function( d.get("transform_uri", "mlmodels.preprocess.image:torch_transform_mnist" ))()
 
 
@@ -159,7 +158,7 @@ def get_model_data(model_pars, data_pars):
 
     ### Embedding Transformer
     transform = None
-    if  d.get("transform_uri")   :
+    if  len(data_pars.get("transform_uri", ""))  > 1 :
        transform = load_function( d.get("transform_uri", "mlmodels.preprocess.text:torch_transform_glove" ))()
 
 
@@ -167,7 +166,7 @@ def get_model_data(model_pars, data_pars):
     dset = load_function(d.get("embedding", "torchtext.embedding:glove") )
 
     data = None
-    if d.get('embedding_path') :
+    if len(d.get('embedding_path', "")) > 1 :
         ###### Custom Build Dataset   ####################################################
         data    = dset(d['embedding_path'], train=True, download=True, transform= transform, model_pars=model_pars, data_pars=data_pars)
         
