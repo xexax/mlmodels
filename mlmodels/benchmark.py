@@ -96,7 +96,7 @@ def benchmark_run(bench_pars=None, args=None, config_mode="test"):
     log("Model List", json_list)
     ii = -1
     for js in json_list :
-        log ( f"### Running {jsonf} #####")
+        log ( f"### Running {js} #####")
         try : 
             log("#### Model URI and Config JSON")
             #config_path = path_norm(jsonf)
@@ -141,7 +141,7 @@ def benchmark_run(bench_pars=None, args=None, config_mode="test"):
         except Exception as e:
             import traceback
             traceback.print_exc()
-            log( jsonf, e)
+            log( js, e)
 
     log( f"benchmark file saved at {output_path}")  
     os.makedirs( output_path, exist_ok=True)
