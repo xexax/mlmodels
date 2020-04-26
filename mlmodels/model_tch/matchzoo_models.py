@@ -21,23 +21,23 @@ from mlmodels.util import os_package_root_path, log, path_norm, get_model_uri, p
 MODEL_URI = get_model_uri(__file__)
 
 MODELS = {
-    'DRMM' : mz.models.DRMM,
-    'DRMMTKS' : mz.models.DRMMTKS, 
-    'ARC-I' : mz.models.ArcI,
-    'ARC-II' : mz.models.ArcII, 
-    'DSSM' : mz.models.DSSM, 
-    'CDSSM': mz.models.CDSSM, 
-    'MatchLSTM' : mz.models.MatchLSTM,
-    'DUET' : mz.models.DUET,
-    'KNRM' : mz.models.KNRM,
-    'ConvKNRM' : mz.models.ConvKNRM, 
-    'ESIM' : mz.models.ESIM,
-    'BiMPM' : mz.models.BiMPM,
-    'MatchPyramid' : mz.models.MatchPyramid, 
-    'Match-SRNN' : mz.models.MatchSRNN,
-    'aNMM' : mz.models.aNMM,
-    'HBMP' : mz.models.HBMP,
-    'BERT' : mz.models.Bert
+    'DRMM'         : mz.models.DRMM,
+    'DRMMTKS'      : mz.models.DRMMTKS,
+    'ARC-I'        : mz.models.ArcI,
+    'ARC-II'       : mz.models.ArcII,
+    'DSSM'         : mz.models.DSSM,
+    'CDSSM'        : mz.models.CDSSM,
+    'MatchLSTM'    : mz.models.MatchLSTM,
+    'DUET'         : mz.models.DUET,
+    'KNRM'         : mz.models.KNRM,
+    'ConvKNRM'     : mz.models.ConvKNRM,
+    'ESIM'         : mz.models.ESIM,
+    'BiMPM'        : mz.models.BiMPM,
+    'MatchPyramid' : mz.models.MatchPyramid,
+    'Match-SRNN'   : mz.models.MatchSRNN,
+    'aNMM'         : mz.models.aNMM,
+    'HBMP'         : mz.models.HBMP,
+    'BERT'         : mz.models.Bert
 }
 
 TASKS = {
@@ -52,7 +52,7 @@ METRICS = {
 }
 
 LOSSES = {
-    'RankHingeLoss' : mz.losses.RankHingeLoss,
+    'RankHingeLoss'        : mz.losses.RankHingeLoss,
     'RankCrossEntropyLoss' : mz.losses.RankCrossEntropyLoss
 }
 
@@ -73,12 +73,13 @@ def get_task(model_pars):
     _task = model_pars['task']
     assert _task in TASKS.keys()
 
-    #### Task
+    #### Task  #######################################
     if _task == "ranking":
         _loss = list(model_pars["loss"].keys())[0]
         _loss_params = model_pars["loss"][_loss]
         if _loss == 'RankHingeLoss':
             loss =  LOSSES[_loss]()
+
         elif _loss == 'RankCrossEntropyLoss':
             loss =  LOSSES[_loss](num_neg=_loss_params["num_neg"])
         task = mz.tasks.Ranking(losses=loss)
@@ -89,14 +90,16 @@ def get_task(model_pars):
     else:
         raise Exception(f"No support task {task} yet")
 
-    #### Metrics
+    #### Metrics  ####################################
     _metrics = model_pars['metrics']
     task.metrics = []
     for metric in _metrics.keys():
         metric_params = _metrics[metric]
+
         # Find a better way later to apply params for metric, for now hardcode.
         if metric == 'NormalizedDiscountedCumulativeGain' and metric_params != {}:
             task.metrics.append(METRICS[metric](k=metric_params["k"]))
+
         elif metric in METRICS:
             task.metrics.append(METRICS[metric]())
         else:
@@ -105,9 +108,9 @@ def get_task(model_pars):
 
 
 def get_glove_embedding_matrix(term_index, dimension):
-    glove_embedding = mz.datasets.embeddings.load_glove_embedding(dimension=dimension)
+    glove_embedding  = mz.datasets.embeddings.load_glove_embedding(dimension=dimension)
     embedding_matrix = glove_embedding.build_matrix(term_index)
-    l2_norm = np.sqrt((embedding_matrix * embedding_matrix).sum(axis=1))
+    l2_norm          = np.sqrt((embedding_matrix * embedding_matrix).sum(axis=1))
     embedding_matrix = embedding_matrix / l2_norm[:, np.newaxis]
     return embedding_matrix
 
@@ -123,11 +126,12 @@ def get_data_loader(model_name, preprocessor, preprocess_pars, raw_data):
     elif "fit_transform" in pp:
         pack_processed = preprocessor.fit_transform(raw_data)
     
-    mode = preprocess_pars.get("mode", "point")
-    num_dup = preprocess_pars.get("num_dup", 1)
-    num_neg = preprocess_pars.get("num_neg", 1)
-    dataset_callback = preprocess_pars.get("dataset_callback")
-    glove_embedding_matrix_dim = preprocess_pars.get("glove_embedding_matrix_dim")
+    mode                       = pp.get("mode", "point")
+    num_dup                    = pp.get("num_dup", 1)
+    num_neg                    = pp.get("num_neg", 1)
+    dataset_callback           = pp.get("dataset_callback")
+    glove_embedding_matrix_dim = pp.get("glove_embedding_matrix_dim")
+
     if glove_embedding_matrix_dim:
         # Make sure you've transformed data before generating glove embedding,
         # else, term_index would be 0 and embedding matrix would be None.
@@ -141,22 +145,22 @@ def get_data_loader(model_name, preprocessor, preprocess_pars, raw_data):
             embedding_matrix, bin_size=30, hist_mode='LCH'
         )]
 
-    resample = preprocess_pars.get("resample")
-    sort = preprocess_pars.get("sort")
-    batch_size = preprocess_pars.get("batch_size", 1)
+    resample   = pp.get("resample")
+    sort       = pp.get("sort")
+    batch_size = pp.get("batch_size", 1)
     dataset = mz.dataloader.Dataset(
-        data_pack=pack_processed,
-        mode=mode,
-        num_dup=num_dup,
-        num_neg=num_neg,
-        batch_size=batch_size,
-        resample=resample,
-        sort=sort,
-        callbacks=dataset_callback
+        data_pack  = pack_processed,
+        mode       = mode,
+        num_dup    = num_dup,
+        num_neg    = num_neg,
+        batch_size = batch_size,
+        resample   = resample,
+        sort       = sort,
+        callbacks  = dataset_callback
     )
 
-    stage = preprocess_pars.get("stage")
-    dataloader_callback = preprocess_pars.get("dataloader_callback")
+    stage               = pp.get("stage")
+    dataloader_callback = pp.get("dataloader_callback")
     dataloader_callback = CALLBACKS[dataloader_callback](model_name)
     dataloader = mz.dataloader.DataLoader(
         device   = 'cpu',
@@ -173,8 +177,8 @@ def update_model_param(params, model, task, preprocessor):
     glove_embedding_matrix_dim = params.get("glove_embedding_matrix_dim")
 
     if glove_embedding_matrix_dim:
-        term_index = preprocessor.context['vocab_unit'].state['term_index']
-        embedding_matrix = get_glove_embedding_matrix(term_index, glove_embedding_matrix_dim)
+        term_index                = preprocessor.context['vocab_unit'].state['term_index']
+        embedding_matrix          = get_glove_embedding_matrix(term_index, glove_embedding_matrix_dim)
         model.params['embedding'] = embedding_matrix
         # Remove those entried in JSON which not directly feeded to model as params
         del params["glove_embedding_matrix_dim"]
@@ -191,9 +195,9 @@ def get_config_file():
 def get_raw_dataset(data_pars, task):
     if data_pars["dataset"] == "WIKI_QA":
         filter_train_pack_raw = data_pars.get("preprocess").get("train").get("filter", False)
-        filter_test_pack_raw = data_pars.get("preprocess").get("test").get("filter", False)
-        train_pack_raw = mz.datasets.wiki_qa.load_data('train', task=task, filtered=filter_train_pack_raw)
-        test_pack_raw  = mz.datasets.wiki_qa.load_data('test', task=task, filtered=filter_test_pack_raw)
+        filter_test_pack_raw  = data_pars.get("preprocess").get("test").get("filter", False)
+        train_pack_raw        = mz.datasets.wiki_qa.load_data('train', task=task, filtered=filter_train_pack_raw)
+        test_pack_raw         = mz.datasets.wiki_qa.load_data('test', task=task, filtered=filter_test_pack_raw)
         return train_pack_raw, test_pack_raw
     else:
         dataset_name = data_pars["dataset"]
@@ -255,18 +259,23 @@ def fit(model, data_pars=None, compute_pars=None, out_pars=None, **kwargs):
     optimizer = OPTIMIZERS[optimizer_](model_parameters, compute_pars["optimizer"][optimizer_])
 
     trainer = mz.trainers.Trainer(
-                model=model.model, 
-                optimizer=optimizer, 
-                trainloader=model.trainloader, 
-                validloader=model.testloader,
-                validate_interval=None, 
-                epochs=epochs
+                model             = model.model,
+                optimizer         = optimizer,
+                trainloader       = model.trainloader,
+                validloader       = model.testloader,
+                validate_interval = None,
+                epochs            = epochs
             )
     trainer.run()
     return model, None
 
 def predict(model, session=None, data_pars=None, compute_pars=None, out_pars=None):
     # get a batch of data
+    """
+
+
+
+    """
     model0 = model.model
     _, valid_iter = get_dataset(data_pars=data_pars)
     x_test        = next(iter(valid_iter))[0].to(device)
@@ -286,6 +295,7 @@ def save(model, session=None, save_pars=None):
 def load(load_pars):
     from mlmodels.util import load_tch
     return load_tch(load_pars)
+
 
 def get_params(param_pars=None, **kw):
     pp          = param_pars
@@ -309,7 +319,7 @@ def get_params(param_pars=None, **kw):
 
 ###########################################################################################################
 ###########################################################################################################
-def train(data_path, pars_choice, model_name):
+def test_train(data_path, pars_choice, model_name):
     ### Local test
 
     log("#### Loading params   ##############################################")
@@ -333,7 +343,7 @@ def train(data_path, pars_choice, model_name):
 
     log("#### metrics   #####################################################")
     #metrics_val = fit_metrics(model, data_pars, compute_pars, out_pars)
-    print(metrics_val)
+    # print(metrics_val)
 
 
     log("#### Plot   ########################################################")
@@ -348,6 +358,6 @@ def train(data_path, pars_choice, model_name):
 
 
 if __name__ == "__main__":
-    train(data_path="model_tch/matchzoo_models.json", pars_choice="json", model_name="BERT_RANKING")
+    test_train(data_path="model_tch/matchzoo_models.json", pars_choice="json", model_name="BERT_RANKING")
 
 
