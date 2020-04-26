@@ -35,7 +35,7 @@ jobs:
            bin/hub pull-request --base infinitiv-ai:dev  --head arita37:dev   -m "Auto Sync arita37/Dev"  & \
            bin/hub pull-request --base souravsingh:Addmodel-ATSPy  --head arita37:dev   -m "Auto Sync arita37/Dev"  & \
            bin/hub pull-request --base Ahmed3bbas:vision   --head arita37:dev   -m "Auto Sync arita37/Dev"  & \
-
+           bin/hub pull-request --base danieltamming:daniel   --head arita37:dev   -m "Auto Sync arita37/Dev"  & \
 
 
 
