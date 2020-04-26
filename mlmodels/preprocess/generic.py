@@ -1,6 +1,17 @@
 """"
-
 Related to data procesisng
+
+TO DO :
+
+   Normalize datasetloader and embedding loading
+
+
+
+1) embeddings can be trainable or fixed  : True
+
+2) embedding are model data, not not split train/test 
+
+
 
 
 
@@ -10,7 +21,7 @@ from pathlib import Path
 import pandas as pd, numpy as np
 
 
-from mlmodels.util import path_norm
+from mlmodels.util import path_norm, log
 
 from torch.utils.data import Dataset
 
@@ -102,12 +113,12 @@ def get_dataset_torch(data_pars):
     d = data_pars
 
     transform = None
-    if  data_pars.get("transform_uri")   :
+    if  len(data_pars.get("transform_uri", ""))  > 1 :
        transform = load_function( d.get("transform_uri", "mlmodels.preprocess.image:torch_transform_mnist" ))()
 
 
     #### from mlmodels.preprocess.image import pandasDataset
-    dset = load_function(d.get("dataset", "torchvision.datasets:MNIST") )
+    dset = load_function(d.get("dataset", "torchvision.datasets:MNIST") ) 
 
 
     if d.get('train_path') and  d.get('test_path') :
@@ -158,7 +169,7 @@ def get_model_data(model_pars, data_pars):
 
     ### Embedding Transformer
     transform = None
-    if  d.get("transform_uri")   :
+    if  len(data_pars.get("transform_uri", ""))  > 1 :
        transform = load_function( d.get("transform_uri", "mlmodels.preprocess.text:torch_transform_glove" ))()
 
 
@@ -166,7 +177,7 @@ def get_model_data(model_pars, data_pars):
     dset = load_function(d.get("embedding", "torchtext.embedding:glove") )
 
     data = None
-    if d.get('embedding_path') :
+    if len(d.get('embedding_path', "")) > 1 :
         ###### Custom Build Dataset   ####################################################
         data    = dset(d['embedding_path'], train=True, download=True, transform= transform, model_pars=model_pars, data_pars=data_pars)
         
@@ -177,6 +188,166 @@ def get_model_data(model_pars, data_pars):
 
 
     return data
+
+
+
+
+
+def text_create_tabular_dataset(path_train, path_valid,   lang='en', pretrained_emb='glove.6B.300d'):
+    import spacy
+    import torchtext
+    from torchtext.data import Field
+    from torchtext.data import TabularDataset
+    from torchtext.vocab import GloVe
+    from torchtext.data import Iterator, BucketIterator
+    import torchtext.datasets
+    from time import sleep
+    import re
+
+    def clean_str(string):
+        """
+        Tokenization/string cleaning for all datasets except for SST.
+        Original taken from https://github.com/yoonkim/CNN_sentence/blob/master/process_data.py
+        """
+        string = re.sub(r"[^A-Za-z0-9(),!?\'\`]", " ", string)
+        string = re.sub(r"\'s", " \'s", string)
+        string = re.sub(r"\'ve", " \'ve", string)
+        string = re.sub(r"n\'t", " n\'t", string)
+        string = re.sub(r"\'re", " \'re", string)
+        string = re.sub(r"\'d", " \'d", string)
+        string = re.sub(r"\'ll", " \'ll", string)
+        string = re.sub(r",", " , ", string)
+        string = re.sub(r"!", " ! ", string)
+        string = re.sub(r"\(", " \( ", string)
+        string = re.sub(r"\)", " \) ", string)
+        string = re.sub(r"\?", " \? ", string)
+        string = re.sub(r"\s{2,}", " ", string)
+        return string.strip()
+
+
+
+    disable = [
+        'tagger', 'parser', 'ner', 'textcat'
+        'entity_ruler', 'sentencizer', 
+        'merge_noun_chunks', 'merge_entities',
+        'merge_subtokens']
+    try :
+      spacy_en = spacy.load( f'{lang}_core_web_sm', disable= disable)
+
+    except :
+       #### Very hacky to get Glove Data 
+       log( f"Download {lang}")
+       os.system( f"python -m spacy download {lang}")
+       sleep(60)
+       spacy_en = spacy.load( f'{lang}_core_web_sm', disable= disable)  
+
+
+    def tokenizer(text):
+        return [tok.text for tok in spacy_en.tokenizer(text)]
+
+    # Creating field for text and label
+    TEXT = Field(sequential=True, tokenize=tokenizer, lower=True)
+    LABEL = Field(sequential=False)
+
+    print('Preprocessing the text...')
+    # clean the text
+    TEXT.preprocessing = torchtext.data.Pipeline(clean_str)
+
+    print('Creating tabular datasets...It might take a while to finish!')
+    train_datafield = [('text', TEXT), ('label', LABEL)]
+    tabular_train = TabularDataset(
+        path=path_train, format='csv',
+        skip_header=True, fields=train_datafield)
+
+    valid_datafield = [('text', TEXT), ('label', LABEL)]
+
+    tabular_valid = TabularDataset(path=path_valid, 
+                                   format='csv',
+                                   skip_header=True,
+                                   fields=valid_datafield)
+
+    print('Building vocaulary...')
+    TEXT.build_vocab(tabular_train, vectors=pretrained_emb)
+    LABEL.build_vocab(tabular_train)
+
+    return tabular_train, tabular_valid, TEXT.vocab
+
+
+
+
+
+
+class numpyDataset(Dataset):
+    """
+    Defines a dataset composed of sentiment text and labels
+    Attributes:
+        X: numpy tensor of the path
+        y: numpy for labels
+        sample_weights(ndarray, shape(len(labels),)): An array with each sample_weight[i] as the weight of the ith sample
+        data (list[int, [int]]): The data in the set
+
+
+    """
+   
+    def __init__(self,root="", train=True, transform=None, target_transform=None,
+                 download=False, data_pars=None, ):
+        import torch
+        import numpy as np
+        self.data_pars        = data_pars
+        self.transform        = transform
+        self.target_transform = target_transform
+        self.download         = download
+        d = data_pars
+
+
+        path = d['train_path'] if train else d['test_path']
+        #filename = d['X_filename'], d['y_filename']
+        #colX =d['colX']
+
+
+        # df = torch.load(os.path.join(path, filename))
+        X      = np.load(os.path.join(path, d['X_filename']))
+        labels = np.load(os.path.join(path, d['y_filename'] )) 
+        # self.X = X
+        # self.labels = labels
+
+
+        #### Split  ####################
+        #X = df[ colX ]
+        #labels = df[ d["coly"] ]
+
+
+        #### Compute sample weights from inverse class frequencies
+        class_sample_count = np.unique(labels, return_counts=True)[1]
+        weight = 1. / class_sample_count
+        self.samples_weight = torch.from_numpy(weight[labels])
+
+
+        #### Data Joining  ############
+        self.data = list(zip(X, labels))
+
+
+    def __len__(self):
+        return len(self.data)
+
+
+    def __getitem__(self, index):
+        """
+        Args:
+            index (int): Index
+        Returns:
+            tuple: (image, target) where target is index of the target class.
+        """
+        X, target = self.data[index], int(self.targets[index])
+
+
+        if self.transform is not None:
+            X = self.transform(X)
+
+        if self.target_transform is not None:
+            target = self.target_transform(target)
+
+        return X, target
 
 
 
