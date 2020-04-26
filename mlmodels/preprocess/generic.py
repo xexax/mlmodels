@@ -115,9 +115,12 @@ def get_dataset_torch(data_pars):
 
     ### tensorflow dataset
     pkg = d['dataset'].split(":")
-    package, name = pkg[0].lower(), pkg[1]
+    package, name = pkg[0].lower(), pkg[1].lower()
     if package == "tensorflow":
         print(" ------------ tensorflow --------------")
+        d['train_file_name'] = name+"_train.npz"
+        d['test_file_name'] = name+"_test.npz"
+        
         transform = None
         if  len(data_pars.get("transform_uri", ""))  > 1 :
             transform = load_function( d.get("transform_uri" ))(train = True)
