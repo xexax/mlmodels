@@ -20,7 +20,7 @@
             "epoch": 2
         },
         "data_pars": {
-            "dataset"  : "tensorflow:CIFAR10",
+            "dataset"  : "mlmodels/preprocess/generic.py:NumpyDataset:CIFAR10",
             "data_path": "dataset/vision/cifar10/",
             "train_batch_size": 100,
             "test_batch_size": 10,

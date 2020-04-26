@@ -112,29 +112,6 @@ def get_dataset_torch(data_pars):
     from torch.utils.data import DataLoader
     d = data_pars
 
-
-    ### tensorflow dataset
-    pkg = d['dataset'].split(":")
-    package, name = pkg[0].lower(), pkg[1].lower()
-    if package == "tensorflow":
-        print(" ------------ tensorflow --------------")
-        d['train_file_name'] = name+"_train.npz"
-        d['test_file_name'] = name+"_test.npz"
-        
-        transform = None
-        if  len(data_pars.get("transform_uri", ""))  > 1 :
-            transform = load_function( d.get("transform_uri" ))(train = True)
-
-        train = NumpyDataset(d['data_path'], train=True, download=True, transform= transform, data_pars=data_pars)
-        train_loader = DataLoader(train, batch_size=d['train_batch_size'], shuffle= d.get('shuffle', True))
-        
-        transform = load_function( d.get("transform_uri", "mlmodels.preprocess.image:torch_transform_mnist" ))(train = False)
-        test = NumpyDataset(d['data_path'], train=False, download=False, transform= transform, data_pars=data_pars)
-        valid_loader = DataLoader( test, batch_size=d['test_batch_size'], shuffle= d.get('shuffle', True))
-        
-        return train_loader, valid_loader 
-
-
     transform = None
     if  len(data_pars.get("transform_uri", ""))  > 1 :
        transform = load_function( d.get("transform_uri", "mlmodels.preprocess.image:torch_transform_mnist" ))()
@@ -148,17 +125,17 @@ def get_dataset_torch(data_pars):
         dset_inst    = dset(d['train_path'], train=True, download=True, transform= transform, data_pars=data_pars)
         train_loader = DataLoader( dset_inst, batch_size=d['train_batch_size'], shuffle= d.get('shuffle', True))
         
-        dset_inst    = dset(d['test_path'], train=False, download=True, transform= transform, data_pars=data_pars)
-        valid_loader = DataLoader( dset_inst, batch_size=d['train_batch_size'], shuffle= d.get('shuffle', True))
+        dset_inst    = dset(d['test_path'], train=False, download=False, transform= transform, data_pars=data_pars)
+        valid_loader = DataLoader( dset_inst, batch_size=d['test_batch_size'], shuffle= d.get('shuffle', True))
 
 
     else :
         ###### Pre Built Dataset available  #############################################
-        dset_inst    = dset(d['data_path'], train=True, download=True, transform= transform)
+        dset_inst    = dset(d['data_path'], train=True, download=True, transform= transform, data_pars=data_pars)
         train_loader = DataLoader( dset_inst, batch_size=d['train_batch_size'], shuffle= d.get('shuffle', True))
         
-        dset_inst    = dset(d['data_path'], train=False, download=True, transform= transform)
-        valid_loader = DataLoader( dset_inst, batch_size=d['train_batch_size'], shuffle= d.get('shuffle', True))
+        dset_inst    = dset(d['data_path'], train=False, download=False, transform= transform, data_pars=data_pars)
+        valid_loader = DataLoader( dset_inst, batch_size=d['test_batch_size'], shuffle= d.get('shuffle', True))
 
 
     return train_loader, valid_loader  
@@ -613,13 +590,14 @@ def tf_dataset(data_pars):
     import numpy as np
 
     d          = data_pars
+    print( d['dataset'])
     dataset_id = d['dataset'].split(":")[-1].lower()
     n_train    = d.get("train_batch_size", 500)
     n_test     = d.get("test_batch_size", 500)
     out_path   = path_norm(d['data_path'] )
     name       = dataset_id.replace(".","-")    
     os.makedirs(out_path, exist_ok=True) 
-    print("name", name)
+    print("Dataset Name is : ", name)
 
 
 
