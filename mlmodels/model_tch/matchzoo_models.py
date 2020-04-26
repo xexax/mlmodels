@@ -6,13 +6,52 @@ https://matchzoo.readthedocs.io/en/master/model_reference.html
 
 https://github.com/NTMC-Community/MatchZoo-py/blob/master/tutorials/classification/esim.ipynb
 
+
+
+
+
+class Trainer:
+    MatchZoo tranier.
+    :param model: A :class:`BaseModel` instance.
+    :param optimizer: A :class:`optim.Optimizer` instance.
+    :param trainloader: A :class`DataLoader` instance. The dataloader
+        is used for training the model.
+    :param validloader: A :class`DataLoader` instance. The dataloader
+        is used for validating the model.
+    :param device: The desired device of returned tensor. Default:
+        if None, use the current device. If `torch.device` or int,
+        use device specified by user. If list, use data parallel.
+    :param start_epoch: Int. Number of starting epoch.
+    :param epochs: The maximum number of epochs for training.
+        Defaults to 10.
+    :param validate_interval: Int. Interval of validation.
+    :param scheduler: LR scheduler used to adjust the learning rate
+        based on the number of epochs.
+    :param clip_norm: Max norm of the gradients to be clipped.
+    :param patience: Number fo events to wait if no improvement and
+        then stop the training.
+    :param key: Key of metric to be compared.
+    :param checkpoint: A checkpoint from which to continue training.
+        If None, training starts from scratch. Defaults to None.
+        Should be a file-like object (has to implement read, readline,
+        tell, and seek), or a string containing a file name.
+    :param save_dir: Directory to save trainer.
+    :param save_all: Bool. If True, save `Trainer` instance; If False,
+        only save model. Defaults to False.
+    :param verbose: 0, 1, or 2. Verbosity mode. 0 = silent,
+        1 = verbose, 2 = one log line per epoch.
+
+
+
 """
 import os, json
 import importlib
-import torch
+from copy import deepcopy
 import numpy as np
 import pandas as pd
 
+
+import torch
 import matchzoo as mz
 from mlmodels.util import os_package_root_path, log, path_norm, get_model_uri, path_norm_dict
 
@@ -207,16 +246,22 @@ def get_raw_dataset(data_pars, task):
 ###########################################################################################################
 class Model:
     def __init__(self, model_pars=None, data_pars=None, compute_pars=None, out_pars=None):
+        self.model_pars   = deepcopy( model_pars)
+        self.compute_pars = deepcopy( compute_pars)
+        self.data_pars    = deepcopy( data_pars)
+
         ### Model Structure        ################################
         if model_pars is None :
             self.model = None
-            return self
+            return None
  
+         ### Model Structure        ################################
         _model = model_pars['model']
         assert _model in MODELS.keys()
         
         self.task = get_task(model_pars)
         
+        ### Data Loader        #####################################
         train_pack_raw, test_pack_raw = get_raw_dataset(data_pars, self.task)
         
         _preprocessor_pars = data_pars["preprocess"]
@@ -231,17 +276,19 @@ class Model:
             preprocessor = MODELS[_model].get_default_preprocessor()
 
         self.trainloader = get_data_loader(_model, preprocessor, _preprocessor_pars["train"], train_pack_raw)
-        self.testloader = get_data_loader(_model, preprocessor, _preprocessor_pars["test"], test_pack_raw)
+        self.testloader  = get_data_loader(_model, preprocessor, _preprocessor_pars["test"], test_pack_raw)
 
+        ### Model Build
         self.model = MODELS[_model]()
-        update_model_param(model_pars["params"], self.model, self.task, preprocessor)
-        
+        update_model_param(model_pars["params"], self.model, self.task, preprocessor)        
         self.model.build()
+
 
 
 def fit(model, data_pars=None, compute_pars=None, out_pars=None, **kwargs):
     model0 = model.model
     epochs = compute_pars["epochs"]
+
 
     optimize_parameters = compute_pars.get("optimizie_parameters", False)
     if optimize_parameters:
@@ -254,6 +301,7 @@ def fit(model, data_pars=None, compute_pars=None, out_pars=None, **kwargs):
         ]
     else:
         model_parameters = model0.parameters()
+
     
     optimizer_ = list(compute_pars["optimizer"].keys())[0]
     optimizer = OPTIMIZERS[optimizer_](model_parameters, compute_pars["optimizer"][optimizer_])
@@ -267,20 +315,60 @@ def fit(model, data_pars=None, compute_pars=None, out_pars=None, **kwargs):
                 epochs            = epochs
             )
     trainer.run()
-    return model, None
+
+    #### trainer Acts as trainer (like in tensorflow)
+    return model, trainer
+
 
 def predict(model, session=None, data_pars=None, compute_pars=None, out_pars=None):
-    # get a batch of data
+    """
+        https://github.com/NTMC-Community/MatchZoo-py/blob/master/matchzoo/trainers/trainer.py#L341
+
+        def predict(
+        self,
+        dataloader: DataLoader
+    ) -> np.array:
+        
+        Generate output predictions for the input samples.
+        :param dataloader: input DataLoader
+        :return: predictions
+    
+        with torch.no_grad():
+            self._model.eval()
+            predictions = []
+            for batch in dataloader:
+                inputs = batch[0]
+                outputs = self._model(inputs).detach().cpu()
+                predictions.append(outputs)
+            self._model.train()
+            return torch.cat(predictions, dim=0).numpy()
+
+
+
     """
 
+    ### Data Loader        #####################################
+    data_pars['train'] = 0
+    test_pack_raw = get_raw_dataset(data_pars, model.task)
+    
+    _preprocessor_pars = data_pars["preprocess"]
+    if "basic_preprocessor" in _preprocessor_pars:
+        pars = _preprocessor_pars["basic_preprocessor"]
+        preprocessor = mz.preprocessors.BasicPreprocessor(
+            truncated_length_left  = pars["truncated_length_left"],
+            truncated_length_right = pars["truncated_length_right"],
+            filter_low_freq        = pars["filter_low_freq"]
+        )
+    else:
+        preprocessor = model.model.get_default_preprocessor()
+
+    testloader  = get_data_loader(model.model, preprocessor, _preprocessor_pars["test"], test_pack_raw)
 
 
-    """
-    model0 = model.model
-    _, valid_iter = get_dataset(data_pars=data_pars)
-    x_test        = next(iter(valid_iter))[0].to(device)
-    ypred         = model0(x_test).detach().cpu().numpy()
+    ### Model Predict
+    ypred = model.model.predict(testloader)
     return ypred
+
 
 
 def fit_metrics(model, data_pars=None, compute_pars=None, out_pars=None):
@@ -288,13 +376,32 @@ def fit_metrics(model, data_pars=None, compute_pars=None, out_pars=None):
 
 
 def save(model, session=None, save_pars=None):
-    from mlmodels.util import save_tch
-    save_tch(model=model, save_pars=save_pars)
+    """
+      trainer == session
+          :param save_dir: Directory to save trainer.
+`       :param save_all: Bool. If True, save `Trainer` instance; If False,
+        only save model. Defaults to False.
+
+     https://github.com/NTMC-Community/MatchZoo-py/blob/master/matchzoo/trainers/trainer.py#L369   
+
+    """
+    session.save_dir = save_pars['path']   # :param save_dir: Directory to save trainer.
+    session.save()
+    session.save_model()
+
 
 
 def load(load_pars):
-    from mlmodels.util import load_tch
-    return load_tch(load_pars)
+    """
+     need trainer instance
+     https://github.com/NTMC-Community/MatchZoo-py/blob/master/matchzoo/trainers/trainer.py#L415
+ 
+    """
+    pass
+    
+
+
+
 
 
 def get_params(param_pars=None, **kw):
