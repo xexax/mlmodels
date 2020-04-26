@@ -53,7 +53,29 @@ def torchvision_dataset_MNIST_load(path, **args):
                     ]))
     return train_dataset, valid_dataset  
 
+def torch_transform_data_augment():
+    from torchvision import datasets, transforms
+    """
+    Options:
+    1.RandomCrop
+    2.CenterCrop
+    3.RandomHorizontalFlip
+    4.Normalize
+    5.ToTensor
+    6.FixedResize
+    7.RandomRotate
+    """
+    transform_list = [] 
+    #transform_list.append(FixedResize(size = (fixed_scale, fixed_scale)))
+    transform_list.append(RandomSized(fixed_scale))
+    transform_list.append(RandomRotate(rotate_prob))
+    transform_list.append(RandomHorizontalFlip())
+    #transform_list.append(Normalize(mean=(0.5, 0.5, 0.5), std=(0.5, 0.5, 0.5)))
+    
+    transform_list.append(Normalize(mean=(0.485, 0.456, 0.406), std=(0.229, 0.224, 0.225)))
+    transform_list.append(ToTensor())
 
+    return transforms.Compose(transform_list) 
 
 
 
