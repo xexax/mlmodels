@@ -20,12 +20,13 @@
             "epoch": 2
         },
         "data_pars": {
-            "dataset"  : "torchvision.datasets:CIFAR10",
-            "data_path": "dataset/vision/cifar10",
+            "dataset"  : "tensorflow:CIFAR10",
+            "data_path": "dataset/vision/cifar10/",
             "train_batch_size": 100,
             "test_batch_size": 10,
-            "transform_uri" : "mlmodels.preprocess.image:torch_transform_mnist",
-            "filename":"cifar10_train.npz",
+            "transform_uri" : "mlmodels.preprocess.image:torch_general_trasform",
+            "train_file_name":"cifar10_train.npz",
+            "test_file_name":"cifar10_test.npz",
             "features_key":"X",
             "classes_key":"y"
         },

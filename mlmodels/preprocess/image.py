@@ -54,7 +54,7 @@ def torchvision_dataset_MNIST_load(path, **args):
     return train_dataset, valid_dataset  
 
 def torch_transform_data_augment():
-    from torchvision import datasets, transforms
+    from torchvision import  transforms
     """
     Options:
     1.RandomCrop
@@ -80,6 +80,23 @@ def torch_transform_data_augment():
 
 
 
-
+def torch_general_trasform(fixed_scale = 256, train = False):
+    from torchvision import  transforms
+    size = fixed_scale - 2
+    transform = {
+        'train': transforms.Compose(
+            [transforms.Resize([fixed_scale, fixed_scale]),
+                transforms.RandomCrop(size),
+                transforms.RandomHorizontalFlip(),
+                transforms.ToTensor(),
+                transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                                  std=[0.229, 0.224, 0.225])]),
+        'test': transforms.Compose(
+            [transforms.Resize([size, size]),
+                transforms.ToTensor(),
+                transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                                  std=[0.229, 0.224, 0.225])])
+        }
+    return transform=transform['train' if train else 'test'] 
 
 

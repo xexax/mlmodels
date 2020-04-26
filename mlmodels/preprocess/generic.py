@@ -110,26 +110,31 @@ def get_dataset_torch(data_pars):
 
     """
     from torch.utils.data import DataLoader
-    d = data_pars.copy()
+    d = data_pars
+
+
+    ### tensorflow dataset
+    pkg = d['dataset'].split(":")
+    package, name = pkg[0].lower(), pkg[1]
+    if package == "tensorflow":
+        print(" ------------ tensorflow --------------")
+        transform = None
+        if  len(data_pars.get("transform_uri", ""))  > 1 :
+            transform = load_function( d.get("transform_uri" ))(train = True)
+
+        train = NumpyDataset(d['data_path'], train=True, download=True, transform= transform, data_pars=data_pars)
+        train_loader = DataLoader(train, batch_size=d['train_batch_size'], shuffle= d.get('shuffle', True))
+        
+        transform = load_function( d.get("transform_uri", "mlmodels.preprocess.image:torch_transform_mnist" ))(train = False)
+        test = NumpyDataset(d['data_path'], train=False, download=False, transform= transform, data_pars=data_pars)
+        valid_loader = DataLoader( test, batch_size=d['test_batch_size'], shuffle= d.get('shuffle', True))
+        
+        return train_loader, valid_loader 
+
 
     transform = None
     if  len(data_pars.get("transform_uri", ""))  > 1 :
        transform = load_function( d.get("transform_uri", "mlmodels.preprocess.image:torch_transform_mnist" ))()
-
-    # cifar10
-    if d['dataset'] == "torchvision.datasets:CIFAR10":
-        print(" ------------ clear10 --------------")
-        tf_dataset(d)
-        d["transform_uri"] = transform
-        
-        train = NumpyDataset(d)
-        train_loader = DataLoader(train, batch_size=d['train_batch_size'], shuffle= d.get('shuffle', True))
-        
-        d['filename'] = d['filename'].replace("train","test")
-        test = NumpyDataset(d)
-        valid_loader = DataLoader( test, batch_size=d['test_batch_size'], shuffle= d.get('shuffle', True))
-        
-        return train_loader, valid_loader 
 
     #### from mlmodels.preprocess.image import pandasDataset
     dset = load_function(d.get("dataset", "torchvision.datasets:MNIST") ) 
@@ -398,14 +403,26 @@ class NumpyDataset(Dataset):
         }        
     """
 
-    def __init__(self, data_pars):
+    def __init__(self, root="", train=True, transform=None, target_transform=None,
+                 download=False, data_pars=None):
 
-        path = data_pars['data_path']
-        file_name = data_pars['filename']
-        data      = np.load(os.path.join("mlmodels", path, file_name))
+        # path = data_pars['data_path']
+        # file_name = data_pars['filename']
+        # data      = np.load(os.path.join("mlmodels", path, file_name))
+        # self.features = data[data_pars['features_key']]
+        # self.classes = data[data_pars['classes_key']]
+        # self.transforms = data_pars['transform_uri']
+        if download:
+            tf_dataset(data_pars)
+        self.transforms = transform
+        if train:
+            file_name = data_pars['train_file_name']
+        else:
+            file_name = data_pars['test_file_name']
+        data      = np.load(os.path.join("mlmodels", root, file_name))
         self.features = data[data_pars['features_key']]
         self.classes = data[data_pars['classes_key']]
-        self.transforms = data_pars['transform_uri']
+
 
     def __getitem__(self, index):
 
@@ -625,7 +642,7 @@ def tf_dataset(data_pars):
 
     Xtemp = np.array(Xtemp)
     ytemp = np.array(ytemp)
-    np.savez_compressed(out_path + f"{name}_train" , X = Xtemp, y = ytemp )    
+    np.savez_compressed(os.path.join(out_path + f"{name}_train") , X = Xtemp, y = ytemp )    
 
     Xtemp = []
     ytemp = []
@@ -635,7 +652,7 @@ def tf_dataset(data_pars):
         ytemp.append(x.get('label'))
     Xtemp = np.array(Xtemp)
     ytemp = np.array(ytemp)
-    np.savez_compressed(out_path + f"{name}_test", X = Xtemp, y = ytemp)
+    np.savez_compressed(os.path.join(out_path + f"{name}_test"), X = Xtemp, y = ytemp)
         
     print(out_path, os.listdir( out_path ))
         
