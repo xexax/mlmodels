@@ -6,39 +6,60 @@ https://matchzoo.readthedocs.io/en/master/model_reference.html
 
 https://github.com/NTMC-Community/MatchZoo-py/blob/master/tutorials/classification/esim.ipynb
 
+Match ZOO Architecture :
 
+   Trainer : Core , gathers all components.
+   Model :   BERT, ...
+   Task :  Classification, Ranking,....
 
 
 
 class Trainer:
+            model: BaseModel,
+        optimizer: optim.Optimizer,
+        trainloader: DataLoader,
+        validloader: DataLoader,
+        device: typing.Union[torch.device, int, list, None] = None,
+        start_epoch: int = 1,
+        epochs: int = 10,
+        validate_interval: typing.Optional[int] = None,
+        scheduler: typing.Any = None,
+        clip_norm: typing.Union[float, int] = None,
+        patience: typing.Optional[int] = None,
+        key: typing.Any = None,
+        checkpoint: typing.Union[str, Path] = None,
+        save_dir: typing.Union[str, Path] = None,
+        save_all: bool = False,
+        verbose: int = 1,
+
     MatchZoo tranier.
-    :param model: A :class:`BaseModel` instance.
-    :param optimizer: A :class:`optim.Optimizer` instance.
-    :param trainloader: A :class`DataLoader` instance. The dataloader
+    model: A :class:`BaseModel` instance.
+    optimizer: A :class:`optim.Optimizer` instance.
+    trainloader: A :class`DataLoader` instance. The dataloader
         is used for training the model.
-    :param validloader: A :class`DataLoader` instance. The dataloader
+    validloader: A :class`DataLoader` instance. The dataloader
         is used for validating the model.
-    :param device: The desired device of returned tensor. Default:
+    device: The desired device of returned tensor. Default:
         if None, use the current device. If `torch.device` or int,
         use device specified by user. If list, use data parallel.
-    :param start_epoch: Int. Number of starting epoch.
-    :param epochs: The maximum number of epochs for training.
+    start_epoch: Int. Number of starting epoch.
+    epochs: The maximum number of epochs for training.
         Defaults to 10.
-    :param validate_interval: Int. Interval of validation.
-    :param scheduler: LR scheduler used to adjust the learning rate
+    validate_interval: Int. Interval of validation.
+    scheduler: LR scheduler used to adjust the learning rate
         based on the number of epochs.
-    :param clip_norm: Max norm of the gradients to be clipped.
-    :param patience: Number fo events to wait if no improvement and
+    clip_norm: Max norm of the gradients to be clipped.
+    patience: Number fo events to wait if no improvement and
         then stop the training.
-    :param key: Key of metric to be compared.
-    :param checkpoint: A checkpoint from which to continue training.
+    key: Key of metric to be compared.
+    checkpoint: A checkpoint from which to continue training.
         If None, training starts from scratch. Defaults to None.
         Should be a file-like object (has to implement read, readline,
         tell, and seek), or a string containing a file name.
-    :param save_dir: Directory to save trainer.
-    :param save_all: Bool. If True, save `Trainer` instance; If False,
+    save_dir: Directory to save trainer.
+    save_all: Bool. If True, save `Trainer` instance; If False,
         only save model. Defaults to False.
-    :param verbose: 0, 1, or 2. Verbosity mode. 0 = silent,
+    verbose: 0, 1, or 2. Verbosity mode. 0 = silent,
         1 = verbose, 2 = one log line per epoch.
 
 
@@ -54,6 +75,8 @@ import pandas as pd
 import torch
 import matchzoo as mz
 from mlmodels.util import os_package_root_path, log, path_norm, get_model_uri, path_norm_dict
+from mlmodels.util import json_norm
+
 
 
 ###########################################################################################################
@@ -250,20 +273,30 @@ class Model:
         self.compute_pars = deepcopy( compute_pars)
         self.data_pars    = deepcopy( data_pars)
 
-        ### Model Structure        ################################
+        ### Model empty      ################################
         if model_pars is None :
             self.model = None
             return None
  
-         ### Model Structure        ################################
+
+
+        ### Model Build : Expose directly the JSON to the MatchZoo Core API  ##############
         _model = model_pars['model']
-        assert _model in MODELS.keys()
-        
+        # assert _model in MODELS.keys()
+        self.model = MODELS[_model]()
+
+        ### Add static params
+        mpars =json_norm(model_pars['model_pars'])
+        for key, value in mpars.items():
+            self.model.params[key] = value
+
+
+        ### Add Task
         self.task = get_task(model_pars)
-        
-        ### Data Loader        #####################################
-        train_pack_raw, test_pack_raw = get_raw_dataset(data_pars, self.task)
-        
+        self.model.params['task'] = self.task
+
+
+        ### Add PreProcessor
         _preprocessor_pars = data_pars["preprocess"]
         if "basic_preprocessor" in _preprocessor_pars:
             pars = _preprocessor_pars["basic_preprocessor"]
@@ -275,13 +308,32 @@ class Model:
         else:
             preprocessor = MODELS[_model].get_default_preprocessor()
 
+
+        ### Add Embedding
+        glove_embedding_matrix_dim = model_pars.get("glove_embedding_matrix_dim")
+        if glove_embedding_matrix_dim:
+            term_index                = preprocessor.context['vocab_unit'].state['term_index']
+            embedding_matrix          = get_glove_embedding_matrix(term_index, glove_embedding_matrix_dim)
+            self.model.params['embedding'] = embedding_matrix
+            
+            ## No need : we seprate Pure MatchZoo parameters
+            # Remove those entried in JSON which not directly feeded to model as params
+            # del params["glove_embedding_matrix_dim"]
+
+        # update_model_param(model_pars["model_pars"], self.model, self.task, preprocessor)        
+        self.model.build()        
+        
+
+
+        ### Data Loader        #####################################  : part of traimer
+        train_pack_raw, test_pack_raw = get_raw_dataset(data_pars, self.task)
         self.trainloader = get_data_loader(_model, preprocessor, _preprocessor_pars["train"], train_pack_raw)
         self.testloader  = get_data_loader(_model, preprocessor, _preprocessor_pars["test"], test_pack_raw)
 
-        ### Model Build
-        self.model = MODELS[_model]()
-        update_model_param(model_pars["params"], self.model, self.task, preprocessor)        
-        self.model.build()
+
+
+
+
 
 
 
@@ -306,6 +358,23 @@ def fit(model, data_pars=None, compute_pars=None, out_pars=None, **kwargs):
     optimizer_ = list(compute_pars["optimizer"].keys())[0]
     optimizer = OPTIMIZERS[optimizer_](model_parameters, compute_pars["optimizer"][optimizer_])
 
+
+    ### Expose all Trainer class : Static pars, dynamic pars
+    #### Static params from JSON
+    from mlodels.util import json_norm
+    train_pars = compute_pars.get('compute_pars', {})
+    train_pars = json_norm(train_pars)
+
+    #### Dynamic params
+    train_pars['model']       = model.model
+    train_pars['model']       = optimizer
+    train_pars['trainloader'] = model.trainloader
+    train_pars['validloader'] = model.testloader
+    train_pars['epoch']       = epochs
+ 
+    trainer = mz.trainer( ** train_pars)
+
+    """
     trainer = mz.trainers.Trainer(
                 model             = model.model,
                 optimizer         = optimizer,
@@ -314,6 +383,7 @@ def fit(model, data_pars=None, compute_pars=None, out_pars=None, **kwargs):
                 validate_interval = None,
                 epochs            = epochs
             )
+    """        
     trainer.run()
 
     #### trainer Acts as trainer (like in tensorflow)
@@ -330,7 +400,7 @@ def predict(model, session=None, data_pars=None, compute_pars=None, out_pars=Non
     ) -> np.array:
         
         Generate output predictions for the input samples.
-        :param dataloader: input DataLoader
+        dataloader: input DataLoader
         :return: predictions
     
         with torch.no_grad():
@@ -379,14 +449,14 @@ def fit_metrics(model, data_pars=None, compute_pars=None, out_pars=None):
 def save(model, session=None, save_pars=None):
     """
       trainer == session
-          :param save_dir: Directory to save trainer.
-`       :param save_all: Bool. If True, save `Trainer` instance; If False,
+          save_dir: Directory to save trainer.
+`       save_all: Bool. If True, save `Trainer` instance; If False,
         only save model. Defaults to False.
 
      https://github.com/NTMC-Community/MatchZoo-py/blob/master/matchzoo/trainers/trainer.py#L369   
 
     """
-    session.save_dir = save_pars['path']   # :param save_dir: Directory to save trainer.
+    session.save_dir = save_pars['path']   # save_dir: Directory to save trainer.
     session.save()
     session.save_model()
 
@@ -439,9 +509,13 @@ def test_train(data_path, pars_choice, model_name):
     #xtuple = get_dataset(data_pars)
 
 
-    log("#### Model init, fit   #############################################")
+    log("#### Model init   ##################################################")
     session = None
     model = Model(model_pars, data_pars, compute_pars)
+
+
+
+    log("#### Model  fit   #############################################")
     model, session = fit(model, data_pars, compute_pars, out_pars)
 
 
@@ -457,12 +531,19 @@ def test_train(data_path, pars_choice, model_name):
     log("#### Plot   ########################################################")
 
 
-    log("#### Save/Load   ###################################################")
+    log("#### Save   ########################################################")
     save_pars = { "path": out_pars["path"]  }
     save(model=model, save_pars=save_pars)
+
+
+    log("#### Load   ###################################################")
     model2 = load( save_pars )
+
+
+    log("#### Predict after Load   ###########################################")
     ypred = predict(model2, data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)
     print(model2)
+
 
 
 if __name__ == "__main__":
