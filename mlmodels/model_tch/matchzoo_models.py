@@ -337,9 +337,10 @@ class Model:
 
 
 
+
 def fit(model, data_pars=None, compute_pars=None, out_pars=None, **kwargs):
     model0 = model.model
-    epochs = compute_pars["epochs"]
+    #epochs = compute_pars["epochs"]
 
 
     #######  Add optimizer
@@ -360,17 +361,18 @@ def fit(model, data_pars=None, compute_pars=None, out_pars=None, **kwargs):
     optimizer = OPTIMIZERS[optimizer_](model_parameters, compute_pars["optimizer"][optimizer_])
 
 
-    ### Expose all Trainer class : Static pars, dynamic pars
+    ### Expose all Trainer class : Static pars, dynamic pars  #####################################
     #### Static params from JSON
     train_pars = compute_pars.get('compute_pars', {})
     train_pars = json_norm(train_pars)
+    # train_pars['epoch']       = epochs   # implciit in the JSON
+
 
     #### Dynamic params
     train_pars['model']       = model.model
     train_pars['optimizer']   = optimizer
     train_pars['trainloader'] = model.trainloader
     train_pars['validloader'] = model.testloader
-    train_pars['epoch']       = epochs
  
     trainer = mz.trainers.Trainer( ** train_pars)
 

@@ -56,7 +56,7 @@
             "validloader": "DataLoader",
             "device": "cpu",
             "start_epoch": 1,
-            "epochs":  10,
+            "epochs":  1,
             "validate_interval":  "None",
             "scheduler": "None",
             "clip_norm": "None",
@@ -76,7 +76,7 @@
 
 
           "optimize_parameters":true,
-          "epochs":10
+          "---epochs":10
        },
        "out_pars":{
           "checkpointdir":"ztest/model_tch/MATCHZOO/BERT/checkpoints/",
