@@ -3,28 +3,54 @@
        "model_pars":{
           "model_uri" : "model_tch.matchzoo_models",
 
+          "model":"BERT",
+          "model_pars":{
+             "mode":"bert-base-uncased",
+             "dropout_rate":0.2
+          },
+
+
           "task":"ranking",
+          "task_pars" : {   },
+
+
           "loss":{ "RankHingeLoss":{}},
 
           "metrics":{
              "NormalizedDiscountedCumulativeGain":{"k":3 },
              "NormalizedDiscountedCumulativeGain":{"k":5 },
              "MeanAveragePrecision":{}
-          },
-
-
-          "model":"BERT",
-
-          "model_pars":{
-             "mode":"bert-base-uncased",
-             "dropout_rate":0.2
           }
+
+
        },
 
 
        "data_pars":{
           "dataset":"WIKI_QA",
           "data_path":"dataset/nlp/",
+          "dataset_pars" : {
+              "data_pack"  : "",
+              "mode":"pair",
+              "num_dup":2,
+              "num_neg":1,
+              "batch_size":20,
+              "resample":true,
+              "sort":false,
+              "callbacks":"PADDING"
+          },
+
+
+          "dataloader" : "",
+          "dataloader_pars" : {
+            "device" :    "cpu",
+            "dataset"  : "None",
+            "stage":"train",
+            "callback":"PADDING"
+          },
+
+
+
           "preprocess":{
              "train":{
                 "transform":true,
@@ -76,7 +102,7 @@
 
 
           "optimize_parameters":true,
-          "---epochs":10
+          "XXX-epochs":10
        },
        "out_pars":{
           "checkpointdir":"ztest/model_tch/MATCHZOO/BERT/checkpoints/",
@@ -165,7 +191,7 @@
              }
           },
           "optimize_parameters":true,
-          "epochs":10
+          "XXX epochs":10
        },
        "out_pars":{
           "checkpointdir":"ztest/model_tch/MATCHZOO/BERT/checkpoints/",
@@ -261,7 +287,7 @@
           "optimizer":{
              "ADADELTA":{"lr":1.0, "rho":0.9, "eps":1e-06, "weight_decay":0.0 }
           },
-          "epochs":10
+          "XXX epochs":10
        },
        "out_pars":{
           "checkpointdir":"ztest/model_tch/MATCHZOO/BERT/checkpoints/",
@@ -354,7 +380,7 @@
           "optimizer":{
              "ADADELTA":{"lr":1.0, "rho":0.9, "eps":1e-06, "weight_decay":0.0 }
           },
-          "epochs":10
+          "XXX epochs":10
        },
        "out_pars":{
           "checkpointdir":"ztest/model_tch/MATCHZOO/BERT/checkpoints/",
