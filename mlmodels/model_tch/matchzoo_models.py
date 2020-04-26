@@ -319,8 +319,8 @@ class Model:
             ## No need : we seprate Pure MatchZoo parameters
             # Remove those entried in JSON which not directly feeded to model as params
             # del params["glove_embedding_matrix_dim"]
-
         # update_model_param(model_pars["model_pars"], self.model, self.task, preprocessor)        
+
         self.model.build()        
         
 
@@ -342,6 +342,7 @@ def fit(model, data_pars=None, compute_pars=None, out_pars=None, **kwargs):
     epochs = compute_pars["epochs"]
 
 
+    #######  Add optimizer
     optimize_parameters = compute_pars.get("optimizie_parameters", False)
     if optimize_parameters:
         # Currently hardcode optimized parameters for Bert,
@@ -361,18 +362,17 @@ def fit(model, data_pars=None, compute_pars=None, out_pars=None, **kwargs):
 
     ### Expose all Trainer class : Static pars, dynamic pars
     #### Static params from JSON
-    from mlodels.util import json_norm
     train_pars = compute_pars.get('compute_pars', {})
     train_pars = json_norm(train_pars)
 
     #### Dynamic params
     train_pars['model']       = model.model
-    train_pars['model']       = optimizer
+    train_pars['optimizer']   = optimizer
     train_pars['trainloader'] = model.trainloader
     train_pars['validloader'] = model.testloader
     train_pars['epoch']       = epochs
  
-    trainer = mz.trainer( ** train_pars)
+    trainer = mz.trainers.Trainer( ** train_pars)
 
     """
     trainer = mz.trainers.Trainer(

@@ -2,29 +2,26 @@
     "BERT_RANKING":{
        "model_pars":{
           "model_uri" : "model_tch.matchzoo_models",
+
           "task":"ranking",
-          "loss":{
-             "RankHingeLoss":{
- 
-             }
-          },
+          "loss":{ "RankHingeLoss":{}},
+
           "metrics":{
-             "NormalizedDiscountedCumulativeGain":{
-                "k":3
-             },
-             "NormalizedDiscountedCumulativeGain":{
-                "k":5
-             },
-             "MeanAveragePrecision":{
- 
-             }
+             "NormalizedDiscountedCumulativeGain":{"k":3 },
+             "NormalizedDiscountedCumulativeGain":{"k":5 },
+             "MeanAveragePrecision":{}
           },
+
+
           "model":"BERT",
+
           "model_pars":{
              "mode":"bert-base-uncased",
              "dropout_rate":0.2
           }
        },
+
+
        "data_pars":{
           "dataset":"WIKI_QA",
           "data_path":"dataset/nlp/",
@@ -48,6 +45,8 @@
              }
           }
        },
+
+
        "compute_pars":{
 
           "compute_pars" :{
@@ -67,14 +66,6 @@
             "save_dir": "",
             "save_all": true,
             "verbose": 1
-          },
-
-
-          "_comments" : {
-
-             "text" : ""
-
-
           },
 
 
