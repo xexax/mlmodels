@@ -110,7 +110,7 @@ def get_dataset_torch(data_pars):
 
     """
     from torch.utils.data import DataLoader
-    d = data_pars
+    d = data_pars.copy()
 
     transform = None
     if  len(data_pars.get("transform_uri", ""))  > 1 :
@@ -119,18 +119,18 @@ def get_dataset_torch(data_pars):
     # cifar10
     if d['dataset'] == "torchvision.datasets:CIFAR10":
         print(" ------------ clear10 --------------")
-        tf_dataset(dataset_pars)
-        dataset_pars["transform_uri"] = transform
-
-        train = NumpyDataset(dataset_pars)
+        tf_dataset(d)
+        d["transform_uri"] = transform
+        
+        train = NumpyDataset(d)
         train_loader = DataLoader(train, batch_size=d['train_batch_size'], shuffle= d.get('shuffle', True))
         
-        dataset_pars['filename'] = dataset_pars['filename'].replace("train","test")
-        test = NumpyDataset(dataset_pars)
+        d['filename'] = d['filename'].replace("train","test")
+        test = NumpyDataset(d)
         valid_loader = DataLoader( test, batch_size=d['test_batch_size'], shuffle= d.get('shuffle', True))
         
         return train_loader, valid_loader 
-    print("-------------- failed ----------------")
+
     #### from mlmodels.preprocess.image import pandasDataset
     dset = load_function(d.get("dataset", "torchvision.datasets:MNIST") ) 
 
@@ -290,7 +290,7 @@ def text_create_tabular_dataset(path_train, path_valid,   lang='en', pretrained_
 
 
 
-
+'''
 class numpyDataset(Dataset):
     """
     Defines a dataset composed of sentiment text and labels
@@ -363,8 +363,61 @@ class numpyDataset(Dataset):
 
         return X, target
 
+'''
 
+from torch.utils.data import Dataset
+import numpy as np
+import os
+from PIL import Image
+# from matplotlib import cm
+# im = Image.fromarray(np.uint8(cm.gist_earth(myarray)*255))
+# import torch
+# torch.from_numpy(X).float()
+class NumpyDataset(Dataset):
+    """
+    Defines a dataset composed of Features and labels
 
+    Attributes:
+        data_pars{
+            data_path: the folder path that it cotains numpy files
+            filename: the name of numpy file 
+            features_key: the key of features ex: n = {"features_name":"data}; n["features_name"]
+            classes_key: the key of classes
+            transforms: operation you wanna apply on image
+
+            example:
+                dataset_pars = {'data_path': 'mlmodels/dataset/vision/cifar10/', 
+                                    'filename':'cifar10_train.npz',
+                                    'features_name':'X',
+                                    'classes_name':'y',
+                                    'transforms':transforms.Compose([transforms.Resize(255), 
+                                                        transforms.CenterCrop(224),  
+                                                        transforms.RandomHorizontalFlip(),
+                                                        transforms.ToTensor(), 
+                                                        transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])]) }
+        }        
+    """
+
+    def __init__(self, data_pars):
+
+        path = data_pars['data_path']
+        file_name = data_pars['filename']
+        data      = np.load(os.path.join("mlmodels", path, file_name))
+        self.features = data[data_pars['features_key']]
+        self.classes = data[data_pars['classes_key']]
+        self.transforms = data_pars['transform_uri']
+
+    def __getitem__(self, index):
+
+        X, y = self.features[index], self.classes[index]
+        # X =  np.stack((X, X, X)) # gray to rgb 64x64 to 3x64x64
+        if self.transforms:
+            X = Image.fromarray(np.uint8(X))
+            X = self.transforms(X)
+        return X, y
+
+    def __len__(self):
+        return len(self.features)
 
 class pandasDataset(Dataset):
     """
@@ -484,7 +537,7 @@ def create_kerasDataloader():
 
 
 ###############################################################################################################
-def tf_dataset(dataset_pars):
+def tf_dataset(data_pars):
     """
         Save in numpy compressez format TF Datasets
     
@@ -546,6 +599,7 @@ def tf_dataset(dataset_pars):
     out_path   = path_norm(d['data_path'] )
     name       = dataset_id.replace(".","-")    
     os.makedirs(out_path, exist_ok=True) 
+    print("name", name)
 
 
 
