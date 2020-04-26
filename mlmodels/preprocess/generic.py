@@ -425,6 +425,48 @@ class pandasDataset(Dataset):
 
 
 
+
+
+
+def create_kerasDataloader():
+    """
+    keras dataloader
+    DataLoader for keras
+
+    Usage example
+    from mlmodels.preprocess.keras_dataloader.dataloader import DataGenerator as kerasDataloader
+    from mlmodels.preprocess.keras_dataloader.dataset import Dataset as kerasDataset
+
+
+    class TensorDataset(kerasDataset):
+
+        def __getitem__(self, index):
+            # time.sleep(np.random.randint(1, 3))
+            return np.random.rand(3), np.array([index])
+
+        def __len__(self):
+            return 100
+            
+    model = Sequential()
+    model.add(Dense(units=4, input_dim=3))
+    model.add(Dense(units=1))
+    model.compile('adam', loss='mse')
+
+    data_loader = kerasDataGenerator(TensorDataset(), batch_size=20, num_workers=0)
+
+    model.fit_generator(generator=data_loader, epochs=1, verbose=1)
+    """
+    #### Write someple
+    a= 1
+
+
+
+
+
+
+
+
+
 ###############################################################################################################
 def tf_dataset(dataset_pars):
     """
