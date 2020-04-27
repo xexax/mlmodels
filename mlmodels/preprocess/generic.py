@@ -2,13 +2,10 @@
 Related to data procesisng
 
 TO DO :
-
    Normalize datasetloader and embedding loading
 
 
-
 1) embeddings can be trainable or fixed  : True
-
 2) embedding are model data, not not split train/test 
 
 
@@ -143,9 +140,33 @@ def get_dataset_torch(data_pars):
 
 
 
-def get_model_data(model_pars, data_pars):
+
+####Not Yet tested
+def get_dataset_keras(data_pars):
     """"
-      Mostly Embedding data, it can be external data used in the model.
+    #### Write someple
+    from mlmodels.preprocess.keras_dataloader.dataloader import DataGenerator as kerasDataloader
+    from mlmodels.preprocess.keras_dataloader.dataset import Dataset as kerasDataset
+
+    class TensorDataset(kerasDataset):
+
+        def __getitem__(self, index):
+            # time.sleep(np.random.randint(1, 3))
+            return np.random.rand(3), np.array([index])
+
+        def __len__(self):
+            return 100
+            
+    #model = Sequential()
+    #model.add(Dense(units=4, input_dim=3))
+    #model.add(Dense(units=1))
+    #model.compile('adam', loss='mse')
+
+    data_loader = kerasDataloader(TensorDataset(), batch_size=20, num_workers=0)
+
+    return data_loader
+    # model.fit_generator(generator=data_loader, epochs=1, verbose=1)
+
 
     ##### MNIST case : TorchVison TorchText Pre-Built
     "dataset"       : "torchvision.datasets:MNIST"
@@ -163,17 +184,73 @@ def get_model_data(model_pars, data_pars):
 
 
     """
-    from torch.utils.data import DataLoader
+    from mlmodels.preprocess.keras_dataloader.dataloader import DataGenerator as kerasDataLoader
+    d = data_pars
+
+    transform = None
+    if  len(data_pars.get("transform_uri", ""))  > 1 :
+       transform = load_function( d.get("transform_uri", "mlmodels.preprocess.image:keras_transform_mnist" ))()
+
+    #### from mlmodels.preprocess.image import pandasDataset
+    dset = load_function(d.get("dataset", "mlmodels.preprocess.datasets:MNIST") ) 
+
+
+    if d.get('train_path') and  d.get('test_path') :
+        ###### Custom Build Dataset   ####################################################
+        dset_inst    = dset(d['train_path'], train=True, download=True, transform= transform, data_pars=data_pars)
+        train_loader = kerasDataLoader( dset_inst, batch_size=d['train_batch_size'], shuffle= d.get('shuffle', True))
+        
+        dset_inst    = dset(d['test_path'], train=False, download=False, transform= transform, data_pars=data_pars)
+        valid_loader = kerasDataLoader( dset_inst, batch_size=d['train_batch_size'], shuffle= d.get('shuffle', True))
+
+
+    else :
+        ###### Pre Built Dataset available  #############################################
+        dset_inst    = dset(d['data_path'], train=True, download=True, transform= transform, data_pars=data_pars)
+        train_loader = kerasDataLoader( dset_inst, batch_size=d['train_batch_size'], shuffle= d.get('shuffle', True))
+        
+        dset_inst    = dset(d['data_path'], train=False, download=False, transform= transform, data_pars=data_pars)
+        valid_loader = kerasDataLoader( dset_inst, batch_size=d['train_batch_size'], shuffle= d.get('shuffle', True))
+
+
+    return train_loader, valid_loader  
+
+
+
+
+
+def get_model_embedding(model_pars, data_pars):
+    """"
+      Mostly Embedding data, it can be external data used in the model.
+
+      INDEPENDANT OF Framework BUT Follows PyTorch Logic
+
+    ##### MNIST case : TorchVison TorchText Pre-Built
+    "dataset"       : "torchvision.datasets:MNIST"
+    "transform_uri" : "mlmodels.preprocess.image:torch_transform_mnist"
+
+
+    ##### Pandas CSV case : Custom MLMODELS One
+    "dataset"        : "mlmodels.preprocess.generic:pandasDataset"
+    "transform_uri"  : "mlmodels.preprocess.text:torch_fillna"
+
+
+    ##### External File processor :
+    "dataset"        : "MyFolder/preprocess/myfile.py:pandasDataset"
+    "transform_uri"  : "MyFolder/preprocess/myfile.py:torch_fillna"
+
+
+    """
     d = model_pars
 
     ### Embedding Transformer
     transform = None
-    if  len(data_pars.get("transform_uri", ""))  > 1 :
-       transform = load_function( d.get("transform_uri", "mlmodels.preprocess.text:torch_transform_glove" ))()
+    if  len(data_pars.get("embedding_transform_uri", ""))  > 1 :
+       transform = load_function( d.get("embedding_transform_uri", "mlmodels.preprocess.text:torch_transform_glove" ))()
 
 
     #### from mlmodels.preprocess.text import embeddingLoader
-    dset = load_function(d.get("embedding", "torchtext.embedding:glove") )
+    dset = load_function(d.get("embedding_dataset", "torchtext.embedding:glove") )
 
     data = None
     if len(d.get('embedding_path', "")) > 1 :
@@ -327,14 +404,12 @@ class NumpyDataset(Dataset):
         self.classes    = data[data_pars['dataset_classes_key']]
 
 
-
-
     def __getitem__(self, index):
 
         X, y = self.features[index], self.classes[index]
         # X =  np.stack((X, X, X)) # gray to rgb 64x64 to 3x64x64
 
-        if self.to_image:
+        if self.to_image :
             X = Image.fromarray(np.uint8(X))
 
         if self.transform is not None:
@@ -451,7 +526,6 @@ def create_kerasDataloader():
     model.fit_generator(generator=data_loader, epochs=1, verbose=1)
     """
     #### Write someple
-    a= 1
     from mlmodels.preprocess.keras_dataloader.dataloader import DataGenerator as kerasDataloader
     from mlmodels.preprocess.keras_dataloader.dataset import Dataset as kerasDataset
 
