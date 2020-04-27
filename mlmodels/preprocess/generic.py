@@ -116,7 +116,6 @@ def get_dataset_torch(data_pars):
     if  len(data_pars.get("transform_uri", ""))  > 1 :
        transform = load_function( d.get("transform_uri", "mlmodels.preprocess.image:torch_transform_mnist" ))()
 
-
     #### from mlmodels.preprocess.image import pandasDataset
     dset = load_function(d.get("dataset", "torchvision.datasets:MNIST") ) 
 
@@ -126,17 +125,17 @@ def get_dataset_torch(data_pars):
         dset_inst    = dset(d['train_path'], train=True, download=True, transform= transform, data_pars=data_pars)
         train_loader = DataLoader( dset_inst, batch_size=d['train_batch_size'], shuffle= d.get('shuffle', True))
         
-        dset_inst    = dset(d['test_path'], train=False, download=True, transform= transform, data_pars=data_pars)
-        valid_loader = DataLoader( dset_inst, batch_size=d['train_batch_size'], shuffle= d.get('shuffle', True))
+        dset_inst    = dset(d['test_path'], train=False, download=False, transform= transform, data_pars=data_pars)
+        valid_loader = DataLoader( dset_inst, batch_size=d['test_batch_size'], shuffle= d.get('shuffle', True))
 
 
     else :
         ###### Pre Built Dataset available  #############################################
-        dset_inst    = dset(d['data_path'], train=True, download=True, transform= transform)
+        dset_inst    = dset(d['data_path'], train=True, download=True, transform= transform, data_pars=data_pars)
         train_loader = DataLoader( dset_inst, batch_size=d['train_batch_size'], shuffle= d.get('shuffle', True))
         
-        dset_inst    = dset(d['data_path'], train=False, download=True, transform= transform)
-        valid_loader = DataLoader( dset_inst, batch_size=d['train_batch_size'], shuffle= d.get('shuffle', True))
+        dset_inst    = dset(d['data_path'], train=False, download=False, transform= transform, data_pars=data_pars)
+        valid_loader = DataLoader( dset_inst, batch_size=d['test_batch_size'], shuffle= d.get('shuffle', True))
 
 
     return train_loader, valid_loader  
@@ -276,7 +275,7 @@ def text_create_tabular_dataset(path_train, path_valid,   lang='en', pretrained_
 
 
 
-
+'''
 class numpyDataset(Dataset):
     """
     Defines a dataset composed of sentiment text and labels
@@ -349,8 +348,73 @@ class numpyDataset(Dataset):
 
         return X, target
 
+'''
+
+from torch.utils.data import Dataset
+import numpy as np
+import os
+from PIL import Image
+# from matplotlib import cm
+# im = Image.fromarray(np.uint8(cm.gist_earth(myarray)*255))
+# import torch
+# torch.from_numpy(X).float()
+class NumpyDataset(Dataset):
+    """
+    Defines a dataset composed of Features and labels
+
+    Attributes:
+        data_pars{
+            data_path: the folder path that it cotains numpy files
+            filename: the name of numpy file 
+            features_key: the key of features ex: n = {"features_name":"data}; n["features_name"]
+            classes_key: the key of classes
+            transforms: operation you wanna apply on image
+
+            example:
+                dataset_pars = {'data_path': 'mlmodels/dataset/vision/cifar10/', 
+                                    'filename':'cifar10_train.npz',
+                                    'features_name':'X',
+                                    'classes_name':'y',
+                                    'transforms':transforms.Compose([transforms.Resize(255), 
+                                                        transforms.CenterCrop(224),  
+                                                        transforms.RandomHorizontalFlip(),
+                                                        transforms.ToTensor(), 
+                                                        transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])]) }
+        }        
+    """
+
+    def __init__(self, root="", train=True, transform=None, target_transform=None,
+                 download=False, data_pars=None):
+
+        # path = data_pars['data_path']
+        # file_name = data_pars['filename']
+        # data      = np.load(os.path.join("mlmodels", path, file_name))
+        # self.features = data[data_pars['features_key']]
+        # self.classes = data[data_pars['classes_key']]
+        # self.transforms = data_pars['transform_uri']
+        if download:
+            tf_dataset(data_pars)
+        self.transforms = transform
+        if train:
+            file_name = data_pars['train_file_name']
+        else:
+            file_name = data_pars['test_file_name']
+        data      = np.load(os.path.join("mlmodels", root, file_name))
+        self.features = data[data_pars['features_key']]
+        self.classes = data[data_pars['classes_key']]
 
 
+    def __getitem__(self, index):
+
+        X, y = self.features[index], self.classes[index]
+        # X =  np.stack((X, X, X)) # gray to rgb 64x64 to 3x64x64
+        if self.transforms:
+            X = Image.fromarray(np.uint8(X))
+            X = self.transforms(X)
+        return X, y
+
+    def __len__(self):
+        return len(self.features)
 
 class pandasDataset(Dataset):
     """
@@ -425,8 +489,52 @@ class pandasDataset(Dataset):
 
 
 
+
+
+
+
+
+def create_kerasDataloader():
+    """
+    keras dataloader
+    DataLoader for keras
+
+    Usage example
+    from mlmodels.preprocess.keras_dataloader.dataloader import DataGenerator as kerasDataloader
+    from mlmodels.preprocess.keras_dataloader.dataset import Dataset as kerasDataset
+
+
+    class TensorDataset(kerasDataset):
+
+        def __getitem__(self, index):
+            # time.sleep(np.random.randint(1, 3))
+            return np.random.rand(3), np.array([index])
+
+        def __len__(self):
+            return 100
+            
+    model = Sequential()
+    model.add(Dense(units=4, input_dim=3))
+    model.add(Dense(units=1))
+    model.compile('adam', loss='mse')
+
+    data_loader = kerasDataGenerator(TensorDataset(), batch_size=20, num_workers=0)
+
+    model.fit_generator(generator=data_loader, epochs=1, verbose=1)
+    """
+    #### Write someple
+    a= 1
+
+
+
+
+
+
+
+
+
 ###############################################################################################################
-def tf_dataset(dataset_pars):
+def tf_dataset(data_pars):
     """
         Save in numpy compressez format TF Datasets
     
@@ -481,38 +589,51 @@ def tf_dataset(dataset_pars):
     import tensorflow_datasets as tfds
     import numpy as np
 
-    d          = dataset_pars
-    dataset_id = d['dataset_id']
-    batch_size = d.get('batch_size', -1)  # -1 neans all the dataset
-    n_train    = d.get("n_train", 500)
-    n_test     = d.get("n_test", 500)
-    out_path   = path_norm(d['out_path'] )
+    d          = data_pars
+    print( d['dataset'])
+    dataset_id = d['dataset'].split(":")[-1].lower()
+    n_train    = d.get("train_batch_size", 500)
+    n_test     = d.get("test_batch_size", 500)
+    out_path   = path_norm(d['data_path'] )
     name       = dataset_id.replace(".","-")    
     os.makedirs(out_path, exist_ok=True) 
+    print("Dataset Name is : ", name)
 
 
-    train_ds = tfds.as_numpy( tfds.load(dataset_id, split= f"train[0:{n_train}]", batch_size=batch_size) )
-    test_ds  = tfds.as_numpy( tfds.load(dataset_id, split= f"test[0:{n_test}]", batch_size=batch_size) )
+
+    train_ds =  tfds.as_numpy( tfds.load(dataset_id, split= f"train[0:{n_train}]") )
+    test_ds  = tfds.as_numpy( tfds.load(dataset_id, split= f"test[0:{n_test}]") )
     # val_ds  = tfds.as_numpy( tfds.load(dataset_id, split= f"test[0:{n_test}]", batch_size=batch_size) )
 
-    print("train", train_ds.shape )
-    print("test",  test_ds.shape )
+    # print("train", train_ds.shape )
+    # print("test",  test_ds.shape )
 
     def get_keys(x):
-       if "image" in x.keys() : xkey = "image"
-       if "text" in x.keys() : xkey = "text"    
-       return xkey
-    
-    
-    for x in train_ds:
-       #print(x)
-       xkey =  get_keys(x)
-       np.savez_compressed(out_path + f"{name}_train" , X = x[xkey] , y = x.get('label') )
-        
+        if "image" in x.keys() : xkey = "image"
+        if "text" in x.keys() : xkey = "text"    
+        return xkey
 
+    Xtemp = []
+    ytemp = []
+    for x in train_ds:
+        #print(x)
+        xkey =  get_keys(x)
+        Xtemp.append(x[xkey])
+        ytemp.append(x.get('label'))
+
+    Xtemp = np.array(Xtemp)
+    ytemp = np.array(ytemp)
+    np.savez_compressed(os.path.join(out_path + f"{name}_train") , X = Xtemp, y = ytemp )    
+
+    Xtemp = []
+    ytemp = []
     for x in test_ds:
-       #print(x)
-       np.savez_compressed(out_path + f"{name}_test", X = x[xkey] , y = x.get('label') )
+        #print(x)
+        Xtemp.append(x[xkey])
+        ytemp.append(x.get('label'))
+    Xtemp = np.array(Xtemp)
+    ytemp = np.array(ytemp)
+    np.savez_compressed(os.path.join(out_path + f"{name}_test"), X = Xtemp, y = ytemp)
         
     print(out_path, os.listdir( out_path ))
         

@@ -396,6 +396,7 @@ def predict(model, session=None, data_pars=None, compute_pars=None, out_pars=Non
     """
         https://github.com/NTMC-Community/MatchZoo-py/blob/master/matchzoo/trainers/trainer.py#L341
 
+       Trainer:
         def predict(
         self,
         dataloader: DataLoader
@@ -438,8 +439,8 @@ def predict(model, session=None, data_pars=None, compute_pars=None, out_pars=Non
     testloader  = get_data_loader(model.model, preprocessor, _preprocessor_pars["test"], test_pack_raw)
 
 
-    ### Model Predict
-    ypred = model.model.predict(testloader)
+    ### Model Predict applied on session = Trainer()
+    ypred = session.predict(testloader)
     return ypred
 
 
@@ -545,6 +546,8 @@ def test_train(data_path, pars_choice, model_name):
     log("#### Predict after Load   ###########################################")
     ypred = predict(model2, data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)
     print(model2)
+
+
 
 
 
