@@ -388,9 +388,9 @@ def config_model_list(folder=None):
     module_names = get_recursive_files(folder, r'/*model*/*.py')
     mlist = []
     for t in module_names:
-        mlist.append(t.replace(folder, "").replace("\\", "."))
-        print(mlist[-1])
-
+        if t.find("__init__") == -1:
+            mlist.append(t.replace(folder, "").replace("\\", "."))
+            print(mlist[-1])
     return mlist
 
 
