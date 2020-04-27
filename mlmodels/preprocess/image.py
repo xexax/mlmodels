@@ -53,8 +53,8 @@ def torchvision_dataset_MNIST_load(path, **args):
                     ]))
     return train_dataset, valid_dataset  
 
-def torch_transform_data_augment():
-    from torchvision import  transforms
+
+def torch_transform_data_augment(fixed_scale = 256, train = False):
     """
     Options:
     1.RandomCrop
@@ -65,22 +65,26 @@ def torch_transform_data_augment():
     6.FixedResize
     7.RandomRotate
     """
+    from torchvision import  transforms
+    size = fixed_scale - 2
+    rotate_prob = 0.5
+
     transform_list = [] 
     #transform_list.append(FixedResize(size = (fixed_scale, fixed_scale)))
-    transform_list.append(RandomSized(fixed_scale))
-    transform_list.append(RandomRotate(rotate_prob))
-    transform_list.append(RandomHorizontalFlip())
+    transform_list.append(transforms.RandomSized(fixed_scale))
+    transform_list.append(transforms.RandomRotate(rotate_prob))
+    transform_list.append(transforms.RandomHorizontalFlip())
     #transform_list.append(Normalize(mean=(0.5, 0.5, 0.5), std=(0.5, 0.5, 0.5)))
     
-    transform_list.append(Normalize(mean=(0.485, 0.456, 0.406), std=(0.229, 0.224, 0.225)))
-    transform_list.append(ToTensor())
+    transform_list.append(transforms.Normalize(mean=(0.485, 0.456, 0.406), std=(0.229, 0.224, 0.225)))
+    transform_list.append(transforms.ToTensor())
 
     return transforms.Compose(transform_list) 
 
 
 
 
-def torch_general_trasform(fixed_scale = 256, train = False):
+def torch_transform_generic(fixed_scale = 256, train = False):
     from torchvision import  transforms
     size = fixed_scale - 2
     transform = {
@@ -98,5 +102,7 @@ def torch_general_trasform(fixed_scale = 256, train = False):
                                   std=[0.229, 0.224, 0.225])])
         }
     return transform['train' if train else 'test'] 
+
+
 
 
