@@ -22,7 +22,9 @@
         "data_pars": {
             "dataset"  : "mlmodels/preprocess/generic.py:NumpyDataset:CIFAR10",
             "data_path": "dataset/vision/cifar10/",
-            "train_batch_size": 100,
+            "train_samples":2000,
+            "test_samples":500,
+            "train_batch_size": 10,
             "test_batch_size": 10,
             "transform_uri" : "mlmodels.preprocess.image:torch_general_trasform",
             "train_file_name":"cifar10_train.npz",
