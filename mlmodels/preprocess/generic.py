@@ -65,12 +65,12 @@ def load_function(uri_name="path_norm"):
         ### Add Folder to Path and Load absoluate path module
         path_parent = str(Path(package).parent.parent.absolute())
         sys.path.append(path_parent)
-        #print(path_parent)
+        #log(path_parent)
 
         #### import Absilute Path model_tf.1_lstm
         model_name   = Path(package).stem  # remove .py
         package_name = str(Path(package).parts[-2]) + "." + str(model_name)
-        #print(package_name, model_name)
+        #log(package_name, model_name)
         return  getattr(importlib.import_module(package_name), name)
 
     except Exception as e2:
@@ -203,6 +203,7 @@ def text_create_tabular_dataset(path_train, path_valid,   lang='en', pretrained_
     from time import sleep
     import re
 
+
     def clean_str(string):
         """
         Tokenization/string cleaning for all datasets except for SST.
@@ -224,9 +225,8 @@ def text_create_tabular_dataset(path_train, path_valid,   lang='en', pretrained_
         return string.strip()
 
 
-
-    disable = [
-        'tagger', 'parser', 'ner', 'textcat'
+    #### Tokenizer  ################################################
+    disable = [ 'tagger', 'parser', 'ner', 'textcat'
         'entity_ruler', 'sentencizer', 
         'merge_noun_chunks', 'merge_entities',
         'merge_subtokens']
@@ -240,34 +240,32 @@ def text_create_tabular_dataset(path_train, path_valid,   lang='en', pretrained_
        sleep(60)
        spacy_en = spacy.load( f'{lang}_core_web_sm', disable= disable)  
 
-
     def tokenizer(text):
         return [tok.text for tok in spacy_en.tokenizer(text)]
 
-    # Creating field for text and label
-    TEXT = Field(sequential=True, tokenize=tokenizer, lower=True)
+
+    # Creating field for text and label  ###########################
+    TEXT  = Field(sequential=True, tokenize=tokenizer, lower=True)
     LABEL = Field(sequential=False)
 
-    print('Preprocessing the text...')
-    # clean the text
+
+    log('Preprocessing the text...')
     TEXT.preprocessing = torchtext.data.Pipeline(clean_str)
 
-    print('Creating tabular datasets...It might take a while to finish!')
+
+
+    log('Creating tabular datasets...It might take a while to finish!')
     train_datafield = [('text', TEXT), ('label', LABEL)]
-    tabular_train = TabularDataset(
-        path=path_train, format='csv',
-        skip_header=True, fields=train_datafield)
+    tabular_train   = TabularDataset(path=path_train, format='csv', skip_header=True, fields=train_datafield)
 
     valid_datafield = [('text', TEXT), ('label', LABEL)]
+    tabular_valid   = TabularDataset(path=path_valid, format='csv', skip_header=True, fields=valid_datafield)
 
-    tabular_valid = TabularDataset(path=path_valid, 
-                                   format='csv',
-                                   skip_header=True,
-                                   fields=valid_datafield)
 
-    print('Building vocaulary...')
+    log('Building vocaulary...')
     TEXT.build_vocab(tabular_train, vectors=pretrained_emb)
     LABEL.build_vocab(tabular_train)
+
 
     return tabular_train, tabular_valid, TEXT.vocab
 
@@ -484,7 +482,7 @@ def tf_dataset_download(data_pars):
         import tensorflow as tf
         
         # Here we assume Eager mode is enabled (TF2), but tfds also works in Graph mode.
-        print(tfds.list_builders())
+        log(tfds.list_builders())
         
         # Construct a tf.data.Dataset
         ds_train = tfds.load(name="mnist", split="train", shuffle_files=True)
@@ -526,7 +524,7 @@ def tf_dataset_download(data_pars):
     import numpy as np
 
     d          = data_pars
-    print( d['dataset'])
+    log( d['dataset'])
     dataset_id = d['dataset'].split(":")[-1].lower()
 
 
@@ -538,7 +536,7 @@ def tf_dataset_download(data_pars):
 
     name       = dataset_id.replace(".","-")    
     os.makedirs(out_path, exist_ok=True) 
-    print("Dataset Name is : ", name)
+    log("Dataset Name is : ", name)
 
 
 
@@ -546,8 +544,8 @@ def tf_dataset_download(data_pars):
     test_ds  = tfds.as_numpy( tfds.load(dataset_id, split= f"test[0:{n_test}]") )
     # val_ds  = tfds.as_numpy( tfds.load(dataset_id, split= f"test[0:{n_test}]", batch_size=batch_size) )
 
-    # print("train", train_ds.shape )
-    # print("test",  test_ds.shape )
+    # log("train", train_ds.shape )
+    # log("test",  test_ds.shape )
 
     def get_keys(x):
         if "image" in x.keys() : xkey = "image"
@@ -557,7 +555,7 @@ def tf_dataset_download(data_pars):
     Xtemp = []
     ytemp = []
     for x in train_ds:
-        #print(x)
+        #log(x)
         xkey =  get_keys(x)
         Xtemp.append(x[xkey])
         ytemp.append(x.get('label'))
@@ -569,14 +567,14 @@ def tf_dataset_download(data_pars):
     Xtemp = []
     ytemp = []
     for x in test_ds:
-        #print(x)
+        #log(x)
         Xtemp.append(x[xkey])
         ytemp.append(x.get('label'))
     Xtemp = np.array(Xtemp)
     ytemp = np.array(ytemp)
     np.savez_compressed(os.path.join(out_path + f"{name}_test"), X = Xtemp, y = ytemp)
         
-    print(out_path, os.listdir( out_path ))
+    log(out_path, os.listdir( out_path ))
         
       
 
