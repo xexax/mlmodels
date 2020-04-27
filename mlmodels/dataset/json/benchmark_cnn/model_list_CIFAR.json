@@ -21,16 +21,26 @@
         },
         "data_pars": {
             "dataset"  : "mlmodels/preprocess/generic.py:NumpyDataset:CIFAR10",
-            "data_path": "dataset/vision/cifar10/",
-            "train_samples":2000,
-            "test_samples":500,
-            "train_batch_size": 10,
-            "test_batch_size": 10,
-            "transform_uri" : "mlmodels.preprocess.image:torch_general_trasform",
-            "train_file_name":"cifar10_train.npz",
-            "test_file_name":"cifar10_test.npz",
-            "features_key":"X",
-            "classes_key":"y"
+
+
+            "tfdataset_train_samples":2000,
+            "tfdataset_test_samples":500,
+            "tfdataset_train_batch_size": 10,
+            "tfdataset_test_batch_size": 10,
+            "tfdataset_data_path": "dataset/vision/cifar10/",
+
+
+            "dataset_train_file_name":"cifar10_train.npz",
+            "dataset_test_file_name":"cifar10_test.npz",
+            "dataset_features_key":"X",
+            "dataset_classes_key":"y",            
+
+            "transform_uri" : "mlmodels.preprocess.image:torch_transform_generic"
+
+
+
+
+
         },
         "compute_pars": {
             "distributed": "mpi",
