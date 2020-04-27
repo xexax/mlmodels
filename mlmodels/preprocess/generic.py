@@ -463,6 +463,7 @@ def create_kerasDataloader():
 
     data_loader = kerasDataloader(TensorDataset(), batch_size=20, num_workers=0)
 
+    return data_loader
     # model.fit_generator(generator=data_loader, epochs=1, verbose=1)
 
 
