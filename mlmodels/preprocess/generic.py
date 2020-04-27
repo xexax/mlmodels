@@ -275,84 +275,7 @@ def text_create_tabular_dataset(path_train, path_valid,   lang='en', pretrained_
 
 
 
-'''
-class numpyDataset(Dataset):
-    """
-    Defines a dataset composed of sentiment text and labels
-    Attributes:
-        X: numpy tensor of the path
-        y: numpy for labels
-        sample_weights(ndarray, shape(len(labels),)): An array with each sample_weight[i] as the weight of the ith sample
-        data (list[int, [int]]): The data in the set
 
-
-    """
-   
-    def __init__(self,root="", train=True, transform=None, target_transform=None,
-                 download=False, data_pars=None, ):
-        import torch
-        import numpy as np
-        self.data_pars        = data_pars
-        self.transform        = transform
-        self.target_transform = target_transform
-        self.download         = download
-        d = data_pars
-
-
-        path = d['train_path'] if train else d['test_path']
-        #filename = d['X_filename'], d['y_filename']
-        #colX =d['colX']
-
-
-        # df = torch.load(os.path.join(path, filename))
-        X      = np.load(os.path.join(path, d['X_filename']))
-        labels = np.load(os.path.join(path, d['y_filename'] )) 
-        # self.X = X
-        # self.labels = labels
-
-
-        #### Split  ####################
-        #X = df[ colX ]
-        #labels = df[ d["coly"] ]
-
-
-        #### Compute sample weights from inverse class frequencies
-        class_sample_count = np.unique(labels, return_counts=True)[1]
-        weight = 1. / class_sample_count
-        self.samples_weight = torch.from_numpy(weight[labels])
-
-
-        #### Data Joining  ############
-        self.data = list(zip(X, labels))
-
-
-    def __len__(self):
-        return len(self.data)
-
-
-    def __getitem__(self, index):
-        """
-        Args:
-            index (int): Index
-        Returns:
-            tuple: (image, target) where target is index of the target class.
-        """
-        X, target = self.data[index], int(self.targets[index])
-
-
-        if self.transform is not None:
-            X = self.transform(X)
-
-        if self.target_transform is not None:
-            target = self.target_transform(target)
-
-        return X, target
-
-'''
-
-from torch.utils.data import Dataset
-import numpy as np
-import os
 from PIL import Image
 # from matplotlib import cm
 # im = Image.fromarray(np.uint8(cm.gist_earth(myarray)*255))
@@ -393,21 +316,20 @@ class NumpyDataset(Dataset):
         # self.classes = data[data_pars['classes_key']]
         # self.transforms = data_pars['transform_uri']
         if download:
-            tf_dataset(data_pars)
+            tf_dataset_download(data_pars)
+
         self.transforms = transform
-        if train:
-            file_name = data_pars['train_file_name']
-        else:
-            file_name = data_pars['test_file_name']
-        data      = np.load(os.path.join("mlmodels", root, file_name))
-        self.features = data[data_pars['features_key']]
-        self.classes = data[data_pars['classes_key']]
+        file_name       = data_pars['dataset_train_file_name'] if train else data_pars['dataset_test_file_name']
+        data            = np.load( path_norm( file_name))
+        self.features   = data[data_pars['dataset_features_key']]
+        self.classes    = data[data_pars['dataset_classes_key']]
 
 
     def __getitem__(self, index):
 
         X, y = self.features[index], self.classes[index]
         # X =  np.stack((X, X, X)) # gray to rgb 64x64 to 3x64x64
+
         if self.transforms:
             X = Image.fromarray(np.uint8(X))
             X = self.transforms(X)
@@ -415,6 +337,7 @@ class NumpyDataset(Dataset):
 
     def __len__(self):
         return len(self.features)
+
 
 class pandasDataset(Dataset):
     """
@@ -489,11 +412,6 @@ class pandasDataset(Dataset):
 
 
 
-
-
-
-
-
 def create_kerasDataloader():
     """
     keras dataloader
@@ -524,23 +442,40 @@ def create_kerasDataloader():
     """
     #### Write someple
     a= 1
+    from mlmodels.preprocess.keras_dataloader.dataloader import DataGenerator as kerasDataloader
+    from mlmodels.preprocess.keras_dataloader.dataset import Dataset as kerasDataset
 
 
 
+    class TensorDataset(kerasDataset):
 
+        def __getitem__(self, index):
+            # time.sleep(np.random.randint(1, 3))
+            return np.random.rand(3), np.array([index])
 
+        def __len__(self):
+            return 100
+            
+    #model = Sequential()
+    #model.add(Dense(units=4, input_dim=3))
+    #model.add(Dense(units=1))
+    #model.compile('adam', loss='mse')
+
+    data_loader = kerasDataloader(TensorDataset(), batch_size=20, num_workers=0)
+
+    # model.fit_generator(generator=data_loader, epochs=1, verbose=1)
 
 
 
 
 ###############################################################################################################
-def tf_dataset(data_pars):
+def tf_dataset_download(data_pars):
     """
         Save in numpy compressez format TF Datasets
     
         dataset_pars ={ "dataset_id" : "mnist", "batch_size" : 5000, "n_train": 500, "n_test": 500, 
                             "out_path" : "dataset/vision/mnist2/" }
-        tf_dataset(dataset_pars)
+        tf_dataset_download(dataset_pars)
         
         
         https://www.tensorflow.org/datasets/api_docs/python/tfds
@@ -592,10 +527,14 @@ def tf_dataset(data_pars):
     d          = data_pars
     print( d['dataset'])
     dataset_id = d['dataset'].split(":")[-1].lower()
-    n_train    = d.get("train_samples", 500)
-    n_test     = d.get("test_samples", 50)
-    batch_size = d.get("train_batch_size", 10)
-    out_path   = path_norm(d['data_path'] )
+
+
+    n_train    = d.get("tfdataset_train_samples", 500)
+    n_test     = d.get("tfdataset_test_samples", 50)
+    batch_size = d.get("tfdataset_train_batch_size", 10)
+    out_path   = path_norm(d['tf_data_path'] )
+
+
     name       = dataset_id.replace(".","-")    
     os.makedirs(out_path, exist_ok=True) 
     print("Dataset Name is : ", name)
@@ -659,3 +598,81 @@ if __name__ == "__main__":
 
 
 
+
+
+
+
+'''
+class numpyDataset(Dataset):
+    """
+    Defines a dataset composed of sentiment text and labels
+    Attributes:
+        X: numpy tensor of the path
+        y: numpy for labels
+        sample_weights(ndarray, shape(len(labels),)): An array with each sample_weight[i] as the weight of the ith sample
+        data (list[int, [int]]): The data in the set
+
+
+    """
+   
+    def __init__(self,root="", train=True, transform=None, target_transform=None,
+                 download=False, data_pars=None, ):
+        import torch
+        import numpy as np
+        self.data_pars        = data_pars
+        self.transform        = transform
+        self.target_transform = target_transform
+        self.download         = download
+        d = data_pars
+
+
+        path = d['train_path'] if train else d['test_path']
+        #filename = d['X_filename'], d['y_filename']
+        #colX =d['colX']
+
+
+        # df = torch.load(os.path.join(path, filename))
+        X      = np.load(os.path.join(path, d['X_filename']))
+        labels = np.load(os.path.join(path, d['y_filename'] )) 
+        # self.X = X
+        # self.labels = labels
+
+
+        #### Split  ####################
+        #X = df[ colX ]
+        #labels = df[ d["coly"] ]
+
+
+        #### Compute sample weights from inverse class frequencies
+        class_sample_count = np.unique(labels, return_counts=True)[1]
+        weight = 1. / class_sample_count
+        self.samples_weight = torch.from_numpy(weight[labels])
+
+
+        #### Data Joining  ############
+        self.data = list(zip(X, labels))
+
+
+    def __len__(self):
+        return len(self.data)
+
+
+    def __getitem__(self, index):
+        """
+        Args:
+            index (int): Index
+        Returns:
+            tuple: (image, target) where target is index of the target class.
+        """
+        X, target = self.data[index], int(self.targets[index])
+
+
+        if self.transform is not None:
+            X = self.transform(X)
+
+        if self.target_transform is not None:
+            target = self.target_transform(target)
+
+        return X, target
+
+'''
