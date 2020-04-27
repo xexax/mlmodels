@@ -315,12 +315,18 @@ class NumpyDataset(Dataset):
         # self.transforms = data_pars['transform_uri']
         if download:
             tf_dataset_download(data_pars)
+        
+        self.target_transform = target_transform
+        self.transform  = transform
+        self.to_image   = data_pars.get('to_image', 1)
 
-        self.transforms = transform
+
         file_name       = data_pars['dataset_train_file_name'] if train else data_pars['dataset_test_file_name']
         data            = np.load( path_norm( file_name))
         self.features   = data[data_pars['dataset_features_key']]
         self.classes    = data[data_pars['dataset_classes_key']]
+
+
 
 
     def __getitem__(self, index):
@@ -328,9 +334,15 @@ class NumpyDataset(Dataset):
         X, y = self.features[index], self.classes[index]
         # X =  np.stack((X, X, X)) # gray to rgb 64x64 to 3x64x64
 
-        if self.transforms:
+        if self.to_image:
             X = Image.fromarray(np.uint8(X))
-            X = self.transforms(X)
+
+        if self.transform is not None:
+            X = self.transform(X)
+
+        if self.target_transform is not None:
+            y = self.target_transform(y)
+
         return X, y
 
     def __len__(self):
