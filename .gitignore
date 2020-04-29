@@ -4,7 +4,8 @@ __pycache__/
 *$py.class
 zsublime*
 *vector_cache*
-
+*zzzarchive*
+*ztest*
 
 # C extensions
 *.so
