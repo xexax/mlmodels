@@ -36,18 +36,16 @@ class Model:
             self.model = None
             return self
 
-        # Initialize the text classifier.
-        # It tries n different models.
+        # initalize model according to the type
         if model_pars["model_name"] == "text":
             # Initialize the TextClassifier
-            self.model = ak.TextClassifier(max_trials=model_pars['max_trials'])
+            self.model = ak.TextClassifier( ** model_pars["model_pars"])
         elif model_pars["model_name"] == "vision":
             # Initialize the ImageClassifier.
-            self.model = ak.ImageClassifier(max_trials=model_pars['max_trials'])
+            self.model = ak.ImageClassifier(** model_pars["model_pars"])
         elif model_pars["model_name"] == "tabular_classifier":
             # Initialize the classifier.
-            self.model = ak.StructuredDataClassifier(max_trials=model_pars['max_trials'])
-
+            self.model = ak.StructuredDataClassifier(** model_pars["model_pars"])
 
 def get_params(param_pars=None, **kw):
     pp = param_pars
