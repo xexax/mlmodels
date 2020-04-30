@@ -28,7 +28,7 @@
         },
 
         "out_pars": {
-            "checkpointdir": "ztest/model_keras/autokeras/"
+            "checkpointdir": "ztest/model_keras/autokeras/vision_classifier/"
         
         }
     },
@@ -64,7 +64,7 @@
         },
 
         "out_pars": {
-            "checkpointdir": "ztest/model_keras/autokeras/"
+            "checkpointdir": "ztest/model_keras/autokeras/text_classifier/"
         
         }
     },
@@ -100,7 +100,7 @@
         },
 
         "out_pars": {
-            "checkpointdir": "ztest/model_keras/autokeras/"
+            "checkpointdir": "ztest/model_keras/autokeras/tabular_classifier/"
         
         }
     },
@@ -142,7 +142,7 @@
         },
 
         "out_pars": {
-            "checkpointdir": "ztest/model_keras/autokeras/"
+            "checkpointdir": "ztest/model_keras/autokeras/tabular_regressor/"
         
         }
     }
