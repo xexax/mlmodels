@@ -3,21 +3,21 @@
 """
 https://autokeras.com/examples/imdb/
 """
-from mlmodels.util import os_package_root_path, log, path_norm, get_model_uri, path_norm_dict
+
 import os
 import json
-
+from copy import deepcopy
 import numpy as np
 import pandas as pd
 import autokeras as ak
 
 from keras.models import load_model
 
-from tensorflow.keras.datasets import imdb
-from tensorflow.keras.datasets import mnist
+from keras.datasets import imdb, mnist
 
 
-
+############################################################################################################
+from mlmodels.util import os_package_root_path, log, path_norm, get_model_uri, path_norm_dict
 
 MODEL_URI = get_model_uri(__file__)
 
@@ -26,16 +26,39 @@ def get_config_file():
     return os.path.join(os_package_root_path(__file__, 1), 'config', 'model_keras', 'Imagecnn.json')
 
 
+MODELS = {
+    'text_classifier'      : ak.TextClassifier,
+    'image_clasifier'      : ak.ImageClassifier,
+    "tabular_classifier"   : ak.StructuredDataClassifier,
+     "tabular_regressor":    ak.StructuredDataRegressor
+
+}
+
+
+
+
 ###########################################################################################################
 ###########################################################################################################
 class Model:
     def __init__(self, model_pars=None, data_pars=None, compute_pars=None, out_pars=None):
-        ### Model Structure        ################################
+        self.model_pars   = deepcopy(model_pars)
+        self.data_pars    = deepcopy(data_pars)
+        self.compute_pars = deepcopy(compute_pars)
+
 
         if model_pars is None:
             self.model = None
-            return self
+            return None
 
+
+        if model_pars["model_name"]  == "tabular_regressor" :
+            self.model = ak.StructuredDataRegressor(** model_pars["model_pars"],column_types=data_pars["data_type"])
+
+        else :    
+           self.model  = MODELS[  model_pars['model_name'] ](  ** model_pars["model_pars"]  )
+
+       
+        """  
         # initalize model according to the type
         if model_pars["model_name"] == "text":
             # Initialize the TextClassifier
@@ -46,8 +69,11 @@ class Model:
         elif model_pars["model_name"] == "tabular_classifier":
             # Initialize the classifier.
             self.model = ak.StructuredDataClassifier(** model_pars["model_pars"])
+
+
         elif model_pars["model_name"] == "tabular_regressor":
             self.model = ak.StructuredDataRegressor(** model_pars["model_pars"],column_types=data_pars["data_type"])
+        """  
 
 
 def get_params(param_pars=None, **kw):
@@ -71,20 +97,21 @@ def get_params(param_pars=None, **kw):
         raise Exception(f"Not support choice {choice} yet")
 
 
+
 def get_dataset_imbd(data_pars):
 
     # Load the integer sequence the IMDB dataset with Keras.
     index_offset = 3  # word index offset
     (x_train, y_train), (x_test, y_test) = imdb.load_data(num_words=data_pars["num_words"],
                                                           index_from=index_offset)
-    y_train = y_train.reshape(-1, 1)
-    y_test = y_test.reshape(-1, 1)
+    y_train               = y_train.reshape(-1, 1)
+    y_test                = y_test.reshape(-1, 1)
     # Prepare the dictionary of index to word.
-    word_to_id = imdb.get_word_index()
-    word_to_id = {k: (v + index_offset) for k, v in word_to_id.items()}
-    word_to_id["<PAD>"] = 0
+    word_to_id            = imdb.get_word_index()
+    word_to_id            = {k: (v + index_offset) for k, v in word_to_id.items()}
+    word_to_id["<PAD>"]   = 0
     word_to_id["<START>"] = 1
-    word_to_id["<UNK>"] = 2
+    word_to_id["<UNK>"]   = 2
     id_to_word = {value: key for key, value in word_to_id.items()}
     # Convert the word indices to words.
     x_train = list(map(lambda sentence: ' '.join(
@@ -95,18 +122,20 @@ def get_dataset_imbd(data_pars):
     x_test = np.array(x_test, dtype=np.str)
     return x_train, y_train, x_test, y_test
 
+
 def get_dataset_titanic(data_pars): 
     # Preparing training data.
-    train_data_path  = data_pars['train_data_path']
-    test_data_path = data_pars['test_data_path']
-    train_data_path  = path_norm( train_data_path )
-    test_data_path = path_norm( test_data_path )
-    x_train = pd.read_csv(train_data_path)
-    y_train = x_train.pop('survived')
+    train_data_path = data_pars['train_data_path']
+    test_data_path  = data_pars['test_data_path']
+    train_data_path = path_norm( train_data_path )
+    test_data_path  = path_norm( test_data_path )
+    x_train         = pd.read_csv(train_data_path)
+    y_train         = x_train.pop('survived')
     # Preparing testing data.
-    x_test = pd.read_csv(test_data_path)
-    y_test = x_test.pop('survived')
+    x_test          = pd.read_csv(test_data_path)
+    y_test          = x_test.pop('survived')
     return x_train, y_train, x_test, y_test
+
 
 def get_dataset_auto_mpg(data_pars):
     column_names = data_pars["column_names"]
@@ -114,13 +143,13 @@ def get_dataset_auto_mpg(data_pars):
     raw_dataset = pd.read_csv(dataset_path, names=column_names,
                         na_values = "?", comment='\t',
                         sep=" ", skipinitialspace=True)
-    target_col = data_pars["target_col"]
-    dataset = raw_dataset.copy()
-    dataset = dataset.dropna()
-    data_type = (len(column_names )-1) * ['numerical'] + ['categorical']
-    data_type = dict(zip(column_names , data_type))
+    target_col    = data_pars["target_col"]
+    dataset       = raw_dataset.copy()
+    dataset       = dataset.dropna()
+    data_type     = (len(column_names )-1) * ['numerical'] + ['categorical']
+    data_type     = dict(zip(column_names , data_type))
     train_dataset = dataset.sample(frac=1-data_pars["validation_split"],random_state=42)
-    test_dataset = dataset.drop(train_dataset.index)
+    test_dataset  = dataset.drop(train_dataset.index)
     return train_dataset.drop(columns=[target_col]), train_dataset[target_col], test_dataset.drop(columns=[target_col]),test_dataset[target_col]
 
 
@@ -227,6 +256,6 @@ def test() :
 
 
 if __name__ == '__main__':
-    VERBOSE = False
+    VERBOSE = True
 
     test()

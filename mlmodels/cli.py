@@ -63,7 +63,7 @@ def predict():
 @click.argument('model_name')
 @click.option('-sf', '--save_folder', help="Folder Path to save configuration")
 def generate_config(model_name, save_folder):
-    from mlmodels.models import generate_config    
+    from mlmodels.models import config_generate_json    
     log(arg.save_folder)
     config_generate_json(model_name, to_path=save_folder)
 
