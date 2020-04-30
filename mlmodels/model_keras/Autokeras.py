@@ -13,7 +13,7 @@ import autokeras as ak
 
 from keras.models import load_model
 
-from keras.datasets import imdb, mnist
+
 
 
 ############################################################################################################
@@ -96,7 +96,7 @@ def get_params(param_pars=None, **kw):
 
 
 def get_dataset_imbd(data_pars):
-
+    from keras.datasets import imdb, mnist
     # Load the integer sequence the IMDB dataset with Keras.
     index_offset = 3  # word index offset
     (x_train, y_train), (x_test, y_test) = imdb.load_data(num_words=data_pars["num_words"],
@@ -111,12 +111,10 @@ def get_dataset_imbd(data_pars):
     word_to_id["<UNK>"]   = 2
     id_to_word = {value: key for key, value in word_to_id.items()}
     # Convert the word indices to words.
-    x_train = list(map(lambda sentence: ' '.join(
-        id_to_word[i] for i in sentence), x_train))
-    x_test = list(map(lambda sentence: ' '.join(
-        id_to_word[i] for i in sentence), x_test))
-    x_train = np.array(x_train, dtype=np.str)
-    x_test = np.array(x_test, dtype=np.str)
+    x_train    = list(map(lambda sentence: ' '.join(id_to_word[i] for i in sentence), x_train))
+    x_test     = list(map(lambda sentence: ' '.join( id_to_word[i] for i in sentence), x_test))
+    x_train    = np.array(x_train, dtype=np.str)
+    x_test     = np.array(x_test, dtype=np.str)
     return x_train, y_train, x_test, y_test
 
 
@@ -157,10 +155,12 @@ def get_dataset(data_pars=None):
         x_train, y_train, x_test, y_test = get_dataset_imbd(data_pars)
         
     elif data_pars['dataset'] == "MNIST":
+        from keras.datasets import mnist
         (x_train, y_train), (x_test, y_test)  = mnist.load_data()
         
     elif data_pars['dataset'] == "Titanic Survival Prediction":
         x_train, y_train, x_test, y_test = get_dataset_titanic(data_pars)
+
     elif data_pars["dataset"] == "Auto MPG Data Set":
         x_train, y_train, x_test, y_test = get_dataset_auto_mpg(data_pars)
         
@@ -172,8 +172,7 @@ def get_dataset(data_pars=None):
 
 def fit(model, data_pars=None, compute_pars=None, out_pars=None, **kwargs):
     x_train, y_train, _, _ = get_dataset(data_pars)
-    print(type(x_train))
-    print(type(y_train))
+    log(type(x_train), type(y_train))
     os.makedirs(out_pars["checkpointdir"], exist_ok=True)
     history = model.model.fit(x_train,
               y_train,
@@ -227,7 +226,7 @@ def save(model, session=None, save_pars=None):
 
 def load(load_pars):
     import pickle, copy
-    load_pars2 = copy.deepcopy(load_pars)
+    #load_pars2 = copy.deepcopy(load_pars)
     path = path_norm( load_pars['path']  + "/keras_model/" )
 
 
@@ -290,7 +289,7 @@ def test_single(data_path="dataset/", pars_choice="json", config_mode="test"):
     print(ypred[:10])
 
     log("#### metrics   #####################################################")
-    metrics_val = fit_metrics(fitted_model, data_pars, compute_pars, out_pars)
+    metrics_val = fit_metrics(model, data_pars, compute_pars, out_pars)
     print(metrics_val)
 
     log("#### Plot   ########################################################")
@@ -299,7 +298,7 @@ def test_single(data_path="dataset/", pars_choice="json", config_mode="test"):
     log("#### Save  #########################################################")
     save_pars = {'path' :  out_pars['path']}
     ## Export as a Keras Model.
-    save_model_keras = fitted_model.model.export_model()
+    save_model_keras = model.model.export_model()
 
     save_model = Model_keras_empty(model_pars, data_pars, compute_pars)
     save_model.model = save_model_keras
@@ -328,3 +327,5 @@ if __name__ == '__main__':
     VERBOSE = True
 
     test()
+
+
