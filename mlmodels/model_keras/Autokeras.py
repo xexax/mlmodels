@@ -41,7 +41,7 @@ class Model:
         self.model_pars   = deepcopy(model_pars)
         self.data_pars    = deepcopy(data_pars)
         self.compute_pars = deepcopy(compute_pars)
-
+        self.history      = None
 
         if model_pars is None:
             self.model = None
@@ -182,7 +182,9 @@ def fit(model, data_pars=None, compute_pars=None, out_pars=None, **kwargs):
               epochs=compute_pars['epochs']
               )
 
-    return model
+    model.history = history
+
+    return model, None
 
 
 def predict(model, session=None, data_pars=None, compute_pars=None, out_pars=None):
@@ -192,7 +194,7 @@ def predict(model, session=None, data_pars=None, compute_pars=None, out_pars=Non
     return predicted_y
 
 
-def fit_metrics(model, data_pars=None, compute_pars=None, out_pars=None):
+def fit_metrics(model, session=None, data_pars=None, compute_pars=None, out_pars=None):
     _, _, x_test, y_test = get_dataset(data_pars)
     return model.evaluate(x_test, y_test)
 
@@ -210,7 +212,7 @@ def save(model, session=None, save_pars=None):
     ### Specialized part
     save2['path'] = path
     # save_tch(model=model, save_pars=save2)
-    model.model.save(os.path.join(save_pars["path"],f'model.h5'))
+    model.model.save(os.path.join(path, 'model.h5'))
 
 
     ### Setup Model
@@ -229,18 +231,19 @@ def load(load_pars):
     path = path_norm( load_pars['path']  + "/keras_model/" )
 
 
-    ### Setup Model
+    #### Setup Model
     d = pickle.load( open(path + "/keras_model_pars.pkl", mode="rb")  )
-    model = Model_keras_empty(model_pars= d['model_pars'], compute_pars= d['compute_pars'],
-                              data_pars= d['data_pars'])  
+    model = Model_keras_empty(model_pars = d['model_pars'], compute_pars = d['compute_pars'],
+                              data_pars  = d['data_pars'])  
 
-    ### Specialized part
-    load_pars2['path'] = path
+    #### Specialized part
+    # load_pars2['path'] = path
     # model2 = load_tch(load_pars2)
-    model2 = load_model(os.path.join(load_pars["checkpointdir"],f'model.h5'), custom_objects=ak.CUSTOM_OBJECTS)
+    model2 = load_model(os.path.join(path, '/model.h5'), custom_objects=ak.CUSTOM_OBJECTS)
     model.model = model2
 
     return model
+
 
 
 """
@@ -279,10 +282,10 @@ def test_single(data_path="dataset/", pars_choice="json", config_mode="test"):
 
     log("#### Model init, fit   #############################################")
     model = Model(model_pars, data_pars, compute_pars)
-    fitted_model = fit(model, data_pars, compute_pars, out_pars)
+    model, session = fit(model, data_pars, compute_pars, out_pars)
 
     log("#### Predict   #####################################################")
-    ypred = predict(fitted_model, data_pars, compute_pars, out_pars)
+    ypred = predict(model, session, data_pars, compute_pars, out_pars)
     print(ypred[:10])
 
     log("#### metrics   #####################################################")
@@ -292,17 +295,19 @@ def test_single(data_path="dataset/", pars_choice="json", config_mode="test"):
     log("#### Plot   ########################################################")
 
 
-    log("#### Save/Load   ###################################################")
+    log("#### Save  #########################################################")
+    save_pars = {'path' :  out_pars['path']}
     ## Export as a Keras Model.
     save_model_keras = fitted_model.model.export_model()
 
     save_model = Model_keras_empty(model_pars, data_pars, compute_pars)
     save_model.model = save_model_keras
-    save(model=save_model, save_pars=out_pars)  #, config_mode=config_mode)
+    save(model=save_model, save_pars=save_pars)  #, config_mode=config_mode)
 
 
     log("#### Load   ###################################################")    
-    loaded_model = load( out_pars)  #, config_mode)
+    load_pars = {'path' :  out_pars['path']}
+    loaded_model = load( load_pars)  #, config_mode)
     ypred = predict(loaded_model, data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)
     print(ypred[:10])
 
