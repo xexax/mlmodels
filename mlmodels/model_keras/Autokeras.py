@@ -46,6 +46,9 @@ class Model:
         elif model_pars["model_name"] == "tabular_classifier":
             # Initialize the classifier.
             self.model = ak.StructuredDataClassifier(** model_pars["model_pars"])
+        elif model_pars["model_name"] == "tabular_regressor":
+            self.model = ak.StructuredDataRegressor(** model_pars["model_pars"],column_types=data_pars["data_type"])
+
 
 def get_params(param_pars=None, **kw):
     pp = param_pars
@@ -105,6 +108,21 @@ def get_dataset_titanic(data_pars):
     y_test = x_test.pop('survived')
     return x_train, y_train, x_test, y_test
 
+def get_dataset_auto_mpg(data_pars):
+    column_names = data_pars["column_names"]
+    dataset_path = data_pars["dataset_path"]
+    raw_dataset = pd.read_csv(dataset_path, names=column_names,
+                        na_values = "?", comment='\t',
+                        sep=" ", skipinitialspace=True)
+    target_col = data_pars["target_col"]
+    dataset = raw_dataset.copy()
+    dataset = dataset.dropna()
+    data_type = (len(column_names )-1) * ['numerical'] + ['categorical']
+    data_type = dict(zip(column_names , data_type))
+    train_dataset = dataset.sample(frac=1-data_pars["validation_split"],random_state=42)
+    test_dataset = dataset.drop(train_dataset.index)
+    return train_dataset.drop(columns=[target_col]), train_dataset[target_col], test_dataset.drop(columns=[target_col]),test_dataset[target_col]
+
 
 
 def get_dataset(data_pars=None):
@@ -117,6 +135,8 @@ def get_dataset(data_pars=None):
         
     elif data_pars['dataset'] == "Titanic Survival Prediction":
         x_train, y_train, x_test, y_test = get_dataset_titanic(data_pars)
+    elif data_pars["dataset"] == "Auto MPG Data Set":
+        x_train, y_train, x_test, y_test = get_dataset_auto_mpg(data_pars)
         
     else:
         raise Exception("Dataloader not implemented")
@@ -199,7 +219,7 @@ def test_single(data_path="dataset/", pars_choice="json", config_mode="test"):
     
 
 def test() :
-    ll = [ "vision" , "text" , "tabular_classifier" ]
+    ll = ["tabular_regressor","vision" , "text" , "tabular_classifier" ]
 
     for t in ll  :
         test_single(data_path="model_keras/Autokeras.json", pars_choice="json", config_mode=t)

@@ -103,6 +103,50 @@
             "checkpointdir": "ztest/model_keras/autokeras/"
         
         }
+    },
+
+"tabular_regressor":{
+
+        "model_pars": {
+            "model_name":"tabular_regressor",
+            "model_pars":{
+                            "output_dim":null,
+                            "loss":  "mean_squared_error",
+                            "metrics": "mean_squared_error",
+                            "name":"tabular_regressor",
+                            "max_trials":10,
+                            "directory": null,
+                            "objective": "val_loss",
+                            "overwrite":true,
+                            "seed":  null,
+                            "column_names":null
+                            }
+        },
+
+        "data_pars" :{
+            "dataset": "Auto MPG Data Set",
+            "column_names":["MPG","Cylinders","Displacement","Horsepower","Weight",
+                "Acceleration", "Model Year", "Origin"],
+            "data_type":{"Cylinders":"numerical","Displacement":"numerical","Horsepower":"numerical","Weight":"numerical",
+                "Acceleration":"numerical","Model Year":"numerical","Origin":"categorical"},
+            "dataset_path":"http://archive.ics.uci.edu/ml/machine-learning-databases/auto-mpg/auto-mpg.data",
+            "train_data_path": "",
+            "test_data_path": "",
+            "target_col":"MPG",
+            "validation_split":0.2
+        },
+
+        "compute_pars": {
+            "epochs":2
+            
+        },
+
+        "out_pars": {
+            "checkpointdir": "ztest/model_keras/autokeras/"
+        
+        }
     }
+
+
 
 }
