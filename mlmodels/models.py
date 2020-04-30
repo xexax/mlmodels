@@ -165,6 +165,41 @@ def save(module, model, session, save_pars, **kwarg):
     return module.save(model, session, save_pars, **kwarg)
 
 
+
+
+####################################################################################################
+########  CLI ######################################################################################
+def fit_cli(model_name, config_file, config_mode, save_folder):
+    model_p, data_p, compute_p, out_p = config_get_pars(config_file, config_mode)
+    module = module_load(model_name)
+    model = model_create(module, model_p, data_p, compute_p)
+    log("Fit")
+    model, sess = module.fit(model, data_pars=data_p, compute_pars=compute_p, out_pars=out_p)
+    log("Save")
+    save_pars = {"path": f"{save_folder}/{model_name}", "model_uri": model_name}
+    save(save_pars, model, sess)
+
+
+
+
+
+def predict_cli(model_name, config_file, config_mode, save_folder) :
+    model_p, data_p, compute_p, out_p = config_get_pars(config_file, config_mode)
+    load_pars = {"path": f"{save_folder}/{model_name}", "model_uri": model_name}
+    module = module_load(model_p[".model_uri"])
+    model, session = load(load_pars)
+    module.predict(model, session, data_pars=data_p, compute_pars=compute_p, out_pars=out_p)
+
+
+
+
+
+
+
+
+
+
+
 ####################################################################################################
 ####################################################################################################
 def test_all(folder=None):

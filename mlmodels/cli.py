@@ -30,20 +30,20 @@ def test(model_name, params):
     param_pars = {"choice": "test01", "data_path": "", "config_mode": "test"}
     models.test_module(model_name, param_pars=param_pars)
 
+
+
+
 @main.command()
 @click.argument('model_name')
 @click.option('-cf', '--config_file', help="Enter Path to config file")
 @click.option('cm', '--config_mode', help="Enter Config Mode: test/prod/uat", default="test")
 @click.option('-sf', '--save_folder', help="Model Save Location")
 def fit(model_name, config_file, config_mode, save_folder):
-    model_p, data_p, compute_p, out_p = config_get_pars(config_file, config_mode)
-    module = module_load(model_name)
-    model = model_create(module, model_p, data_p, compute_p)
-    log("Fit")
-    model, sess = module.fit(model, data_pars=data_p, compute_pars=compute_p, out_pars=out_p)
-    log("Save")
-    save_pars = {"path": f"{save_folder}/{model_name}", "model_uri": model_name}
-    save(save_pars, model, sess)
+    from mlmodels.models import fit_cli
+    fit_cli(model_name, config_file, config_mode, save_folder)
+
+
+
 
 @main.command()
 @click.argument('model_name')
@@ -51,11 +51,10 @@ def fit(model_name, config_file, config_mode, save_folder):
 @click.option('cm', '--config_mode', help="Enter Config Mode: test/prod/uat", default="test")
 @click.option('-sf', '--save_folder', help="Model Save Location")
 def predict():
-    model_p, data_p, compute_p, out_p = config_get_pars(config_file, config_mode)
-    load_pars = {"path": f"{save_folder}/{model_name}", "model_uri": model_name}
-    module = module_load(model_p[".model_uri"])
-    model, session = load(load_pars)
-    module.predict(model, session, data_pars=data_p, compute_pars=compute_p, out_pars=out_p)
+    from mlmodels.models import predict_cli
+    predict_cli(model_name, config_file, config_mode, save_folder)
+
+
 
 @main.command()
 @click.argument('model_name')
