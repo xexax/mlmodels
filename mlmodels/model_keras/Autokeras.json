@@ -2,8 +2,19 @@
     "vision":{
 
         "model_pars": {
-            "max_trials": 10,
-            "model_name":"vision"
+            "model_name":"vision",
+             "model_pars":{
+                            "num_classes": null,
+                            "multi_label": false,
+                            "loss":  null,
+                            "metrics": null,
+                            "name":"vision_classifier",
+                            "max_trials":10,
+                            "directory": null,
+                            "objective": "val_loss",
+                            "overwrite":true,
+                            "seed": null
+                            }
         },
 
         "data_pars" :{
@@ -25,8 +36,19 @@
 "text":{
 
         "model_pars": {
-            "max_trials": 10,
-            "model_name":"text"
+            "model_name":"text",
+            "model_pars":{
+                            "num_classes":null,
+                            "multi_label":false,
+                            "loss":  null,
+                            "metrics": null,
+                            "name":"text_classifier",
+                            "max_trials":10,
+                            "directory": null,
+                            "objective": "val_loss",
+                            "overwrite":true,
+                            "seed":  null
+                            }
         },
 
         "data_pars" :{
@@ -50,8 +72,19 @@
 "tabular_classifier":{
 
         "model_pars": {
-            "max_trials": 10,
-            "model_name":"tabular_classifier"
+            "model_name":"tabular_classifier",
+            "model_pars":{
+                            "num_classes": null,
+                            "multi_label": false,
+                            "loss":  null,
+                            "metrics": null,
+                            "name":"tabular_classifier",
+                            "max_trials":10,
+                            "directory": null,
+                            "objective": "val_loss",
+                            "overwrite":true,
+                            "seed":  null
+                            }
         },
 
         "data_pars" :{
