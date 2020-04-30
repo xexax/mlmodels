@@ -192,6 +192,17 @@ def predict_cli(model_name, config_file, config_mode, save_folder) :
 
 
 
+def test_cli(model_name, params):
+    # Name as argument as must entered by user,
+    # params are optional. Would take default params
+    # if user didn;t mention explictly
+    models.test(model_name)
+    # both of these are same thus, test are running two times.
+    # one is implemented in models.py and one is implemented
+    # individually in each model.
+    param_pars = {"choice": "test01", "data_path": "", "config_mode": "test"}
+    models.test_module(model_name, param_pars=param_pars)
+
 
 
 
