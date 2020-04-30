@@ -131,7 +131,7 @@ setup(
     description="Generic model API, Model Zoo in Tensorflow, Keras, Pytorch, Hyperparamter search",
     keywords='Machine Learning Interface library',
     
-    author="Kevin Noel",
+    author="Kevin Noel, al",
     author_email="brookm291@gmail.com",
     url="https://github.com/arita37/mlmodels",
     
@@ -139,6 +139,8 @@ setup(
     python_requires='>=3.6',
     
     packages=packages,
+
+    include_package_data=True,
     
     #### CLI
     scripts = scripts,
