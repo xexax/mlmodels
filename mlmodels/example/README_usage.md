@@ -64,6 +64,7 @@ https://github.com/arita37/mlmodels/blob/dev/mlmodels/example/arun_model.py
 
 ## Example of notebooks
 
+https://drive.google.com/open?id=1-oEzbxFyQ3G3x21ZGh6CJbrlIjOLIyaM
 
 
 ### Progressive GAN , Image Generation with mlmodels
