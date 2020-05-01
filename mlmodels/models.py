@@ -4,7 +4,6 @@ Models are stored in model_XX/  or in folder XXXXX
     module :  folder/mymodel.py, contains the methods, operations.
     model  :  Class in mymodel.py containing the model definition, compilation
    
-
 models.py   #### Generic Interface
    module_load(model_uri)
    model_create(module)
@@ -14,10 +13,7 @@ models.py   #### Generic Interface
    save(save_pars)
    load(load_pars)
  
-
 ######### Command line sample  #####################################################################
-
-
 """
 import argparse
 import glob
@@ -166,9 +162,9 @@ def save(module, model, session, save_pars, **kwarg):
 
 
 
-
 ####################################################################################################
 ########  CLI ######################################################################################
+
 def fit_cli(model_name, config_file, config_mode, save_folder):
     model_p, data_p, compute_p, out_p = config_get_pars(config_file, config_mode)
     module = module_load(model_name)
@@ -196,16 +192,12 @@ def test_cli(model_name, params):
     # Name as argument as must entered by user,
     # params are optional. Would take default params
     # if user didn;t mention explictly
-    models.test(model_name)
+    test(model_name)
     # both of these are same thus, test are running two times.
     # one is implemented in models.py and one is implemented
     # individually in each model.
     param_pars = {"choice": "test01", "data_path": "", "config_mode": "test"}
-    models.test_module(model_name, param_pars=param_pars)
-
-
-
-
+    test_module(model_name, param_pars=param_pars)
 
 
 
@@ -238,6 +230,20 @@ def test(modelname):
         del module
     except Exception as e:
         print("Failed", e)
+
+
+def test_global(modelname):
+    print(modelname)
+    try:
+        module = module_load(modelname, verbose=1)
+        print(module)
+        module.test()
+        del module
+    except Exception as e:
+        print("Failed", e)
+
+
+
 
 
 def test_api(model_uri="model_xxxx/yyyy.py", param_pars=None):
@@ -336,7 +342,6 @@ def config_generate_json(modelname, to_path="ztest/new_model/"):
     """
       Generate config file from code source
       config_init("model_tf.1_lstm", to_folder="ztest/")
-
     """
     os.makedirs(to_path, exist_ok=True)
     ##### JSON file
@@ -423,9 +428,9 @@ def config_model_list(folder=None):
     module_names = get_recursive_files(folder, r'/*model*/*.py')
     mlist = []
     for t in module_names:
-        if t.find("__init__") == -1:
-            mlist.append(t.replace(folder, "").replace("\\", "."))
-            print(mlist[-1])
+        mlist.append(t.replace(folder, "").replace("\\", "."))
+        print(mlist[-1])
+
     return mlist
 
 
@@ -478,5 +483,54 @@ def main():
         config_init(to_path=arg.init)
         return 0
 
+    if arg.do == "generate_config":
+        log(arg.save_folder)
+        config_generate_json(arg.model_uri, to_path=arg.save_folder)
+
+    ###################################################################
+    if arg.do == "model_list":  # list all models in the repo
+        l = config_model_list(arg.folder)
+
+    if arg.do == "testall":
+        # test_all() # tot test all te modules inside model_tf
+        test_all(folder=None)
+
+    if arg.do == "test":
+        param_pars = {"choice": "test01", "data_path": "", "config_mode": "test"}
+        test_module(arg.model_uri, param_pars=param_pars)  # '1_lstm'
+
+        test(arg.model_uri)  # '1_lstm'
+        # test_api(arg.model_uri)  # '1_lstm'
+        test_global(arg.model_uri)  # '1_lstm'
+
+    if arg.do == "fit":
+        model_p, data_p, compute_p, out_p = config_get_pars(arg.config_file, arg.config_mode)
+
+        module = module_load(arg.model_uri)  # '1_lstm.py
+        model = model_create(module, model_p, data_p, compute_p)  # Exact map JSON and paramters
+
+        log("Fit")
+        model, sess = module.fit(model, data_pars=data_p, compute_pars=compute_p, out_pars=out_p)
+
+        log("Save")
+        save_pars = {"path": f"{arg.save_folder}/{arg.model_uri}", "model_uri": arg.model_uri}
+        save(save_pars, model, sess)
+
+    if arg.do == "predict":
+        model_p, data_p, compute_p, out_p = config_get_pars(arg.config_file, arg.config_mode)
+        # module = module_load(arg.modelname)  # '1_lstm'
+        load_pars = {"path": f"{arg.save_folder}/{arg.model_uri}", "model_uri": arg.model_uri}
+
+        module = module_load(model_p[".model_uri"])  # '1_lstm.py
+        model, session = load(load_pars)
+        module.predict(model, session, data_pars=data_p, compute_pars=compute_p, out_pars=out_p)
+
+
 if __name__ == "__main__":
     main()
+
+
+
+
+
+

@@ -117,7 +117,7 @@ scripts = [ "mlmodels/distri_torch_mpirun.sh",
 
 ### CLI Scripts  #################################################   
 entry_points={ 'console_scripts': [
-               'ml_models = mlmodels.cli:main'
+               'ml_models = mlmodels.models:main'
                ,'ml_optim = mlmodels.optim:main'
                ,'ml_test = mlmodels.ztest:main'
                ,'ml_benchmark = mlmodels.benchmark:main'
