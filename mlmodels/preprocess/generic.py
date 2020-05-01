@@ -128,14 +128,16 @@ def get_dataset_torch(data_pars):
 
     else :
         ###### Pre Built Dataset available  #############################################
-        dset_inst    = dset(d['data_path'], train=True, download=True, transform= transform, data_pars=data_pars)
+        dset_inst    = dset(d['data_path'], train=True, download=True, transform= transform)
         train_loader = DataLoader( dset_inst, batch_size=d['train_batch_size'], shuffle= d.get('shuffle', True))
         
-        dset_inst    = dset(d['data_path'], train=False, download=False, transform= transform, data_pars=data_pars)
+        dset_inst    = dset(d['data_path'], train=False, download=False, transform= transform)
         valid_loader = DataLoader( dset_inst, batch_size=d['train_batch_size'], shuffle= d.get('shuffle', True))
 
 
     return train_loader, valid_loader  
+
+
 
 
 

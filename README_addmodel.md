@@ -14,15 +14,22 @@ Read following instructions before adding a new model.
 - [Source Code Structure As Below](#source-code-structure-as-below)
 - [How to define a custom model](#how-to-define-a-custom-model)
 
+
+## List of TODO / ISSUES List
+https://github.com/arita37/mlmodels/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc
+
+
 ## List of Functions/Methods
-https://github.com/arita37/mlmodels/blob/dev/README_index_doc.py
+[Index](https://github.com/arita37/mlmodels/blob/dev/README_index_doc.py)
+
+
 
 ## Using Online Editor (Gitpod) for mlmodels
 (https://github.com/arita37/mlmodels/issues/101)
 
 ## Code Style: 
    - You can use to 120 characters per line : Better code readability
-   - Do Not FOLLOW PEP8, make your code EASY TO READ : Align  "=" together, .... 
+   - Do Not FOLLOW strict PEP8, make your code EASY TO READ : Align  "=" together, .... 
    - Do NOT reformat existing files.
 
 ## Read The Examples

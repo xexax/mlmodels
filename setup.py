@@ -117,9 +117,9 @@ scripts = [ "mlmodels/distri_torch_mpirun.sh",
 
 ### CLI Scripts  #################################################   
 entry_points={ 'console_scripts': [
-               'ml_models = mlmodels.models:main'
-               ,'ml_optim = mlmodels.optim:main'
-               ,'ml_test = mlmodels.ztest:main'
+               'ml_models     = mlmodels.models:main'
+               ,'ml_optim     = mlmodels.optim:main'
+               ,'ml_test      = mlmodels.ztest:main'
                ,'ml_benchmark = mlmodels.benchmark:main'
               ] }
 
@@ -128,7 +128,7 @@ entry_points={ 'console_scripts': [
 setup(
     name="mlmodels",
     version=version,
-    description="Generic model API, Model Zoo in Tensorflow, Keras, Pytorch, Hyperparamter search",
+    description="Generic model API, Model Zoo in Tensorflow, Keras, Pytorch, Gluon and Hyperparamter search",
     keywords='Machine Learning Interface library',
     
     author="Kevin Noel, al",
@@ -136,7 +136,7 @@ setup(
     url="https://github.com/arita37/mlmodels",
     
     install_requires=install_requires,
-    python_requires='>=3.6',
+    python_requires='>=3.6.5',
     
     packages=packages,
 
@@ -145,7 +145,7 @@ setup(
     #### CLI
     scripts = scripts,
   
-    ### CLI pyton
+    ### CLI python
     entry_points= entry_points,
     
     long_description=long_description,
