@@ -25,15 +25,15 @@
 					"uri": "preprocess/text_keras.py::Preprocess_namentity",
 					"args": {
 						"max_len": 75
-					}
+					},
+					"internal_states": ["word_count"]
 				},
 				{
 					"name": "split_xy",
 					"uri": "test_dataloader.py::split_xy_from_dict",
 					"args": {
 						"col_Xinput": ["X"],
-						"col_yinput": ["y"],
-						"col_miscinput": ["word_count"]
+						"col_yinput": ["y"]
 					}
 				},
 				{
