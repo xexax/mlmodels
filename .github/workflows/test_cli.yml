@@ -24,7 +24,7 @@ jobs:
       uses: dschep/install-pipenv-action@v1
       
       
-      
+
     #- uses: actions/cache@v1
     #  id: cache
     #  with:
@@ -72,7 +72,7 @@ jobs:
 
 
     ########  Test running 
-    - name: ml_optim
+    - name: cli_test
       run: ml_test --do cli_test
 
 
