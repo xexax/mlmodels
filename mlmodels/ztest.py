@@ -20,7 +20,7 @@ import numpy as np
 import mlmodels
 
 from mlmodels.util import get_recursive_files, log, os_package_root_path, model_get_list, os_get_file
-from mlmodels.util import get_recursive_files2
+from mlmodels.util import get_recursive_files2, path_norm
 
 
 
@@ -137,7 +137,7 @@ def test_cli(arg=None):
     path = mlmodels.__path__[0]
     fileconfig = f"{path}/config/cli_test_list.md"
     print(fileconfig)
-    
+
     with open( fileconfig, mode="r" ) as f:
         cmd_list = f.readlines()
 
