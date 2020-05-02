@@ -421,8 +421,8 @@ def cli():
         argument("--model_uri", default="model_tf/1_lstm.py", help="Model Name")
     )
     def generate_config(args):
-        log(arg.save_folder)
-        config_generate_json(arg.model_uri, to_path=arg.save_folder)
+        log(args.save_folder)
+        config_generate_json(args.model_uri, to_path=args.save_folder)
 
     @subcommand(
         argument("--folder", help="Enter the path with all models", default=None)
@@ -441,9 +441,9 @@ def cli():
     )
     def test(args):
         param_pars = {"choice": "test01", "data_path": "", "config_mode": "test"}
-        test_module(arg.model_uri, param_pars=param_pars)  # '1_lstm'
-        test(arg.model_uri)
-        test_global(arg.model_uri)
+        test_module(args.model_uri, param_pars=param_pars)  # '1_lstm'
+        test(args.model_uri)
+        test_global(args.model_uri)
 
     @subcommand(
         argument("--config_file", help="Path to config file", default=None),
@@ -461,7 +461,7 @@ def cli():
         log("Fit")
         model, sess = module.fit(model, data_pars=data_p, compute_pars=compute_p, out_pars=out_p)
         log("Save")
-        save_pars = {"path": f"{arg.save_folder}/{arg.model_uri}", "model_uri": arg.model_uri}
+        save_pars = {"path": f"{args.save_folder}/{args.model_uri}", "model_uri": args.model_uri}
         save(save_pars, model, sess)
 
     @subcommand(

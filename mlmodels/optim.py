@@ -232,7 +232,7 @@ def test_json(path_json="", config_mode="test"):
     return res
 
 
-def test_fast(ntrials):
+def test_fast(ntrials, model_uri):
     path_curr = os.getcwd()
 
     data_path = path_norm('dataset/timeseries/GOOG-year_small.csv')
@@ -240,9 +240,6 @@ def test_fast(ntrials):
 
     os.makedirs(path_save, exist_ok=True)
     log("path_save", path_save, data_path)
-
-    ############ Params setup   #########################################################
-    model_uri = 'model_tf.1_lstm'
 
     hypermodel_pars = {
         "engine_pars": {"engine": "optuna", "method": "normal", 'ntrials': 2, "metric_target": "loss"},
@@ -312,10 +309,11 @@ def cli():
         return decorator
     
     @subcommand(
-        argument("-ntrials", help="No. of trials", default=2)
+        argument("-ntrials", help="No. of trials", default=2),
+        argument("model_uri", help="Model Name", default='model_tf.1_lstm')
     )
     def test(args):
-        test_fast(ntrials=args.ntrials)
+        test_fast(ntrials=args.ntrials, model_uri=args.model_uri)
     
     @subcommand()
     def test_all(args):
