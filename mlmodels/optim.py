@@ -214,31 +214,6 @@ def post_process_best(model, module, model_uri, model_pars_update, data_pars, co
 
     return model_pars_update
 
-################CLI########################
-###########################################
-
-def test_cli(model_uri=None, new_config=None):
-    test_fast()
-
-def test_all_cli():
-    test_all()
-
-def test_search_cli(config_file, config_mode):
-    js = json.load(open(config_file, mode='rb'))  # Config
-    js = js[config_mode]  # test /uat /prod
-
-    # log(model_pars, data_pars, compute_pars)
-    log("############# OPTIMIZATION Start  ###############")
-    res = optim(js["model_pars"]["modeluri"],
-                hypermodel_pars = js["hypermodel_pars"],
-                model_pars      = js["model_pars"],
-                compute_pars    = js["compute_pars"],
-                data_pars       = js["data_pars"],
-                out_pars        = js["out_pars"])
-
-    log("#############  OPTIMIZATION End ###############")
-    log(res)
-
 ####################################################################################################
 def test_json(path_json="", config_mode="test"):
     cf = json.load(open(path_json, mode='rb', encoding='utf-8'))
@@ -257,7 +232,7 @@ def test_json(path_json="", config_mode="test"):
     return res
 
 
-def test_fast(ntrials=2):
+def test_fast(ntrials):
     path_curr = os.getcwd()
 
     data_path = path_norm('dataset/timeseries/GOOG-year_small.csv')
@@ -312,64 +287,50 @@ def test_all():
 
 ####################################################################################################
 ####################################################################################################
-def cli_load_arguments(config_file=None):
+def cli():
     """
-        Load CLI input, load config.toml , overwrite config.toml by CLI Input
-    """
-    if config_file is None:
-        cur_path = os.path.dirname(os.path.realpath(__file__))
-        config_file = os.path.join(cur_path, "template/optim_config.json")
-    # print(config_file)
-
-    p = argparse.ArgumentParser()
-
-    def add(*k, **kw):
-        p.add_argument(*k, **kw)
-
-    add("do", default="test", 
-        help="Enter the Operation to be performed. Available Operations: \
-        test, test_all, search")
-    add("--config_file", default=config_file, help="Params File")
-    add("--config_mode", default="test", help="test/ prod /uat")
     add("--log_file", help="File to save the logging")
-
-    ###### model_pars
     add("--model_uri", default="model_tf.1_lstm.py",
         help="name of the model to be tuned this name will be used to save the model")
-
-    ###### data_pars
     add("--data_path", default="dataset/GOOG-year_small.csv", help="path of the training file")
-
-
-    ###### compute params
-    add("--ntrials", default=100, help='number of trials during the hyperparameters tuning')
     add('--optim_engine', default='optuna', help='Optimization engine')
     add('--optim_method', default='normal/prune', help='Optimization method')
-
-
-    ###### out params
     add('--save_path', default='ztest/search_save/', help='folder that will contain saved version of best model')
+    """
+    cli = argparse.ArgumentParser()
+    subparsers = cli.add_subparsers(dest="subcommand")
 
-    args = p.parse_args()
-    # args = load_config(args, args.config_file, args.config_mode, verbose=0)
-    return args
-
-
-####################################################################################################
-####################################################################################################
-def main():
-    arg = cli_load_arguments()
-
-    if arg.do == "test":
-        test_fast()
-
-    if arg.do == "test_all":
+    def argument(*names_or_flags, **kwargs):
+        return names_or_flags, kwargs
+    
+    def subcommand(*subparser_args, parent=subparsers):
+        def decorator(func):
+            parser = parent.add_parser(func.__name__, description=func.__doc__)
+            for args, kwargs in subparser_args:
+                parser.add_argument(*args, **kwargs)
+            parser.set_defaults(func=func)
+        return decorator
+    
+    @subcommand(
+        argument("-ntrials", help="No. of trials", default=2)
+    )
+    def test(args):
+        test_fast(ntrials=args.ntrials)
+    
+    @subcommand()
+    def test_all(args):
         test_all()
-
-    if arg.do == "search":
-        # model_pars, data_pars, compute_pars = config_get_pars(arg)
-        js = json.load(open(arg.config_file, mode='rb'))  # Config
-        js = js[arg.config_mode]  # test /uat /prod
+    
+    @subcommand(
+        argument("--config_file", help="Path to config file", default=None),
+        argument("--config_mode", help="test/ prod /uat", default="test")
+    )
+    def search(args):
+        if args.config_file is None:
+            cur_path = os.path.dirname(os.path.realpath(__file__))
+            args.config_file = os.path.join(cur_path, "template/optim_config.json")
+        js = json.load(open(args.config_file, mode='rb'))  # Config
+        js = js[args.config_mode]  # test /uat /prod
 
         # log(model_pars, data_pars, compute_pars)
         log("############# OPTIMIZATION Start  ###############")
@@ -383,6 +344,10 @@ def main():
         log("#############  OPTIMIZATION End ###############")
         log(res)
 
+####################################################################################################
+####################################################################################################
+def main():
+    cli()
 
 if __name__ == "__main__":
     VERBOSE = True
