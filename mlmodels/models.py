@@ -161,48 +161,6 @@ def save(module, model, session, save_pars, **kwarg):
     return module.save(model, session, save_pars, **kwarg)
 
 
-
-####################################################################################################
-########  CLI ######################################################################################
-
-def fit_cli(model_name, config_file, config_mode, save_folder):
-    model_p, data_p, compute_p, out_p = config_get_pars(config_file, config_mode)
-    module = module_load(model_name)
-    model = model_create(module, model_p, data_p, compute_p)
-    log("Fit")
-    model, sess = module.fit(model, data_pars=data_p, compute_pars=compute_p, out_pars=out_p)
-    log("Save")
-    save_pars = {"path": f"{save_folder}/{model_name}", "model_uri": model_name}
-    save(save_pars, model, sess)
-
-
-
-
-
-def predict_cli(model_name, config_file, config_mode, save_folder) :
-    model_p, data_p, compute_p, out_p = config_get_pars(config_file, config_mode)
-    load_pars = {"path": f"{save_folder}/{model_name}", "model_uri": model_name}
-    module = module_load(model_p[".model_uri"])
-    model, session = load(load_pars)
-    module.predict(model, session, data_pars=data_p, compute_pars=compute_p, out_pars=out_p)
-
-
-
-def test_cli(model_name, params):
-    # Name as argument as must entered by user,
-    # params are optional. Would take default params
-    # if user didn;t mention explictly
-    test(model_name)
-    # both of these are same thus, test are running two times.
-    # one is implemented in models.py and one is implemented
-    # individually in each model.
-    param_pars = {"choice": "test01", "data_path": "", "config_mode": "test"}
-    test_module(model_name, param_pars=param_pars)
-
-
-
-
-
 ####################################################################################################
 ####################################################################################################
 def test_all(folder=None):
@@ -450,10 +408,12 @@ def cli_load_arguments(config_file=None):
     def add(*w, **kw):
         p.add_argument(*w, **kw)
 
+    add("do", default="test", 
+        help="Enter the Operation to be performed. Available Operations: \
+        model_list, testall, test, fit, predict, generate_config")
     add("--config_file", default=config_file, help="Params File")
     add("--config_mode", default="test", help="test/ prod /uat")
     add("--log_file", default="mlmodels_log.log", help="log.log")
-    add("--do", default="test", help="do ")
     add("--folder", default=None, help="folder ")
 
     add("--init", default="", help=".")

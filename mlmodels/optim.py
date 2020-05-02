@@ -214,7 +214,30 @@ def post_process_best(model, module, model_uri, model_pars_update, data_pars, co
 
     return model_pars_update
 
+################CLI########################
+###########################################
 
+def test_cli(model_uri=None, new_config=None):
+    test_fast()
+
+def test_all_cli():
+    test_all()
+
+def test_search_cli(config_file, config_mode):
+    js = json.load(open(config_file, mode='rb'))  # Config
+    js = js[config_mode]  # test /uat /prod
+
+    # log(model_pars, data_pars, compute_pars)
+    log("############# OPTIMIZATION Start  ###############")
+    res = optim(js["model_pars"]["modeluri"],
+                hypermodel_pars = js["hypermodel_pars"],
+                model_pars      = js["model_pars"],
+                compute_pars    = js["compute_pars"],
+                data_pars       = js["data_pars"],
+                out_pars        = js["out_pars"])
+
+    log("#############  OPTIMIZATION End ###############")
+    log(res)
 
 ####################################################################################################
 def test_json(path_json="", config_mode="test"):
@@ -303,11 +326,12 @@ def cli_load_arguments(config_file=None):
     def add(*k, **kw):
         p.add_argument(*k, **kw)
 
+    add("do", default="test", 
+        help="Enter the Operation to be performed. Available Operations: \
+        test, test_all, search")
     add("--config_file", default=config_file, help="Params File")
     add("--config_mode", default="test", help="test/ prod /uat")
     add("--log_file", help="File to save the logging")
-
-    add("--do", default="test", help="what to do test or search")
 
     ###### model_pars
     add("--model_uri", default="model_tf.1_lstm.py",
