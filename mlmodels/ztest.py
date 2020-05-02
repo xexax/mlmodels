@@ -238,7 +238,7 @@ def cli_load_arguments(config_file=None):
 
     add("do", default="test_all", 
         help="Enter the Operation to be performed. Available Operations: \
-        search")
+        test_all")
     add("--config_file", default=config_file, help="Params File")
     add("--config_mode", default="test", help="test/ prod /uat")
     add("--log_file", help="log.log")
@@ -266,7 +266,6 @@ def main():
     if ".py" in arg.do:
         s = arg.do
         test_list(s.split(","))
-
 
     else:
         globals()[arg.do](arg)
