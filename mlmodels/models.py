@@ -382,7 +382,7 @@ def config_init(to_path="."):
 def config_model_list(folder=None):
     # Get all the model.py into folder
     folder = os_package_root_path() if folder is None else folder
-    # print(folder)
+    print(folder)
     module_names = get_recursive_files(folder, r'/*model*/*.py')
     mlist = []
     for t in module_names:
@@ -394,97 +394,102 @@ def config_model_list(folder=None):
 
 ####################################################################################################
 ############CLI Command ############################################################################
-def cli_load_arguments(config_file=None):
-    """
-        Load CLI input, load config.toml , overwrite config.toml by CLI Input
-    """
-    if config_file is None:
-        cur_path = os.path.dirname(os.path.realpath(__file__))
-        config_file = os.path.join(cur_path, "template/models_config.json")
-    # print(config_file)
+def cli():
+    cli = argparse.ArgumentParser()
+    subparsers = cli.add_subparsers(dest="subcommand")
 
-    p = argparse.ArgumentParser()
+    def argument(*names_or_flags, **kwargs):
+            return names_or_flags, kwargs
 
-    def add(*w, **kw):
-        p.add_argument(*w, **kw)
+    def subcommand(*subparser_args, parent=subparsers):
+            def decorator(func):
+                parser = parent.add_parser(func.__name__, description=func.__doc__)
+                for args, kwargs in subparser_args:
+                    parser.add_argument(*args, **kwargs)
+                parser.set_defaults(func=func)
+            return decorator
 
-    add("do", default="test", 
-        help="Enter the Operation to be performed. Available Operations: \
-        model_list, testall, test, fit, predict, generate_config")
-    add("--config_file", default=config_file, help="Params File")
-    add("--config_mode", default="test", help="test/ prod /uat")
-    add("--log_file", default="mlmodels_log.log", help="log.log")
-    add("--folder", default=None, help="folder ")
-
-    add("--init", default="", help=".")
-
-    ##### model pars
-    add("--model_uri", default="model_tf/1_lstm.py", help=".")
-    add("--load_folder", default="ztest/", help=".")
-
-    ##### data pars
-    add("--dataname", default="dataset/google.csv", help=".")
-
-    ##### compute pars
-
-    ##### out pars
-    add("--save_folder", default="ztest/", help=".")
-
-    arg = p.parse_args()
-    # arg = load_config(arg, arg.config_file, arg.config_mode, verbose=0)
-    return arg
-
-
-def main():
-    arg = cli_load_arguments()
-    print(arg.do)
-
-    if len(arg.init) > 0:
-        config_init(to_path=arg.init)
+    @subcommand(
+        argument("--path", help="Enter path to create workspace", default=".")
+    )
+    def init(args):
+        config_init(to_path=args.path)
         return 0
 
-    if arg.do == "generate_config":
+    @subcommand(
+        argument("--save_folder", help="Location to save the generated configuration", default="ztest/"),
+        argument("--model_uri", default="model_tf/1_lstm.py", help="Model Name")
+    )
+    def generate_config(args):
         log(arg.save_folder)
         config_generate_json(arg.model_uri, to_path=arg.save_folder)
 
-    ###################################################################
-    if arg.do == "model_list":  # list all models in the repo
-        l = config_model_list(arg.folder)
+    @subcommand(
+        argument("--folder", help="Enter the path with all models", default=None)
+    )
+    def model_list(args):
+        l = config_model_list(args.folder)
 
-    if arg.do == "testall":
-        # test_all() # tot test all te modules inside model_tf
-        test_all(folder=None)
+    @subcommand(
+        argument("--folder", help="Enter the path with all models", default=None)
+    )
+    def testall(args):
+        test_all(folder=args.folder)
 
-    if arg.do == "test":
+    @subcommand(
+        argument("--model_uri", help="Enter Model URI", default="model_tf/1_lstm.py")
+    )
+    def test(args):
         param_pars = {"choice": "test01", "data_path": "", "config_mode": "test"}
         test_module(arg.model_uri, param_pars=param_pars)  # '1_lstm'
+        test(arg.model_uri)
+        test_global(arg.model_uri)
 
-        test(arg.model_uri)  # '1_lstm'
-        # test_api(arg.model_uri)  # '1_lstm'
-        test_global(arg.model_uri)  # '1_lstm'
-
-    if arg.do == "fit":
-        model_p, data_p, compute_p, out_p = config_get_pars(arg.config_file, arg.config_mode)
-
-        module = module_load(arg.model_uri)  # '1_lstm.py
+    @subcommand(
+        argument("--config_file", help="Path to config file", default=None),
+        argument("--config_mode", help="test/ prod /uat", default="test"),
+        argument("--model_uri", help="Enter Model URI", default="model_tf/1_lstm.py"),
+        argument("--save_folder", help="Location to save the generated configuration", default="ztest/")
+    )
+    def fit(args):
+        if args.config_file is None:
+            cur_path = os.path.dirname(os.path.realpath(__file__))
+            args.config_file = os.path.join(cur_path, "template/models_config.json")
+        model_p, data_p, compute_p, out_p = config_get_pars(args.config_file, args.config_mode)
+        module = module_load(args.model_uri)  # '1_lstm.py
         model = model_create(module, model_p, data_p, compute_p)  # Exact map JSON and paramters
-
         log("Fit")
         model, sess = module.fit(model, data_pars=data_p, compute_pars=compute_p, out_pars=out_p)
-
         log("Save")
         save_pars = {"path": f"{arg.save_folder}/{arg.model_uri}", "model_uri": arg.model_uri}
         save(save_pars, model, sess)
 
-    if arg.do == "predict":
-        model_p, data_p, compute_p, out_p = config_get_pars(arg.config_file, arg.config_mode)
+    @subcommand(
+        argument("--config_file", help="Path to config file", default=None),
+        argument("--config_mode", help="test/ prod /uat", default="test"),
+        argument("--model_uri", help="Enter Model URI", default="model_tf/1_lstm.py"),
+        argument("--save_folder", help="Location to save the generated configuration", default="ztest/")
+    )
+    def predict(args):
+        if args.config_file is None:
+            cur_path = os.path.dirname(os.path.realpath(__file__))
+            args.config_file = os.path.join(cur_path, "template/models_config.json")
+        model_p, data_p, compute_p, out_p = config_get_pars(args.config_file, args.config_mode)
         # module = module_load(arg.modelname)  # '1_lstm'
-        load_pars = {"path": f"{arg.save_folder}/{arg.model_uri}", "model_uri": arg.model_uri}
+        load_pars = {"path": f"{args.save_folder}/{args.model_uri}", "model_uri": args.model_uri}
 
         module = module_load(model_p[".model_uri"])  # '1_lstm.py
         model, session = load(load_pars)
         module.predict(model, session, data_pars=data_p, compute_pars=compute_p, out_pars=out_p)
+    
+    args = cli.parse_args()
+    if args.subcommand is None:
+        cli.print_help()
+    else:
+        args.func(args)
 
+def main():
+    cli()
 
 if __name__ == "__main__":
     main()
