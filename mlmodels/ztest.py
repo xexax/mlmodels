@@ -237,10 +237,12 @@ def cli_load_arguments(config_file=None):
     def add(*w, **kw):
         p.add_argument(*w, **kw)
 
+    add("do", default="test_all", 
+        help="Enter the Operation to be performed. Available Operations: \
+        test_all")
     add("--config_file", default=config_file, help="Params File")
     add("--config_mode", default="test", help="test/ prod /uat")
     add("--log_file", help="log.log")
-    add("--do", default="test_all", help="test")
     add("--folder", default=None, help="test")
 
     ##### model pars
@@ -265,7 +267,6 @@ def main():
     if ".py" in arg.do:
         s = arg.do
         test_list(s.split(","))
-
 
     else:
         globals()[arg.do](arg)
