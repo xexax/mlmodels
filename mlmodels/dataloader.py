@@ -159,7 +159,16 @@ def _check_output_shape(self, inter_output, shape, max_len):
 
 
 
+def get_dataset_type(x) :
+    from mlmodel.process.generic import PandasDataset, NumpyDataset, Dataset, kerasDataset  #Pytorch
 
+
+    from mlmodel.process.generic import DataLoader
+
+
+    if isinstance(x, PandasDataset  ) : return "PandasDataset"
+    if isinstance(x, NumpyDataset  ) : return "NumpyDataset"
+    if isinstance(x, Dataset  ) : return "pytorchDataset"
 
 
 
@@ -170,6 +179,7 @@ class DataLoader:
         ".npy": {"uri": "numpy::load", "pass_data_pars":False},
         ".npz": {"uri": "np:load", "arg": {"allow_pickle": True}, "pass_data_pars":False},
         ".pkl": {"uri": "dataloader::pickle_load", "pass_data_pars":False},
+
         "image_dir": {"uri": "dataloader::image_dir_load", "pass_data_pars":False},
     }
     _validate_data_info = _validate_data_info
@@ -180,6 +190,8 @@ class DataLoader:
         self.internal_states          = {}
         self.data_info                = data_pars['data_info']
         self.preprocessors            = data_pars.get('preprocessors', [])
+        self.final_output_type        = data_pars['output_type'] 
+
 
     def compute(self):
         # Validate data_info
@@ -190,23 +202,41 @@ class DataLoader:
             uri = preprocessor.get("uri", None)
             if not uri:
                 raise Exception(f"Preprocessor {preprocessor} missing uri")
-
-            args = preprocessor.get("args", {})
-
             preprocessor_func = load_callable_from_uri(uri)
 
+
+            args = preprocessor.get("args", {})
+            input_type = preprocessor.get("input_type", None)
+
+
+            ### Should match PytorchDataloader, KerasDataloader, PandasDataset, ....
             if inspect.isclass(preprocessor_func):
-                obj_preprocessor = preprocessor_func(**args)
+                obj_preprocessor = preprocessor_func(args, self.data_info)
                 obj_preprocessor.compute(input_tmp)
                 out_tmp = obj_preprocessor.get_data()
+
             else:
                 pos_params = inspect.getfullargspec(preprocessor_func)[0]
                 if isinstance(input_tmp, (tuple, list)) and len(input_tmp) > 0 and len(pos_params) == 0:
-                    out_tmp = preprocessor_func(*input_tmp, **args)
+                   out_tmp = preprocessor_func(args, self.data_info, *input_tmp)
                 else:
-                    out_tmp = preprocessor_func(input_tmp, **args)
-            # TODO: Need to check output format of processor.
+                    out_tmp = preprocessor_func(args, self.data_info, input_tmp) 
 
+
+            # TODO: Need to check output format of processor.
+            """
+                type_tmp_previous = typing(out_tmp)
+
+
+
+
+            """
+
+
+
+
+
+            ## Be vareful of Very Large Dataset, not to save ALL 
             if preprocessor.get("internal_states", None):
                 for internal_state in preprocessor.get("internal_states", None):
                     if isinstance(out_tmp, dict):
