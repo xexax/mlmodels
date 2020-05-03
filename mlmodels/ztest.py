@@ -21,6 +21,7 @@ import numpy as np
 import mlmodels
 
 from mlmodels.util import get_recursive_files, log, os_package_root_path, model_get_list, os_get_file
+
 from mlmodels.util import get_recursive_files2, path_norm, path_norm_dict
 
 
@@ -133,6 +134,21 @@ def test_benchmark(arg=None):
 
 
 
+def test_cli(arg=None):
+    # Testing Command Line System
+    path = mlmodels.__path__[0]
+    fileconfig = f"{path}/config/cli_test_list.md"
+    print(fileconfig)
+
+    with open( fileconfig, mode="r" ) as f:
+        cmd_list = f.readlines()
+
+    for ss in cmd_list:
+        cmd = ss.strip()
+        if cmd.startswith("ml_models") or cmd.startswith("ml_benchmark") or cmd.startswith("ml_optim")  :
+          print("\n\n\n",cmd,  flush=True)
+          os.system(cmd)
+
 
 
 
@@ -243,12 +259,12 @@ def test_custom():
     test_list(test_list0)
 
 
+
+
 #################################################################################################################
 #################################################################################################################
 def cli_load_arguments(config_file=None):
-    """
-        Load CLI input, load config.toml , overwrite config.toml by CLI Input
-    """
+    #Load CLI input, load config.toml , overwrite config.toml by CLI Input
     import argparse
     from mlmodels.util import load_config, path_norm, os_package_root_path
     if config_file is None  :
@@ -280,6 +296,7 @@ def cli_load_arguments(config_file=None):
     return arg
 
 
+
 def main():
     arg = cli_load_arguments()
     print(arg.do)
@@ -290,6 +307,7 @@ def main():
         test_list(s.split(","))
 
     else:
+        print("Running command", arg.do)
         globals()[arg.do](arg)
 
 
