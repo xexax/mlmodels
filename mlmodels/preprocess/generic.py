@@ -82,11 +82,10 @@ def load_function(uri_name="path_norm"):
 
 
 
-def tf_dataset_download(**args):
+def tf_dataset_download(args, data_info, **kw):
     """
        Save in numpy compressez format TF Datasets
-       args = {'dataset_info':{},'pre_args':{}}
-       dataset_info ={ "dataset" : "mnist", "batch_size" : 5000,"data_path" : "dataset/vision/mnist2/"}
+       data_info ={ "dataset" : "mnist", "batch_size" : 5000,"data_path" : "dataset/vision/mnist2/"}
         args{"n_train": 500, "n_test": 500 }
        tf_dataset_download(dataset_pars)            
    
@@ -94,12 +93,7 @@ def tf_dataset_download(**args):
     import tensorflow_datasets as tfds
     import numpy as np
     
-    data_info = args.get('data_info', None)
-    pre_args = args.get('pre_args',None)
-    
-    if not data_info or not pre_args:
-        raise Exception("['data_info','pre_args'] are required fields")
-   
+
     dataset = data_info.get("dataset", None)
     out_path = data_info.get("data_path", None)
    
@@ -114,9 +108,9 @@ def tf_dataset_download(**args):
         raise Exception(f"Datatype error 'dataset: {dataset}'")
  
  
-    n_train    = pre_args.get("train_samples", 500)
-    n_test     = pre_args.get("test_samples", 50)
-    batch_size = pre_args.get("batch_size", 10)
+    n_train    = args.get("train_samples", 500)
+    n_test     = args.get("test_samples", 50)
+    batch_size = args.get("batch_size", 10)
     out_path   = path_norm(out_path)
  
  
@@ -164,19 +158,13 @@ def tf_dataset_download(**args):
     log(out_path, os.listdir( out_path ))
  
  
-def get_dataset_torch(**args):
+def get_dataset_torch(args, data_info, **kw):
     
-    data_info = args.get('data_info', None)
-    pre_args = args.get('pre_args',None)
-    
-    if not data_info or not pre_args:
-        raise Exception("['data_info','pre_args'] are required fields")
- 
-    target_transform_info = pre_args.get('target_transform', None)
-    transform_info  = pre_args.get('transform', None)
-    to_image   = pre_args.get('to_image', True)
-    shuffle= pre_args.get('shuffle', True)
-    dataloader = pre_args.get("dataloader", "mlmodels.preprocess.datasets:MNIST")
+    target_transform_info = args.get('target_transform', None)
+    transform_info  = args.get('transform', None)
+    to_image   = args.get('to_image', True)
+    shuffle= args.get('shuffle', True)
+    dataloader = args.get("dataloader", "mlmodels.preprocess.datasets:MNIST")
  
     dataset = data_info.get("dataset", None)
     data_path = data_info.get("data_path", None)
@@ -201,17 +189,17 @@ def get_dataset_torch(**args):
     dset = load_function(dataloader)
            
     #### from mlmodels.preprocess.image import pandasDataset
-    dset_inst    = dset(data_path, train=True, download=True, transform= transform, **args)
+    dset_inst    = dset(data_path, train=True, download=True, transform= transform, args = args , data_info = data_info)
     train_loader = DataLoader( dset_inst, batch_size=batch_size, shuffle= shuffle)
  
-    dset_inst    = dset(data_path, train=False, download=False, transform= transform, **args)
+    dset_inst    = dset(data_path, train=False, download=False, transform= transform, args = args,  data_info = data_info)
     valid_loader = DataLoader( dset_inst, batch_size= batch_size, shuffle= shuffle)
  
     return train_loader, valid_loader
  
  
  
-def get_dataset_keras(**args):
+def get_dataset_keras(args, data_info, **kw):
     """"
    #### Write someple
    from mlmodels.preprocess.keras_dataloader.dataloader import DataGenerator as kerasDataloader
@@ -255,16 +243,11 @@ def get_dataset_keras(**args):
    """
     from mlmodels.preprocess.keras_dataloader.dataloader import DataGenerator as kerasDataLoader
     
-    data_info = args.get('data_info', None)
-    pre_args = args.get('pre_args',None)
-    
-    if not data_info or not pre_args:
-        raise Exception("['data_info','pre_args'] are required fields")
-   
-    target_transform_info = pre_args.get('target_transform', None)
-    transform_info  = pre_args.get('transform', None)
-    shuffle= pre_args.get('shuffle', True)
-    dataloader = pre_args.get("dataloader", "mlmodels.preprocess.datasets:MNIST")
+
+    target_transform_info = args.get('target_transform', None)
+    transform_info  = args.get('transform', None)
+    shuffle= args.get('shuffle', True)
+    dataloader = args.get("dataloader", "mlmodels.preprocess.datasets:MNIST")
  
     dataset = data_info.get("dataset", None)
     data_path = data_info.get("data_path", None)
@@ -287,16 +270,16 @@ def get_dataset_keras(**args):
  
  
     ######  Dataset Downloader  #############################################
-    dset_inst    = dset(data_path, train=True, download=True, transform= transform, **args)
+    dset_inst    = dset(data_path, train=True, download=True, transform= transform, args = args, data_info = data_info)
     train_loader = kerasDataLoader( dset_inst, batch_size=batch_size, shuffle= shuffle)
  
-    dset_inst    = dset(data_path, train=False, download=False, transform= transform, **args)
+    dset_inst    = dset(data_path, train=False, download=False, transform= transform, args = args,  data_info = data_info)
     valid_loader = kerasDataLoader( dset_inst, batch_size=batch_size, shuffle= shuffle)
  
  
     return train_loader, valid_loader
 
-def get_model_embedding(model_pars, **args):
+def get_model_embedding(model_pars, args, data_info, **kw):
     """"
      Mostly Embedding data, it can be external data used in the model.
  
@@ -319,16 +302,10 @@ def get_model_embedding(model_pars, **args):
  
    """
     d = model_pars
-    
-    data_info = args.get('data_info', None)
-    pre_args = args.get('pre_args',None)
-    
-    if not data_info or not pre_args:
-        raise Exception("['data_info','pre_args'] are required fields")
- 
+
     ### Embedding Transformer
     transform = None
-    if  len(pre_args.get("embedding_transform_uri", ""))  > 1 :
+    if  len(args.get("embedding_transform_uri", ""))  > 1 :
         transform = load_function( d.get("embedding_transform_uri", "mlmodels.preprocess.text:torch_transform_glove" ))()
  
  
@@ -338,7 +315,7 @@ def get_model_embedding(model_pars, **args):
     data = None
     if len(d.get('embedding_path', "")) > 1 :
         ###### Custom Build Dataset   ####################################################
-        data    = dset(d['embedding_path'], train=True, download=True, transform= transform, model_pars=model_parss, **args)
+        data    = dset(d['embedding_path'], train=True, download=True, transform= transform, model_pars=model_parss, args = args,  data_info = data_info)
        
  
     else :
@@ -359,16 +336,13 @@ class pandasDataset(Dataset):
        data (list[int, [int]]): The data in the set
    """
    
-    def __init__(self,root="", train=True, transform=None, target_transform=None,
-                 download=False, **args ):
+    def __init__(self, root="", train=True, transform=None, target_transform=None, 
+                 download=False, args={}, data_info={}, **kw):
         import torch
         
-        data_info = args.get('data_info', None)
-        pre_args = args.get('pre_args',None)
+        if len(args) < 1 or len(data_info) < 1:
+            raise Exception("['args','data_info'] are required fields")
         
-        if not data_info or not pre_args:
-            raise Exception("['data_info','pre_args'] are required fields")
-       
         self.transform        = transform
         self.target_transform = target_transform
         self.download         = download
@@ -384,8 +358,8 @@ class pandasDataset(Dataset):
         path =  os.path.join(root,'train' if train else 'test')
         filename = dataset if dataset.find('.csv') > -1 else dataset + '.csv'  ## CSV file
        
-        colX = pre_args.get('colX',[])
-        coly = pre_args.get('colX',[])
+        colX = args.get('colX',[])
+        coly = args.get('colX',[])
  
         # df = torch.load(os.path.join(path, filename))
         df = pd.read_csv(os.path.join(path, filename))
@@ -445,23 +419,19 @@ class NumpyDataset(Dataset):
           transforms: operation you wanna apply on image
  
           example:
-          args = {data_info:{}, pre_args:{}}
               data_info= {'data_path': 'mlmodels/dataset/vision/cifar10/', 'dataset':'clfar10'}
-               pre_args = { 'to_image':True}
+               args = { 'to_image':True}
                                    
       }        
   """
  
     def __init__(self, root="", train=True, transform=None, target_transform=None,
-                 download=False, **args):
- 
- 
-        data_info = args.get('data_info', None)
-        pre_args = args.get('pre_args',None)
-    
-        if not data_info or not pre_args:
-            raise Exception("['data_info','pre_args'] are required fields")
+                 download=False, args={}, data_info={}, **kw):
         
+        if len(args) < 1 or len(data_info) < 1:
+            raise Exception("['args','data_info'] are required fields")
+            
+            
         dataset = data_info.get('dataset', None)
         if not dataset:
             raise Exception("'dataset' is required field, please add it in data_info key")
@@ -472,7 +442,7 @@ class NumpyDataset(Dataset):
            
         self.target_transform = target_transform
         self.transform  = transform
-        self.to_image   = pre_args.get('to_image', True)
+        self.to_image   = args.get('to_image', True)
  
        
         file_path      =   os.path.join(root,'train' if train else 'test', f"{dataset}.npz")
