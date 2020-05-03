@@ -146,9 +146,11 @@ def test_cli(arg=None):
     with open( fileconfig, mode="r" ) as f:
         cmd_list = f.readlines()
 
+
+
     for ss in cmd_list:
         cmd = ss.strip()
-        if cmd.startswith("ml_models") or cmd.startswith("ml_benchmark") or cmd.startswith("ml_optim")  :
+        if cmd.startswith("ml_models ") or cmd.startswith("ml_benchmark ") or cmd.startswith("ml_optim ")  :
           print("\n\n\n",cmd,  flush=True)
           os.system(cmd)
 
@@ -257,13 +259,11 @@ def cli_load_arguments(config_file=None):
     def add(*w, **kw):
         p.add_argument(*w, **kw)
 
-    add("do", default="test_all", 
-        help="Enter the Operation to be performed. Available Operations: \
-        test_all")
-    add("--config_file", default=config_file, help="Params File")
-    add("--config_mode", default="test", help="test/ prod /uat")
-    add("--log_file", help="log.log")
-    add("--folder", default=None, help="test")
+    add("do"            , default="test_all"  , help="  Action to do")
+    add("--config_file" , default=config_file , help="Params File")
+    add("--config_mode" , default="test"      , help="test/ prod /uat")
+    add("--log_file"    , help="log.log")
+    add("--folder"      , default=None        , help="test")
 
     ##### model pars
 
