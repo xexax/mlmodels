@@ -74,9 +74,21 @@ def load_function(uri_name="path_norm"):
             raise NameError(f"Module {pkg} notfound, {e1}, {e2}")
 
 
+"""
+def get_dataset_torch(data_pars):
+   
+      torchvison.datasets
+         MNIST Fashion-MNIST KMNIST EMNIST QMNIST  FakeData COCO Captions Detection LSUN ImageFolder DatasetFolder 
+         ImageNet CIFAR STL10 SVHN PhotoTour SBU Flickr VOC Cityscapes SBD USPS Kinetics-400 HMDB51 UCF101 CelebA
 
-
-
+      torchtext.datasets
+         Sentiment Analysis:    SST IMDb Question Classification TREC Entailment SNLI MultiNLI 
+         Language Modeling:     WikiText-2 WikiText103  PennTreebank 
+         Machine Translation :  Multi30k IWSLT WMT14 
+         Sequence Tagging    :  UDPOS CoNLL2000Chunking 
+         Question Answering  :  BABI20
+=======
+"""
 
 
 
@@ -188,18 +200,35 @@ def get_dataset_torch(args, data_info, **kw):
            
     dset = load_function(dataloader)
            
-    #### from mlmodels.preprocess.image import pandasDataset
-    dset_inst    = dset(data_path, train=True, download=True, transform= transform, args = args , data_info = data_info)
-    train_loader = DataLoader( dset_inst, batch_size=batch_size, shuffle= shuffle)
- 
-    dset_inst    = dset(data_path, train=False, download=False, transform= transform, args = args,  data_info = data_info)
-    valid_loader = DataLoader( dset_inst, batch_size= batch_size, shuffle= shuffle)
- 
-    return train_loader, valid_loader
- 
- 
- 
+
+    dset = load_function(d.get("dataset", "torchvision.datasets:MNIST") ) 
+
+
+    if d.get('train_path') and  d.get('test_path') :
+        ###### Custom Build Dataset   ####################################################
+        dset_inst    = dset(d['train_path'], train=True, download=True, transform= transform, data_pars=data_pars)
+        train_loader = DataLoader( dset_inst, batch_size=d['train_batch_size'], shuffle= d.get('shuffle', True))
+        
+        dset_inst    = dset(d['test_path'], train=False, download=False, transform= transform, data_pars=data_pars)
+        valid_loader = DataLoader( dset_inst, batch_size=d['train_batch_size'], shuffle= d.get('shuffle', True))
+
+
+    else :
+        ###### Pre Built Dataset available  #############################################
+        dset_inst    = dset(d['data_path'], train=True, download=True, transform= transform)
+        train_loader = DataLoader( dset_inst, batch_size=d['train_batch_size'], shuffle= d.get('shuffle', True))
+        
+        dset_inst    = dset(d['data_path'], train=False, download=False, transform= transform)
+        valid_loader = DataLoader( dset_inst, batch_size=d['train_batch_size'], shuffle= d.get('shuffle', True))
+
+
+    return train_loader, valid_loader  
+
+
+
+####Not Yet tested
 def get_dataset_keras(args, data_info, **kw):
+
     """"
    #### Write someple
    from mlmodels.preprocess.keras_dataloader.dataloader import DataGenerator as kerasDataloader
