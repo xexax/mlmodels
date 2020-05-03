@@ -136,6 +136,7 @@ def test_benchmark(arg=None):
 
 
 
+
 def test_cli(arg=None):
     # Testing Command Line System
     path = mlmodels.__path__[0]
