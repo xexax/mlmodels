@@ -392,64 +392,71 @@ def config_model_list(folder=None):
     return mlist
 
 
+
 ####################################################################################################
 ############CLI Command ############################################################################
-def cli():
+def main():
     cli = argparse.ArgumentParser()
-    subparsers = cli.add_subparsers(dest="subcommand")
+    subparsers = cli.add_subparsers(dest="cli_")
 
-    def argument(*names_or_flags, **kwargs):
+    def add(*names_or_flags, **kwargs):
             return names_or_flags, kwargs
 
-    def subcommand(*subparser_args, parent=subparsers):
+
+    def cli_(*subparser_args, parent=subparsers):
             def decorator(func):
                 parser = parent.add_parser(func.__name__, description=func.__doc__)
                 for args, kwargs in subparser_args:
-                    parser.add_argument(*args, **kwargs)
+                    parser.add_add(*args, **kwargs)
                 parser.set_defaults(func=func)
             return decorator
 
-    @subcommand(
-        argument("--path", help="Enter path to create workspace", default=".")
-    )
+
+
+    @cli_( add("--path", help="Enter path to create workspace", default="."))
     def init(args):
         config_init(to_path=args.path)
         return 0
 
-    @subcommand(
-        argument("--save_folder", help="Location to save the generated configuration", default="ztest/"),
-        argument("--model_uri", default="model_tf/1_lstm.py", help="Model Name")
+
+
+    @cli_(
+        add("--save_folder", help="Location to save the generated configuration", default="ztest/"),
+        add("--model_uri", default="model_tf/1_lstm.py", help="Model Name")
     )
     def generate_config(args):
         log(args.save_folder)
         config_generate_json(args.model_uri, to_path=args.save_folder)
 
-    @subcommand(
-        argument("--folder", help="Enter the path with all models", default=None)
-    )
+
+
+
+    @cli_( add("--folder", help="Enter the path with all models", default=None) )
     def model_list(args):
         l = config_model_list(args.folder)
 
-    @subcommand(
-        argument("--folder", help="Enter the path with all models", default=None)
-    )
+
+
+    @cli_( add("--folder", help="Enter the path with all models", default=None))
     def testall(args):
         test_all(folder=args.folder)
 
-    @subcommand(
-        argument("--model_uri", help="Enter Model URI", default="model_tf/1_lstm.py")
-    )
+
+
+    @cli_( add("--model_uri", help="Enter Model URI", default="model_tf/1_lstm.py"))
     def test(args):
         param_pars = {"choice": "test01", "data_path": "", "config_mode": "test"}
         test_module(args.model_uri, param_pars=param_pars)  # '1_lstm'
         test(args.model_uri)
         test_global(args.model_uri)
 
-    @subcommand(
-        argument("--config_file", help="Path to config file", default=None),
-        argument("--config_mode", help="test/ prod /uat", default="test"),
-        argument("--model_uri", help="Enter Model URI", default="model_tf/1_lstm.py"),
-        argument("--save_folder", help="Location to save the generated configuration", default="ztest/")
+
+
+    @cli_(
+        add("--config_file", help="Path to config file", default=None),
+        add("--config_mode", help="test/ prod /uat", default="test"),
+        add("--model_uri", help="Enter Model URI", default="model_tf/1_lstm.py"),
+        add("--save_folder", help="Location to save the generated configuration", default="ztest/")
     )
     def fit(args):
         if args.config_file is None:
@@ -464,11 +471,14 @@ def cli():
         save_pars = {"path": f"{args.save_folder}/{args.model_uri}", "model_uri": args.model_uri}
         save(save_pars, model, sess)
 
-    @subcommand(
-        argument("--config_file", help="Path to config file", default=None),
-        argument("--config_mode", help="test/ prod /uat", default="test"),
-        argument("--model_uri", help="Enter Model URI", default="model_tf/1_lstm.py"),
-        argument("--save_folder", help="Location to save the generated configuration", default="ztest/")
+
+
+
+    @cli_(
+        add("--config_file", help="Path to config file", default=None),
+        add("--config_mode", help="test/ prod /uat", default="test"),
+        add("--model_uri", help="Enter Model URI", default="model_tf/1_lstm.py"),
+        add("--save_folder", help="Location to save the generated configuration", default="ztest/")
     )
     def predict(args):
         if args.config_file is None:
@@ -482,14 +492,16 @@ def cli():
         model, session = load(load_pars)
         module.predict(model, session, data_pars=data_p, compute_pars=compute_p, out_pars=out_p)
     
+
+
     args = cli.parse_args()
-    if args.subcommand is None:
+    if args.cli_ is None:
         cli.print_help()
     else:
         args.func(args)
 
-def main():
-    cli()
+#def main():
+#    cli()
 
 if __name__ == "__main__":
     main()
