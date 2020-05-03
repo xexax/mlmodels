@@ -94,13 +94,16 @@ def tf_dataset_download(**args):
     import tensorflow_datasets as tfds
     import numpy as np
     
-    data_info = args['data_info']
-    pre_args = args['pre_args']
+    data_info = args.get('data_info', None)
+    pre_args = args.get('pre_args',None)
+    
+    if not data_info or not pre_args:
+        raise Exception("['data_info','pre_args'] are required fields")
    
     dataset = data_info.get("dataset", None)
     out_path = data_info.get("data_path", None)
    
-     if not dataset or not out_path:
+    if not dataset or not out_path:
         raise Exception("['data_path','dataset'] is required field, please add these ['data_path','dataset'] in data_info")
  
     log(dataset)
@@ -156,15 +159,18 @@ def tf_dataset_download(**args):
     Xtemp = np.array(Xtemp)
     ytemp = np.array(ytemp)
     np.savez_compressed(os.path.join(out_path,'test', f"{name}"), X = Xtemp, y = ytemp)
-       
+    
+    
     log(out_path, os.listdir( out_path ))
- 
  
  
 def get_dataset_torch(**args):
     
-    data_info = args['data_info']
-    pre_args = args['pre_args']
+    data_info = args.get('data_info', None)
+    pre_args = args.get('pre_args',None)
+    
+    if not data_info or not pre_args:
+        raise Exception("['data_info','pre_args'] are required fields")
  
     target_transform_info = pre_args.get('target_transform', None)
     transform_info  = pre_args.get('transform', None)
@@ -178,7 +184,7 @@ def get_dataset_torch(**args):
     batch_size = data_info.get("batch_size", 1)
  
     if not dataset or not data_path:
-        raise Exception("['data_path','dataset'] is required field, please add these ['data_path','dataset'] in data_info")
+        raise Exception("['data_path','dataset'] are required fields, please add these ['data_path','dataset'] in data_info")
  
     transform = None
     if  len(transform_info)  > 1 :
@@ -186,7 +192,7 @@ def get_dataset_torch(**args):
         try:
             transform_args = transform_info.get("args", None)
             trans_pars = transform_info.get("pass_data_pars", False)
-            transform = load_function(transform_uri)(**transform_args if trans_pars)
+            transform = load_function(transform_uri)(transform_args if trans_pars else None)
         except Exception as e :
             transform = None
             print(e)
@@ -249,8 +255,11 @@ def get_dataset_keras(**args):
    """
     from mlmodels.preprocess.keras_dataloader.dataloader import DataGenerator as kerasDataLoader
     
-    data_info = args['data_info']
-    pre_args = args['pre_args']
+    data_info = args.get('data_info', None)
+    pre_args = args.get('pre_args',None)
+    
+    if not data_info or not pre_args:
+        raise Exception("['data_info','pre_args'] are required fields")
    
     target_transform_info = pre_args.get('target_transform', None)
     transform_info  = pre_args.get('transform', None)
@@ -268,7 +277,7 @@ def get_dataset_keras(**args):
         try:
             transform_args = transform_info.get("args", None)
             trans_pars = transform_info.get("pass_data_pars", False)
-            transform = load_function(transform_uri)(**transform_args if trans_pars)
+            transform = load_function(transform_uri)(transform_args if trans_pars else None)
         except Exception as e :
             transform = None
             print(e)
@@ -285,10 +294,9 @@ def get_dataset_keras(**args):
     valid_loader = kerasDataLoader( dset_inst, batch_size=batch_size, shuffle= shuffle)
  
  
-    return train_loader, valid_loader  
- 
- 
- def get_model_embedding(model_pars, **args):
+    return train_loader, valid_loader
+
+def get_model_embedding(model_pars, **args):
     """"
      Mostly Embedding data, it can be external data used in the model.
  
@@ -312,8 +320,11 @@ def get_dataset_keras(**args):
    """
     d = model_pars
     
-    data_info = args['data_info']
-    pre_args = args['pre_args']
+    data_info = args.get('data_info', None)
+    pre_args = args.get('pre_args',None)
+    
+    if not data_info or not pre_args:
+        raise Exception("['data_info','pre_args'] are required fields")
  
     ### Embedding Transformer
     transform = None
@@ -352,8 +363,11 @@ class pandasDataset(Dataset):
                  download=False, **args ):
         import torch
         
-        data_info = args['data_info']
-        pre_args = args['pre_args']
+        data_info = args.get('data_info', None)
+        pre_args = args.get('pre_args',None)
+        
+        if not data_info or not pre_args:
+            raise Exception("['data_info','pre_args'] are required fields")
        
         self.transform        = transform
         self.target_transform = target_transform
@@ -405,19 +419,22 @@ class pandasDataset(Dataset):
            tuple: (image, target) where target is index of the target class.
        """
         X, target = self.data[index], int(self.targets[index])
- 
- 
+        
+        
+        
         if self.transform is not None:
             X = self.transform(X)
- 
+            
         if self.target_transform is not None:
             target = self.target_transform(target)
  
         return X, target
  
     def shuffle(self, random_state=123):
-            self._df = self._df.sample(frac=1.0, random_state=random_state)
- 
+        self._df = self._df.sample(frac=1.0, random_state=random_state)
+        
+        
+
 class NumpyDataset(Dataset):
     """
   Defines a dataset composed of Features and labels
@@ -439,8 +456,11 @@ class NumpyDataset(Dataset):
                  download=False, **args):
  
  
-        data_info = args['data_info']
-        pre_args = args['pre_args']
+        data_info = args.get('data_info', None)
+        pre_args = args.get('pre_args',None)
+    
+        if not data_info or not pre_args:
+            raise Exception("['data_info','pre_args'] are required fields")
         
         dataset = data_info.get('dataset', None)
         if not dataset:
