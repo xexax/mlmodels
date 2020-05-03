@@ -21,7 +21,7 @@ import numpy as np
 import mlmodels
 
 from mlmodels.util import get_recursive_files, log, os_package_root_path, model_get_list, os_get_file
-from mlmodels.util import get_recursive_files2
+from mlmodels.util import get_recursive_files2, path_norm, path_norm_dict
 
 
 
@@ -139,16 +139,17 @@ def test_benchmark(arg=None):
 
 def test_cli(arg=None):
     # Testing Command Line System
-    path = mlmodels.__path__[0]
-    fileconfig = f"{path}/config/cli_test_list.md"
+
+    import mlmodels
+    path = mlmodels.__path__[0]   ### Root Path           
+    fileconfig = path_norm( arg.get("config_file", f"{path}/config/cli_test_list.md") )
     print(fileconfig)
 
     with open( fileconfig, mode="r" ) as f:
         cmd_list = f.readlines()
 
-
-
-    for ss in cmd_list:
+    #### Parse the CMD from the file .md and Execute
+    for ss in cmd_list:                      
         cmd = ss.strip()
         if cmd.startswith("ml_models ") or cmd.startswith("ml_benchmark ") or cmd.startswith("ml_optim ")  :
           print("\n\n\n",cmd,  flush=True)
