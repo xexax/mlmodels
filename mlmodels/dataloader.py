@@ -69,8 +69,10 @@ def pickle_load(file):
     return pickle.load(open(f, " r"))
 
 
-def pickle_dump(t,path):
-    pickle.dump(t, open(path, "wb" ))
+def pickle_dump(t, **kwargs):
+    with open(kwargs["path"], "wb") as fi:
+        pickle.dump(t, fi)
+    return t
 
 
 def image_dir_load(path):
@@ -183,36 +185,28 @@ class DataLoader:
         # Validate data_info
         self._validate_data_info(self.data_info)
 
-        input_tmp = None
+        input_tmp = self.data_info["path"]
         for preprocessor in self.preprocessors:
             uri = preprocessor.get("uri", None)
             if not uri:
                 raise Exception(f"Preprocessor {preprocessor} missing uri")
 
-            name = preprocessor.get("name", None)
             args = preprocessor.get("args", {})
 
             preprocessor_func = load_callable_from_uri(uri)
-            
-            if False :
-              pass   
-              #if name == "loader":
-              #    out_tmp = preprocessor_func(self.path, **args)
-              #elif name == "saver":  # saver do not return output
-              #    preprocessor_func(self.path, **args)
+
+            if inspect.isclass(preprocessor_func):
+                obj_preprocessor = preprocessor_func(**args)
+                obj_preprocessor.compute(input_tmp)
+                out_tmp = obj_preprocessor.get_data()
             else:
-                if inspect.isclass(preprocessor_func):
-                    obj_preprocessor = preprocessor_func(**args)
-                    obj_preprocessor.compute(input_tmp)
-                    out_tmp = obj_preprocessor.get_data()
+                pos_params = inspect.getfullargspec(preprocessor_func)[0]
+                if isinstance(input_tmp, (tuple, list)) and len(input_tmp) > 0 and len(pos_params) == 0:
+                    out_tmp = preprocessor_func(*input_tmp, **args)
                 else:
-                    if isinstance(input_tmp, (tuple, list)):
-                        out_tmp = preprocessor_func(*input_tmp[:2], **args)
-                    else:
-                        out_tmp = preprocessor_func(input_tmp, **args)
-                #### Need to check output format of processor.        
-                        
-                        
+                    out_tmp = preprocessor_func(input_tmp, **args)
+            # TODO: Need to check output format of processor.
+
             if preprocessor.get("internal_states", None):
                 for internal_state in preprocessor.get("internal_states", None):
                     if isinstance(out_tmp, dict):
@@ -225,35 +219,29 @@ class DataLoader:
         return self.final_output, self.internal_states
 
 
-
-
-
-
 ### Test functions
-def split_xy_from_dict(out,data_pars):
-    X_c    = data_pars['input_pars'].get('col_Xinput',[])
-    y_c    = data_pars['input_pars'].get('col_yinput',[])
-    misc_c = data_pars['input_pars'].get('col_miscinput',[])
+def split_xy_from_dict(out, **kwargs):
+    X_c    = kwargs.get('col_Xinput',[])
+    y_c    = kwargs.get('col_yinput',[])
     X      = [out[n] for n in X_c]
     y      = [out[n] for n in y_c]
-    misc   = [out[n] for n in misc_c]
-    return (*X,*y,*misc)
+    return (*X,*y)
 
 
 if __name__ == "__main__":
-    from models import test_module
+    from mlmodels.models import test_module
+
+    # param_pars = {
+    #     "choice": "json",
+    #     "config_mode": "test",
+    #     "data_path": "dataset/json/refactor/03_nbeats_dataloader.json",
+    # }
+    # test_module("model_tch/03_nbeats_dataloader.py", param_pars)
 
     param_pars = {
         "choice": "json",
         "config_mode": "test",
-        "data_path": "dataset/json/refactor/03_nbeats_dataloader.json",
-    }
-    test_module("model_tch/03_nbeats_dataloader.py", param_pars)
-
-    param_pars = {
-        "choice": "json",
-        "config_mode": "test",
-        "data_path": "dataset/json/refactor/namentity_crm_bilstm_dataloader.json",
+        "data_path": "dataset/json/refactor/namentity_crm_bilstm_dataloader_new.json",
     }
     test_module("model_keras/namentity_crm_bilstm_dataloader.py", param_pars)
     

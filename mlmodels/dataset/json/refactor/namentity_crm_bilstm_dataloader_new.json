@@ -30,7 +30,7 @@
 				},
 				{
 					"name": "split_xy",
-					"uri": "test_dataloader.py::split_xy_from_dict",
+					"uri": "dataloader.py::split_xy_from_dict",
 					"args": {
 						"col_Xinput": ["X"],
 						"col_yinput": ["y"]
@@ -42,14 +42,14 @@
 					"args": {
 						"test_size": 0.5
 					}
-				},
-				{
-					"name": "saver",
-					"uri":"dataloader.py::pickle_dump",
-					"args": {
-						"path": "ztest/ml_keras/namentity_crm_bilstm/data.pkl"
+					},
+					{
+						"name": "saver",
+						"uri":"dataloader.py::pickle_dump",
+						"args": {
+							"path": "ztest/ml_keras/namentity_crm_bilstm/data.pkl"
+						}
 					}
-				}
 			],
 
 		"output": {
