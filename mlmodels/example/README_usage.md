@@ -206,6 +206,64 @@ ypred       = module.predict(model, data_pars, compute_pars, out_pars)     # pre
 
 ---
 
+
+### AutoML example in AutoKeras ([Example script](/mlmodels/model_keras/Autokeras.py))
+```python
+# import library
+import mlmodels
+import autokeras as ak
+
+#### Define model and data definitions
+model_uri = "model_gluon.Autokeras.py"
+data_pars =  {
+            "dataset": "MNIST",
+            "data_path": "dataset/vision/",
+            "validation_split":0.2
+        }
+
+model_pars = {
+            "model_name":"vision",
+             "model_pars":{
+                            "num_classes": null,
+                            "multi_label": false,
+                            "loss":  null,
+                            "metrics": null,
+                            "name":"vision_classifier",
+                            "max_trials":10,
+                            "directory": null,
+                            "objective": "val_loss",
+                            "overwrite":true,
+                            "seed": null
+                            }
+        }
+
+compute_pars = {
+            "epochs":2
+        }
+
+out_pars =  {
+            "checkpointdir": "ztest/model_keras/autokeras/vision_classifier/"
+        
+        }
+
+
+
+#### Load Parameters and Train
+from mlmodels.models import module_load
+
+module        =  module_load( model_uri= model_uri )                           # Load file definition
+model         =  module.Model(model_pars=model_pars, compute_pars=compute_pars)             # Create Model instance
+model, sess   =  module.fit(model, data_pars=data_pars, model_pars=model_pars, compute_pars=compute_pars, out_pars=out_pars)      
+
+
+#### Inference
+ypred       = module.predict(model, data_pars, compute_pars, out_pars)     # predict pipeline
+
+
+```
+
+---
+
 ### RandomForest example in Scikit-learn ([Example notebook](mlmodels/example/sklearn.ipynb))
 ```python
 # import library
