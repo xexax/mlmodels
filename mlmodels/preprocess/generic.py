@@ -192,7 +192,7 @@ def get_dataset_torch(**args):
         try:
             transform_args = transform_info.get("args", None)
             trans_pars = transform_info.get("pass_data_pars", False)
-            transform = load_function(transform_uri)(transform_args if trans_pars else None)
+            transform = load_function(transform_uri)(**transform_args if trans_pars else None)
         except Exception as e :
             transform = None
             print(e)
@@ -277,7 +277,7 @@ def get_dataset_keras(**args):
         try:
             transform_args = transform_info.get("args", None)
             trans_pars = transform_info.get("pass_data_pars", False)
-            transform = load_function(transform_uri)(transform_args if trans_pars else None)
+            transform = load_function(transform_uri)(**transform_args if trans_pars else None)
         except Exception as e :
             transform = None
             print(e)
