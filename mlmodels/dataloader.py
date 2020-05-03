@@ -193,21 +193,47 @@ class DataLoader:
         self.final_output_type        = data_pars['output_type'] 
 
 
-    def compute(self):
+
+    def check(self):
         # Validate data_info
         self._validate_data_info(self.data_info)
 
         input_tmp = self.data_info["path"]
+        input_type_prev = "file"   ## HARD CODE , Bad
+
+        for preprocessor in self.preprocessors:
+            uri = preprocessor.get("uri", None)
+            if not uri:
+                print(f"Preprocessor {preprocessor} missing uri")
+
+
+            ### Compare date type for COMPATIBILITY
+            input_type = preprocessor.get("input_type", None)   ### Automatic ???
+            if input_type != input_type_prev :
+                print(f"Preprocessor {preprocessor} missing uri")                  
+
+            input_type_prev = preprocessor.get('output_type', None)
+       
+
+
+    def compute(self, docheck=1):
+        # Validate data_info
+        self._validate_data_info(self.data_info)
+
+        if docheck :
+            self.check()
+
+
+        input_tmp = self.data_info["path"]
+
         for preprocessor in self.preprocessors:
             uri = preprocessor.get("uri", None)
             if not uri:
                 raise Exception(f"Preprocessor {preprocessor} missing uri")
             preprocessor_func = load_callable_from_uri(uri)
 
-
+        
             args = preprocessor.get("args", {})
-            input_type = preprocessor.get("input_type", None)
-
 
             ### Should match PytorchDataloader, KerasDataloader, PandasDataset, ....
             if inspect.isclass(preprocessor_func):
@@ -221,19 +247,6 @@ class DataLoader:
                    out_tmp = preprocessor_func(args, self.data_info, *input_tmp)
                 else:
                     out_tmp = preprocessor_func(args, self.data_info, input_tmp) 
-
-
-            # TODO: Need to check output format of processor.
-            """
-                type_tmp_previous = typing(out_tmp)
-
-
-
-
-            """
-
-
-
 
 
             ## Be vareful of Very Large Dataset, not to save ALL 
