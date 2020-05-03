@@ -36,7 +36,7 @@ def torch_datasets_wrapper(sets, args_list = None, **args):
 
 
 def load_function(uri_name="path_norm"):
-  """
+    """
     ##### Pandas CSV case : Custom MLMODELS One
     "dataset"        : "mlmodels.preprocess.generic:pandasDataset"
 
@@ -47,45 +47,45 @@ def load_function(uri_name="path_norm"):
      "MyFolder/mlmodels/preprocess/generic.py:pandasDataset"
 
 
-  """  
-  import importlib, sys
-  from pathlib import Path
-  pkg = uri_name.split(":")
-  package, name = pkg[0], pkg[1]
-
-  try:
-    #### Import from package mlmodels sub-folder
-    return  getattr(importlib.import_module(package), name)
-
-  except Exception as e1:
+  """
+    import importlib, sys
+    from pathlib import Path
+    pkg = uri_name.split(":")
+    package, name = pkg[0], pkg[1]
+    
     try:
-        ### Add Folder to Path and Load absoluate path module
-        path_parent = str(Path(package).parent.parent.absolute())
-        sys.path.append(path_parent)
-        #log(path_parent)
+        #### Import from package mlmodels sub-folder
+        return  getattr(importlib.import_module(package), name)
 
-        #### import Absilute Path model_tf.1_lstm
-        model_name   = Path(package).stem  # remove .py
-        package_name = str(Path(package).parts[-2]) + "." + str(model_name)
-        #log(package_name, model_name)
-        return  getattr(importlib.import_module(package_name), name)
+    except Exception as e1:
+        try:
+            ### Add Folder to Path and Load absoluate path module
+            path_parent = str(Path(package).parent.parent.absolute())
+            sys.path.append(path_parent)
+            #log(path_parent)
 
-    except Exception as e2:
-        raise NameError(f"Module {pkg} notfound, {e1}, {e2}")
+            #### import Absilute Path model_tf.1_lstm
+            model_name   = Path(package).stem  # remove .py
+            package_name = str(Path(package).parts[-2]) + "." + str(model_name)
+            #log(package_name, model_name)
+            return  getattr(importlib.import_module(package_name), name)
 
-
-
-
-
-
-
+        except Exception as e2:
+            raise NameError(f"Module {pkg} notfound, {e1}, {e2}")
 
 
 
-def tf_dataset_download(**args, **data_info):
+
+
+
+
+
+
+
+def tf_dataset_download(**args):
     """
        Save in numpy compressez format TF Datasets
-   
+       args = {'dataset_info':{},'pre_args':{}}
        dataset_info ={ "dataset" : "mnist", "batch_size" : 5000,"data_path" : "dataset/vision/mnist2/"}
         args{"n_train": 500, "n_test": 500 }
        tf_dataset_download(dataset_pars)            
@@ -93,6 +93,9 @@ def tf_dataset_download(**args, **data_info):
    """
     import tensorflow_datasets as tfds
     import numpy as np
+    
+    data_info = args['data_info']
+    pre_args = args['pre_args']
    
     dataset = data_info.get("dataset", None)
     out_path = data_info.get("data_path", None)
@@ -108,9 +111,9 @@ def tf_dataset_download(**args, **data_info):
         raise Exception(f"Datatype error 'dataset: {dataset}'")
  
  
-    n_train    = args.get("train_samples", 500)
-    n_test     = args.get("test_samples", 50)
-    batch_size = args.get("batch_size", 10)
+    n_train    = pre_args.get("train_samples", 500)
+    n_test     = pre_args.get("test_samples", 50)
+    batch_size = pre_args.get("batch_size", 10)
     out_path   = path_norm(out_path)
  
  
@@ -158,13 +161,16 @@ def tf_dataset_download(**args, **data_info):
  
  
  
-def get_dataset_torch(**args , **data_info):
+def get_dataset_torch(**args):
+    
+    data_info = args['data_info']
+    pre_args = args['pre_args']
  
-    target_transform_info = args.get('target_transform', None)
-    transform_info  = args.get('transform', None)
-    to_image   = args.get('to_image', True)
-    shuffle= args.get('shuffle', True)
-    dataloader = args.get("dataloader", "mlmodels.preprocess.datasets:MNIST")
+    target_transform_info = pre_args.get('target_transform', None)
+    transform_info  = pre_args.get('transform', None)
+    to_image   = pre_args.get('to_image', True)
+    shuffle= pre_args.get('shuffle', True)
+    dataloader = pre_args.get("dataloader", "mlmodels.preprocess.datasets:MNIST")
  
     dataset = data_info.get("dataset", None)
     data_path = data_info.get("data_path", None)
@@ -189,17 +195,17 @@ def get_dataset_torch(**args , **data_info):
     dset = load_function(dataloader)
            
     #### from mlmodels.preprocess.image import pandasDataset
-    dset_inst    = dset(data_path, train=True, download=True, transform= transform, **args, **data_info)
+    dset_inst    = dset(data_path, train=True, download=True, transform= transform, **args)
     train_loader = DataLoader( dset_inst, batch_size=batch_size, shuffle= shuffle)
  
-    dset_inst    = dset(data_path, train=False, download=False, transform= transform, **args, **data_info)
+    dset_inst    = dset(data_path, train=False, download=False, transform= transform, **args)
     valid_loader = DataLoader( dset_inst, batch_size= batch_size, shuffle= shuffle)
  
     return train_loader, valid_loader
  
  
  
-def get_dataset_keras(**args, **data_info):
+def get_dataset_keras(**args):
     """"
    #### Write someple
    from mlmodels.preprocess.keras_dataloader.dataloader import DataGenerator as kerasDataloader
@@ -242,11 +248,14 @@ def get_dataset_keras(**args, **data_info):
  
    """
     from mlmodels.preprocess.keras_dataloader.dataloader import DataGenerator as kerasDataLoader
+    
+    data_info = args['data_info']
+    pre_args = args['pre_args']
    
-    target_transform_info = args.get('target_transform', None)
-    transform_info  = args.get('transform', None)
-    shuffle= args.get('shuffle', True)
-    dataloader = args.get("dataloader", "mlmodels.preprocess.datasets:MNIST")
+    target_transform_info = pre_args.get('target_transform', None)
+    transform_info  = pre_args.get('transform', None)
+    shuffle= pre_args.get('shuffle', True)
+    dataloader = pre_args.get("dataloader", "mlmodels.preprocess.datasets:MNIST")
  
     dataset = data_info.get("dataset", None)
     data_path = data_info.get("data_path", None)
@@ -269,17 +278,17 @@ def get_dataset_keras(**args, **data_info):
  
  
     ######  Dataset Downloader  #############################################
-    dset_inst    = dset(data_path, train=True, download=True, transform= transform, **args, **data_info)
+    dset_inst    = dset(data_path, train=True, download=True, transform= transform, **args)
     train_loader = kerasDataLoader( dset_inst, batch_size=batch_size, shuffle= shuffle)
  
-    dset_inst    = dset(data_path, train=False, download=False, transform= transform, **args, **data_info)
+    dset_inst    = dset(data_path, train=False, download=False, transform= transform, **args)
     valid_loader = kerasDataLoader( dset_inst, batch_size=batch_size, shuffle= shuffle)
  
  
     return train_loader, valid_loader  
  
  
- def get_model_embedding(model_pars, **args, **data_info):
+ def get_model_embedding(model_pars, **args):
     """"
      Mostly Embedding data, it can be external data used in the model.
  
@@ -302,10 +311,13 @@ def get_dataset_keras(**args, **data_info):
  
    """
     d = model_pars
+    
+    data_info = args['data_info']
+    pre_args = args['pre_args']
  
     ### Embedding Transformer
     transform = None
-    if  len(args.get("embedding_transform_uri", ""))  > 1 :
+    if  len(pre_args.get("embedding_transform_uri", ""))  > 1 :
         transform = load_function( d.get("embedding_transform_uri", "mlmodels.preprocess.text:torch_transform_glove" ))()
  
  
@@ -315,7 +327,7 @@ def get_dataset_keras(**args, **data_info):
     data = None
     if len(d.get('embedding_path', "")) > 1 :
         ###### Custom Build Dataset   ####################################################
-        data    = dset(d['embedding_path'], train=True, download=True, transform= transform, model_pars=model_parss, **args, **data_info)
+        data    = dset(d['embedding_path'], train=True, download=True, transform= transform, model_pars=model_parss, **args)
        
  
     else :
@@ -337,8 +349,11 @@ class pandasDataset(Dataset):
    """
    
     def __init__(self,root="", train=True, transform=None, target_transform=None,
-                 download=False, **args, **data_info ):
+                 download=False, **args ):
         import torch
+        
+        data_info = args['data_info']
+        pre_args = args['pre_args']
        
         self.transform        = transform
         self.target_transform = target_transform
@@ -355,8 +370,8 @@ class pandasDataset(Dataset):
         path =  os.path.join(root,'train' if train else 'test')
         filename = dataset if dataset.find('.csv') > -1 else dataset + '.csv'  ## CSV file
        
-        colX = args.get('colX',[])
-        coly = args.get('colX',[])
+        colX = pre_args.get('colX',[])
+        coly = pre_args.get('colX',[])
  
         # df = torch.load(os.path.join(path, filename))
         df = pd.read_csv(os.path.join(path, filename))
@@ -413,17 +428,20 @@ class NumpyDataset(Dataset):
           transforms: operation you wanna apply on image
  
           example:
+          args = {data_info:{}, pre_args:{}}
               data_info= {'data_path': 'mlmodels/dataset/vision/cifar10/', 'dataset':'clfar10'}
-               args = { 'to_image':True}
+               pre_args = { 'to_image':True}
                                    
       }        
   """
  
     def __init__(self, root="", train=True, transform=None, target_transform=None,
-                 download=False, **args, **data_info):
+                 download=False, **args):
  
  
-       
+        data_info = args['data_info']
+        pre_args = args['pre_args']
+        
         dataset = data_info.get('dataset', None)
         if not dataset:
             raise Exception("'dataset' is required field, please add it in data_info key")
@@ -434,7 +452,7 @@ class NumpyDataset(Dataset):
            
         self.target_transform = target_transform
         self.transform  = transform
-        self.to_image   = args.get('to_image', True)
+        self.to_image   = pre_args.get('to_image', True)
  
        
         file_path      =   os.path.join(root,'train' if train else 'test', f"{dataset}.npz")
