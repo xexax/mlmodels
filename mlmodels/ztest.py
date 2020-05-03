@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 
+
 ml_test --do test_json --config_file test/pullrequest.json
 
 ml_test --do test_all  --config_file  mlmdodels/config/test_config.json"
@@ -20,7 +21,8 @@ import numpy as np
 import mlmodels
 
 from mlmodels.util import get_recursive_files, log, os_package_root_path, model_get_list, os_get_file
-from mlmodels.util import get_recursive_files2, path_norm
+
+from mlmodels.util import get_recursive_files2, path_norm, path_norm_dict
 
 
 
@@ -151,6 +153,29 @@ def test_cli(arg=None):
 
 
 
+def test_cli(arg=None):
+    # Testing Command Line System
+
+    import mlmodels
+    path = mlmodels.__path__[0]   ### Root Path           
+    fileconfig = path_norm( arg.get("config_file", f"{path}/config/cli_test_list.md") )
+    print(fileconfig)
+
+    with open( fileconfig, mode="r" ) as f:
+        cmd_list = f.readlines()
+
+    #### Parse the CMD from the file .md and Execute
+    for ss in cmd_list:                      
+        cmd = ss.strip()
+        if cmd.startswith("ml_models ") or cmd.startswith("ml_benchmark ") or cmd.startswith("ml_optim ")  :
+          print("\n\n\n",cmd,  flush=True)
+          os.system(cmd)
+
+
+
+
+
+
 
 def test_all(arg=None):
     print("os.getcwd", os.getcwd())
@@ -251,11 +276,11 @@ def cli_load_arguments(config_file=None):
     def add(*w, **kw):
         p.add_argument(*w, **kw)
 
-    add("--config_file", default=config_file, help="Params File")
-    add("--config_mode", default="test", help="test/ prod /uat")
-    add("--log_file", help="log.log")
-    add("--do", default="test_all", help="test")
-    add("--folder", default=None, help="test")
+    add("do"            , default="test_all"  , help="  Action to do")
+    add("--config_file" , default=config_file , help="Params File")
+    add("--config_mode" , default="test"      , help="test/ prod /uat")
+    add("--log_file"    , help="log.log")
+    add("--folder"      , default=None        , help="test")
 
     ##### model pars
 
@@ -280,7 +305,6 @@ def main():
     if ".py" in arg.do:
         s = arg.do
         test_list(s.split(","))
-
 
     else:
         print("Running command", arg.do)

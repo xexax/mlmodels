@@ -3,8 +3,10 @@ name: test_cli
 
 
 on:
-  push:
+  pull_request:
     branches: 
+      dev
+      
 
  
 jobs:
@@ -70,8 +72,8 @@ jobs:
            ml_test --do test_import
 
 
-    ########  Test running 
-    - name: ml_optim
+    ########  Test running for ALL Command Line
+    - name: cli_test
       run: ml_test --do cli_test
 
 
