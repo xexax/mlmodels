@@ -100,7 +100,14 @@ if __name__ == '__main__':
     refactor_path = path_norm('dataset/json/refactor/' )
     data_pars_list = [(f,json.loads(open(refactor_path+f).read())['test']['data_pars']) for f in os.listdir(refactor_path)]
     
+    l1  =  [
 
+            path_norm('dataset/json/refactor/torchhub.json' )
+
+
+    ]
+
+    data_pars_list = l1
 
     for f, data_pars in data_pars_list:
         print(f)
@@ -108,6 +115,8 @@ if __name__ == '__main__':
         loader    = DataLoader(data_pars)
         loader.compute()
         print(loader.get_data())
+
+
 
 
 
