@@ -139,8 +139,14 @@ def test_cli(arg=None):
     # Testing Command Line System
 
     import mlmodels
-    path = mlmodels.__path__[0]   ### Root Path           
-    fileconfig = path_norm( arg.get("config_file", f"{path}/config/cli_test_list.md") )
+    path = mlmodels.__path__[0]   ### Root Path
+    # if arg is None :           
+    #  fileconfig = path_norm( f"{path}/config/cli_test_list.md" ) 
+    # else :
+    #  fileconfig = path_norm(  arg.config_file )
+
+    fileconfig = path_norm( f"{path}/config/cli_test_list.md" ) 
+
     print(fileconfig)
 
     def is_valid_cmd(cmd) :
@@ -266,7 +272,7 @@ def cli_load_arguments(config_file=None):
     def add(*w, **kw):
         p.add_argument(*w, **kw)
 
-    add("do"            , default="test_all"  , help="  Action to do")
+    add("--do"            , default="test_all"  , help="  Action to do")
     add("--config_file" , default=config_file , help="Params File")
     add("--config_mode" , default="test"      , help="test/ prod /uat")
     add("--log_file"    , help="log.log")
