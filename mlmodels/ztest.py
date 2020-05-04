@@ -161,13 +161,21 @@ def test_cli(arg=None):
     fileconfig = path_norm( arg.get("config_file", f"{path}/config/cli_test_list.md") )
     print(fileconfig)
 
+    def is_valid_cmd(cmd) :
+       cmd = cmd.strip() 
+       if len(cmd) > 8 :
+          if cmd.startswith("ml_models ") or cmd.startswith("ml_benchmark ") or cmd.startswith("ml_optim ")  :
+              return True
+        return False 
+             
+
     with open( fileconfig, mode="r" ) as f:
         cmd_list = f.readlines()
 
     #### Parse the CMD from the file .md and Execute
     for ss in cmd_list:                      
         cmd = ss.strip()
-        if cmd.startswith("ml_models ") or cmd.startswith("ml_benchmark ") or cmd.startswith("ml_optim ")  :
+        if is_valid_cmd(cmd):
           print("\n\n\n",cmd,  flush=True)
           os.system(cmd)
 
