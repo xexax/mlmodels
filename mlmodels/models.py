@@ -27,7 +27,7 @@ from pathlib import Path
 from warnings import simplefilter
 
 ####################################################################################################
-from mlmodels.util import (get_recursive_files, load_config, log, os_package_root_path)
+from mlmodels.util import (get_recursive_files, load_config, log, os_package_root_path, path_norm)
 
 from mlmodels.util import (env_build, env_conda_build, env_pip_requirement)
 
@@ -483,8 +483,8 @@ def main():
     )
     def predict(args):
         if args.config_file is None:
-            cur_path = os.path.dirname(os.path.realpath(__file__))
-            args.config_file = os.path.join(cur_path, "template/models_config.json")
+            args.config_file = path_norm("template/models_config.json")
+            
         model_p, data_p, compute_p, out_p = config_get_pars(args.config_file, args.config_mode)
         # module = module_load(arg.modelname)  # '1_lstm'
         load_pars = {"path": f"{args.save_folder}/{args.model_uri}", "model_uri": args.model_uri}

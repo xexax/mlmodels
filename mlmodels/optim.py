@@ -31,7 +31,7 @@ import copy
 ####################################################################################################
 # from mlmodels import models
 from mlmodels.models import model_create, module_load
-from mlmodels.util import log, os_package_root_path, path_norm, tf_deprecation
+from mlmodels.util import log, os_package_root_path, path_norm, tf_deprecation, path_norm
 
 ####################################################################################################
 tf_deprecation()
@@ -308,6 +308,8 @@ def cli():
             parser.set_defaults(func=func)
         return decorator
     
+    
+    #########  Test  #########################################################
     @subcommand(
         argument("-ntrials", help="No. of trials", default=2),
         argument("model_uri", help="Model Name", default='model_tf.1_lstm')
@@ -315,18 +317,21 @@ def cli():
     def test(args):
         test_fast(ntrials=args.ntrials, model_uri=args.model_uri)
     
+
+
     @subcommand()
     def test_all(args):
         test_all()
     
+
+
     @subcommand(
         argument("--config_file", help="Path to config file", default=None),
         argument("--config_mode", help="test/ prod /uat", default="test")
     )
     def search(args):
         if args.config_file is None:
-            cur_path = os.path.dirname(os.path.realpath(__file__))
-            args.config_file = os.path.join(cur_path, "template/optim_config.json")
+            args.config_file = path_norm("template/optim_config.json")
         js = json.load(open(args.config_file, mode='rb'))  # Config
         js = js[args.config_mode]  # test /uat /prod
 
@@ -350,3 +355,7 @@ def main():
 if __name__ == "__main__":
     VERBOSE = True
     main()
+
+
+
+
