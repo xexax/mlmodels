@@ -78,6 +78,30 @@ https://github.com/arita37/mlmodels/blob/dev/README.md
 
 """
 
+"""
+
+import os
+
+def package_files(directory):
+    paths = []
+    for (path, directories, filenames) in os.walk(directory):
+        for filename in filenames:
+            paths.append(os.path.join('..', path, filename))
+    return paths
+
+
+from pathlib import Path
+import inspect
+root_path = Path("mlmodels/")
+extra_files = package_files( root_path )
+
+print(root_path)
+
+
+print( __pkgname__ )
+
+
+"""
 
 
 ### Packages  ####################################################
@@ -108,6 +132,12 @@ entry_points={ 'console_scripts': [
               ] }
 
 
+
+
+
+
+
+
 ##################################################################   
 setup(
     name="mlmodels",
@@ -125,13 +155,13 @@ setup(
     packages=packages,
 
     include_package_data=True,
-    
-    #### CLI
-    scripts = scripts,
-  
-    ### CLI python
-    entry_points= entry_points,
-    
+    package_data= {'': extra_files},
+
+    package_data={
+      'mlmodels': ['*','*/*','*/*/*','*/*/*/*'],
+    },
+
+
     long_description=long_description,
     long_description_content_type="text/markdown",
 
