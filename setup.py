@@ -156,10 +156,10 @@ setup(
     packages=packages,
 
     include_package_data=True,
-    package_data= {'': extra_files},
+    #    package_data= {'': extra_files},
 
     package_data={
-      '': ['*','*/*','*/*/*','*/*/*/*'],
+      '': ['*','*/*','*/*/*','*/*/*/*']
     },
 
 
