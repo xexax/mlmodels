@@ -107,6 +107,7 @@ print( __pkgname__ )
 ### Packages  ####################################################
 packages = ["mlmodels"] + ["mlmodels." + p for p in find_packages("mlmodels")]
 
+print(packages)
 
 ### CLI Scripts  #################################################
 """
