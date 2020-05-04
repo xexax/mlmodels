@@ -127,7 +127,7 @@ python benchmark.py  --do  dataset/json/benchmark.json  --path_json  dataset/jso
 
 # Example in Colab :
 
-  https://colab.research.google.com/drive/1qkC7enImfhTWA8YXMXZDOKJ2XKaARMUW#scrollTo=ckk9XJguZwRB
+https://colab.research.google.com/drive/1u6ZUrBExDY9Jr6HA7kKutVKoP5RQfvRi#scrollTo=4qtLQiaCaDaU
 
 
 
