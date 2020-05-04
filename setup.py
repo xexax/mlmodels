@@ -61,24 +61,7 @@ With the goal to transform Script/Research code into re-usable batch/code with m
 
 
 
-ml_models --do                    
-    "testall"     :  test all modules inside model_tf
-    "test"        :  test a certain module inside model_tf
 
-
-    "model_list"  :  #list all models in the repo          
-    "fit"         :  wrap fit generic m    ethod
-    "predict"     :  predict  using a pre-trained model and some data
-    "generate_config"  :  generate config file from code source
-
-
-ml_optim --do
-  "test"      :  Test the hyperparameter optimization for a specific model
-  "test_all"  :  TODO, Test all
-  "search"    :  search for the best hyperparameters of a specific model
-
-
- 
 ##### Include models :
 
 https://github.com/arita37/mlmodels/blob/dev/README.md
@@ -117,10 +100,11 @@ scripts = [ "mlmodels/distri_torch_mpirun.sh",
 
 ### CLI Scripts  #################################################   
 entry_points={ 'console_scripts': [
-               'ml_models     = mlmodels.models:main'
-               ,'ml_optim     = mlmodels.optim:main'
-               ,'ml_test      = mlmodels.ztest:main'
-               ,'ml_benchmark = mlmodels.benchmark:main'
+               'ml_models       = mlmodels.models:main'
+               ,'ml_optim       = mlmodels.optim:main'
+               ,'ml_test        = mlmodels.ztest:main'
+               ,'ml_benchmark   = mlmodels.benchmark:main'
+               ,'ml_distributed = mlmodels.distributed:main'   ### Not functionnal
               ] }
 
 
@@ -131,7 +115,7 @@ setup(
     description="Generic model API, Model Zoo in Tensorflow, Keras, Pytorch, Gluon and Hyperparamter search",
     keywords='Machine Learning Interface library',
     
-    author="Kevin Noel, al",
+    author="Kevin Noel, MLMODELS Team",
     author_email="brookm291@gmail.com",
     url="https://github.com/arita37/mlmodels",
     

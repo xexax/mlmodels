@@ -2,7 +2,7 @@
 ```bash
 - ml_models    :  Running model training
 - ml_optim     :  Hyper-parameter search
-- ml_test      :  Testing
+- ml_test      :  Testing for developpers.
 - ml_benchmark :  Benchmark
 
 
@@ -22,6 +22,7 @@ ml_models --do
     predict     :  predict  using a pre-trained model and some data
     generate_config  :  generate config file from code source
     
+
   ## --do fit  
      --model_uri     model_tf.1_lstm
      --save_folder   myfolder/
@@ -106,7 +107,7 @@ python benchmark.py  --do  dataset/json/benchmark.json  --path_json  dataset/jso
 #### Distributed Pytorch on CPU (using Horovod and MPI on Linux, 4 processes)  in model_tch/mlp.py
     mlmodels/distri_torch_mpirun.sh   4    model_tch.mlp    mymodel.json
 
-
+    ml_distributed  --do fit   --n_node 4    --model_uri model_tch.mlp    --model_json mymodel.json
 
 
 ```
