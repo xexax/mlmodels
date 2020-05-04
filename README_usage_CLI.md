@@ -104,12 +104,16 @@ python benchmark.py  --do  dataset/json/benchmark.json  --path_json  dataset/jso
 
 
 
-### Distributed training on Pytorch Horovod
+### ml_distributed : Distributed training on Pytorch Horovod
 ```bash
+### Work in Progress
+
 #### Distributed Pytorch on CPU (using Horovod and MPI on Linux, 4 processes)  in model_tch/mlp.py
     mlmodels/distri_torch_mpirun.sh   4    model_tch.mlp    mymodel.json
 
     ml_distributed  --do fit   --n_node 4    --model_uri model_tch.mlp    --model_json mymodel.json
+
+
 
 
 ```
