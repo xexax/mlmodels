@@ -159,7 +159,7 @@ setup(
     package_data= {'': extra_files},
 
     package_data={
-      'mlmodels': ['*','*/*','*/*/*','*/*/*/*'],
+      '': ['*','*/*','*/*/*','*/*/*/*'],
     },
 
 
