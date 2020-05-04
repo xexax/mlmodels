@@ -391,14 +391,14 @@ class pandasDataset(Dataset):
         except:
             raise Exception(f"Datatype error 'dataset':{dataset}")
        
-        path =  os.path.join(root,'train' if train else 'test')
+        path =  root # os.path.join(root,'train' if train else 'test') #TODO: need re-organize dataset later
         filename = dataset if dataset.find('.csv') > -1 else dataset + '.csv'  ## CSV file
        
         colX = args.get('colX',[])
         coly = args.get('colX',[])
  
         # df = torch.load(os.path.join(path, filename))
-        df = pd.read_csv(os.path.join(path, filename))
+        df = pd.read_csv(os.path.join(path, filename), **args)
         self.df = df
  
  
@@ -441,9 +441,10 @@ class pandasDataset(Dataset):
         return X, target
  
     def shuffle(self, random_state=123):
-        self._df = self._df.sample(frac=1.0, random_state=random_state)
+        self.df = self._df.sample(frac=1.0, random_state=random_state)
         
-        
+    def get_data(self):
+        return self.df
 
 class NumpyDataset(Dataset):
     """

@@ -11,7 +11,7 @@ import keras
 
 
 ###########################################################################3
-from dataloader import DataLoader
+from mlmodels.dataloader import DataLoader
 from mlmodels.util import load_callable_from_dict, path_norm, path_norm_dict
 ### path_norm : find the ABSOLUTE PATH of the repobby heuristic.
 
@@ -102,15 +102,16 @@ if __name__ == '__main__':
     
     l1  =  [
 
-            path_norm('dataset/json/refactor/torchhub.json' )
+            path_norm('dataset/json/refactor/namentity_crm_bilstm_dataloader_new.json' )
 
 
     ]
 
     data_pars_list = l1
 
-    for f, data_pars in data_pars_list:
+    for f in l1:
         print(f)
+        data_pars = json.loads(open(f).read())['test']['data_pars']
         data_pars = path_norm_dict( data_pars)
         loader    = DataLoader(data_pars)
         loader.compute()
