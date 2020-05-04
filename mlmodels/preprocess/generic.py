@@ -191,8 +191,12 @@ def get_dataset_torch(args, data_info, **kw):
         transform_uri = transform_info.get("uri", "mlmodels.preprocess.image:torch_transform_mnist" )
         try:
             transform_args = transform_info.get("args", None)
-            trans_pars = transform_info.get("pass_data_pars", False)
-            transform = load_function(transform_uri)(**transform_args if trans_pars else None)
+            trans_pass = transform_info.get("pass_data_pars", False)
+            if trans_pass:
+               transform = load_function(transform_uri)(**transform_args)
+            else:
+               transform = load_function(transform_uri)()
+               
         except Exception as e :
             transform = None
             print(e)
@@ -288,8 +292,11 @@ def get_dataset_keras(args, data_info, **kw):
         transform_uri = transform_info.get("uri", "mlmodels.preprocess.image:keras_transform_mnist")
         try:
             transform_args = transform_info.get("args", None)
-            trans_pars = transform_info.get("pass_data_pars", False)
-            transform = load_function(transform_uri)(**transform_args if trans_pars else None)
+            trans_pass = transform_info.get("pass_data_pars", False)
+            if trans_pass:
+               transform = load_function(transform_uri)(**transform_args)
+            else:
+               transform = load_function(transform_uri)()
         except Exception as e :
             transform = None
             print(e)
