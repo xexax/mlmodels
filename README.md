@@ -890,6 +890,6 @@ model2 = module.load(load_pars ={ 'path': out_pars['path'] +"/model/"})
 
 
 
-
+<iframe src="https://github.com/arita37/mlmodels/blob/dev/mlmodels/example/README_usage.md"></iframe>
 
 
