@@ -16,5 +16,5 @@ pip install torchvision==0.4.0
 
 
 
-cd z/mlmodels && pip install . 
+cd z/mlmodels && pip install -e .  --no-deps
 

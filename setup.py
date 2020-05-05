@@ -158,9 +158,9 @@ setup(
     include_package_data=True,
     #    package_data= {'': extra_files},
 
-    # package_data={
-    #   '': ['*','*/*','*/*/*','*/*/*/*']
-    # },
+    package_data={
+       '': ['*','*/*','*/*/*','*/*/*/*']
+    },
 
 
     #### CLI
@@ -169,7 +169,7 @@ setup(
     ### CLI pyton
     entry_points= entry_points,
 
-    
+
 
     long_description=long_description,
     long_description_content_type="text/markdown",
