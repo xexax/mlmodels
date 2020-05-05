@@ -163,6 +163,14 @@ setup(
     # },
 
 
+    #### CLI
+    scripts = scripts,
+  
+    ### CLI pyton
+    entry_points= entry_points,
+
+    
+
     long_description=long_description,
     long_description_content_type="text/markdown",
 
