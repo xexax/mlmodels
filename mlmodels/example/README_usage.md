@@ -1,9 +1,20 @@
-## Usage with Online Editor
+## Usage with Online Dvelopper Editor
   Pre-Installed setup
 
 https://github.com/arita37/mlmodels/issues/101
 
 
+
+#### Install MLMODELS in Colab 
+Copy and run
+```
+%%capture
+!  bash <(wget -qO- https://raw.githubusercontent.com/arita37/mlmodels/dev/run_install2.sh)
+
+### Restart Runtime AFTER Install
+import os, time
+os.kill(os.getpid(), 9)
+```
 
 #
 #
