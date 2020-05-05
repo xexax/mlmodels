@@ -33,9 +33,10 @@ tensorboardX
 ### autokeras
 # autokeras==1.0.2
 # packaging==20.3
+# tensorflow==2.0  ### Conflict
 
 
-
+####
 
 ############################
 mxnet==1.6.0
