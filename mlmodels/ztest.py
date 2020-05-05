@@ -95,10 +95,11 @@ def test_import(arg):
     for f in file_list:
         try:
             f = "mlmodels." + f.replace("\\", ".").replace(".py", "").replace("/", ".")
+
             import_module(f)
             print(f)
         except Exception as e:
-            print(f, e)
+            print("Error", f, e)
 
 
 
