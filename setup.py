@@ -11,6 +11,10 @@ import sys
 
 from setuptools import find_packages, setup
 
+
+ import versioneer
+
+
 ######################################################################################
 root = os.path.abspath(os.path.dirname(__file__))
 
@@ -25,7 +29,10 @@ except : pass
 """
 
 ##### Version  #######################################################################
-version ='0.35.1'
+#version ='0.35.1'
+version = versioneer.get_version()
+cmdclass=versioneer.get_cmdclass()
+# version = versioneer.get_version()
 print("version", version)
 
 
@@ -138,7 +145,6 @@ entry_points={ 'console_scripts': [
 #####################################################################   
 setup(
     name="mlmodels",
-    version=version,
     description="Generic model API, Model Zoo in Tensorflow, Keras, Pytorch, Gluon and Hyperparamter search",
     keywords='Machine Learning Interface library',
     
@@ -157,6 +163,12 @@ setup(
     package_data={
        '': ['*','*/*','*/*/*','*/*/*/*']
     },
+
+   
+    ### Versioning
+    version=version,
+    cmdclass=cmdclass,
+
 
 
     #### CLI
