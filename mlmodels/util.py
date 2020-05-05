@@ -19,7 +19,7 @@ class to_namespace(object):
         return self.__dict__.get(key)
 
 
-def log(*s, n=0, m=1):
+def log(*s, n=0, m=0):
     sspace = "#" * n
     sjump = "\n" * m
     print(sjump, sspace, s, sspace, flush=True)
