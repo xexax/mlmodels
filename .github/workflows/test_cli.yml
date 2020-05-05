@@ -25,6 +25,20 @@ jobs:
     - name: Install pipenv
       uses: dschep/install-pipenv-action@v1
       
+
+    ##### Log Start  ######################################################
+    - name: ssh_gen
+      uses: webfactory/ssh-agent@v0.2.0
+      with:
+        ssh-private-key: ${{ secrets.GIT_RSA }}
+                
+    - name: log_start
+      run: |
+           cd /home/runner/work/mlmodels/  && git clone git@github.com:arita37/mlmodels_store.git  &&  ls && pwd
+           cd /home/runner/work/mlmodels/mlmodels/
+    ########################################################################
+
+
       
     #- uses: actions/cache@v1
     #  id: cache
@@ -69,15 +83,25 @@ jobs:
     - name: Repo Check
       run: |
            python -c "import mlmodels,os ; print(mlmodels); print(os)"
-           ml_test --do test_import
+           ml_test --do test_import  2>&1 | tee -a  cd /home/runner/work/mlmodels/mlmodels_store/log_cli_test/log_$(date '+%Y-%m-%d_%H:%M:%S,%3N').txt
 
 
     ########  Test running for ALL Command Line
     - name: cli_test
-      run: ml_test --do cli_test
+      run: ml_test --do cli_test     2>&1 | tee -a  cd /home/runner/work/mlmodels/mlmodels_store/log_cli_test/log_$(date '+%Y-%m-%d_%H:%M:%S,%3N').txt
 
 
-      
-         
+
+    - name: log_gitcommit
+      run: |
+           cd /home/runner/work/mlmodels/mlmodels_store/
+           git config --local user.email "noelkev0@gmail.com" && git config --local user.name "arita37"        
+           git pull --all   
+           ls &&  git add --all &&  git commit -m "cli_store" 
+           git push --all
+           cd /home/runner/work/mlmodels/mlmodels/
+
+
+
 
 
