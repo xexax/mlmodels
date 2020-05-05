@@ -12,7 +12,7 @@ import sys
 from setuptools import find_packages, setup
 
 
- import versioneer
+# import versioneer
 
 
 ######################################################################################
@@ -29,9 +29,9 @@ except : pass
 """
 
 ##### Version  #######################################################################
-#version ='0.35.1'
-version = versioneer.get_version()
-cmdclass=versioneer.get_cmdclass()
+version ='0.35.2'
+# version = versioneer.get_version()
+# cmdclass=versioneer.get_cmdclass()
 # version = versioneer.get_version()
 print("version", version)
 
@@ -167,7 +167,7 @@ setup(
    
     ### Versioning
     version=version,
-    cmdclass=cmdclass,
+    # cmdclass=cmdclass,
 
 
 
