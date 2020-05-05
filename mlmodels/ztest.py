@@ -94,7 +94,7 @@ def test_import(arg):
     file_list = os_get_file(folder=None, block_list=[], pattern=r"/*.py")
     for f in file_list:
         try:
-            f = f.replace("\\", ".").replace(".py", "")
+            f = f.replace("\\", ".").replace(".py", "").replace("/",".")
             import_module(f)
             print(f)
         except Exception as e:
@@ -304,7 +304,7 @@ def cli_load_arguments(config_file=None):
     import argparse
     from mlmodels.util import load_config, path_norm, os_package_root_path
     if config_file is None  :
-      config_file =  os_package_root_path() + "/config/test_config.json"
+      config_file =  path_norm( "config/test_config.json" )
     print(config_file)
 
     p = argparse.ArgumentParser()
