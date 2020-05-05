@@ -1,21 +1,20 @@
-## Command Line Tools
+# C
 ```bash
-- ml_models    :  Running model fit/predict
+- ml_models    :  Running model training
 - ml_optim     :  Hyper-parameter search
-- ml_benchmark :  Benchmark
-
 - ml_test      :  Testing for developpers.
+- ml_benchmark :  Benchmark
 
 
 ```
 
 
-## How to use CLI
+# How to use Command Line
 
 
 ### ml_models
 ```bash
-ml_models   
+ml_models --do  
     model_list  :  list all models in the repo                            
     testall     :  test all modules inside model_tf
     test        :  test a certain module inside model_tf
@@ -24,14 +23,14 @@ ml_models
     generate_config  :  generate config file from code source
     
 
-  ##  fit  
+  ## --do fit  
      --model_uri     model_tf.1_lstm
      --save_folder   myfolder/
      --config_file   myfile.json
      --config_mode   "test"
 
 
-  ## predict  
+  ## --do predict  
      --model_uri     model_tf.1_lstm
      --save_folder   myfolder/
      --config_file   myfile.json
@@ -39,14 +38,14 @@ ml_models
 
 
 #### generate config file
-    ml_models  generate_config  --model_uri model_tf.1_lstm.py  --save_folder "c:\myconfig"
+    ml_models  --do generate_config  --model_uri model_tf.1_lstm.py  --save_folder "c:\myconfig"
 
 #### TensorFlow LSTM model
-    ml_models  test  --model_uri model_tf/1_lstm.py  
+    ml_models  --do test  --model_uri model_tf/1_lstm.py  
 
 
 #### Custom  Models by URI
-    ml_models test  --model_uri "D:\_devs\Python01\gitdev\mlmodels\mlmodels\model_tf.1_lstm.py"
+    ml_models --do test  --model_uri ("D:\_devs\Python01\gitdev\mlmodels\mlmodels\model_tf.1_lstm.py")
 
 
 ```
@@ -57,7 +56,7 @@ ml_models
 ### ml_optim
 ```bash
 
-ml_optim 
+ml_optim --do
     test      :  Test the hyperparameter optimization for a specific model
     test_all  :  TODO, Test all
     search    :  search for the best hyperparameters of a specific model
@@ -65,19 +64,19 @@ ml_optim
 
 
 #### For normal optimization search method
-    ml_optim search --ntrials 1  --config_file optim_config.json --optim_method normal
+    ml_optim --do search --ntrials 1  --config_file optim_config.json --optim_method normal
 
 
 ###### for pruning method
-    ml_optim search --ntrials 1  --config_file optim_config.json --optim_method prune  
+    ml_optim --do search --ntrials 1  --config_file optim_config.json --optim_method prune  
 
 
 ###### Using Model default params
-    ml_optim search --modelname model_tf.1_lstm.py  
+    ml_optim --do search --modelname model_tf.1_lstm.py  
 
 
 ###### Using Model default params
-    ml_optim test  --modelname model_tf.1_lstm.py  
+    ml_optim --do test  --modelname model_tf.1_lstm.py  
 
 
 ```
@@ -89,11 +88,11 @@ ml_optim
 ## Benchmark model
 
 #### One Single file for all models
-ml_benchmark  dataset/json/benchmark.json  --path_json  dataset/json/benchmark_timeseries/test02/model_list.json
+ml_benchmark  --do  dataset/json/benchmark.json  --path_json  dataset/json/benchmark_timeseries/test02/model_list.json
      
 
 #### Many json                            
-ml_benchmark  dataset/json/benchmark.json  --path_json  dataset/json/benchmark_timeseries/test01/
+ml_benchmark  --do  dataset/json/benchmark.json  --path_json  dataset/json/benchmark_timeseries/test01/
 
     
 
@@ -112,7 +111,7 @@ ml_benchmark  dataset/json/benchmark.json  --path_json  dataset/json/benchmark_t
 #### Distributed Pytorch on CPU (using Horovod and MPI on Linux, 4 processes)  in model_tch/mlp.py
     mlmodels/distri_torch_mpirun.sh   4    model_tch.mlp    mymodel.json
 
-    ml_distributed  fit   --n_node 4    --model_uri model_tch.mlp    --model_json mymodel.json
+    ml_distributed  --do fit   --n_node 4    --model_uri model_tch.mlp    --model_json mymodel.json
 
 
 
@@ -123,7 +122,6 @@ ml_benchmark  dataset/json/benchmark.json  --path_json  dataset/json/benchmark_t
 
 ### ml_test
 ```bash
-### For Developpers
 
 
 
@@ -134,7 +132,7 @@ ml_benchmark  dataset/json/benchmark.json  --path_json  dataset/json/benchmark_t
 
 
 
-## Example in Colab :
+# Example in Colab :
 
 https://colab.research.google.com/drive/1u6ZUrBExDY9Jr6HA7kKutVKoP5RQfvRi#scrollTo=4qtLQiaCaDaU
 
