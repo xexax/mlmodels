@@ -96,7 +96,9 @@ class SingleFunctionPreprocessor:
         return self.data
 
 
-if __name__ == '__main__':
+
+
+def main():
     refactor_path = path_norm('dataset/json/refactor/' )
     data_pars_list = [(f,json.loads(open(refactor_path+f).read())['test']['data_pars']) for f in os.listdir(refactor_path)]
     
@@ -118,6 +120,11 @@ if __name__ == '__main__':
 
 
 
+
+
+
+if __name__ == '__main__':
+   main()
 
 
 

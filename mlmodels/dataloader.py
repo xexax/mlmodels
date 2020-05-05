@@ -42,7 +42,7 @@ import cloudpickle as pickle
 
 #########################################################################
 #### mlmodels-internal imports
-from mlmodels.util import load_callable_from_dict, load_callable_from_uri, path_norm
+from mlmodels.util import load_callable_from_dict, load_callable_from_uri, path_norm, path_norm_dict
 
 
 #########################################################################
@@ -61,12 +61,12 @@ import tensorflow.data
 
 
 
-DATASET_TYPES = ["csv_dataset", "text_dataset"]
+DATASET_TYPES = ["csv_dataset", "text_dataset", "NumpyDataset", "PandasDataset"]
 
 
 #########################################################################
 def pickle_load(file):
-    return pickle.load(open(f, " r"))
+    return pickle.load(open(file, " r"))
 
 
 def pickle_dump(t, **kwargs):
@@ -96,14 +96,14 @@ def _validate_data_info(self, data_info):
     if dataset_type and dataset_type not in DATASET_TYPES:
         raise Exception(f"Unknown dataset type {dataset_type}")
 
-    self.path = path
-    self.dataset_type = dataset_type
-    self.test_size = data_info.get("test_size", None)
-    self.generator = data_info.get("generator", False)
-    self.batch_size = int(data_info.get("batch_size", 1))
+    self.path          = path
+    self.dataset_type  = dataset_type
+    self.test_size     = data_info.get("test_size", None)
+    self.generator     = data_info.get("generator", False)
+    self.batch_size    = int(data_info.get("batch_size", 1))
 
-    self.col_Xinput = data_info.get("col_Xinput", None)
-    self.col_Yinput = data_info.get("col_Yinput", None)
+    self.col_Xinput    = data_info.get("col_Xinput", None)
+    self.col_Yinput    = data_info.get("col_Yinput", None)
     self.col_miscinput = data_info.get("col_miscinput", None)
 
 
@@ -161,9 +161,7 @@ def _check_output_shape(self, inter_output, shape, max_len):
 
 def get_dataset_type(x) :
     from mlmodel.process.generic import PandasDataset, NumpyDataset, Dataset, kerasDataset  #Pytorch
-
-
-    from mlmodel.process.generic import DataLoader
+    from mlmodel.process.generic import DataLoader  ## Pytorch
 
 
     if isinstance(x, PandasDataset  ) : return "PandasDataset"
@@ -208,11 +206,11 @@ class DataLoader:
 
 
             ### Compare date type for COMPATIBILITY
-            input_type = preprocessor.get("input_type", None)   ### Automatic ???
+            input_type = preprocessor.get("input_type", "")   ### Automatic ???
             if input_type != input_type_prev :
-                print(f"Preprocessor {preprocessor} missing uri")                  
+                print(f"Mismatch input / output data type {preprocessor} ")                  
 
-            input_type_prev = preprocessor.get('output_type', None)
+            input_type_prev = preprocessor.get('output_type', "")
        
 
 
@@ -245,6 +243,7 @@ class DataLoader:
                 pos_params = inspect.getfullargspec(preprocessor_func)[0]
                 if isinstance(input_tmp, (tuple, list)) and len(input_tmp) > 0 and len(pos_params) == 0:
                    out_tmp = preprocessor_func(args, self.data_info, *input_tmp)
+
                 else:
                     out_tmp = preprocessor_func(args, self.data_info, input_tmp) 
 
@@ -262,6 +261,8 @@ class DataLoader:
         return self.final_output, self.internal_states
 
 
+
+##########################################################################################################
 ### Test functions
 def split_xy_from_dict(out, **kwargs):
     X_c    = kwargs.get('col_Xinput',[])
@@ -271,7 +272,10 @@ def split_xy_from_dict(out, **kwargs):
     return (*X,*y)
 
 
-if __name__ == "__main__":
+
+
+
+def test_run_model():
     from mlmodels.models import test_module
 
     # param_pars = {
@@ -287,11 +291,43 @@ if __name__ == "__main__":
         "data_path": "dataset/json/refactor/namentity_crm_bilstm_dataloader_new.json",
     }
     test_module("model_keras/namentity_crm_bilstm_dataloader.py", param_pars)
+
+
+
+
+
+def test_dataloader(path='dataset/json/refactor/'):
+    refactor_path = path_norm( path )
+    data_pars_list = [(f,json.loads(open(refactor_path+f).read())['test']['data_pars']) for f in os.listdir(refactor_path)]
+    
+    l1  =  [
+
+            path_norm('dataset/json/refactor/torchhub.json' )
+
+
+    ]
+
+    data_pars_list = l1
+
+    for f, data_pars in data_pars_list:
+        print(f)
+        data_pars = path_norm_dict( data_pars)
+        loader    = DataLoader(data_pars)
+        loader.compute()
+        print(loader.get_data())
+
+
+
+
+
+
+##########################################################################################################
+if __name__ == "__main__":
+   test_dataloader('dataset/json/refactor/')    
     
     
     
-    
-    
+
     
     
     

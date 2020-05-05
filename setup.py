@@ -124,6 +124,10 @@ entry_points={ 'console_scripts': [
               ] }
 
 
+
+
+
+
 ##################################################################   
 setup(
     name="mlmodels",
@@ -141,7 +145,10 @@ setup(
     packages=packages,
 
     include_package_data=True,
-    
+    package_data= {'': extra_files},
+
+
+
     #### CLI
     scripts = scripts,
   

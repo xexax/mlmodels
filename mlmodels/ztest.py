@@ -134,24 +134,6 @@ def test_benchmark(arg=None):
 
 
 
-def test_cli(arg=None):
-    # Testing Command Line System
-    path = mlmodels.__path__[0]
-    fileconfig = f"{path}/config/cli_test_list.md"
-    print(fileconfig)
-
-    with open( fileconfig, mode="r" ) as f:
-        cmd_list = f.readlines()
-
-    for ss in cmd_list:
-        cmd = ss.strip()
-        if cmd.startswith("ml_models") or cmd.startswith("ml_benchmark") or cmd.startswith("ml_optim")  :
-          print("\n\n\n",cmd,  flush=True)
-          os.system(cmd)
-
-
-
-
 
 def test_cli(arg=None):
     # Testing Command Line System
