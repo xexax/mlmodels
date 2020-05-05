@@ -45,7 +45,7 @@ ml_models --do
 
 
 #### Custom  Models by URI
-    ml_models --do test  --model_uri ("D:\_devs\Python01\gitdev\mlmodels\mlmodels\model_tf.1_lstm.py")
+    ml_models --do test  --model_uri "D:\_devs\Python01\gitdev\mlmodels\mlmodels\model_tf.1_lstm.py"
 
 
 ```

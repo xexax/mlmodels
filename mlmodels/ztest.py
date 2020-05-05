@@ -145,7 +145,9 @@ def test_cli(arg=None):
     # else :
     #  fileconfig = path_norm(  arg.config_file )
 
-    fileconfig = path_norm( f"{path}/config/cli_test_list.md" ) 
+    # fileconfig = path_norm( f"{path}/../config/cli_test_list.md" ) 
+    fileconfig = path_norm( f"{path}/../README_usage_CLI.md" ) 
+
 
     print(fileconfig)
 
