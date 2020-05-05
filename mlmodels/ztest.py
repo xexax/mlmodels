@@ -105,12 +105,12 @@ def test_model_structure():
     os.system(cmd)
 
 
-def test_import(arg):
+def test_import(arg=None):
     #import tensorflow as tf
     #import torch
 
     #print(np, np.__version__)
-    #print(tf, tf.__version__)
+    #print(tf, tf.__version__)    #### Import internally Create Issues
     #print(torch, torch.__version__)
     #print(mlmodels)
 
@@ -219,6 +219,42 @@ def test_cli(arg=None):
           cmd =  cmd  + to_logfile("cli", '+%Y-%m-%d_%H')
           print("\n\n\n", cmd ,  flush=True)
           os.system(cmd)
+
+
+
+def test_pullrequest(arg=None):
+    """
+      Scan files in /pullrequest/ and run test on it.
+
+
+    """
+    from pathlib import Path
+    print("os.getcwd", os.getcwd())
+    path = str( os.path.join(Path(mlmodels.__path__[0] ).parent , "pullrequest/") )
+    print(path)
+
+    print("############Check model ################################")
+    file_list = get_recursive_files(path , r"*.py" )
+    print(file_list)
+
+    ## Block list
+    block_list = []
+    test_list = [t for t in file_list if t not in block_list]
+    print("Used", test_list)
+    
+
+    print("########### Run Check ##############################")
+    test_import(arg=None)
+    os.system("ml_optim")
+    os.system("ml_mlmodels")
+
+
+   
+    for file in test_list:
+        # cmd = cmd + log_git_push()
+        cmd = f"python {file}"
+        print("\n\n\n",cmd, flush=True)
+        os.system(cmd)
 
 
 

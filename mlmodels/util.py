@@ -114,7 +114,9 @@ def model_get_list(folder=None, block_list=[]):
 def get_recursive_files2(folderPath, ext):
     results = os.listdir(folderPath)
     outFiles = []
+    print(results)
     for file in results:
+        print(file)
         if os.path.isdir(os.path.join(folderPath, file)):
             outFiles += get_recursive_files(os.path.join(folderPath, file), ext)
         elif re.match(ext, file):
