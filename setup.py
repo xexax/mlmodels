@@ -12,7 +12,6 @@ import sys
 from setuptools import find_packages, setup
 
 
-# import versioneer
 
 
 ######################################################################################
@@ -30,9 +29,12 @@ except : pass
 
 ##### Version  #######################################################################
 version ='0.35.2'
-# version = versioneer.get_version()
-# cmdclass=versioneer.get_cmdclass()
-# version = versioneer.get_version()
+cmdclass= None
+
+
+#import versioneer
+#version = versioneer.get_version()
+#cmdclass=versioneer.get_cmdclass()
 print("version", version)
 
 
@@ -165,7 +167,7 @@ setup(
    
     ### Versioning
     version=version,
-    # cmdclass=cmdclass,
+    #cmdclass=cmdclass,
 
 
     #### CLI
