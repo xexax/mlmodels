@@ -1,4 +1,4 @@
-## Usage with Online Dvelopper Editor
+## Usage with Online IDE Editor
   Pre-Installed setup
 
 https://github.com/arita37/mlmodels/issues/101
