@@ -23,7 +23,18 @@ jobs:
     - name: Install pipenv
       uses: dschep/install-pipenv-action@v1
       
-      
+
+
+    - name: ssh_gen
+      uses: webfactory/ssh-agent@v0.2.0
+      with:
+        ssh-private-key: ${{ secrets.GIT_RSA }}
+                
+    - name: log_start
+      run: ml_test --do log_remote_start
+
+            
+
     #- uses: actions/cache@v1
     #  id: cache
     #  with:
@@ -64,7 +75,7 @@ jobs:
       run: pip install -e . -r requirements.txt  --no-deps
 
 
-    - name: Repo Check
+    - name: test_import
       run: |
            python -c "import mlmodels,os ; print(mlmodels); print(os)"
            ml_test --do test_import
@@ -83,6 +94,12 @@ jobs:
     #  run: ml_test
       
          
+
+
+    - name: log_gitcommit
+      run: |
+           ml_test --do log_remote_push
+
 
 
 

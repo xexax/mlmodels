@@ -65,6 +65,34 @@ def json_load(path) :
   except :
     return {}  
 
+####################################################################################################
+def log_remote_start(arg=None):
+   s = """ cd /home/runner/work/mlmodels/  && git clone git@github.com:arita37/mlmodels_store.git  &&  ls && pwd
+         cd /home/runner/work/mlmodels/mlmodels/
+       """
+
+   cmd = " ; ".join(s.split("\n"))
+   print(cmd)
+   os.system(cmd)
+
+
+
+def log_remote_push(arg=None):
+   s = """            cd /home/runner/work/mlmodels/mlmodels_store/
+           git config --local user.email "noelkev0@gmail.com" && git config --local user.name "arita37"        
+           git pull --all   
+           ls &&  git add --all &&  git commit -m "cli_store" 
+           git push --all
+           cd /home/runner/work/mlmodels/mlmodels/
+       """
+
+   cmd = " ; ".join(s.split("\n"))
+   print(cmd)
+   os.system(cmd)
+
+
+
+
 
 ####################################################################################################
 def test_model_structure():
