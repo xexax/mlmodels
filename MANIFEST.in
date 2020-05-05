@@ -1,4 +1,9 @@
 include README*
 include mlmodels/*
-include mlmodels/dataset/*.*
-include mlmodels/*.json
+recursive-include mlmodels/*.json
+recursive-include mlmodels/*.md
+recursive-include mlmodels/config/*
+recursive-include mlmodels/dataset/*
+recursive-include mlmodels/example/*
+recursive-include mlmodels/template/*
+recursive-include mlmodels/utils/*
