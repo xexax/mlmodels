@@ -94,7 +94,7 @@ def test_import(arg):
     file_list = os_get_file(folder=None, block_list=[], pattern=r"/*.py")
     for f in file_list:
         try:
-            f = f.replace("\\", ".").replace(".py", "").replace("/",".")
+            f = "mlmodels." + f.replace("\\", ".").replace(".py", "")
             import_module(f)
             print(f)
         except Exception as e:
