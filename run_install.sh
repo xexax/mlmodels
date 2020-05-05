@@ -15,6 +15,7 @@ mkdir z  ;  cd z && git clone https://github.com/arita37/mlmodels.git  ; cd mlmo
 pip install torchvision==0.4.0
 
 
+pip uninstall mlmodels ; pip install -e .  --no-deps 
 
-cd z/mlmodels && pip install -e .  --no-deps
+
 
