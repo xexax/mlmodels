@@ -1,8 +1,11 @@
-## Usage with Online Editor
-  Pre-Installed setup
+## Usage with Online IDE Editor
 
+####  Pre-Installed setup
 https://github.com/arita37/mlmodels/issues/101
 
+
+#### Install MLMODELS in Colab 
+https://github.com/arita37/mlmodels/issues/275
 
 
 #
