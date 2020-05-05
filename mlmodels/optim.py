@@ -337,7 +337,7 @@ def cli():
 
         # log(model_pars, data_pars, compute_pars)
         log("############# OPTIMIZATION Start  ###############")
-        res = optim(js["model_pars"]["modeluri"],
+        res = optim(js["model_pars"]["model_uri"],
                     hypermodel_pars = js["hypermodel_pars"],
                     model_pars      = js["model_pars"],
                     compute_pars    = js["compute_pars"],

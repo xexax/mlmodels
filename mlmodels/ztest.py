@@ -27,10 +27,14 @@ from mlmodels.util import get_recursive_files2, path_norm, path_norm_dict
 
 
            
+####################################################################################################
+def log_git_push() :
+ return " git config --local user.email 'noelkev0@gmail.com' &&   git config --local user.name 'arita37'  &&  cd /home/runner/work/mlmodels/mlmodels_store/   && ls &&  git add --all &&  git commit -m 'log'   && git push --all   && cd /home/runner/work/mlmodels/mlmodels/ "
 
 
-
-log_git_push = " git config --local user.email 'noelkev0@gmail.com' &&   git config --local user.name 'arita37'  &&  cd /home/runner/work/mlmodels/mlmodels_store/   && ls &&  git add --all &&  git commit -m 'log'   && git push --all   && cd /home/runner/work/mlmodels/mlmodels/ "
+def to_logfile(prefix="", dateformat='+%Y-%m-%d_%H:%M:%S,%3N' ) : 
+    ### On Linux System
+    return  f"  2>&1 | tee -a  cd log_{prefix}_$(date {dateformat}).txt"
 
 
 
@@ -45,6 +49,14 @@ def os_file_current_path():
     val = str(os.path.join(val, ""))
     # print(val)
     return val
+
+
+def os_system(cmd, dolog=1, prefix="", dateformat='+%Y-%m-%d_%H:%M:%S,%3N') :
+    if dolog :
+        cmd = cmd + to_logfile(prefix, dateformat)
+    os.system(cmd)
+
+
 
 
 ####################################################################################################
@@ -137,9 +149,9 @@ def test_benchmark(arg=None):
 
 
 def test_cli(arg=None):
-    # Testing Command Line System
+    print("# Testing Command Line System  ")
 
-    import mlmodels
+    import mlmodels, os
     path = mlmodels.__path__[0]   ### Root Path
     # if arg is None :           
     #  fileconfig = path_norm( f"{path}/config/cli_test_list.md" ) 
@@ -148,8 +160,6 @@ def test_cli(arg=None):
 
     # fileconfig = path_norm( f"{path}/../config/cli_test_list.md" ) 
     fileconfig = path_norm( f"{path}/../README_usage_CLI.md" ) 
-
-
     print(fileconfig)
 
     def is_valid_cmd(cmd) :
@@ -162,12 +172,16 @@ def test_cli(arg=None):
 
     with open( fileconfig, mode="r" ) as f:
         cmd_list = f.readlines()
+    print(cmd_list[:5])
+
+
 
     #### Parse the CMD from the file .md and Execute
     for ss in cmd_list:                      
         cmd = ss.strip()
         if is_valid_cmd(cmd):
-          print("\n\n\n",cmd,  flush=True)
+          cmd =  cmd  + to_logfile("cli", '+%Y-%m-%d_%H')
+          print("\n\n\n", cmd ,  flush=True)
           os.system(cmd)
 
 
