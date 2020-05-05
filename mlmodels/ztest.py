@@ -33,6 +33,9 @@ def log_git_push() :
 
 def to_logfile(prefix="", dateformat='+%Y-%m-%d_%H:%M:%S,%3N' ) : 
     ### On Linux System
+    if dateformat = "" :
+           return  f"  2>&1 | tee -a  cd log_{prefix}.txt"     
+
     return  f"  2>&1 | tee -a  cd log_{prefix}_$(date {dateformat}).txt"
 
 
@@ -251,11 +254,19 @@ def test_pullrequest(arg=None):
 
    
     for file in test_list:
-        # cmd = cmd + log_git_push()
+        file = file +  to_logfile(prefix="", dateformat='' ) 
         cmd = f"python {file}"
         print("\n\n\n",cmd, flush=True)
         os.system(cmd)
 
+    #### Check the logs
+    with open("log_.txt", mode="r")  as f :
+       lines = f.readlines()
+
+    for x in lines :
+        if "Error" in x :
+           raise Exception(f"Unknown dataset type", x)
+  
 
 
 
