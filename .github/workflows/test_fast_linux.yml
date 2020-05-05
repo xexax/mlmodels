@@ -24,14 +24,13 @@ jobs:
       uses: dschep/install-pipenv-action@v1
       
 
-
+    ### Remote Log
     - name: ssh_gen
       uses: webfactory/ssh-agent@v0.2.0
       with:
         ssh-private-key: ${{ secrets.GIT_RSA }}
                 
-    - name: log_start
-      run: ml_test --do log_remote_start
+
 
             
 
@@ -73,6 +72,11 @@ jobs:
 
     - name: Install repo
       run: pip install -e . -r requirements.txt  --no-deps
+
+
+
+    - name: log_start
+      run: ml_test --do log_remote_start
 
 
     - name: test_import
