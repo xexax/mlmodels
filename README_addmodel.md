@@ -37,21 +37,25 @@ https://github.com/arita37/mlmodels/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated
    - Do Not FOLLOW strict PEP8, make your code EASY TO READ : Align  "=" together, .... 
    - Do NOT reformat existing files.
 
-## Read The Examples
 
+## Read The Examples
   - [Issue#102](https://github.com/arita37/mlmodels/issues/102)
   - [Issue#100](https://github.com/arita37/mlmodels/pull/100)
+
   
 ## 1) Fork 
-Fork from arita37/mlmodels. Create a new branch from DEV branchto work on. Name it as YourName or Specifi Name to identify you.
+Fork from arita37/mlmodels. Please use yourName as Branch name
 Please use same branch for your developpements.
 
 `git checkout -b YourName` or `git checkout -b YourName`
 
-## 2) Configure for Tests  (No Test, No PR Accepted)
+
+## 2) Configure for Tests  (No Tests Success, No PR Accepted)
 Change in these files where needed with your MODEL_NAME and BRANCH NAME :
-- [`test_specific_model`](https://github.com/arita37/mlmodels/blob/dev/.github/workflows/PLEASE_CHANGE_test_specific_model.yml)
-- [`pullrequest.json`](https://github.com/arita37/mlmodels/blob/dev/pullrequest.json)
+- [`Test on YOUR_Branch, at each Commit`](https://github.com/arita37/mlmodels/blob/dev/.github/workflows/a_PLEASE_CHANGE_test_yourmodel.yml)  : At each commit
+- [`Test at by using pullrequest/ youtest.py`](https://github.com/arita37/mlmodels/tree/dev/pullrequest)  : Used at PR Merge
+
+
 
 
 ## 3) Create Python Script For New Model
@@ -108,6 +112,8 @@ https://github.com/arita37/mlmodels/actions?query=workflow%3Atest_custom_model
 
 ## Issue A Pull Request
 Once you have made the changes issue a PR.
+
+
 
 
 
