@@ -31,7 +31,10 @@ jobs:
         ssh-private-key: ${{ secrets.GIT_RSA }}
                 
 
-
+    # - name: log_start
+    #  run: |
+    #       cd /home/runner/work/mlmodels/  && git clone git@github.com:arita37/mlmodels_store.git  &&  ls && pwd
+    #       cd /home/runner/work/mlmodels/mlmodels/
             
 
     #- uses: actions/cache@v1

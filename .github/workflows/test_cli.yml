@@ -88,12 +88,12 @@ jobs:
     - name: ml_test  test_import 
       run: |
            python -c "import mlmodels,os ; print(mlmodels); print(os)"
-           ml_test --do test_import  2>&1 | tee -a  cd /home/runner/work/mlmodels/mlmodels_store/log_cli_test/log_$(date '+%Y-%m-%d_%H:%M:%S,%3N').txt
+           ml_test --do test_import  2>&1 | tee -a  cd /home/runner/work/mlmodels/mlmodels_store/log_test_cli/log_$(date '+%Y-%m-%d_%H:%M:%S,%3N').txt
 
 
     ########  Test running for ALL Command Line
     - name: cli_test
-      run: ml_test --do cli_test     2>&1 | tee -a  cd /home/runner/work/mlmodels/mlmodels_store/log_cli_test/log_$(date '+%Y-%m-%d_%H:%M:%S,%3N').txt
+      run: ml_test --do cli_test     2>&1 | tee -a  cd /home/runner/work/mlmodels/mlmodels_store/log_test_cli/log_$(date '+%Y-%m-%d_%H:%M:%S,%3N').txt
 
 
 
