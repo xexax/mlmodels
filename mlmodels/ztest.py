@@ -29,7 +29,7 @@ from mlmodels.util import get_recursive_files2, path_norm, path_norm_dict
            
 ####################################################################################################
 def log_git_push() :
- return " git config --local user.email 'noelkev0@gmail.com' &&   git config --local user.name 'arita37'  &&  cd /home/runner/work/mlmodels/mlmodels_store/   && ls &&  git add --all &&  git commit -m 'log'   && git push --all   && cd /home/runner/work/mlmodels/mlmodels/ "
+ return " ; git config --local user.email 'noelkev0@gmail.com' &&   git config --local user.name 'arita37'  &&  cd /home/runner/work/mlmodels/mlmodels_store/   && ls &&  git add --all &&  git commit -m 'log'   && git push --all   && cd /home/runner/work/mlmodels/mlmodels/ "
 
 
 def to_logfile(prefix="", dateformat='+%Y-%m-%d_%H:%M:%S,%3N' ) : 
@@ -57,6 +57,13 @@ def os_system(cmd, dolog=1, prefix="", dateformat='+%Y-%m-%d_%H:%M:%S,%3N') :
     os.system(cmd)
 
 
+
+
+def json_load(path) :
+  try :
+    return json.load(open( path, mode='r'))
+  except :
+    return {}  
 
 
 ####################################################################################################
@@ -188,6 +195,23 @@ def test_cli(arg=None):
 
 
 
+def test_dataloader(arg=None):
+    print("os.getcwd", os.getcwd())
+    path = mlmodels.__path__[0]
+    cfg = json_load(path_norm(arg.config_file))
+
+    print("############Check model ################################")
+    path = path.replace("\\", "//")
+    test_list = [ f"python {path}/dataloader.py --do test "   ,
+    ]
+
+    for cmd in test_list:
+        print("\n\n\n", cmd, flush=True)
+        os.system(cmd)
+
+
+
+
 
 
 def test_all(arg=None):
@@ -209,10 +233,9 @@ def test_all(arg=None):
     test_list = [f"python {path}/" + t.replace(".", "//").replace("//py", ".py") for t in model_list]
 
     for cmd in test_list:
-        print("\n\n\n", flush=True)
-        print(cmd, flush=True)
+        cmd = cmd + log_git_push()
+        print("\n\n\n",cmd, flush=True)
         os.system(cmd)
-        os.system(log_git_push)
 
 
 
