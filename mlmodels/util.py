@@ -76,7 +76,7 @@ def os_get_file(folder=None, block_list=[], pattern=r'*.py'):
 
     list_select = []
     for t in module_names:
-        t = t.replace(folder, "").replace("\\", ".").replace(".py", "").replace("/", "")
+        t = t.replace(folder, "").replace("\\", ".").replace(".py", "").replace("/", ".")
 
         flag = False
         for x in NO_LIST:
@@ -99,7 +99,7 @@ def model_get_list(folder=None, block_list=[]):
 
     list_select = []
     for t in module_names:
-        t = t.replace(folder, "").replace("\\", ".").replace(".py", "").replace("/", "")
+        t = t.replace(folder, "").replace("\\", ".").replace(".py", "").replace("/", ".")
 
         flag = False
         for x in NO_LIST:
