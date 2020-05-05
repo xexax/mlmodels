@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-
+All test are located here
 
 ml_test --do test_json --config_file test/pullrequest.json
 
@@ -21,7 +21,6 @@ import numpy as np
 import mlmodels
 
 from mlmodels.util import get_recursive_files, log, os_package_root_path, model_get_list, os_get_file
-
 from mlmodels.util import get_recursive_files2, path_norm, path_norm_dict
 
 
@@ -67,18 +66,18 @@ def json_load(path) :
 
 ####################################################################################################
 def log_remote_start(arg=None):
+   ## Download remote log on disk 
    s = """ cd /home/runner/work/mlmodels/  && git clone git@github.com:arita37/mlmodels_store.git  &&  ls && pwd
-         cd /home/runner/work/mlmodels/mlmodels/
        """
 
    cmd = " ; ".join(s.split("\n"))
-   print(cmd)
+   print(cmd, flush=True)
    os.system(cmd)
 
 
 
 def log_remote_push(arg=None):
-   s = """            cd /home/runner/work/mlmodels/mlmodels_store/
+   s = """ cd /home/runner/work/mlmodels/mlmodels_store/
            git config --local user.email "noelkev0@gmail.com" && git config --local user.name "arita37"        
            git pull --all   
            ls &&  git add --all &&  git commit -m "cli_store" 
@@ -87,7 +86,7 @@ def log_remote_push(arg=None):
        """
 
    cmd = " ; ".join(s.split("\n"))
-   print(cmd)
+   print(cmd, flush=True)
    os.system(cmd)
 
 
@@ -107,13 +106,13 @@ def test_model_structure():
 
 
 def test_import(arg):
-    import tensorflow as tf
-    import torch as torch
+    #import tensorflow as tf
+    #import torch
 
-    print(np, np.__version__)
-    print(tf, tf.__version__)
-    print(torch, torch.__version__)
-    print(mlmodels)
+    #print(np, np.__version__)
+    #print(tf, tf.__version__)
+    #print(torch, torch.__version__)
+    #print(mlmodels)
 
     from importlib import import_module
 
@@ -228,7 +227,7 @@ def test_cli(arg=None):
 def test_dataloader(arg=None):
     print("os.getcwd", os.getcwd())
     path = mlmodels.__path__[0]
-    cfg = json_load(path_norm(arg.config_file))
+    cfg  = json_load(path_norm(arg.config_file))
 
     print("############Check model ################################")
     path = path.replace("\\", "//")
@@ -373,9 +372,11 @@ def main():
         test_list(s.split(","))
 
     else:
-        print("Running command", arg.do)
+        print("Running command", arg.do, flush=True)
         globals()[arg.do](arg)
 
 
 if __name__ == "__main__":
     main()
+
+
