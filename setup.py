@@ -158,9 +158,9 @@ setup(
     include_package_data=True,
     #    package_data= {'': extra_files},
 
-    package_data={
-      '': ['*','*/*','*/*/*','*/*/*/*']
-    },
+    # package_data={
+    #   '': ['*','*/*','*/*/*','*/*/*/*']
+    # },
 
 
     long_description=long_description,
