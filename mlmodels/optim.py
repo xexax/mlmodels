@@ -385,7 +385,7 @@ def cli_load_arguments(config_file=None):
 
 
     ###### compute params
-    add("--ntrials", default=100, help='number of trials during the hyperparameters tuning')
+    add("--ntrials", default=1, help='number of trials during the hyperparameters tuning')
     add('--optim_engine', default='optuna', help='Optimization engine')
     add('--optim_method', default='normal/prune', help='Optimization method')
 
@@ -398,12 +398,13 @@ def cli_load_arguments(config_file=None):
     return args
 
 
+
 ####################################################################################################
 def main():
     arg = cli_load_arguments()
 
     if arg.do == "test":
-        test_fast()
+        test_fast(ntrials= arg.ntrials, model_uri= arg.model_uri)
 
     if arg.do == "test_all":
         test_all()

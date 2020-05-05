@@ -69,14 +69,10 @@ https://github.com/arita37/mlmodels/blob/dev/README.md
 
 
 ```
-
-
-
-
-
-
-
 """
+
+
+
 
 """
 
@@ -104,12 +100,12 @@ print( __pkgname__ )
 """
 
 
-### Packages  ####################################################
+### Packages  ########################################################
 packages = ["mlmodels"] + ["mlmodels." + p for p in find_packages("mlmodels")]
 
 print(packages)
 
-### CLI Scripts  #################################################
+### CLI Scripts  ####################################################
 """
 scripts = [ "mlmodels/models.py",
             "mlmodels/optim.py",
@@ -123,7 +119,7 @@ scripts = [ "mlmodels/distri_torch_mpirun.sh",
 
 
 
-### CLI Scripts  #################################################   
+### CLI Scripts  ###################################################   
 entry_points={ 'console_scripts': [
                 'ml_models      = mlmodels.models:main'
                ,'ml_optim       = mlmodels.optim:main'
@@ -139,7 +135,7 @@ entry_points={ 'console_scripts': [
 
 
 
-##################################################################   
+#####################################################################   
 setup(
     name="mlmodels",
     version=version,
@@ -337,3 +333,6 @@ setup(
 
 
 """
+
+
+
