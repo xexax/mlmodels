@@ -32,9 +32,9 @@ version ='0.35.2'
 cmdclass= None
 
 
-import versioneer
-version = versioneer.get_version()
-cmdclass=versioneer.get_cmdclass()
+#import versioneer
+#version = versioneer.get_version()
+#cmdclass=versioneer.get_cmdclass()
 print("version", version)
 
 
@@ -167,7 +167,7 @@ setup(
    
     ### Versioning
     version=version,
-    cmdclass=cmdclass,
+    #cmdclass=cmdclass,
 
 
     #### CLI
