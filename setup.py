@@ -140,9 +140,7 @@ entry_points={ 'console_scripts': [
 
 
 
-
-
-#####################################################################   
+##################################################################   
 setup(
     name="mlmodels",
     description="Generic model API, Model Zoo in Tensorflow, Keras, Pytorch, Gluon and Hyperparamter search",
@@ -168,7 +166,6 @@ setup(
     ### Versioning
     version=version,
     # cmdclass=cmdclass,
-
 
 
     #### CLI

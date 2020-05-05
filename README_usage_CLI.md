@@ -5,7 +5,6 @@
 - ml_test      :  Testing for developpers.
 - ml_benchmark :  Benchmark
 
-
 ```
 
 
@@ -13,7 +12,12 @@
 
 
 ### ml_models
+=======
+
+### How to use Command Line
 ```bash
+
+
 ml_models --do  
     model_list  :  list all models in the repo                            
     testall     :  test all modules inside model_tf
@@ -62,7 +66,6 @@ ml_optim --do
     search    :  search for the best hyperparameters of a specific model
 
 
-
 #### For normal optimization search method
     ml_optim --do search --ntrials 1  --config_file optim_config.json --optim_method normal
 
@@ -95,8 +98,6 @@ ml_benchmark  --do  dataset/json/benchmark.json  --path_json  dataset/json/bench
 ml_benchmark  --do  dataset/json/benchmark.json  --path_json  dataset/json/benchmark_timeseries/test01/
 
     
-
-
 ```
 
 
@@ -114,9 +115,9 @@ ml_benchmark  --do  dataset/json/benchmark.json  --path_json  dataset/json/bench
     ml_distributed  --do fit   --n_node 4    --model_uri model_tch.mlp    --model_json mymodel.json
 
 
-
-
 ```
+
+
 
 
 

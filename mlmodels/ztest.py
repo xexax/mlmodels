@@ -187,7 +187,6 @@ def test_benchmark(arg=None):
 
 
 
-
 def test_cli(arg=None):
     print("# Testing Command Line System  ")
 
@@ -213,7 +212,6 @@ def test_cli(arg=None):
     with open( fileconfig, mode="r" ) as f:
         cmd_list = f.readlines()
     print(cmd_list[:5])
-
 
 
     #### Parse the CMD from the file .md and Execute
