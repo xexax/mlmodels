@@ -92,6 +92,7 @@ def test_import(arg):
     block_list = ["raw"]
 
     file_list = os_get_file(folder=None, block_list=[], pattern=r"/*.py")
+    print(file_list)
     for f in file_list:
         try:
             f = "mlmodels." + f.replace("\\", ".").replace(".py", "").replace("/", ".")
