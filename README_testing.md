@@ -1,20 +1,34 @@
-# Testing Mechanism
-### Pull Requests, Fixes, New Models
-Read following instructions before adding a new model.
+# Testing Process
 
-- [MANDATORY For TESTS](#configure-for-tests)
-
+Testing is all automated, test parse automatically new files in the repo 
+and add it to the testing process
 
 
 ### Overview
 
-  Configuration is here :
-     https://github.com/arita37/mlmodels/blob/dev/.github/workflows/
+#### Configuration of auto-test :
+https://github.com/arita37/mlmodels/blob/dev/.github/workflows/
+
+    test_cli         : CLI
+    test_dataloader  : dataloader part
+    test_benchmark   : benchmark
+    test_fast_linux  : On Commit
+    test_pullrequest : On PR
 
 
 
-####  Code for testing is here :
-      https://github.com/arita37/mlmodels/blob/dev/mlmodels/ztest.py
+
+####  Code of auto-test :
+https://github.com/arita37/mlmodels/blob/dev/mlmodels/ztest.py
+
+
+
+
+#### Log of testing
+Uploaded directly here :
+https://github.com/arita37/mlmodels_store
+
+
 
 
 
@@ -36,5 +50,8 @@ Read following instructions before adding a new model.
      data_path = path_norm("ztest/text/myfile.txt")
         --> FULL_ PATH   /home/ubuntu/mlmodels/ztest/text/myfile.txt
 ```
+
+
+
 
 
