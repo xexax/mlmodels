@@ -891,10 +891,5 @@ model2 = module.load(load_pars ={ 'path': out_pars['path'] +"/model/"})
 
 
 
-<div class="iframe_container">
-  <iframe width="560" height="315" src="https://github.com/arita37/mlmodels/blob/dev/mlmodels/example/README_usage.md" frameborder="0" allowfullscreen="allowfullscreen"></iframe>
-</div>
-
-
 
 
