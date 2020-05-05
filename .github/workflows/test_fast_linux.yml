@@ -64,7 +64,7 @@ jobs:
 
     - name: Install numpy
       if: steps.cache-pipenv.outputs.cache-hit != 'true'
-      run: pip install numpy
+      run: pip install numpy==1.18.2   pillow==6.2.1  
       
 
     - name: Install repo requirements  1
@@ -91,7 +91,8 @@ jobs:
     - name: test_import
       run: |
            python -c "import mlmodels,os ; print(mlmodels); print(os)"
-           ml_test --do test_import
+           ml_test --do test_import    2>&1 | tee -a  cd /home/runner/work/mlmodels/mlmodels_store/log_import/log_import_$(date '+%Y-%m-%d_%H:%M:%S,%3N').txt
+
 
 
     ########  Test running 
@@ -106,8 +107,7 @@ jobs:
     #- name: ml_test
     #  run: ml_test
       
-         
-
+        
 
     - name: log_gitcommit
       run: |
