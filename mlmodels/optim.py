@@ -347,11 +347,87 @@ def cli():
         log("#############  OPTIMIZATION End ###############")
         log(res)
 
-####################################################################################################
-####################################################################################################
+
+"""
 def main():
     cli()
+"""
 
+
+####################################################################################################
+####################################################################################################
+def cli_load_arguments(config_file=None):
+    """
+        Load CLI input, load config.toml , overwrite config.toml by CLI Input
+    """
+    if config_file is None:
+        cur_path = os.path.dirname(os.path.realpath(__file__))
+        config_file = os.path.join(cur_path, "template/optim_config.json")
+    # print(config_file)
+
+    p = argparse.ArgumentParser()
+
+    def add(*k, **kw):
+        p.add_argument(*k, **kw)
+
+    add("--config_file", default=config_file, help="Params File")
+    add("--config_mode", default="test", help="test/ prod /uat")
+    add("--log_file", help="File to save the logging")
+
+    add("--do", default="test", help="what to do test or search")
+
+    ###### model_pars
+    add("--model_uri", default="model_tf.1_lstm.py",
+        help="name of the model to be tuned this name will be used to save the model")
+
+    ###### data_pars
+    add("--data_path", default="dataset/GOOG-year_small.csv", help="path of the training file")
+
+
+    ###### compute params
+    add("--ntrials", default=100, help='number of trials during the hyperparameters tuning')
+    add('--optim_engine', default='optuna', help='Optimization engine')
+    add('--optim_method', default='normal/prune', help='Optimization method')
+
+
+    ###### out params
+    add('--save_path', default='ztest/search_save/', help='folder that will contain saved version of best model')
+
+    args = p.parse_args()
+    # args = load_config(args, args.config_file, args.config_mode, verbose=0)
+    return args
+
+
+####################################################################################################
+def main():
+    arg = cli_load_arguments()
+
+    if arg.do == "test":
+        test_fast()
+
+    if arg.do == "test_all":
+        test_all()
+
+    if arg.do == "search":
+        # model_pars, data_pars, compute_pars = config_get_pars(arg)
+        js = json.load(open(arg.config_file, mode='rb'))  # Config
+        js = js[arg.config_mode]  # test /uat /prod
+
+        # log(model_pars, data_pars, compute_pars)
+        log("############# OPTIMIZATION Start  ###############")
+        res = optim(js["model_pars"]["modeluri"],
+                    hypermodel_pars = js["hypermodel_pars"],
+                    model_pars      = js["model_pars"],
+                    compute_pars    = js["compute_pars"],
+                    data_pars       = js["data_pars"],
+                    out_pars        = js["out_pars"])
+
+        log("#############  OPTIMIZATION End ###############")
+        log(res)
+
+
+
+####################################################################################################
 if __name__ == "__main__":
     VERBOSE = True
     main()
