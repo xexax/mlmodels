@@ -1,4 +1,4 @@
-# C
+# Comand Line tools :
 ```bash
 - ml_models    :  Running model training
 - ml_optim     :  Hyper-parameter search
