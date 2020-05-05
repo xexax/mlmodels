@@ -95,11 +95,5 @@ jobs:
         
 
     - name: log_gitcommit
-      run: |
-           cd /home/runner/work/mlmodels/mlmodels_store/
-           git config --local user.email "noelkev0@gmail.com" && git config --local user.name "arita37"        
-           git pull --all   
-           ls &&  git add --all &&  git commit -m "cli_store" 
-           git push --all
-           cd /home/runner/work/mlmodels/mlmodels/
+      run: ml_test log_remote_push
 
