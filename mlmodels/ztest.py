@@ -174,7 +174,7 @@ def test_jupyter(arg=None, config_mode="test_all"):
 
     log("############ Running files ################################")
     for cmd in test_list:
-        print("\n\n\n", "Running: " + cmd)
+        print("\n\n\n", "Running: " + cmd, flush=True)
         os.system(cmd)
 
 
