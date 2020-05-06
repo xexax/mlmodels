@@ -101,6 +101,6 @@ jobs:
       
       
     - name: log_gitcommit
-      run: ml_test --do log_remote_push("test_jupyter")
+      run: ml_test --do log_remote_push
 
 

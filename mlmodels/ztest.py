@@ -79,8 +79,9 @@ def log_remote_start(arg=None):
 
 
 
-def log_remote_push(tag="cli_store"):
+def log_remote_push(arg=None):
    ### Pushing to mlmodels_store 
+   tag ="ml_store"
    s = f""" cd /home/runner/work/mlmodels/mlmodels_store/
            git config --local user.email "noelkev0@gmail.com" && git config --local user.name "arita37"        
            git pull --all   
