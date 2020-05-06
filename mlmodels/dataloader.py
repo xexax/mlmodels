@@ -62,7 +62,7 @@ import tensorflow.data
 
 
 
-DATASET_TYPES = ["csv_dataset", "text_dataset", "NumpyDataset", "PandasDataset"]
+DATASET_TYPES = ["csv_dataset", "text_dataset", "NumpyDataset", "pandasDataset"]
 
 
 #########################################################################
@@ -224,13 +224,15 @@ class DataLoader:
             if not uri:
                 raise Exception(f"Preprocessor {preprocessor} missing uri")
             preprocessor_func = load_callable_from_uri(uri)
-
+            
+            print("URL: ",uri)
             args = preprocessor.get("args", {})
             ### Should match PytorchDataloader, KerasDataloader, PandasDataset, ....
             if inspect.isclass(preprocessor_func):
                 cls_name = preprocessor_func.__name__
+                print("cls_name :", cls_name)
                 if cls_name in DATASET_TYPES:  # dataset object
-                    obj_preprocessor = preprocessor_func(args=args, data_info=self.data_info)
+                    obj_preprocessor = preprocessor_func(**args, data_info=self.data_info)
                     if cls_name == "pandasDataset": # get dataframe instead of pytorch dataset
                         out_tmp = obj_preprocessor.get_data()
                     else:
@@ -240,6 +242,9 @@ class DataLoader:
                     obj_preprocessor.compute(input_tmp)
                     out_tmp = obj_preprocessor.get_data()
             else:
+                # print("input_tmp: ",input_tmp['X'].shape,input_tmp['y'].shape)
+                # print("input_tmp: ",input_tmp.keys())
+
                 pos_params = inspect.getfullargspec(preprocessor_func)[0]
                 if isinstance(input_tmp, (tuple, list)) and len(input_tmp) > 0 and len(pos_params) == 0:
                     out_tmp = preprocessor_func(*input_tmp, **args)

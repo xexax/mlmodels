@@ -100,7 +100,7 @@ class SingleFunctionPreprocessor:
 
 def main():
     refactor_path = path_norm('dataset/json/refactor/' )
-    data_pars_list = [(f,json.loads(open(refactor_path+f).read())['test']['data_pars']) for f in os.listdir(refactor_path)]
+    data_pars_list = [(f,json.loads(open(refactor_path+f).read())['test']['data_pars']) for f in os.listdir(refactor_path) if os.path.isfile(f)]
     
     l1  =  [
 

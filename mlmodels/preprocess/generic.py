@@ -306,10 +306,10 @@ def get_dataset_keras(args, data_info, **kw):
  
  
     ######  Dataset Downloader  #############################################
-    dset_inst    = dset(data_path, train=True, download=True, transform= transform, args = args, data_info = data_info)
+    dset_inst    = dset(data_path, train=True, download=True, transform= transform, data_info = data_info, **args)
     train_loader = kerasDataLoader( dset_inst, batch_size=batch_size, shuffle= shuffle)
  
-    dset_inst    = dset(data_path, train=False, download=False, transform= transform, args = args,  data_info = data_info)
+    dset_inst    = dset(data_path, train=False, download=False, transform= transform,  data_info = data_info, **args)
     valid_loader = kerasDataLoader( dset_inst, batch_size=batch_size, shuffle= shuffle)
  
  
@@ -373,11 +373,11 @@ class pandasDataset(Dataset):
    """
    
     def __init__(self, root="", train=True, transform=None, target_transform=None, 
-                 download=False, args={}, data_info={}, **kw):
+                 download=False, data_info={}, **kw):
         import torch
         
-        if len(args) < 1 or len(data_info) < 1:
-            raise Exception("['args','data_info'] are required fields")
+        if len(data_info) < 1:
+            raise Exception("'data_info' is required fields in pandasDataset")
         
         self.transform        = transform
         self.target_transform = target_transform
@@ -390,15 +390,19 @@ class pandasDataset(Dataset):
             dataset = dataset.lower()
         except:
             raise Exception(f"Datatype error 'dataset':{dataset}")
-       
-        path =  root # os.path.join(root,'train' if train else 'test') #TODO: need re-organize dataset later
+            
+        if len(root) > 1:
+            path =  root # os.path.join(root,'train' if train else 'test') #TODO: need re-organize dataset later
+        else:
+            path = data_info.get("data_path","")
         filename = dataset if dataset.find('.csv') > -1 else dataset + '.csv'  ## CSV file
        
-        colX = args.get('colX',[])
-        coly = args.get('colX',[])
+        colX = kw.get('colX',[])
+        coly = kw.get('coly',[])
  
         # df = torch.load(os.path.join(path, filename))
-        df = pd.read_csv(os.path.join(path, filename), **args)
+        file_path = path_norm(os.path.join(path, filename))
+        df = pd.read_csv(file_path, **kw.get("read_csv_parm",None))
         self.df = df
  
  
@@ -410,7 +414,8 @@ class pandasDataset(Dataset):
         #### Compute sample weights from inverse class frequencies
         class_sample_count = np.unique(labels, return_counts=True)[1]
         weight = 1. / class_sample_count
-        self.samples_weight = torch.from_numpy(weight[labels])
+        self.samples_weight = torch.from_numpy(weight) # BUG weight[labels] >> IndexError: only integers, slices (`:`), ellipsis (`...`), numpy.newaxis (`None`) and integer or boolean arrays are valid indices
+
  
  
         #### Data Joining  ############
@@ -463,10 +468,10 @@ class NumpyDataset(Dataset):
   """
  
     def __init__(self, root="", train=True, transform=None, target_transform=None,
-                 download=False, args={}, data_info={}, **kw):
+                 download=False, data_info={}, **kw):
         
-        if len(args) < 1 or len(data_info) < 1:
-            raise Exception("['args','data_info'] are required fields")
+        if len(data_info) < 1:
+            raise Exception("'data_info' is required fields in NumpyDataset")
             
             
         dataset = data_info.get('dataset', None)
@@ -479,7 +484,7 @@ class NumpyDataset(Dataset):
            
         self.target_transform = target_transform
         self.transform  = transform
-        self.to_image   = args.get('to_image', True)
+        self.to_image   = kw.get('to_image', True)
  
        
         file_path      =   os.path.join(root,'train' if train else 'test', f"{dataset}.npz")
