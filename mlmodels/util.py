@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import os
 import re
+import fnmatch
 
 # import toml
 from pathlib import Path
@@ -135,7 +136,8 @@ def get_recursive_files3(folderPath, ext):
     for file in results:
         if os.path.isdir(os.path.join(folderPath, file)):
             outFiles += get_recursive_files(os.path.join(folderPath, file), ext)
-        elif re.match(ext, file):
+        # elif re.match(ext, file): 
+        elif fnmatch.fnmatch(file, ext):
             outFiles.append(file)
     return outFiles
 

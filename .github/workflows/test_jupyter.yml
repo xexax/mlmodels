@@ -67,7 +67,7 @@ jobs:
 
     - name: Install numpy
       if: steps.cache-pipenv.outputs.cache-hit != 'true'
-      run: pip install numpy
+      run: pip install numpy==1.18.2  pillow==6.2.1
  
 
     - name: Install repo requirements 1
@@ -87,7 +87,7 @@ jobs:
 
 
     - name: Install Jupyter
-      run: pip install ipython
+      run: pip install notebook==6.0.3
 
 
     - name: Repo path
@@ -101,6 +101,6 @@ jobs:
       
       
     - name: log_gitcommit
-      run: ml_test --do log_remote_push
+      run: ml_test --do log_remote_push("test_jupyter")
 
 
