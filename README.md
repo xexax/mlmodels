@@ -888,10 +888,6 @@ model2 = module.load(load_pars ={ 'path': out_pars['path'] +"/model/"})
 ---
 
 
-![Pytorch](https://cutt.ly/Ayk8hji =5x5)
-
-
-
-
+![Pytorch](https://cutt.ly/Ayk8hji )
 
 
