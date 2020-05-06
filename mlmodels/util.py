@@ -112,14 +112,18 @@ def model_get_list(folder=None, block_list=[]):
 
 
 def get_recursive_files2(folderPath, ext):
+    import fnmatch  #Unix type match
     results = os.listdir(folderPath)
     outFiles = []
-    print(results)
+    # print(results)
+
+
     for file in results:
-        print(file)
+        # print(file)
         if os.path.isdir(os.path.join(folderPath, file)):
             outFiles += get_recursive_files(os.path.join(folderPath, file), ext)
-        elif re.match(ext, file):
+
+        elif fnmatch.fnmatch(file, ext):
             outFiles.append( folderPath + "/" + file)
 
     return outFiles

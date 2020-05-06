@@ -12,7 +12,7 @@ import math
 import os
 from collections import Counter, OrderedDict
 import json
-
+from pathlib import Path
 import numpy as np
 ####################################################################################################
 
@@ -139,29 +139,43 @@ def test_import(arg=None):
 
 
 def test_jupyter(arg=None, config_mode="test_all"):
+    """
+      Tests files in mlmodels/example/
+
+    """
     log("os.getcwd", os.getcwd())
 
     root = os_package_root_path()
     root = root.replace("\\", "//")
     log(root)
 
-    log("############Check model ################################")
-    model_list = get_recursive_files2(root, r'/*/*.ipynb')
-    log(model_list)
+
+    path = str( os.path.join(root, "example/") )
+    log(path)
+
+    log("############ List of files ################################")
+    #model_list = get_recursive_files2(root, r'/*/*.ipynb')
+    model_list  = get_recursive_files2(path, r'*.ipynb')
+    model_list2 = get_recursive_files2(path, r'*.py')
+    model_list  = model_list + model_list2
+    # log(model_list)
 
 
     ## Block list
-    cfg = json.load(open( f"{arg.config_file}", mode='r'))[ config_mode ]
-    block_list = cfg.get('jupyter_blocked', [])
+    #cfg = json.load(open( path_norm(arg.config_file) , mode='r'))[ config_mode ]
+    #block_list = cfg.get('jupyter_blocked', [])
+    
+    block_list = [ "ipynb_checkpoints" ] 
     model_list = [t for t in model_list if t not in block_list]
-    log("Used", model_list)
 
-    test_list = [f"ipython {root}/{t}"  for  t in model_list]
+    test_list = [f"ipython {t}"  for  t in model_list]
+    log(test_list) 
 
+    log("############ Running files ################################")
     for cmd in test_list:
-        log("\n\n\n")
-        log(cmd)
+        print("\n\n\n", "Running: " + cmd)
         os.system(cmd)
+
 
 
 
