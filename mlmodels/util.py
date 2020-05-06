@@ -167,10 +167,11 @@ def json_norm(ddict):
 def path_norm(path=""):
     root = os_package_root_path(__file__, 0)
 
+    path = path.strip()
     if len(path) == 0 or path is None:
         path = root
 
-    tag_list = [ "model_", "//model_",  "dataset", "template", "ztest", "example"  ]
+    tag_list = [ "model_", "//model_",  "dataset", "template", "ztest", "example", "config"  ]
 
 
     for t in tag_list :
