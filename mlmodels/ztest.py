@@ -27,10 +27,6 @@ from mlmodels.util import get_recursive_files2, path_norm, path_norm_dict
 
            
 ####################################################################################################
-def log_git_push() :
- return " ; git config --local user.email 'noelkev0@gmail.com' &&   git config --local user.name 'arita37'  &&  cd /home/runner/work/mlmodels/mlmodels_store/   && ls &&  git add --all &&  git commit -m 'log'   && git push --all   && cd /home/runner/work/mlmodels/mlmodels/ "
-
-
 def to_logfile(prefix="", dateformat='+%Y-%m-%d_%H:%M:%S,%3N' ) : 
     ### On Linux System
     if dateformat == "" :
@@ -41,14 +37,11 @@ def to_logfile(prefix="", dateformat='+%Y-%m-%d_%H:%M:%S,%3N' ) :
 
 
 def os_file_current_path():
-    import inspect
+    import inspect, os
     val = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
-    # return current_dir + "/"
-    # Path of current file
-    # from pathlib import Path
-
+    val = str(val)
     # val = Path().absolute()
-    val = str(os.path.join(val, ""))
+    # val = str(os.path.join(val, ""))
     # log(val)
     return val
 
@@ -275,7 +268,8 @@ def test_pullrequest(arg=None):
         log("\n\n\n",cmd)
         os.system(cmd)
 
-    #### Check the logs
+    
+    #### Check the logs   ###################################
     with open("log_.txt", mode="r")  as f :
        lines = f.readlines()
 
@@ -325,9 +319,11 @@ def test_all(arg=None):
     test_list = [f"python {path}/" + t.replace(".", "//").replace("//py", ".py") for t in model_list]
 
     for cmd in test_list:
-        cmd = cmd + log_git_push()
         log("\n\n\n",cmd)
         os.system(cmd)
+        log_remote_push()
+        sleep(5)
+
 
 
 
@@ -395,16 +391,15 @@ def cli_load_arguments(config_file=None):
     #Load CLI input, load config.toml , overwrite config.toml by CLI Input
     import argparse
     from mlmodels.util import load_config, path_norm, os_package_root_path
-    if config_file is None  :
-      config_file =  path_norm( "config/test_config.json" )
+    
+    config_file =  path_norm( "config/test_config.json" ) if config_file is None  else config_file
     log(config_file)
 
     p = argparse.ArgumentParser()
-
     def add(*w, **kw):
         p.add_argument(*w, **kw)
 
-    add("--do"            , default="test_all"  , help="  Action to do")
+    add("--do"          , default="test_all"  , help="  Action to do")
     add("--config_file" , default=config_file , help="Params File")
     add("--config_mode" , default="test"      , help="test/ prod /uat")
     add("--log_file"    , help="log.log")
