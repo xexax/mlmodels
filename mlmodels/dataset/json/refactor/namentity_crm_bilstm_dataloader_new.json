@@ -19,7 +19,9 @@
 					"name": "loader",
 					"uri": "mlmodels/preprocess/generic.py::pandasDataset",
 					"args": {
-                        "read_csv_parm":{"encoding": "ISO-8859-1"}
+                        "read_csv_parm":{"encoding": "ISO-8859-1"},
+                        "colX":[],
+                        "coly":[]
 					}
 				},
 				{
@@ -28,6 +30,13 @@
 						"max_len": 75
 					},
 					"internal_states": ["word_count"]
+				},{
+					"name": "split_xy",
+					"uri": "mlmodels/dataloader.py::split_xy_from_dict",
+					"args": {
+						"col_Xinput": ["X"],
+						"col_yinput": ["y"]
+					}
 				},
 				{
 					"name": "split_train_test",
