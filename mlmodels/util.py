@@ -26,23 +26,37 @@ def log(*s, n=0, m=0):
     print(sjump, sspace, s, sspace, flush=True)
 
 
+
 ####################################################################################################
-def get_device_torch():
-    import torch, numpy as np
-    if torch.cuda.is_available():
-        device = "cuda:{}".format(np.random.randint(torch.cuda.device_count()))
-    else:
-        device = "cpu"
-    print("use device", device)
-    return device
+def os_package_root_path(filepath="", sublevel=0, path_add=""):
+    """
+       get the module package root folder
+    """
+    from pathlib import Path
+    import mlmodels, os, inspect 
+
+    path = Path(inspect.getfile(mlmodels)).parent
+    # print( path )
+
+    # path = Path(os.path.realpath(filepath)).parent
+    for i in range(1, sublevel + 1):
+        path = path.parent
+
+    path = os.path.join(path.absolute(), path_add)
+    return path
 
 
+def os_file_current_path():
+    import inspect
+    val = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+    # return current_dir + "/"
+    # Path of current file
+    # from pathlib import Path
 
-
-def load_function(package="mlmodels.util", name="path_norm"):
-  import importlib
-  return  getattr(importlib.import_module(package), name)
-
+    # val = Path().absolute()
+    val = str(os.path.join(val, ""))
+    # print(val)
+    return val
 
 
 
@@ -112,6 +126,14 @@ def model_get_list(folder=None, block_list=[]):
     return list_select
 
 
+
+def get_recursive_files(folderPath, ext='/*model*/*.py'):
+    import glob
+    files = glob.glob(folderPath + ext, recursive=True)
+    return files
+
+
+
 def get_recursive_files2(folderPath, ext):
     import fnmatch  #Unix type match
     results = os.listdir(folderPath)
@@ -148,21 +170,8 @@ def get_model_uri(file):
 
 
 
-def get_recursive_files(folderPath, ext='/*model*/*.py'):
-    import glob
-    files = glob.glob(folderPath + ext, recursive=True)
-    return files
 
-
-
-
-
-def json_norm(ddict):
-  """
-    String to Object for JSON on file
-
-
-  """  
+def json_norm(ddict):  
   for k,t in ddict.items(): 
      if t == "None" :
          ddict[k] = None
@@ -194,45 +203,6 @@ def path_norm_dict(ddict):
     return ddict
 
 
-"""
-def os_module_path():
-    import inspect
-    current_dir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
-    parent_dir = os.path.dirname(current_dir)
-    # sys.path.insert(0, parent_dir)
-    return parent_dir
-"""
-
-def os_package_root_path(filepath="", sublevel=0, path_add=""):
-    """
-       get the module package root folder
-    """
-    from pathlib import Path
-    import mlmodels, os, inspect 
-
-    path = Path(inspect.getfile(mlmodels)).parent
-    # print( path )
-
-    # path = Path(os.path.realpath(filepath)).parent
-    for i in range(1, sublevel + 1):
-        path = path.parent
-
-    path = os.path.join(path.absolute(), path_add)
-    return path
-
-
-def os_file_current_path():
-    import inspect
-    val = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
-    # return current_dir + "/"
-    # Path of current file
-    # from pathlib import Path
-
-    # val = Path().absolute()
-    val = str(os.path.join(val, ""))
-    # print(val)
-    return val
-
 
 ####################################################################################################
 def test_module(model_uri="model_tf/1_lstm.py", data_path="dataset/", pars_choice="json", reset=True):
@@ -251,6 +221,9 @@ def test_module(model_uri="model_tf/1_lstm.py", data_path="dataset/", pars_choic
     log("#### Run module test   ##############################################")
     from mlmodels.models import test_module as test_module_global
     test_module_global(model_uri, model_pars, data_pars, compute_pars, out_pars)
+
+
+
 
 
 ####################################################################################################
@@ -282,8 +255,6 @@ def config_set(ddict2):
     json.dump(ddict, open(ddict, mode='w'))
    
 
-
-
 def params_json_load(path, config_mode="test", 
                      tlist= [ "model_pars", "data_pars", "compute_pars", "out_pars"] ):
     import json
@@ -300,12 +271,6 @@ def params_json_load(path, config_mode="test",
             log("error in json, cannot load ", t)
 
     return tuple(list_pars)
-
-
-
-
-
-
 
 
 
@@ -405,7 +370,7 @@ def env_build(model_uri, env_pars):
 
 
 ####################################################################################################
-########## TF specific #############################################################################
+########## Specific ################################################################################
 def tf_deprecation():
     try:
         from tensorflow.python.util import deprecation
@@ -413,6 +378,20 @@ def tf_deprecation():
         print("Deprecaton set to False")
     except:
         pass
+
+
+def get_device_torch():
+    import torch, numpy as np
+    if torch.cuda.is_available():
+        device = "cuda:{}".format(np.random.randint(torch.cuda.device_count()))
+    else:
+        device = "cpu"
+    print("use device", device)
+    return device
+
+
+
+
 
 
 
@@ -598,6 +577,13 @@ def load_gluonts(load_pars=None):
 
 
 
+#########################################################################################
+#########################################################################################
+def load_function(package="mlmodels.util", name="path_norm"):
+  import importlib
+  return  getattr(importlib.import_module(package), name)
+
+
 
 def load_callable_from_uri(uri):
     assert(len(uri)>0 and ('::' in uri or '.' in uri))
@@ -614,6 +600,7 @@ def load_callable_from_uri(uri):
         module = importlib.import_module(module_path)
     return dict(getmembers(module))[callable_name]
         
+
 def load_callable_from_dict(function_dict, return_other_keys=False):
     function_dict = function_dict.copy()
     uri = function_dict.pop('uri')
