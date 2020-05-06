@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import os
 import re
+import fnmatch
 
 # import toml
 from pathlib import Path
@@ -19,7 +20,7 @@ class to_namespace(object):
         return self.__dict__.get(key)
 
 
-def log(*s, n=0, m=1):
+def log(*s, n=0, m=0):
     sspace = "#" * n
     sjump = "\n" * m
     print(sjump, sspace, s, sspace, flush=True)
@@ -68,7 +69,7 @@ def os_get_file(folder=None, block_list=[], pattern=r'*.py'):
     folder = os_package_root_path() if folder is None else folder
     # print(folder)
     module_names = get_recursive_files3(folder, pattern)
-    print(module_names)
+    # print(module_names)
 
 
     NO_LIST = []
@@ -76,7 +77,7 @@ def os_get_file(folder=None, block_list=[], pattern=r'*.py'):
 
     list_select = []
     for t in module_names:
-        t = t.replace(folder, "").replace("\\", ".").replace(".py", "")
+        t = t.replace(folder, "").replace("\\", ".").replace(".py", "").replace("/", ".")
 
         flag = False
         for x in NO_LIST:
@@ -99,7 +100,7 @@ def model_get_list(folder=None, block_list=[]):
 
     list_select = []
     for t in module_names:
-        t = t.replace(folder, "").replace("\\", ".")
+        t = t.replace(folder, "").replace("\\", ".").replace(".py", "").replace("/", ".")
 
         flag = False
         for x in NO_LIST:
@@ -112,12 +113,18 @@ def model_get_list(folder=None, block_list=[]):
 
 
 def get_recursive_files2(folderPath, ext):
+    import fnmatch  #Unix type match
     results = os.listdir(folderPath)
     outFiles = []
+    # print(results)
+
+
     for file in results:
+        # print(file)
         if os.path.isdir(os.path.join(folderPath, file)):
             outFiles += get_recursive_files(os.path.join(folderPath, file), ext)
-        elif re.match(ext, file):
+
+        elif fnmatch.fnmatch(file, ext):
             outFiles.append( folderPath + "/" + file)
 
     return outFiles
@@ -129,7 +136,8 @@ def get_recursive_files3(folderPath, ext):
     for file in results:
         if os.path.isdir(os.path.join(folderPath, file)):
             outFiles += get_recursive_files(os.path.join(folderPath, file), ext)
-        elif re.match(ext, file):
+        # elif re.match(ext, file): 
+        elif fnmatch.fnmatch(file, ext):
             outFiles.append(file)
     return outFiles
 
@@ -165,10 +173,11 @@ def json_norm(ddict):
 def path_norm(path=""):
     root = os_package_root_path(__file__, 0)
 
+    path = path.strip()
     if len(path) == 0 or path is None:
         path = root
 
-    tag_list = [ "model_", "//model_",  "dataset", "template", "ztest", "example"  ]
+    tag_list = [ "model_", "//model_",  "dataset", "template", "ztest", "example", "config"  ]
 
 
     for t in tag_list :

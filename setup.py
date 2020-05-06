@@ -11,6 +11,9 @@ import sys
 
 from setuptools import find_packages, setup
 
+
+
+
 ######################################################################################
 root = os.path.abspath(os.path.dirname(__file__))
 
@@ -25,7 +28,16 @@ except : pass
 """
 
 ##### Version  #######################################################################
-version ='0.35.1'
+version ='0.35.2'
+cmdclass= None
+
+
+
+#### Issues When Building on Colab
+#import versioneer
+#version = versioneer.get_version()
+#cmdclass=versioneer.get_cmdclass()
+
 print("version", version)
 
 
@@ -61,24 +73,7 @@ With the goal to transform Script/Research code into re-usable batch/code with m
 
 
 
-ml_models --do                    
-    "testall"     :  test all modules inside model_tf
-    "test"        :  test a certain module inside model_tf
 
-
-    "model_list"  :  #list all models in the repo          
-    "fit"         :  wrap fit generic m    ethod
-    "predict"     :  predict  using a pre-trained model and some data
-    "generate_config"  :  generate config file from code source
-
-
-ml_optim --do
-  "test"      :  Test the hyperparameter optimization for a specific model
-  "test_all"  :  TODO, Test all
-  "search"    :  search for the best hyperparameters of a specific model
-
-
- 
 ##### Include models :
 
 https://github.com/arita37/mlmodels/blob/dev/README.md
@@ -86,22 +81,43 @@ https://github.com/arita37/mlmodels/blob/dev/README.md
 
 
 ```
-
-
-
+"""
 
 
 
 
 """
 
+import os
+
+def package_files(directory):
+    paths = []
+    for (path, directories, filenames) in os.walk(directory):
+        for filename in filenames:
+            paths.append(os.path.join('..', path, filename))
+    return paths
 
 
-### Packages  ####################################################
+from pathlib import Path
+import inspect
+root_path = Path("mlmodels/")
+extra_files = package_files( root_path )
+
+print(root_path)
+
+
+print( __pkgname__ )
+
+
+"""
+
+
+### Packages  ########################################################
 packages = ["mlmodels"] + ["mlmodels." + p for p in find_packages("mlmodels")]
 
+print(packages)
 
-### CLI Scripts  #################################################
+### CLI Scripts  ####################################################
 """
 scripts = [ "mlmodels/models.py",
             "mlmodels/optim.py",
@@ -115,23 +131,27 @@ scripts = [ "mlmodels/distri_torch_mpirun.sh",
 
 
 
-### CLI Scripts  #################################################   
+### CLI Scripts  ###################################################   
 entry_points={ 'console_scripts': [
-               'ml_models     = mlmodels.models:main'
-               ,'ml_optim     = mlmodels.optim:main'
-               ,'ml_test      = mlmodels.ztest:main'
-               ,'ml_benchmark = mlmodels.benchmark:main'
+                'ml_models      = mlmodels.models:main'
+               ,'ml_optim       = mlmodels.optim:main'
+               ,'ml_test        = mlmodels.ztest:main'
+               ,'ml_benchmark   = mlmodels.benchmark:main'
+               ,'ml_distributed = mlmodels.distributed:main'   ### Not functionnal
               ] }
+
+
+
+
 
 
 ##################################################################   
 setup(
     name="mlmodels",
-    version=version,
     description="Generic model API, Model Zoo in Tensorflow, Keras, Pytorch, Gluon and Hyperparamter search",
     keywords='Machine Learning Interface library',
     
-    author="Kevin Noel, al",
+    author="Kevin Noel, MLMODELS Team",
     author_email="brookm291@gmail.com",
     url="https://github.com/arita37/mlmodels",
     
@@ -141,13 +161,26 @@ setup(
     packages=packages,
 
     include_package_data=True,
-    
+    #    package_data= {'': extra_files},
+
+    package_data={
+       '': ['*','*/*','*/*/*','*/*/*/*']
+    },
+
+   
+    ### Versioning
+    version=version,
+    #cmdclass=cmdclass,
+
+
     #### CLI
     scripts = scripts,
   
-    ### CLI python
+    ### CLI pyton
     entry_points= entry_points,
-    
+
+
+
     long_description=long_description,
     long_description_content_type="text/markdown",
 
@@ -314,3 +347,6 @@ setup(
 
 
 """
+
+
+

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """
+All test are located here
 
 ml_test --do test_json --config_file test/pullrequest.json
 
@@ -11,7 +12,7 @@ import math
 import os
 from collections import Counter, OrderedDict
 import json
-
+from pathlib import Path
 import numpy as np
 ####################################################################################################
 
@@ -20,14 +21,22 @@ import numpy as np
 import mlmodels
 
 from mlmodels.util import get_recursive_files, log, os_package_root_path, model_get_list, os_get_file
-from mlmodels.util import get_recursive_files2, path_norm
+from mlmodels.util import get_recursive_files2, path_norm, path_norm_dict
 
 
 
            
-           
+####################################################################################################
+def log_git_push() :
+ return " ; git config --local user.email 'noelkev0@gmail.com' &&   git config --local user.name 'arita37'  &&  cd /home/runner/work/mlmodels/mlmodels_store/   && ls &&  git add --all &&  git commit -m 'log'   && git push --all   && cd /home/runner/work/mlmodels/mlmodels/ "
 
-log_git_push = " git config --local user.email 'noelkev0@gmail.com' &&   git config --local user.name 'arita37'  &&  cd /home/runner/work/mlmodels/mlmodels_store/   && ls &&  git add --all &&  git commit -m 'log'   && git push --all   && cd /home/runner/work/mlmodels/mlmodels/ "
+
+def to_logfile(prefix="", dateformat='+%Y-%m-%d_%H:%M:%S,%3N' ) : 
+    ### On Linux System
+    if dateformat == "" :
+           return  f"  2>&1 | tee -a  cd log_{prefix}.txt"     
+
+    return  f"  2>&1 | tee -a  cd log_{prefix}_$(date {dateformat}).txt"
 
 
 
@@ -40,81 +49,144 @@ def os_file_current_path():
 
     # val = Path().absolute()
     val = str(os.path.join(val, ""))
-    # print(val)
+    # log(val)
     return val
+
+
+def os_system(cmd, dolog=1, prefix="", dateformat='+%Y-%m-%d_%H:%M:%S,%3N') :
+    if dolog :
+        cmd = cmd + to_logfile(prefix, dateformat)
+    os.system(cmd)
+
+
+
+
+def json_load(path) :
+  try :
+    return json.load(open( path, mode='r'))
+  except :
+    return {}  
+
+####################################################################################################
+def log_remote_start(arg=None):
+   ## Download remote log on disk 
+   s = """ cd /home/runner/work/mlmodels/  && git clone git@github.com:arita37/mlmodels_store.git  &&  ls && pwd
+       """
+
+   cmd = " ; ".join(s.split("\n"))
+   log(cmd)
+   os.system(cmd)
+
+
+
+def log_remote_push(arg=None):
+   ### Pushing to mlmodels_store 
+   tag ="ml_store"
+   s = f""" cd /home/runner/work/mlmodels/mlmodels_store/
+           git config --local user.email "noelkev0@gmail.com" && git config --local user.name "arita37"        
+           git pull --all   
+           ls &&  git add --all &&  git commit -m "{tag}" 
+           git push --all
+           cd /home/runner/work/mlmodels/mlmodels/
+       """
+
+   cmd = " ; ".join(s.split("\n"))
+   log(cmd)
+   os.system(cmd)
+
+
+
+
+
 
 
 ####################################################################################################
 def test_model_structure():
-    print("os.getcwd", os.getcwd())
-    print(mlmodels)
+    log("os.getcwd", os.getcwd())
+    log(mlmodels)
 
     path = mlmodels.__path__[0]
 
-    print("############Check structure ############################")
+    log("############Check structure ############################")
     cmd = f"ztest_structure.py"
     os.system(cmd)
 
 
-def test_import(arg):
-    import tensorflow as tf
-    import torch as torch
+def test_import(arg=None):
+    #import tensorflow as tf
+    #import torch
 
-    print(np, np.__version__)
-    print(tf, tf.__version__)
-    print(torch, torch.__version__)
-    print(mlmodels)
+    #log(np, np.__version__)
+    #log(tf, tf.__version__)    #### Import internally Create Issues
+    #log(torch, torch.__version__)
+    #log(mlmodels)
 
     from importlib import import_module
 
     block_list = ["raw"]
 
     file_list = os_get_file(folder=None, block_list=[], pattern=r"/*.py")
+    log(file_list)
     for f in file_list:
         try:
-            f = f.replace("\\", ".").replace(".py", "")
+            f = "mlmodels." + f.replace("\\", ".").replace(".py", "").replace("/", ".")
+
             import_module(f)
-            print(f)
+            log(f)
         except Exception as e:
-            print(f, e)
+            log("Error", f, e)
 
 
 
 
 def test_jupyter(arg=None, config_mode="test_all"):
-    print("os.getcwd", os.getcwd())
+    """
+      Tests files in mlmodels/example/
+
+    """
+    log("os.getcwd", os.getcwd())
 
     root = os_package_root_path()
     root = root.replace("\\", "//")
-    print(root)
+    log(root)
 
-    print("############Check model ################################")
-    model_list = get_recursive_files2(root, r'/*/*.ipynb')
-    print(model_list)
+
+    path = str( os.path.join(root, "example/") )
+    log(path)
+
+    log("############ List of files ################################")
+    #model_list = get_recursive_files2(root, r'/*/*.ipynb')
+    model_list  = get_recursive_files2(path, r'*.ipynb')
+    model_list2 = get_recursive_files2(path, r'*.py')
+    model_list  = model_list + model_list2
+    # log(model_list)
 
 
     ## Block list
-    cfg = json.load(open( f"{arg.config_file}", mode='r'))[ config_mode ]
-    block_list = cfg.get('jupyter_blocked', [])
+    #cfg = json.load(open( path_norm(arg.config_file) , mode='r'))[ config_mode ]
+    #block_list = cfg.get('jupyter_blocked', [])
+    
+    block_list = [ "ipynb_checkpoints" ] 
     model_list = [t for t in model_list if t not in block_list]
-    print("Used", model_list)
 
-    test_list = [f"ipython {root}/{t}"  for  t in model_list]
+    test_list = [f"ipython {t}"  for  t in model_list]
+    log(test_list) 
 
+    log("############ Running files ################################")
     for cmd in test_list:
-        print("\n\n\n", flush=True)
-        print(cmd, flush=True)
+        print("\n\n\n", "Running: " + cmd, flush=True)
         os.system(cmd)
 
 
 
 
 
+
 def test_benchmark(arg=None):
-    print("os.getcwd", os.getcwd())
+    log("os.getcwd", os.getcwd())
 
     path = mlmodels.__path__[0]
-    print("############Check model ################################")
+    log("############Check model ################################")
     path = path.replace("\\", "//")
     test_list = [ f"python {path}/benchmark.py --do timeseries "   ,
                   f"python {path}/benchmark.py --do vision_mnist "   ,
@@ -125,27 +197,109 @@ def test_benchmark(arg=None):
     ]
 
     for cmd in test_list:
-        print("\n\n\n", flush=True)
-        print(cmd, flush=True)
+        log("\n\n\n")
+        log(cmd)
         os.system(cmd)
 
 
 
 
 def test_cli(arg=None):
-    # Testing Command Line System
-    path = mlmodels.__path__[0]
-    fileconfig = f"{path}/config/cli_test_list.md"
-    print(fileconfig)
+    log("# Testing Command Line System  ")
+
+    import mlmodels, os
+    path = mlmodels.__path__[0]   ### Root Path
+    # if arg is None :           
+    #  fileconfig = path_norm( f"{path}/config/cli_test_list.md" ) 
+    # else :
+    #  fileconfig = path_norm(  arg.config_file )
+
+    # fileconfig = path_norm( f"{path}/../config/cli_test_list.md" ) 
+    fileconfig = path_norm( f"{path}/../README_usage_CLI.md" ) 
+    log(fileconfig)
+
+    def is_valid_cmd(cmd) :
+       cmd = cmd.strip() 
+       if len(cmd) > 8 :
+          if cmd.startswith("ml_models ") or cmd.startswith("ml_benchmark ") or cmd.startswith("ml_optim ")  :
+              return True
+       return False 
+             
 
     with open( fileconfig, mode="r" ) as f:
         cmd_list = f.readlines()
+    log(cmd_list[:5])
 
-    for ss in cmd_list:
+
+    #### Parse the CMD from the file .md and Execute
+    for ss in cmd_list:                      
         cmd = ss.strip()
-        if cmd.startswith("ml_models") or cmd.startswith("ml_benchmark") or cmd.startswith("ml_optim")  :
-          print("\n\n\n",cmd,  flush=True)
+        if is_valid_cmd(cmd):
+          cmd =  cmd  + to_logfile("cli", '+%Y-%m-%d_%H')
+          log("\n\n\n", cmd )
           os.system(cmd)
+
+
+
+def test_pullrequest(arg=None):
+    """
+      Scan files in /pullrequest/ and run test on it.
+
+
+    """
+    from pathlib import Path
+    log("os.getcwd", os.getcwd())
+    path = str( os.path.join(Path(mlmodels.__path__[0] ).parent , "pullrequest/") )
+    log(path)
+
+    log("############Check model ################################")
+    file_list = get_recursive_files(path , r"*.py" )
+    log(file_list)
+
+    ## Block list
+    block_list = []
+    test_list = [t for t in file_list if t not in block_list]
+    log("Used", test_list)
+    
+
+    log("########### Run Check ##############################")
+    test_import(arg=None)
+    os.system("ml_optim")
+    os.system("ml_mlmodels")
+
+
+   
+    for file in test_list:
+        file = file +  to_logfile(prefix="", dateformat='' ) 
+        cmd = f"python {file}"
+        log("\n\n\n",cmd)
+        os.system(cmd)
+
+    #### Check the logs
+    with open("log_.txt", mode="r")  as f :
+       lines = f.readlines()
+
+    for x in lines :
+        if "Error" in x :
+           raise Exception(f"Unknown dataset type", x)
+  
+
+
+
+
+def test_dataloader(arg=None):
+    log("os.getcwd", os.getcwd())
+    path = mlmodels.__path__[0]
+    cfg  = json_load(path_norm(arg.config_file))
+
+    log("############Check model ################################")
+    path = path.replace("\\", "//")
+    test_list = [ f"python {path}/dataloader.py --do test "   ,
+    ]
+
+    for cmd in test_list:
+        log("\n\n\n", cmd)
+        os.system(cmd)
 
 
 
@@ -153,57 +307,56 @@ def test_cli(arg=None):
 
 
 def test_all(arg=None):
-    print("os.getcwd", os.getcwd())
+    log("os.getcwd", os.getcwd())
 
     path = mlmodels.__path__[0]
-    print("############Check model ################################")
+    log("############Check model ################################")
     model_list = model_get_list(folder=None, block_list=[])
-    print(model_list)
+    log(model_list)
 
     ## Block list
     # root = os_package_root_path()
-    cfg = json.load(open(arg.config_file, mode='r'))['test_all']
+    cfg = json.load(open( path_norm(arg.config_file), mode='r'))['test_all']
     block_list = cfg['model_blocked']
     model_list = [t for t in model_list if t not in block_list]
-    print("Used", model_list)
+    log("Used", model_list)
 
     path = path.replace("\\", "//")
     test_list = [f"python {path}/" + t.replace(".", "//").replace("//py", ".py") for t in model_list]
 
     for cmd in test_list:
-        print("\n\n\n", flush=True)
-        print(cmd, flush=True)
+        cmd = cmd + log_git_push()
+        log("\n\n\n",cmd)
         os.system(cmd)
-        os.system(log_git_push)
 
 
 
 def test_json(arg):
-    print("os.getcwd", os.getcwd())
-    print("############Check model ################################")
+    log("os.getcwd", os.getcwd())
+    log("############Check model ################################")
     path = mlmodels.__path__[0]
     cfg = json.load(open(arg.config_file, mode='r'))
 
     mlist = cfg['model_list']
-    print(mlist)
+    log(mlist)
     test_list = [f"python {path}/{model}" for model in mlist]
 
     for cmd in test_list:
-        print("\n\n\n", flush=True)
-        print(cmd, flush=True)
+        log("\n\n\n")
+        log(cmd)
         os.system(cmd)
 
 
 def test_list(mlist):
-    print("os.getcwd", os.getcwd())
-    print("############Check model ################################")
+    log("os.getcwd", os.getcwd())
+    log("############Check model ################################")
     path = mlmodels.__path__[0]
     # mlist = str_list.split(",")
     test_list = [f"python {path}/{model}" for model in mlist]
 
     for cmd in test_list:
-        print("\n\n\n", flush=True)
-        print(cmd, flush=True)
+        log("\n\n\n")
+        log(cmd)
         os.system(cmd)
 
 
@@ -243,19 +396,19 @@ def cli_load_arguments(config_file=None):
     import argparse
     from mlmodels.util import load_config, path_norm, os_package_root_path
     if config_file is None  :
-      config_file =  os_package_root_path() + "/config/test_config.json"
-    print(config_file)
+      config_file =  path_norm( "config/test_config.json" )
+    log(config_file)
 
     p = argparse.ArgumentParser()
 
     def add(*w, **kw):
         p.add_argument(*w, **kw)
 
-    add("--config_file", default=config_file, help="Params File")
-    add("--config_mode", default="test", help="test/ prod /uat")
-    add("--log_file", help="log.log")
-    add("--do", default="test_all", help="test")
-    add("--folder", default=None, help="test")
+    add("--do"            , default="test_all"  , help="  Action to do")
+    add("--config_file" , default=config_file , help="Params File")
+    add("--config_mode" , default="test"      , help="test/ prod /uat")
+    add("--log_file"    , help="log.log")
+    add("--folder"      , default=None        , help="test")
 
     ##### model pars
 
@@ -274,18 +427,19 @@ def cli_load_arguments(config_file=None):
 
 def main():
     arg = cli_load_arguments()
-    print(arg.do)
+    log(arg.do)
 
     #### Input is String list of model name
     if ".py" in arg.do:
         s = arg.do
         test_list(s.split(","))
 
-
     else:
-        print("Running command", arg.do)
+        log("Running command", arg.do)
         globals()[arg.do](arg)
 
 
 if __name__ == "__main__":
     main()
+
+
