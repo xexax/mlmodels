@@ -298,6 +298,32 @@ def test_dataloader(arg=None):
 
 
 
+def test_json_all(arg):
+    log("os.getcwd", os.getcwd())
+    root = os_package_root_path()
+    root = root.replace("\\", "//")
+    log(root)
+    path = str( os.path.join(root, "dataset/json/") )
+    log(path)
+
+    log("############ List of files ################################")
+    #model_list = get_recursive_files2(root, r'/*/*.ipynb')
+    model_list  = get_recursive_files2(path, r'/*/.json')
+    model_list2 = get_recursive_files2(path, r'/*/*.json')
+    model_list  = model_list + model_list2
+    # log(model_list)
+
+
+    for js_file in model_list:
+        log("\n\n\n", "************", js_file)
+        cfg = json.load(open(js_file, mode='r'))
+        for kmode, ddict in cfg.items():
+            cmd = f"ml_models --do fit --config_file {js_file}  --config_mode {kmode} "   
+            log("\n\n\n", "************", cmd) 
+            os.system(cmd)
+
+
+
 
 
 def test_all(arg=None):
