@@ -32,9 +32,12 @@ version ='0.35.2'
 cmdclass= None
 
 
+
+#### Issues When Building on Colab
 #import versioneer
 #version = versioneer.get_version()
 #cmdclass=versioneer.get_cmdclass()
+
 print("version", version)
 
 
