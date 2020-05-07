@@ -15,41 +15,55 @@
 =======
 
 ### How to use Command Line
+
 ```bash
 
-
 ml_models --do  
-    model_list  :  list all models in the repo                            
-    testall     :  test all modules inside model_tf
-    test        :  test a certain module inside model_tf
-    fit         :  wrap fit generic m    ethod
-    predict     :  predict  using a pre-trained model and some data
+    init        :  copy to path  --path "myPath"
     generate_config  :  generate config file from code source
+    model_list  :  list all models in the repo                            
+    fit         :  wrap fit generic method
+    predict     :  predict  using a pre-trained model and some data
+    predict     :  Test
+
     
+#### Examples
 
-  ## --do fit  
-     --model_uri     model_tf.1_lstm
-     --save_folder   myfolder/
-     --config_file   myfile.json
-     --config_mode   "test"
+### Copy Notebooks to path
+ml_models --do init  --path Myfolder/  
 
-
-  ## --do predict  
-     --model_uri     model_tf.1_lstm
-     --save_folder   myfolder/
-     --config_file   myfile.json
-     --config_mode   "test"
+### list all models available in the repo
+ml_models --do model_list  
 
 
-#### generate config file
-    ml_models  --do generate_config  --model_uri model_tf.1_lstm.py  --save_folder "c:\myconfig"
-
-#### TensorFlow LSTM model
-    ml_models  --do test  --model_uri model_tf/1_lstm.py  
+#### generate JSON config file for one model
+ml_models  --do generate_config  --model_uri model_tf.1_lstm.py  --save_folder "c:\myconfig"
 
 
-#### Custom  Models by URI
-    ml_models --do test  --model_uri "D:\_devs\Python01\gitdev\mlmodels\mlmodels\model_tf.1_lstm.py"
+#### Fit model and Save
+ml_models --do fit     --model_uri model_tf.1_lstm --save_folder myfolder/ --config_file myfile.json --config_mode "test"
+
+
+#### Load model and Save results
+ml_models --do predict --model_uri model_tf.1_lstm --save_folder myfolder/ --config_file myfile.json --config_mode "test"
+
+
+
+####  Internal model
+ml_models  --do test  --model_uri model_tf.1_lstm
+
+
+#### External  Models by URI
+ml_models --do test  --model_uri "D:\_devs\Python01\gitdev\mlmodels\mlmodels\model_tf.1_lstm.py"
+
+
+
+
+
+
+
+
+
 
 
 ```
