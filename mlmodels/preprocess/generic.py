@@ -487,10 +487,16 @@ class NumpyDataset(Dataset):
         self.to_image   = kw.get('to_image', True)
  
        
-        file_path      =   os.path.join(root,'train' if train else 'test', f"{dataset}.npz")
+        # file_path      =   os.path.join(root,'train' if train else 'test', f"{dataset}.npz")
+        if not f"{dataset}".endswith(".npz"):  # TODO: re-organize train test dataset folder later
+            file_path   = os.path.join(root, f"{dataset}.npz")
+        else:
+            file_path   = os.path.join(root, dataset)
         data            = np.load( path_norm( file_path))
-        self.features   = data['X']
-        self.classes    = data['y']
+        # self.features   = data['X']
+        # self.classes    = data['y']
+        self.data = tuple(data[x] for x in sorted(data.files))
+        data.close()
  
  
     def __getitem__(self, index):
@@ -512,6 +518,9 @@ class NumpyDataset(Dataset):
     def __len__(self):
         return len(self.features)
 
+
+    def get_data(self):
+        return self.data
 
 
 

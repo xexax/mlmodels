@@ -283,7 +283,7 @@ class DataLoader:
                     obj_preprocessor = preprocessor_func(**args, data_info=self.data_info)
 
 
-                    if cls_name == "pandasDataset": # get dataframe instead of pytorch dataset
+                    if cls_name == "pandasDataset" or cls_name == "NumpyDataset": # get dataframe/numpyarray instead of pytorch dataset
                         out_tmp = obj_preprocessor.get_data()
                     else:
                         out_tmp = obj_preprocessor
@@ -363,16 +363,17 @@ def test_dataloader(path='dataset/json/refactor/'):
     
     l1  =  [
 
-            path_norm('dataset/json/refactor/torchhub.json' )
+            # path_norm('dataset/json/refactor/torchhub.json' )
 
-            #,path_norm('dataset/json/refactor/namentity_crm_bilstm_dataloader_new.json' )
+            path_norm('dataset/json/refactor/namentity_crm_bilstm_dataloader_new.json' )
 
     ]
 
     data_pars_list = l1
 
-    for f, data_pars in data_pars_list:
+    for f in data_pars_list:
         print(f)
+        data_pars = json.loads(open(f).read())['test']['data_pars']
         data_pars = path_norm_dict( data_pars)
         loader    = DataLoader(data_pars)
         loader.compute()
