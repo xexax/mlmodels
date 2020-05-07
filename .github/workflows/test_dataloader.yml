@@ -4,9 +4,9 @@ name:  test_dataloader
 on:
   push:
     branches: 
-      - feat_dataloader
+      # - feat_dataloader
       - adata2
-      - dev
+      # - dev
 
 #on:
 #  schedule:
