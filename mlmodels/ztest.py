@@ -120,7 +120,7 @@ def test_import(arg=None):
     log("\n\n\n", "************", "test_import")
 
     file_list = os_get_file(folder=None, block_list=[], pattern=r"/*.py")
-    log(file_list)
+    print(file_list)
 
     for f in file_list:
         try:
@@ -311,7 +311,7 @@ def test_json_all(arg):
     model_list  = get_recursive_files2(path, r'/*/.json')
     model_list2 = get_recursive_files2(path, r'/*/*.json')
     model_list  = model_list + model_list2
-    log("List of JSON Files", model_list)
+    print"List of JSON Files", model_list)
 
 
     for js_file in model_list:

@@ -215,7 +215,7 @@ def post_process_best(model, module, model_uri, model_pars_update, data_pars, co
 
 ####################################################################################################
 def test_json(path_json="", config_mode="test"):
-    cf = json.load(open(path_json, mode='r', encoding='utf-8'))
+    cf = json.load(open( path_norm(path_json), mode='r', encoding='utf-8'))
     cf = cf[config_mode]
 
     model_uri = cf['model_pars']['model_uri']  # 'model_tf.1_lstm'
