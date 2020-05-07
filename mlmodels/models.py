@@ -443,9 +443,11 @@ def cli_load_arguments(config_file=None):
     add("--config_mode" , default="test"               , help="test/ prod /uat")
     add("--log_file"    , default="mlmodels_log.log"   , help="log.log")
     add("--do"          , default="test"               , help="do ")
-    add("--folder"      , default=None                 , help="folder ")
 
+
+    add("--folder"      , default=None                 , help="folder ")
     add("-p"            , "--path"                     , default= None           , help="Copy to working space")
+
 
     ##### model pars
     add("--model_uri"   , default="model_tf/1_lstm.py" , help=".")

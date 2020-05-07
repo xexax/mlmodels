@@ -24,7 +24,7 @@ ml_models --do
     model_list  :  list all models in the repo                            
     fit         :  wrap fit generic method
     predict     :  predict  using a pre-trained model and some data
-    predict     :  Test
+    test        :  Test a model
 
     
 #### Examples
