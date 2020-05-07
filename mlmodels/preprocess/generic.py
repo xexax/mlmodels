@@ -20,7 +20,7 @@ import pandas as pd, numpy as np
 
 from mlmodels.util import path_norm, log
 
-from torch.utils.data import Dataset
+from torch.utils.data import Dataset, DataLoader
 
 
 ###############################################################################################################
@@ -94,7 +94,7 @@ def get_dataset_torch(data_pars):
 
 
 
-def tf_dataset_download(args, data_info, **kw):
+def tf_dataset_download(data_info, **args):
     """
        Save in numpy compressez format TF Datasets
        data_info ={ "dataset" : "mnist", "batch_size" : 5000,"data_path" : "dataset/vision/mnist2/"}
@@ -170,24 +170,25 @@ def tf_dataset_download(args, data_info, **kw):
     log(out_path, os.listdir( out_path ))
  
  
-def get_dataset_torch(args, data_info, **kw):
+def get_dataset_torch(data_info, **args):
     
     target_transform_info = args.get('target_transform', None)
     transform_info  = args.get('transform', None)
     to_image   = args.get('to_image', True)
     shuffle= args.get('shuffle', True)
-    dataloader = args.get("dataloader", "mlmodels.preprocess.datasets:MNIST")
+    dataloader = args.get("dataloader", "torchvision.datasets:MNIST")
  
     dataset = data_info.get("dataset", None)
     data_path = data_info.get("data_path", None)
     train = data_info.get("train", True)
     batch_size = data_info.get("batch_size", 1)
+    data_type = data_info.get('data_type', "tch_dataset")
  
     if not dataset or not data_path:
         raise Exception("['data_path','dataset'] are required fields, please add these ['data_path','dataset'] in data_info")
  
     transform = None
-    if  len(transform_info)  > 1 :
+    if transform_info :
         transform_uri = transform_info.get("uri", "mlmodels.preprocess.image:torch_transform_mnist" )
         try:
             transform_args = transform_info.get("args", None)
@@ -205,25 +206,25 @@ def get_dataset_torch(args, data_info, **kw):
     dset = load_function(dataloader)
            
 
-    dset = load_function(d.get("dataset", "torchvision.datasets:MNIST") ) 
+    # dset = load_function(d.get("dataset", "torchvision.datasets:MNIST") ) 
 
 
-    if d.get('train_path') and  d.get('test_path') :
+    if data_type != "tch_dataset":
         ###### Custom Build Dataset   ####################################################
-        dset_inst    = dset(d['train_path'], train=True, download=True, transform= transform, data_pars=data_pars)
-        train_loader = DataLoader( dset_inst, batch_size=d['train_batch_size'], shuffle= d.get('shuffle', True))
+        dset_inst    = dset(os.path.join(data_path,'train'), train=True, download=True, transform=transform, data_info=data_info, **args)
+        train_loader = DataLoader( dset_inst, batch_size=batch_size, shuffle= shuffle)
         
-        dset_inst    = dset(d['test_path'], train=False, download=False, transform= transform, data_pars=data_pars)
-        valid_loader = DataLoader( dset_inst, batch_size=d['train_batch_size'], shuffle= d.get('shuffle', True))
+        dset_inst    = dset(os.path.join(data_path,'test'), train=False, download=False, transform=transform, data_info=data_info, **args)
+        valid_loader = DataLoader( dset_inst, batch_size=batch_size, shuffle=shuffle)
 
 
     else :
         ###### Pre Built Dataset available  #############################################
-        dset_inst    = dset(d['data_path'], train=True, download=True, transform= transform)
-        train_loader = DataLoader( dset_inst, batch_size=d['train_batch_size'], shuffle= d.get('shuffle', True))
+        dset_inst    = dset(data_path, train=True, download=True, transform=transform)
+        train_loader = DataLoader( dset_inst, batch_size=batch_size, shuffle=shuffle)
         
-        dset_inst    = dset(d['data_path'], train=False, download=False, transform= transform)
-        valid_loader = DataLoader( dset_inst, batch_size=d['train_batch_size'], shuffle= d.get('shuffle', True))
+        dset_inst    = dset(data_path, train=False, download=False, transform=transform)
+        valid_loader = DataLoader( dset_inst, batch_size=batch_size, shuffle=shuffle)
 
 
     return train_loader, valid_loader  
@@ -231,7 +232,7 @@ def get_dataset_torch(args, data_info, **kw):
 
 
 ####Not Yet tested
-def get_dataset_keras(args, data_info, **kw):
+def get_dataset_keras(data_info, **args):
 
     """"
    #### Write someple
@@ -288,7 +289,7 @@ def get_dataset_keras(args, data_info, **kw):
     batch_size = data_info.get("batch_size", 1)
    
     transform = None
-    if  len(transform_info)  > 1 :
+    if transform_info :
         transform_uri = transform_info.get("uri", "mlmodels.preprocess.image:keras_transform_mnist")
         try:
             transform_args = transform_info.get("args", None)
@@ -315,7 +316,7 @@ def get_dataset_keras(args, data_info, **kw):
  
     return train_loader, valid_loader
 
-def get_model_embedding(model_pars, args, data_info, **kw):
+def get_model_embedding(data_info, **args):
     """"
      Mostly Embedding data, it can be external data used in the model.
  
@@ -337,7 +338,9 @@ def get_model_embedding(model_pars, args, data_info, **kw):
  
  
    """
-    d = model_pars
+   
+    d = args.get("model_pars",{})
+    args = args("args", {})
 
     ### Embedding Transformer
     transform = None
@@ -373,7 +376,7 @@ class pandasDataset(Dataset):
    """
    
     def __init__(self, root="", train=True, transform=None, target_transform=None, 
-                 download=False, data_info={}, **kw):
+                 download=False, data_info={}, **args):
         import torch
         
         if len(data_info) < 1:
@@ -397,12 +400,12 @@ class pandasDataset(Dataset):
             path = data_info.get("data_path","")
         filename = dataset if dataset.find('.csv') > -1 else dataset + '.csv'  ## CSV file
        
-        colX = kw.get('colX',[])
-        coly = kw.get('coly',[])
+        colX = args.get('colX',[])
+        coly = args.get('coly',[])
  
         # df = torch.load(os.path.join(path, filename))
         file_path = path_norm(os.path.join(path, filename))
-        df = pd.read_csv(file_path, **kw.get("read_csv_parm",None))
+        df = pd.read_csv(file_path, **args.get("read_csv_parm",None))
         self.df = df
  
  
@@ -468,7 +471,7 @@ class NumpyDataset(Dataset):
   """
  
     def __init__(self, root="", train=True, transform=None, target_transform=None,
-                 download=False, data_info={}, **kw):
+                 download=False, data_info={}, **args):
         
         if len(data_info) < 1:
             raise Exception("'data_info' is required fields in NumpyDataset")
@@ -484,7 +487,7 @@ class NumpyDataset(Dataset):
            
         self.target_transform = target_transform
         self.transform  = transform
-        self.to_image   = kw.get('to_image', True)
+        self.to_image   = args.get('to_image', True)
  
        
         # file_path      =   os.path.join(root,'train' if train else 'test', f"{dataset}.npz")
