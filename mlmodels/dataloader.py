@@ -303,9 +303,13 @@ class DataLoader:
                 # print("input_tmp: ",input_tmp['X'].shape,input_tmp['y'].shape)
                 # print("input_tmp: ",input_tmp.keys())
                 pos_params = inspect.getfullargspec(preprocessor_func)[0]
+                print("postional parameteres : ", pos_params)
                 if isinstance(input_tmp, (tuple, list)) and len(input_tmp) > 0 and len(pos_params) == 0:
                     out_tmp = preprocessor_func(*input_tmp, **args)
 
+                elif pos_params == ['data_info']:
+                    # function with postional parmater data_info >> get_dataset_torch(data_info, **args)
+                    out_tmp = preprocessor_func(data_info=self.data_info, **args)
                 else:
                     out_tmp = preprocessor_func(input_tmp, **args)
 
