@@ -117,10 +117,11 @@ def test_import(arg=None):
     from importlib import import_module
 
     block_list = ["raw"]
+    log("\n\n\n", "************", "test_import")
 
-    log("\n\n\n", "************", cmd)
     file_list = os_get_file(folder=None, block_list=[], pattern=r"/*.py")
     log(file_list)
+
     for f in file_list:
         try:
             f = "mlmodels." + f.replace("\\", ".").replace(".py", "").replace("/", ".")
