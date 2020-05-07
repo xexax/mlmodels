@@ -118,6 +118,7 @@ def test_import(arg=None):
 
     block_list = ["raw"]
 
+    log("\n\n\n", "************", cmd)
     file_list = os_get_file(folder=None, block_list=[], pattern=r"/*.py")
     log(file_list)
     for f in file_list:
@@ -167,7 +168,7 @@ def test_jupyter(arg=None, config_mode="test_all"):
 
     log("############ Running files ################################")
     for cmd in test_list:
-        print("\n\n\n", "Running: " + cmd, flush=True)
+        log("\n\n\n", "************", cmd)
         os.system(cmd)
 
 
@@ -190,8 +191,7 @@ def test_benchmark(arg=None):
     ]
 
     for cmd in test_list:
-        log("\n\n\n")
-        log(cmd)
+        log("\n\n\n", "************", cmd)
         os.system(cmd)
 
 
@@ -229,7 +229,7 @@ def test_cli(arg=None):
         cmd = ss.strip()
         if is_valid_cmd(cmd):
           cmd =  cmd  + to_logfile("cli", '+%Y-%m-%d_%H')
-          log("\n\n\n", cmd )
+          log("\n\n\n", "************", cmd)
           os.system(cmd)
 
 
@@ -265,7 +265,7 @@ def test_pullrequest(arg=None):
     for file in test_list:
         file = file +  to_logfile(prefix="", dateformat='' ) 
         cmd = f"python {file}"
-        log("\n\n\n",cmd)
+        log("\n\n\n", "************", cmd)
         os.system(cmd)
 
     
@@ -292,7 +292,7 @@ def test_dataloader(arg=None):
     ]
 
     for cmd in test_list:
-        log("\n\n\n", cmd)
+        log("\n\n\n", "************", cmd)
         os.system(cmd)
 
 
@@ -301,6 +301,7 @@ def test_dataloader(arg=None):
 
 
 def test_all(arg=None):
+    from time import sleep
     log("os.getcwd", os.getcwd())
 
     path = mlmodels.__path__[0]
@@ -319,7 +320,7 @@ def test_all(arg=None):
     test_list = [f"python {path}/" + t.replace(".", "//").replace("//py", ".py") for t in model_list]
 
     for cmd in test_list:
-        log("\n\n\n",cmd)
+        log("\n\n\n", "************", cmd)
         os.system(cmd)
         log_remote_push()
         sleep(5)
@@ -338,8 +339,7 @@ def test_json(arg):
     test_list = [f"python {path}/{model}" for model in mlist]
 
     for cmd in test_list:
-        log("\n\n\n")
-        log(cmd)
+        log("\n\n\n", "************", cmd)
         os.system(cmd)
 
 
@@ -351,9 +351,9 @@ def test_list(mlist):
     test_list = [f"python {path}/{model}" for model in mlist]
 
     for cmd in test_list:
-        log("\n\n\n")
-        log(cmd)
+        log("\n\n\n", "************", cmd)
         os.system(cmd)
+
 
 
 def test_custom():
@@ -390,7 +390,7 @@ def test_custom():
 def cli_load_arguments(config_file=None):
     #Load CLI input, load config.toml , overwrite config.toml by CLI Input
     import argparse
-    from mlmodels.util import load_config, path_norm, os_package_root_path
+    from mlmodels.util import load_config, path_norm
     
     config_file =  path_norm( "config/test_config.json" ) if config_file is None  else config_file
     log(config_file)
