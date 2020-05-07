@@ -30,14 +30,14 @@ ml_models --do
 #### Examples
 
 ### Copy Notebooks to path
-ml_models --do init  --path Myfolder/  
+ml_models --do init  --path ztest/
 
 ### list all models available in the repo
 ml_models --do model_list  
 
 
 #### generate JSON config file for one model
-ml_models  --do generate_config  --model_uri model_tf.1_lstm.py  --save_folder "c:\myconfig"
+ml_models  --do generate_config  --model_uri model_tf.1_lstm  --save_folder "ztest/"
 
 
 #### Fit model and Save

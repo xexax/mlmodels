@@ -24,14 +24,13 @@ import argparse
 import json
 import os
 import copy
-
 # import pandas as pd
 
 
 ####################################################################################################
 # from mlmodels import models
 from mlmodels.models import model_create, module_load
-from mlmodels.util import log, os_package_root_path, path_norm, tf_deprecation, path_norm_dict
+from mlmodels.util import log, path_norm, tf_deprecation, path_norm_dict
 
 ####################################################################################################
 tf_deprecation()
@@ -40,7 +39,7 @@ VERBOSE = False
 
 
 ####################################################################################################
-def optim(model_uri="model_tf.1_lstm.py",
+def optim(model_uri="model_tf.1_lstm",
           hypermodel_pars={},
           model_pars={},
           data_pars={},
@@ -220,15 +219,16 @@ def test_json(path_json="", config_mode="test"):
     cf = cf[config_mode]
 
     model_uri = cf['model_pars']['model_uri']  # 'model_tf.1_lstm'
+    data_pars = path_norm_dict( cf['data_pars'] )
+    out_pars  = path_norm_dict( cf['out_pars'] )
 
     res = optim(model_uri,
                 hypermodel_pars = cf['hypermodel_pars'],
                 model_pars      = cf['model_pars'],
-                data_pars       = cf['data_pars'],
+                data_pars       = data_pars,
                 compute_pars    = cf['compute_pars'],
-                out_pars        = cf['out_pars']
+                out_pars        = out_pars
                 )
-
     return res
 
 
@@ -255,16 +255,13 @@ def test_fast(ntrials, model_uri):
     }
     log("model details", model_uri, hypermodel_pars)
 
-    #    model_pars   = {"model_uri" :"model_tf.1_lstm",  "model_type": "model_tf",
-    #                    "learning_rate": 0.001, "num_layers": 1, "size": None,
-    #                    "size_layer": 128, "output_size": None, "timestep": 4, "epoch": 2, }
-    model_pars = {"model_uri": "model_tf.1_lstm",
+    model_pars   = {"model_uri": "model_tf.1_lstm",
                   "learning_rate": 0.001, "num_layers": 1, "size": None,
                   "size_layer": 128, "output_size": None, "timestep": 4, "epoch": 2, }
 
-    data_pars = {"data_path": data_path, "data_type": "pandas"}
+    data_pars    = {"data_path": data_path, "data_type": "pandas"}
     compute_pars = {}
-    out_pars = {"path": "ztest/optuna_1lstm/", "log_path": "ztest/optuna_1lstm/"}
+    out_pars     = {"path": "ztest/optuna_1lstm/", "log_path": "ztest/optuna_1lstm/"}
 
     res = optim(model_uri,
                 hypermodel_pars=hypermodel_pars,
@@ -385,11 +382,11 @@ def cli_load_arguments(config_file=None):
     def add(*k, **kw):
         p.add_argument(*k, **kw)
 
-    add("--config_file", default=None, help="Params File")
-    add("--config_mode", default="test", help="test/ prod /uat")
-    add("--log_file", help="File to save the logging")
+    add("--config_file" , default=None                     , help="Params File")
+    add("--config_mode" , default="test"                   , help="test/ prod /uat")
+    add("--log_file"    , help="File to save the logging")
 
-    add("--do", default="test", help="what to do test or search")
+    add("--do"          , default="test"                   , help="what to do test or search")
 
     ###### model_pars
     add("--model_uri", default="model_tf.1_lstm.py", help="name of the model for --do test")
@@ -405,7 +402,7 @@ def cli_load_arguments(config_file=None):
 
 
     ###### out params
-    add('--save_path', default='ztest/search_save/', help='folder that will contain saved version of best model')
+    # add('--save_path', default='ztest/search_save/', help='folder that will contain saved version of best model')
 
     args = p.parse_args()
     # args = load_config(args, args.config_file, args.config_mode, verbose=0)
