@@ -92,7 +92,7 @@ jobs:
       run: |
            python -c "import mlmodels,os ; print(mlmodels); print(os)"
            python -c "import tensorflow, torch ; print(tensorflow); print(torch)"
-           ml_test --do test_import    2>&1 | tee -a  cd /home/runner/work/mlmodels/mlmodels_store/log_import/log_import_$(date '+%Y-%m-%d_%H:%M:%S,%3N').txt
+           ml_test --do test_import    2>&1 | tee -a  cd /home/runner/work/mlmodels/mlmodels_store/log_import/log_import_$(date '+%Y-%m-%d_%H:%M:%S,%3N').py
 
 
 
