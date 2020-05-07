@@ -215,7 +215,7 @@ def post_process_best(model, module, model_uri, model_pars_update, data_pars, co
 
 ####################################################################################################
 def test_json(path_json="", config_mode="test"):
-    cf = json.load(open(path_json, mode='rb', encoding='utf-8'))
+    cf = json.load(open(path_json, mode='r', encoding='utf-8'))
     cf = cf[config_mode]
 
     model_uri = cf['model_pars']['model_uri']  # 'model_tf.1_lstm'
@@ -232,6 +232,8 @@ def test_json(path_json="", config_mode="test"):
     return res
 
 
+
+"""
 def test_fast(ntrials, model_uri):
     # path_curr = os.getcwd()
     data_path = path_norm('dataset/timeseries/GOOG-year_small.csv')
@@ -273,7 +275,7 @@ def test_fast(ntrials, model_uri):
 
     log("Finished OPTIMIZATION", n=30)
     log(res)
-
+"""
 
 def test_all():
     return 1
@@ -286,6 +288,9 @@ def optim_cli(arg):
 
     js = json.load(open(config_file, mode='r'))  # Config
     js = js[arg.config_mode]  # test /uat /prod
+    data_pars = path_norm_dict( js['data_pars'] )
+    out_pars  = path_norm_dict( js['out_pars'] )
+
 
     # log(model_pars, data_pars, compute_pars)
     log("############# OPTIMIZATION Start  ###############")
@@ -293,8 +298,8 @@ def optim_cli(arg):
                 hypermodel_pars = js["hypermodel_pars"],
                 model_pars      = js["model_pars"],
                 compute_pars    = js["compute_pars"],
-                data_pars       = path_norm_dict( js["data_pars"]),
-                out_pars        = path_norm_dict( js["out_pars"]) )
+                data_pars       = data_pars,
+                out_pars        = out_pars )
 
     log("#############  OPTIMIZATION End ###############")
     log(res)
@@ -333,7 +338,8 @@ def cli():
         argument("model_uri", help="Model Name", default='model_tf.1_lstm')
     )
     def test(args):
-        test_fast(ntrials=args.ntrials, model_uri=args.model_uri)
+        test_json( path_json="template/optim_config_prune.json", config_mode= args.config_mode )
+        #    test_fast(ntrials=args.ntrials, model_uri=args.model_uri)
     
 
 
@@ -415,7 +421,8 @@ def main():
     arg = cli_load_arguments()
 
     if arg.do == "test":
-        test_fast(ntrials= arg.ntrials, model_uri= arg.model_uri)
+        #test_fast(ntrials= arg.ntrials, model_uri= arg.model_uri)
+        test_json( path_json="template/optim_config_prune.json", config_mode= arg.config_mode )
 
     if arg.do == "test_all":
         test_all()
