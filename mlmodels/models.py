@@ -418,7 +418,7 @@ def predict_cli(arg):
 
 
     load_pars = {"path": f"{arg.path}", "model_uri": model_uri}
-    # module = module_load(model_p[".model_uri"])  # '1_lstm.py
+    module = module_load(model_uri)  # '1_lstm.py
     model, session = load(load_pars)
     ydict = module.predict(model, session, data_pars=data_p, compute_pars=compute_p, out_pars=out_p)
     return ydict
