@@ -133,7 +133,6 @@ def test_import(arg=None):
 
 
 
-
 def test_jupyter(arg=None, config_mode="test_all"):
     """
       Tests files in mlmodels/example/
