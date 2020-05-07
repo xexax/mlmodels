@@ -171,6 +171,51 @@ def get_dataset_type(x) :
 
 
 
+"""
+
+data_pars --> Dataloader.py  :
+  sequence of pre-processors item
+       uri, args
+       return some objects in a sequence way.
+
+
+
+"data_pars": {  
+ "data_info": { 
+                  "name" : "text_dataset",   "data_path": "dataset/nlp/WIKI_QA/" , 
+                  "train": true
+                  } 
+         },
+ 
+
+"preprocessors": [ 
+                {  "uri" : "mlmodels.preprocess.generic.:train_test_val_split",
+                    "arg" : {   "split_if_exists": true, "frac": 0.99, "batch_size": 64,  "val_batch_size": 64,
+                                    "input_path" :    "dataset/nlp/WIKIQA_singleFile/" ,
+                                    "output_path" :  "dataset/nlp/WIKIQA" ,   
+                                    "format" : "csv"
+                               },
+                    "output_type" :  "file_csv"
+                } ,  
+
+
+             {  "name" : "loader"  ,
+                "uri" :  "mlmodels.model_tch.matchzoo:WIKI_QA_loader",
+                "arg" :  {  "name" : "text_dataset",   
+                                        "data_path": "dataset/nlp/WIKI_QA/"   ,
+                                         "data_pack"  : "",   "mode":"pair",  "num_dup":2,   "num_neg":1,
+                                        "batch_size":20,     "resample":true,  
+                                        "sort":false,   "callbacks":"PADDING"
+                                      },
+                 "output_type" :  "pytorch_dataset"
+             } ]
+}
+
+
+"""
+
+
+
 class DataLoader:
 
     default_loaders = {
@@ -217,34 +262,46 @@ class DataLoader:
         if docheck :
             self.check()
 
-        input_tmp = None
 
+        input_tmp = None
         for preprocessor in self.preprocessors:
-            uri = preprocessor.get("uri", None)
-            if not uri:
-                raise Exception(f"Preprocessor {preprocessor} missing uri")
-            preprocessor_func = load_callable_from_uri(uri)
-            
-            print("URL: ",uri)
+            uri  = preprocessor["uri"]
             args = preprocessor.get("args", {})
-            ### Should match PytorchDataloader, KerasDataloader, PandasDataset, ....
+            print("URL: ",uri, args)
+
+
+            preprocessor_func = load_callable_from_uri(uri)
             if inspect.isclass(preprocessor_func):
+                ### Should match PytorchDataloader, KerasDataloader, PandasDataset, ....
+                ## A class : muti-steps compute
                 cls_name = preprocessor_func.__name__
                 print("cls_name :", cls_name)
+
+
+
                 if cls_name in DATASET_TYPES:  # dataset object
                     obj_preprocessor = preprocessor_func(**args, data_info=self.data_info)
+
+
                     if cls_name == "pandasDataset": # get dataframe instead of pytorch dataset
                         out_tmp = obj_preprocessor.get_data()
                     else:
                         out_tmp = obj_preprocessor
-                else:  # pre-process object
+
+
+                else:  # pre-process object defined in preprocessor.py
                     obj_preprocessor = preprocessor_func(**args)
                     obj_preprocessor.compute(input_tmp)
                     out_tmp = obj_preprocessor.get_data()
+
+
+
+
             else:
+                ### Only a function, not a Class : Directly COMPUTED.
+
                 # print("input_tmp: ",input_tmp['X'].shape,input_tmp['y'].shape)
                 # print("input_tmp: ",input_tmp.keys())
-
                 pos_params = inspect.getfullargspec(preprocessor_func)[0]
                 if isinstance(input_tmp, (tuple, list)) and len(input_tmp) > 0 and len(pos_params) == 0:
                     out_tmp = preprocessor_func(*input_tmp, **args)
@@ -253,7 +310,9 @@ class DataLoader:
                     out_tmp = preprocessor_func(input_tmp, **args)
 
 
-            ## Be vareful of Very Large Dataset, not to save ALL 
+
+            ## Be careful of Very Large Dataset, it will not work not to save ALL 
+            ## Save internal States
             if preprocessor.get("internal_states", None):
                 for internal_state in preprocessor.get("internal_states", None):
                     if isinstance(out_tmp, dict):
@@ -275,9 +334,6 @@ def split_xy_from_dict(out, **kwargs):
     X      = [out[n] for n in X_c]
     y      = [out[n] for n in y_c]
     return (*X,*y)
-
-
-
 
 
 def test_run_model():
@@ -309,6 +365,7 @@ def test_dataloader(path='dataset/json/refactor/'):
 
             path_norm('dataset/json/refactor/torchhub.json' )
 
+            #,path_norm('dataset/json/refactor/namentity_crm_bilstm_dataloader_new.json' )
 
     ]
 

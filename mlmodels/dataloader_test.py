@@ -96,15 +96,20 @@ class SingleFunctionPreprocessor:
         return self.data
 
 
-
+#######################################################################################
 
 def main():
     refactor_path = path_norm('dataset/json/refactor/' )
     data_pars_list = [(f,json.loads(open(refactor_path+f).read())['test']['data_pars']) for f in os.listdir(refactor_path) if os.path.isfile(f)]
-    
+    print(data_pars_list)
+
+
+    ### Add your own JSON for testing    
     l1  =  [
 
             path_norm('dataset/json/refactor/namentity_crm_bilstm_dataloader_new.json' )
+
+
 
 
     ]
