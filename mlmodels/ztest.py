@@ -12,7 +12,7 @@ import math
 import os
 from collections import Counter, OrderedDict
 import json
-
+from pathlib import Path
 import numpy as np
 ####################################################################################################
 
@@ -27,10 +27,6 @@ from mlmodels.util import get_recursive_files2, path_norm, path_norm_dict
 
            
 ####################################################################################################
-def log_git_push() :
- return " ; git config --local user.email 'noelkev0@gmail.com' &&   git config --local user.name 'arita37'  &&  cd /home/runner/work/mlmodels/mlmodels_store/   && ls &&  git add --all &&  git commit -m 'log'   && git push --all   && cd /home/runner/work/mlmodels/mlmodels/ "
-
-
 def to_logfile(prefix="", dateformat='+%Y-%m-%d_%H:%M:%S,%3N' ) : 
     ### On Linux System
     if dateformat == "" :
@@ -41,14 +37,11 @@ def to_logfile(prefix="", dateformat='+%Y-%m-%d_%H:%M:%S,%3N' ) :
 
 
 def os_file_current_path():
-    import inspect
+    import inspect, os
     val = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
-    # return current_dir + "/"
-    # Path of current file
-    # from pathlib import Path
-
+    val = str(val)
     # val = Path().absolute()
-    val = str(os.path.join(val, ""))
+    # val = str(os.path.join(val, ""))
     # log(val)
     return val
 
@@ -81,10 +74,11 @@ def log_remote_start(arg=None):
 
 def log_remote_push(arg=None):
    ### Pushing to mlmodels_store 
-   s = """ cd /home/runner/work/mlmodels/mlmodels_store/
+   tag ="ml_store"
+   s = f""" cd /home/runner/work/mlmodels/mlmodels_store/
            git config --local user.email "noelkev0@gmail.com" && git config --local user.name "arita37"        
            git pull --all   
-           ls &&  git add --all &&  git commit -m "cli_store" 
+           ls &&  git add --all &&  git commit -m "{tag}" 
            git push --all
            cd /home/runner/work/mlmodels/mlmodels/
        """
@@ -141,29 +135,43 @@ def test_import(arg=None):
 
 
 def test_jupyter(arg=None, config_mode="test_all"):
+    """
+      Tests files in mlmodels/example/
+
+    """
     log("os.getcwd", os.getcwd())
 
     root = os_package_root_path()
     root = root.replace("\\", "//")
     log(root)
 
-    log("############Check model ################################")
-    model_list = get_recursive_files2(root, r'/*/*.ipynb')
-    log(model_list)
+
+    path = str( os.path.join(root, "example/") )
+    log(path)
+
+    log("############ List of files ################################")
+    #model_list = get_recursive_files2(root, r'/*/*.ipynb')
+    model_list  = get_recursive_files2(path, r'*.ipynb')
+    model_list2 = get_recursive_files2(path, r'*.py')
+    model_list  = model_list + model_list2
+    # log(model_list)
 
 
     ## Block list
-    cfg = json.load(open( f"{arg.config_file}", mode='r'))[ config_mode ]
-    block_list = cfg.get('jupyter_blocked', [])
+    #cfg = json.load(open( path_norm(arg.config_file) , mode='r'))[ config_mode ]
+    #block_list = cfg.get('jupyter_blocked', [])
+    
+    block_list = [ "ipynb_checkpoints" ] 
     model_list = [t for t in model_list if t not in block_list]
-    log("Used", model_list)
 
-    test_list = [f"ipython {root}/{t}"  for  t in model_list]
+    test_list = [f"ipython {t}"  for  t in model_list]
+    log(test_list) 
 
+    log("############ Running files ################################")
     for cmd in test_list:
-        log("\n\n\n")
-        log(cmd)
+        print("\n\n\n", "Running: " + cmd, flush=True)
         os.system(cmd)
+
 
 
 
@@ -262,7 +270,8 @@ def test_pullrequest(arg=None):
         log("\n\n\n",cmd)
         os.system(cmd)
 
-    #### Check the logs
+    
+    #### Check the logs   ###################################
     with open("log_.txt", mode="r")  as f :
        lines = f.readlines()
 
@@ -312,9 +321,11 @@ def test_all(arg=None):
     test_list = [f"python {path}/" + t.replace(".", "//").replace("//py", ".py") for t in model_list]
 
     for cmd in test_list:
-        cmd = cmd + log_git_push()
         log("\n\n\n",cmd)
         os.system(cmd)
+        log_remote_push()
+        sleep(5)
+
 
 
 
@@ -382,16 +393,15 @@ def cli_load_arguments(config_file=None):
     #Load CLI input, load config.toml , overwrite config.toml by CLI Input
     import argparse
     from mlmodels.util import load_config, path_norm, os_package_root_path
-    if config_file is None  :
-      config_file =  path_norm( "config/test_config.json" )
+    
+    config_file =  path_norm( "config/test_config.json" ) if config_file is None  else config_file
     log(config_file)
 
     p = argparse.ArgumentParser()
-
     def add(*w, **kw):
         p.add_argument(*w, **kw)
 
-    add("--do"            , default="test_all"  , help="  Action to do")
+    add("--do"          , default="test_all"  , help="  Action to do")
     add("--config_file" , default=config_file , help="Params File")
     add("--config_mode" , default="test"      , help="test/ prod /uat")
     add("--log_file"    , help="log.log")

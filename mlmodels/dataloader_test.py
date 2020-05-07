@@ -107,10 +107,10 @@ def main():
     ### Add your own JSON for testing    
     l1  =  [
 
-            path_norm('dataset/json/refactor/namentity_crm_bilstm_dataloader_new.json' )
-
-
-
+            # path_norm('dataset/json/refactor/namentity_crm_bilstm_dataloader_new.json' )
+            path_norm('dataset/json/refactor/textcnn_keras.json'),
+            path_norm('dataset/json/refactor/namentity_crm_bilstm_dataloader_new.json' ),
+            path_norm('dataset/json/refactor/resnet18_benchmark_new.json' )
 
     ]
 

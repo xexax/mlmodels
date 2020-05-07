@@ -283,7 +283,7 @@ class DataLoader:
                     obj_preprocessor = preprocessor_func(**args, data_info=self.data_info)
 
 
-                    if cls_name == "pandasDataset": # get dataframe instead of pytorch dataset
+                    if cls_name == "pandasDataset" or cls_name == "NumpyDataset": # get dataframe/numpyarray instead of pytorch dataset
                         out_tmp = obj_preprocessor.get_data()
                     else:
                         out_tmp = obj_preprocessor
@@ -303,9 +303,13 @@ class DataLoader:
                 # print("input_tmp: ",input_tmp['X'].shape,input_tmp['y'].shape)
                 # print("input_tmp: ",input_tmp.keys())
                 pos_params = inspect.getfullargspec(preprocessor_func)[0]
+                print("postional parameteres : ", pos_params)
                 if isinstance(input_tmp, (tuple, list)) and len(input_tmp) > 0 and len(pos_params) == 0:
                     out_tmp = preprocessor_func(*input_tmp, **args)
 
+                elif pos_params == ['data_info']:
+                    # function with postional parmater data_info >> get_dataset_torch(data_info, **args)
+                    out_tmp = preprocessor_func(data_info=self.data_info, **args)
                 else:
                     out_tmp = preprocessor_func(input_tmp, **args)
 
@@ -363,16 +367,17 @@ def test_dataloader(path='dataset/json/refactor/'):
     
     l1  =  [
 
-            path_norm('dataset/json/refactor/torchhub.json' )
+            # path_norm('dataset/json/refactor/torchhub.json' )
 
-            #,path_norm('dataset/json/refactor/namentity_crm_bilstm_dataloader_new.json' )
+            path_norm('dataset/json/refactor/namentity_crm_bilstm_dataloader_new.json' )
 
     ]
 
     data_pars_list = l1
 
-    for f, data_pars in data_pars_list:
+    for f in data_pars_list:
         print(f)
+        data_pars = json.loads(open(f).read())['test']['data_pars']
         data_pars = path_norm_dict( data_pars)
         loader    = DataLoader(data_pars)
         loader.compute()
