@@ -379,6 +379,7 @@ def test_dataloader(path='dataset/json/refactor/'):
         print(f)
         data_pars = json.loads(open(f).read())['test']['data_pars']
         data_pars = path_norm_dict( data_pars)
+        print(data_pars)
         loader    = DataLoader(data_pars)
         loader.compute()
         print(loader.get_data())
