@@ -33,7 +33,7 @@ def os_bash(cmd):
   import subprocess  
   try :
     l = subprocess.run( cmd, stdout=subprocess.PIPE, shell=True, ).stdout.decode('utf-8')
-    return l.split("\n")
+    return l
   except :
     return ""
 
@@ -56,19 +56,28 @@ def log_info_repo(arg=None):
           
 
    """ 
-   print( "Check" os_bash(  "echo $GITHUB_REF" ),  os_bash(  "echo $GITHUB_REPOSITORY" ),  os_bash(  "echo $GITHUB_SHA" )  )
+   #print( "Check", os_bash(  "echo $GITHUB_REF" ),  os_bash(  "echo $GITHUB_REPOSITORY" ),  os_bash(  "echo $GITHUB_SHA" )  )
    repo = arg.repo
    sha  = arg.sha 
+
+   repo      =  os_bash(  "echo $GITHUB_REPOSITORY" )
+   sha       =  os_bash(  "echo $GITHUB_SHA" )
+   workflow  =  os_bash(  "echo $GITHUB_WORKFLOW" )
+
 
    url_repo = f"https://github.com/{repo}/tree/{sha}" 
    url_diff = f"https://github.com/{repo}/commit/{sha}" 
    
    log_separator()
+   print("\n" * 2, "******** GITHUB_WOKFLOW : " + f"{url_repo}/actions?query=workflow%3A{workflow}"   )
+
    print("\n" * 2, "******** GITHUB_REPO_URL : "   + url_repo)
    print("\n" * 1, "******** GITHUB_COMMIT_URL : " + url_diff)
-   print("\n" * 2, "******** GITHUB_BRANCH_URL : " + url_repo)
 
    print("\n" * 1, "*" * 120 )
+
+
+
 
 
 
