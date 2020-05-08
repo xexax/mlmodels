@@ -40,7 +40,7 @@ def os_bash(cmd):
 
 
 def log_separator():
-   print("\n" * 5, "*" * 90 )
+   print("\n" * 5, "*" * 120 )
 
 
 def log_info_repo(arg=None):
