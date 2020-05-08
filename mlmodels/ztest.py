@@ -58,7 +58,7 @@ def log_info_repo(arg=None):
 
    """ 
    repo = arg.repo
-   sha = arg.sha 
+   sha  = arg.sha 
 
    #repo = os_bash("${{ github_repo }}")
    #sha  = os_bash("${{ github_sha }}")
@@ -163,7 +163,7 @@ def test_import(arg=None):
 
     from importlib import import_module
 
-    log_info_repo()
+    log_info_repo(arg)
 
     block_list = ["raw"]
     log_separator()
@@ -252,7 +252,7 @@ def test_benchmark(arg=None):
 def test_cli(arg=None):
     log("# Testing Command Line System  ")
 
-    log_info_repo()
+    log_info_repo(arg)
 
     import mlmodels, os
     path = mlmodels.__path__[0]   ### Root Path
@@ -522,9 +522,9 @@ def cli_load_arguments(config_file=None):
 
 
     """
-    add("-r", "--repo" , default="test"      , help="test/ prod /uat")
-    add("-s", "--sha" , default="test"      , help="test/ prod /uat")
-    add("-b", "--ref" , default="test"      , help="test/ prod /uat")
+    add("--repo" , default="test"      , help="test/ prod /uat")
+    add("--sha" , default="test"      , help="test/ prod /uat")
+    add("--ref" , default="test"      , help="test/ prod /uat")
 
 
     add("--workflow" , default="test"      , help="test/ prod /uat")
@@ -541,7 +541,7 @@ def cli_load_arguments(config_file=None):
 
 def main():
     arg = cli_load_arguments()
-    log(arg.do)
+    log(arg.do, arg.repo, arg.sha)
 
     #### Input is String list of model name
     if ".py" in arg.do:
