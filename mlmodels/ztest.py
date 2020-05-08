@@ -27,8 +27,47 @@ from mlmodels.util import get_recursive_files2, path_norm, path_norm_dict
 
            
 ####################################################################################################
+def os_bash(cmd):
+  # os_bash("dir ")  
+  import subprocess  
+  try :
+    l = subprocess.run( cmd, stdout=subprocess.PIPE, shell=True, ).stdout.decode('utf-8')
+    return l.split("\n")
+  except :
+    return ""
+
+
+
 def log_sep():
    print("\n" * 5, "*" * 90 )
+
+
+def log_info_repo(arg=None):
+   """
+   
+           run: |
+        curl --request POST \
+        --url https://api.github.com/repos/${{ github.repository }}/issues \
+        --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' \
+        --header 'content-type: application/json' \
+        --data '{
+          "title": "Automated issue for commit: ${{ github.sha }}",
+          "body": "This issue was automatically created by the GitHub Action workflow **${{ github.workflow }}**. \n\n The commit hash was: _${{ github.sha }}_."
+          
+
+   """ 
+
+   repo = os_bash("${{ github.repository }}")
+   sha  = os_bash("${{ github.sha }}")
+
+   url_repo = f"https://github.com/{repo}/tree/{sha}" 
+   url_diff = f"https://github.com/{repo}/commit/{sha}" 
+
+   print("\n" * 2, "***" * 90, url_repo)
+   print("\n" * 1, url_diff)
+
+
+
 
 
 
@@ -120,6 +159,8 @@ def test_import(arg=None):
     #log(mlmodels)
 
     from importlib import import_module
+
+    log_info_repo()
 
     block_list = ["raw"]
     log_separator()
@@ -266,6 +307,7 @@ def test_pullrequest(arg=None):
 
     log("########### Run Check ##############################")
     test_import(arg=None)
+    sleep(20)
     os.system("ml_optim")
     os.system("ml_mlmodels")
 
@@ -277,7 +319,7 @@ def test_pullrequest(arg=None):
         log_separator()
         log( cmd)
         os.system(cmd)
-
+        sleep(5)
 
     
     #### Check the logs   ###################################
@@ -459,6 +501,32 @@ def cli_load_arguments(config_file=None):
 
     ##### out pars
     add("--save_folder", default="ztest/", help=".")
+
+    #### Env Vars :
+    """
+     https://help.github.com/en/actions/configuring-and-managing-workflows/using-environment-variables
+           run: |
+        curl --request POST \
+        --url https://api.github.com/repos/${{ github.repository }}/issues \
+        --header 'authorization: Bearer ${{ secrets.TOKEN }}' \
+        --header 'content-type: application/json' \
+        --data '{
+          "title": "Automated issue for commit: ${{ github.sha }}",
+          "body": "This issue was automatically created by the GitHub Action workflow **${{ github.workflow }}**. \n\n The commit hash was: _${{ github.sha }}_."
+          
+
+
+    """
+    add("-r", "--repository" , default="test"      , help="test/ prod /uat")
+    add("-s", "--sha" , default="test"      , help="test/ prod /uat")
+    add("-b", "--ref" , default="test"      , help="test/ prod /uat")
+
+
+    add("--workflow" , default="test"      , help="test/ prod /uat")
+    add("--event_name" , default="test"      , help="test/ prod /uat")
+    add("--event_path" , default="test"      , help="test/ prod /uat")
+    add("--workspace" , default="test"      , help="test/ prod /uat")
+
 
     arg = p.parse_args()
     # arg = load_config(arg, arg.config_file, arg.config_mode, verbose=0)
