@@ -40,7 +40,7 @@ def os_bash(cmd):
 
 
 def log_separator():
-   print("\n" * 5, "*" * 120 )
+   print("\n" * 5, "*" * 140 )
 
 
 def log_info_repo(arg=None):
@@ -57,9 +57,11 @@ def log_info_repo(arg=None):
           
 
    """ 
+   repo = arg.repo
+   sha = arg.sha 
 
-   repo = os_bash("${{ github_repo }}")
-   sha  = os_bash("${{ github_sha }}")
+   #repo = os_bash("${{ github_repo }}")
+   #sha  = os_bash("${{ github_sha }}")
 
    url_repo = f"https://github.com/{repo}/tree/{sha}" 
    url_diff = f"https://github.com/{repo}/commit/{sha}" 
@@ -520,7 +522,7 @@ def cli_load_arguments(config_file=None):
 
 
     """
-    add("-r", "--repository" , default="test"      , help="test/ prod /uat")
+    add("-r", "--repo" , default="test"      , help="test/ prod /uat")
     add("-s", "--sha" , default="test"      , help="test/ prod /uat")
     add("-b", "--ref" , default="test"      , help="test/ prod /uat")
 
