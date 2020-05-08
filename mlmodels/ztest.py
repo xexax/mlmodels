@@ -14,6 +14,7 @@ from collections import Counter, OrderedDict
 import json
 from pathlib import Path
 import numpy as np
+from time import sleep
 ####################################################################################################
 
 
@@ -38,7 +39,7 @@ def os_bash(cmd):
 
 
 
-def log_sep():
+def log_separator():
    print("\n" * 5, "*" * 90 )
 
 
@@ -366,7 +367,7 @@ def test_json_all(arg):
     model_list  = get_recursive_files2(path, r'/*/.json')
     model_list2 = get_recursive_files2(path, r'/*/*.json')
     model_list  = model_list + model_list2
-    print"List of JSON Files", model_list)
+    print("List of JSON Files", model_list)
 
 
     for js_file in model_list:
@@ -400,7 +401,7 @@ def test_all(arg=None):
     log("Used", model_list)
 
     path = path.replace("\\", "//")
-    test_list = [f"python {path}/" + t.replace(".", "//").replace("//py", ".py") for t in model_list]
+    test_list = [f"python {path}/" + t.replace(".", "//") + ".py" for t in model_list]
 
     for cmd in test_list:
         log_separator()
