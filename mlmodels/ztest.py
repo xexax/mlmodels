@@ -27,6 +27,11 @@ from mlmodels.util import get_recursive_files2, path_norm, path_norm_dict
 
            
 ####################################################################################################
+def log_sep():
+   print("\n" * 5, "*" * 90 )
+
+
+
 def to_logfile(prefix="", dateformat='+%Y-%m-%d_%H:%M:%S,%3N' ) : 
     ### On Linux System
     if dateformat == "" :
@@ -117,7 +122,8 @@ def test_import(arg=None):
     from importlib import import_module
 
     block_list = ["raw"]
-    log("\n\n\n", "************", "test_import")
+    log_separator()
+    log("test_import")
 
     file_list = os_get_file(folder=None, block_list=[], pattern=r"/*.py")
     print(file_list)
@@ -168,7 +174,8 @@ def test_jupyter(arg=None, config_mode="test_all"):
 
     log("############ Running files ################################")
     for cmd in test_list:
-        log("\n\n\n", "************", cmd)
+        log_separator()
+        log( cmd)
         os.system(cmd)
 
 
@@ -191,7 +198,8 @@ def test_benchmark(arg=None):
     ]
 
     for cmd in test_list:
-        log("\n\n\n", "************", cmd)
+        log_separator()
+        log( cmd)
         os.system(cmd)
 
 
@@ -229,7 +237,8 @@ def test_cli(arg=None):
         cmd = ss.strip()
         if is_valid_cmd(cmd):
           cmd =  cmd  + to_logfile("cli", '+%Y-%m-%d_%H')
-          log("\n\n\n", "************", cmd)
+          log_separator()
+          log( cmd)
           os.system(cmd)
 
 
@@ -265,8 +274,10 @@ def test_pullrequest(arg=None):
     for file in test_list:
         file = file +  to_logfile(prefix="", dateformat='' ) 
         cmd = f"python {file}"
-        log("\n\n\n", "************", cmd)
+        log_separator()
+        log( cmd)
         os.system(cmd)
+
 
     
     #### Check the logs   ###################################
@@ -292,8 +303,10 @@ def test_dataloader(arg=None):
     ]
 
     for cmd in test_list:
-        log("\n\n\n", "************", cmd)
-        os.system(cmd)
+          log_separator()
+          log( cmd)
+          os.system(cmd)
+
 
 
 
@@ -319,8 +332,10 @@ def test_json_all(arg):
         cfg = json.load(open(js_file, mode='r'))
         for kmode, ddict in cfg.items():
             cmd = f"ml_models --do fit --config_file {js_file}  --config_mode {kmode} "   
-            log("\n\n\n", "************", "CLI ", cmd) 
+            log_separator()
+            log( cmd)
             os.system(cmd)
+
 
 
 
@@ -346,7 +361,8 @@ def test_all(arg=None):
     test_list = [f"python {path}/" + t.replace(".", "//").replace("//py", ".py") for t in model_list]
 
     for cmd in test_list:
-        log("\n\n\n", "************", cmd)
+        log_separator()
+        log( cmd)
         os.system(cmd)
         log_remote_push()
         sleep(5)
@@ -365,8 +381,10 @@ def test_json(arg):
     test_list = [f"python {path}/{model}" for model in mlist]
 
     for cmd in test_list:
-        log("\n\n\n", "************", cmd)
-        os.system(cmd)
+          log_separator()
+          log( cmd)
+          os.system(cmd)
+
 
 
 def test_list(mlist):
@@ -377,8 +395,10 @@ def test_list(mlist):
     test_list = [f"python {path}/{model}" for model in mlist]
 
     for cmd in test_list:
-        log("\n\n\n", "************", cmd)
-        os.system(cmd)
+          log_separator()
+          log( cmd)
+          os.system(cmd)
+
 
 
 

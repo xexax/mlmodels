@@ -233,50 +233,6 @@ def test_json(path_json="", config_mode="test"):
 
 
 
-"""
-def test_fast(ntrials, model_uri):
-    # path_curr = os.getcwd()
-    data_path = path_norm('dataset/timeseries/GOOG-year_small.csv')
-    log(data_path)
-
-    #path_save = f"{path_curr}/ztest/optuna_1lstm/"
-    #os.makedirs(path_save, exist_ok=True)
-    # log("path_save", path_save, data_path)
-
-    hypermodel_pars = {
-        "engine_pars": {"engine": "optuna", "method": "normal", 'ntrials': 2, "metric_target": "loss"},
-
-        "learning_rate": {"type": "log_uniform", "init": 0.01, "range": [0.001, 0.1]},
-        "num_layers": {"type": "int", "init": 2, "range": [2, 4]},
-        "size": {"type": "int", "init": 6, "range": [6, 6]},
-        "output_size": {"type": "int", "init": 6, "range": [6, 6]},
-
-        "size_layer": {"type": "categorical", "value": [128, 256]},
-        "timestep": {"type": "categorical", "value": [5]},
-        "epoch": {"type": "categorical", "value": [2]}
-    }
-    log("model details", model_uri, hypermodel_pars)
-
-    model_pars   = {"model_uri": "model_tf.1_lstm",
-                  "learning_rate": 0.001, "num_layers": 1, "size": None,
-                  "size_layer": 128, "output_size": None, "timestep": 4, "epoch": 2, }
-
-    data_pars    = {"data_path": data_path, "data_type": "pandas"}
-    compute_pars = {}
-    out_pars     = {"path": "ztest/optuna_1lstm/", "log_path": "ztest/optuna_1lstm/"}
-
-    res = optim(model_uri,
-                hypermodel_pars=hypermodel_pars,
-                model_pars=model_pars,
-                data_pars=data_pars,
-                compute_pars=compute_pars,
-                out_pars=out_pars
-                )
-
-    log("Finished OPTIMIZATION", n=30)
-    log(res)
-"""
-
 def test_all():
     return 1
 
@@ -437,5 +393,54 @@ if __name__ == "__main__":
     main()
 
 
+
+
+
+
+
+
+"""
+def test_fast(ntrials, model_uri):
+    # path_curr = os.getcwd()
+    data_path = path_norm('dataset/timeseries/GOOG-year_small.csv')
+    log(data_path)
+
+    #path_save = f"{path_curr}/ztest/optuna_1lstm/"
+    #os.makedirs(path_save, exist_ok=True)
+    # log("path_save", path_save, data_path)
+
+    hypermodel_pars = {
+        "engine_pars": {"engine": "optuna", "method": "normal", 'ntrials': 2, "metric_target": "loss"},
+
+        "learning_rate": {"type": "log_uniform", "init": 0.01, "range": [0.001, 0.1]},
+        "num_layers": {"type": "int", "init": 2, "range": [2, 4]},
+        "size": {"type": "int", "init": 6, "range": [6, 6]},
+        "output_size": {"type": "int", "init": 6, "range": [6, 6]},
+
+        "size_layer": {"type": "categorical", "value": [128, 256]},
+        "timestep": {"type": "categorical", "value": [5]},
+        "epoch": {"type": "categorical", "value": [2]}
+    }
+    log("model details", model_uri, hypermodel_pars)
+
+    model_pars   = {"model_uri": "model_tf.1_lstm",
+                  "learning_rate": 0.001, "num_layers": 1, "size": None,
+                  "size_layer": 128, "output_size": None, "timestep": 4, "epoch": 2, }
+
+    data_pars    = {"data_path": data_path, "data_type": "pandas"}
+    compute_pars = {}
+    out_pars     = {"path": "ztest/optuna_1lstm/", "log_path": "ztest/optuna_1lstm/"}
+
+    res = optim(model_uri,
+                hypermodel_pars=hypermodel_pars,
+                model_pars=model_pars,
+                data_pars=data_pars,
+                compute_pars=compute_pars,
+                out_pars=out_pars
+                )
+
+    log("Finished OPTIMIZATION", n=30)
+    log(res)
+"""
 
 
