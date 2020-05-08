@@ -40,12 +40,11 @@ def os_bash(cmd):
 
 
 def log_separator():
-   print("\n" * 5, "*" * 140 )
+   print("\n" * 5, "*" * 120 )
 
 
 def log_info_repo(arg=None):
    """
-   
            run: |
         curl --request POST \
         --url https://api.github.com/repos/${{ github.repository }}/issues \
@@ -65,12 +64,11 @@ def log_info_repo(arg=None):
 
    url_repo = f"https://github.com/{repo}/tree/{sha}" 
    url_diff = f"https://github.com/{repo}/commit/{sha}" 
-
-   print("\n" * 2, "***" * 90, url_repo)
-   print("\n" * 1, url_diff)
-
-
-
+   
+   log_separator()
+   print("\n" * 2, "******** GITHUB_REPO_URL " + url_repo)
+   print("\n" * 1, "******** GITHUB_COMMIT_URL " + url_diff)
+   log_separator()
 
 
 
@@ -188,7 +186,8 @@ def test_jupyter(arg=None, config_mode="test_all"):
       Tests files in mlmodels/example/
 
     """
-    log("os.getcwd", os.getcwd())
+    #log("os.getcwd", os.getcwd())
+    log_info_repo(arg)
 
     root = os_package_root_path()
     root = root.replace("\\", "//")
@@ -228,7 +227,8 @@ def test_jupyter(arg=None, config_mode="test_all"):
 
 
 def test_benchmark(arg=None):
-    log("os.getcwd", os.getcwd())
+    log_info_repo(arg)
+    # log("os.getcwd", os.getcwd())
 
     path = mlmodels.__path__[0]
     log("############Check model ################################")
@@ -251,7 +251,6 @@ def test_benchmark(arg=None):
 
 def test_cli(arg=None):
     log("# Testing Command Line System  ")
-
     log_info_repo(arg)
 
     import mlmodels, os
@@ -295,8 +294,10 @@ def test_pullrequest(arg=None):
 
 
     """
+    log_info_repo(arg)
+
     from pathlib import Path
-    log("os.getcwd", os.getcwd())
+    # log("os.getcwd", os.getcwd())
     path = str( os.path.join(Path(mlmodels.__path__[0] ).parent , "pullrequest/") )
     log(path)
 
@@ -340,7 +341,8 @@ def test_pullrequest(arg=None):
 
 
 def test_dataloader(arg=None):
-    log("os.getcwd", os.getcwd())
+    log_info_repo(arg)
+    # log("os.getcwd", os.getcwd())
     path = mlmodels.__path__[0]
     cfg  = json_load(path_norm(arg.config_file))
 
@@ -359,7 +361,8 @@ def test_dataloader(arg=None):
 
 
 def test_json_all(arg):
-    log("os.getcwd", os.getcwd())
+    log_info_repo(arg)
+    # log("os.getcwd", os.getcwd())
     root = os_package_root_path()
     root = root.replace("\\", "//")
     log(root)
@@ -389,8 +392,9 @@ def test_json_all(arg):
 
 
 def test_all(arg=None):
+    log_info_repo(arg)
     from time import sleep
-    log("os.getcwd", os.getcwd())
+    # log("os.getcwd", os.getcwd())
 
     path = mlmodels.__path__[0]
     log("############Check model ################################")
@@ -418,8 +422,9 @@ def test_all(arg=None):
 
 
 def test_json(arg):
+    log_info_repo(arg)
     log("os.getcwd", os.getcwd())
-    log("############Check model ################################")
+
     path = mlmodels.__path__[0]
     cfg = json.load(open(arg.config_file, mode='r'))
 
@@ -435,8 +440,8 @@ def test_json(arg):
 
 
 def test_list(mlist):
-    log("os.getcwd", os.getcwd())
-    log("############Check model ################################")
+    #log("os.getcwd", os.getcwd())
+
     path = mlmodels.__path__[0]
     # mlist = str_list.split(",")
     test_list = [f"python {path}/{model}" for model in mlist]
