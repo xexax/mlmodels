@@ -175,7 +175,7 @@ def test_import(arg=None):
             f = "mlmodels." + f.replace("\\", ".").replace(".py", "").replace("/", ".")
 
             import_module(f)
-            log(f)
+            print(f)
         except Exception as e:
             log("Error", f, e)
 
@@ -218,7 +218,7 @@ def test_jupyter(arg=None, config_mode="test_all"):
     log("############ Running files ################################")
     for cmd in test_list:
         log_separator()
-        log( cmd)
+        print( cmd)
         os.system(cmd)
 
 
@@ -243,7 +243,7 @@ def test_benchmark(arg=None):
 
     for cmd in test_list:
         log_separator()
-        log( cmd)
+        print( cmd)
         os.system(cmd)
 
 
@@ -283,9 +283,8 @@ def test_cli(arg=None):
         if is_valid_cmd(cmd):
           cmd =  cmd  + to_logfile("cli", '+%Y-%m-%d_%H')
           log_separator()
-          log( cmd)
+          print( cmd)
           os.system(cmd)
-
 
 
 def test_pullrequest(arg=None):
