@@ -52,31 +52,30 @@ def log_info_repo(arg=None):
         --header 'content-type: application/json' \
         --data '{
           "title": "Automated issue for commit: ${{ github.sha }}",
-          "body": "This issue was automatically created by the GitHub Action workflow **${{ github.workflow }}**. \n\n The commit hash was: _${{ github.sha }}_."
+          "body": "This issue was automatically created by the GitHub Action workflow **${{ github.workflow }}**. 
+          \n\n The commit hash was: _${{ github.sha }}_."
           
 
    """ 
    #print( "Check", os_bash(  "echo $GITHUB_REF" ),  os_bash(  "echo $GITHUB_REPOSITORY" ),  os_bash(  "echo $GITHUB_SHA" )  )
-   repo = arg.repo
-   sha  = arg.sha 
+   # repo = arg.repo
+   # sha  = arg.sha 
 
    repo      =  os_bash(  "echo $GITHUB_REPOSITORY" )
    sha       =  os_bash(  "echo $GITHUB_SHA" )
    workflow  =  os_bash(  "echo $GITHUB_WORKFLOW" )
-
-
-   url_repo = f"https://github.com/{repo}/tree/{sha}" 
-   url_diff = f"https://github.com/{repo}/commit/{sha}" 
    
-   log_separator()
-   print("\n" * 2, "******** GITHUB_WOKFLOW : " + f"{url_repo}/actions?query=workflow%3A{workflow}"   )
+   repo     = repo.replace("\n", "").replace("\r", "").strip()
+   workflow = workflow.replace("\n", "").replace("\r", "").strip()
+   sha      = sha.replace("\n", "").replace("\r", "").strip()
 
-   print("\n" * 2, "******** GITHUB_REPO_URL : "   + url_repo)
-   print("\n" * 1, "******** GITHUB_COMMIT_URL : " + url_diff)
+
+   log_separator()
+   print("\n" * 1, "******** GITHUB_WOKFLOW : " + f"https://github.com/{repo}/actions?query=workflow%3A{workflow}"   )
+   print("\n" * 1, "******** GITHUB_REPO_URL : "   + f"https://github.com/{repo}/tree/{sha}" )
+   print("\n" * 1, "******** GITHUB_COMMIT_URL : " + f"https://github.com/{repo}/commit/{sha}" )
 
    print("\n" * 1, "*" * 120 )
-
-
 
 
 
@@ -107,12 +106,12 @@ def os_system(cmd, dolog=1, prefix="", dateformat='+%Y-%m-%d_%H:%M:%S,%3N') :
 
 
 
-
 def json_load(path) :
   try :
     return json.load(open( path, mode='r'))
   except :
     return {}  
+
 
 ####################################################################################################
 def log_remote_start(arg=None):
