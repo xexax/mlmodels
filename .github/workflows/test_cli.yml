@@ -91,12 +91,9 @@ jobs:
 
 
     ########  Test running for ALL Command Line
-    - uses: franzdiebold@github-env-vars-action@v1.0.0
+    # - uses: franzdiebold@github-env-vars-action@v1.0.0
     - name: cli_test
       run: ml_test --do test_cli   --repo $GITHUB_REPOSITORY   --sha  $GITHUB_SHA   2>&1 | tee -a  cd /home/runner/work/mlmodels/mlmodels_store/log_test_cli/log_$(date '+%Y-%m-%d_%H-%M-%S-%3N').py
-
-
-
 
       env:
          github_sha: ${{ github.sha }}
