@@ -56,19 +56,19 @@ def log_info_repo(arg=None):
           
 
    """ 
+   print( "Check" os_bash(  "echo $GITHUB_REF" ),  os_bash(  "echo $GITHUB_REPOSITORY" ),  os_bash(  "echo $GITHUB_SHA" )  )
    repo = arg.repo
    sha  = arg.sha 
-
-   #repo = os_bash("${{ github_repo }}")
-   #sha  = os_bash("${{ github_sha }}")
 
    url_repo = f"https://github.com/{repo}/tree/{sha}" 
    url_diff = f"https://github.com/{repo}/commit/{sha}" 
    
    log_separator()
-   print("\n" * 2, "******** GITHUB_REPO_URL " + url_repo)
-   print("\n" * 1, "******** GITHUB_COMMIT_URL " + url_diff)
-   log_separator()
+   print("\n" * 2, "******** GITHUB_REPO_URL : "   + url_repo)
+   print("\n" * 1, "******** GITHUB_COMMIT_URL : " + url_diff)
+   print("\n" * 2, "******** GITHUB_BRANCH_URL : " + url_repo)
+
+   print("\n" * 1, "*" * 120 )
 
 
 
@@ -523,16 +523,14 @@ def cli_load_arguments(config_file=None):
         --data '{
           "title": "Automated issue for commit: ${{ github.sha }}",
           "body": "This issue was automatically created by the GitHub Action workflow **${{ github.workflow }}**. \n\n The commit hash was: _${{ github.sha }}_."
-          
-
-
+        
     """
-    add("--repo" , default="test"      , help="test/ prod /uat")
-    add("--sha" , default="test"      , help="test/ prod /uat")
-    add("--ref" , default="test"      , help="test/ prod /uat")
+    add("--repo" , default="GITHUB_REPOSITORT"      , help="test/ prod /uat")
+    add("--sha" , default="GITHUB_SHA"      , help="test/ prod /uat")
+    add("--ref" , default="GITHUB_REF"      , help="test/ prod /uat")
+    add("--workflow" , default="GITHUB_WORKFLOW"      , help="test/ prod /uat")
 
 
-    add("--workflow" , default="test"      , help="test/ prod /uat")
     add("--event_name" , default="test"      , help="test/ prod /uat")
     add("--event_path" , default="test"      , help="test/ prod /uat")
     add("--workspace" , default="test"      , help="test/ prod /uat")
