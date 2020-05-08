@@ -45,16 +45,8 @@ def log_separator():
 
 def log_info_repo(arg=None):
    """
-           run: |
-        curl --request POST \
-        --url https://api.github.com/repos/${{ github.repository }}/issues \
-        --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' \
-        --header 'content-type: application/json' \
-        --data '{
-          "title": "Automated issue for commit: ${{ github.sha }}",
-          "body": "This issue was automatically created by the GitHub Action workflow **${{ github.workflow }}**. 
-          \n\n The commit hash was: _${{ github.sha }}_."
-          
+      Grab Github Variables
+      https://help.github.com/en/actions/configuring-and-managing-workflows/using-environment-variables    
 
    """ 
    #print( "Check", os_bash(  "echo $GITHUB_REF" ),  os_bash(  "echo $GITHUB_REPOSITORY" ),  os_bash(  "echo $GITHUB_SHA" )  )
@@ -523,15 +515,6 @@ def cli_load_arguments(config_file=None):
     #### Env Vars :
     """
      https://help.github.com/en/actions/configuring-and-managing-workflows/using-environment-variables
-           run: |
-        curl --request POST \
-        --url https://api.github.com/repos/${{ github.repository }}/issues \
-        --header 'authorization: Bearer ${{ secrets.TOKEN }}' \
-        --header 'content-type: application/json' \
-        --data '{
-          "title": "Automated issue for commit: ${{ github.sha }}",
-          "body": "This issue was automatically created by the GitHub Action workflow **${{ github.workflow }}**. \n\n The commit hash was: _${{ github.sha }}_."
-        
     """
     add("--repo" , default="GITHUB_REPOSITORT"      , help="test/ prod /uat")
     add("--sha" , default="GITHUB_SHA"      , help="test/ prod /uat")
@@ -539,9 +522,9 @@ def cli_load_arguments(config_file=None):
     add("--workflow" , default="GITHUB_WORKFLOW"      , help="test/ prod /uat")
 
 
-    add("--event_name" , default="test"      , help="test/ prod /uat")
-    add("--event_path" , default="test"      , help="test/ prod /uat")
-    add("--workspace" , default="test"      , help="test/ prod /uat")
+    # add("--event_name" , default="test"      , help="test/ prod /uat")
+    #add("--event_path" , default="test"      , help="test/ prod /uat")
+    # add("--workspace" , default="test"      , help="test/ prod /uat")
 
 
     arg = p.parse_args()
