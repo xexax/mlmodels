@@ -250,6 +250,8 @@ def test_benchmark(arg=None):
 def test_cli(arg=None):
     log("# Testing Command Line System  ")
 
+    log_info_repo()
+
     import mlmodels, os
     path = mlmodels.__path__[0]   ### Root Path
     # if arg is None :           
