@@ -58,8 +58,8 @@ def log_info_repo(arg=None):
 
    """ 
 
-   repo = os_bash("${{ github.repository }}")
-   sha  = os_bash("${{ github.sha }}")
+   repo = os_bash("${{ github_repo }}")
+   sha  = os_bash("${{ github_sha }}")
 
    url_repo = f"https://github.com/{repo}/tree/{sha}" 
    url_diff = f"https://github.com/{repo}/commit/{sha}" 
