@@ -65,7 +65,8 @@ jobs:
           
     - name: repo path
       run: |
-          echo $GITHUB_REPOSITORY 
+          echo  $GITHUB_REPOSITORY 
+          echo  $GITHUB_SHA
       
       
     - name: Install repo
