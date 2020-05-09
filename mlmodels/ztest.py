@@ -14,6 +14,7 @@ from collections import Counter, OrderedDict
 import json
 from pathlib import Path
 import numpy as np
+from time import sleep
 ####################################################################################################
 
 
@@ -27,6 +28,50 @@ from mlmodels.util import get_recursive_files2, path_norm, path_norm_dict
 
            
 ####################################################################################################
+def os_bash(cmd):
+  # os_bash("dir ")  
+  import subprocess  
+  try :
+    l = subprocess.run( cmd, stdout=subprocess.PIPE, shell=True, ).stdout.decode('utf-8')
+    return l
+  except :
+    return ""
+
+
+
+def log_separator():
+   print("\n" * 5, "*" * 120 )
+
+
+def log_info_repo(arg=None):
+   """
+      Grab Github Variables
+      https://help.github.com/en/actions/configuring-and-managing-workflows/using-environment-variables    
+
+   """ 
+   #print( "Check", os_bash(  "echo $GITHUB_REF" ),  os_bash(  "echo $GITHUB_REPOSITORY" ),  os_bash(  "echo $GITHUB_SHA" )  )
+   # repo = arg.repo
+   # sha  = arg.sha 
+
+   repo      =  os_bash(  "echo $GITHUB_REPOSITORY" )
+   sha       =  os_bash(  "echo $GITHUB_SHA" )
+   workflow  =  os_bash(  "echo $GITHUB_WORKFLOW" )
+   
+   repo     = repo.replace("\n", "").replace("\r", "").strip()
+   workflow = workflow.replace("\n", "").replace("\r", "").strip()
+   sha      = sha.replace("\n", "").replace("\r", "").strip()
+
+
+   log_separator()
+   print("\n" * 1, "******** GITHUB_WOKFLOW : " + f"https://github.com/{repo}/actions?query=workflow%3A{workflow}"   )
+   print("\n" * 1, "******** GITHUB_REPO_URL : "   + f"https://github.com/{repo}/tree/{sha}" )
+   print("\n" * 1, "******** GITHUB_COMMIT_URL : " + f"https://github.com/{repo}/commit/{sha}" )
+
+   print("\n" * 1, "*" * 120 )
+
+
+
+
 def to_logfile(prefix="", dateformat='+%Y-%m-%d_%H:%M:%S,%3N' ) : 
     ### On Linux System
     if dateformat == "" :
@@ -53,12 +98,12 @@ def os_system(cmd, dolog=1, prefix="", dateformat='+%Y-%m-%d_%H:%M:%S,%3N') :
 
 
 
-
 def json_load(path) :
   try :
     return json.load(open( path, mode='r'))
   except :
     return {}  
+
 
 ####################################################################################################
 def log_remote_start(arg=None):
@@ -89,10 +134,6 @@ def log_remote_push(arg=None):
 
 
 
-
-
-
-
 ####################################################################################################
 def test_model_structure():
     log("os.getcwd", os.getcwd())
@@ -116,21 +157,23 @@ def test_import(arg=None):
 
     from importlib import import_module
 
+    log_info_repo(arg)
+
     block_list = ["raw"]
+    log_separator()
+    log("test_import")
 
     file_list = os_get_file(folder=None, block_list=[], pattern=r"/*.py")
-    log(file_list)
+    print(file_list)
+
     for f in file_list:
         try:
             f = "mlmodels." + f.replace("\\", ".").replace(".py", "").replace("/", ".")
 
             import_module(f)
-            log(f)
+            print(f)
         except Exception as e:
             log("Error", f, e)
-
-
-
 
 
 
@@ -139,7 +182,8 @@ def test_jupyter(arg=None, config_mode="test_all"):
       Tests files in mlmodels/example/
 
     """
-    log("os.getcwd", os.getcwd())
+    #log("os.getcwd", os.getcwd())
+    log_info_repo(arg)
 
     root = os_package_root_path()
     root = root.replace("\\", "//")
@@ -169,7 +213,8 @@ def test_jupyter(arg=None, config_mode="test_all"):
 
     log("############ Running files ################################")
     for cmd in test_list:
-        print("\n\n\n", "Running: " + cmd, flush=True)
+        log_separator()
+        print( cmd)
         os.system(cmd)
 
 
@@ -178,7 +223,8 @@ def test_jupyter(arg=None, config_mode="test_all"):
 
 
 def test_benchmark(arg=None):
-    log("os.getcwd", os.getcwd())
+    log_info_repo(arg)
+    # log("os.getcwd", os.getcwd())
 
     path = mlmodels.__path__[0]
     log("############Check model ################################")
@@ -192,8 +238,8 @@ def test_benchmark(arg=None):
     ]
 
     for cmd in test_list:
-        log("\n\n\n")
-        log(cmd)
+        log_separator()
+        print( cmd)
         os.system(cmd)
 
 
@@ -201,6 +247,7 @@ def test_benchmark(arg=None):
 
 def test_cli(arg=None):
     log("# Testing Command Line System  ")
+    log_info_repo(arg)
 
     import mlmodels, os
     path = mlmodels.__path__[0]   ### Root Path
@@ -231,9 +278,9 @@ def test_cli(arg=None):
         cmd = ss.strip()
         if is_valid_cmd(cmd):
           cmd =  cmd  + to_logfile("cli", '+%Y-%m-%d_%H')
-          log("\n\n\n", cmd )
+          log_separator()
+          print( cmd)
           os.system(cmd)
-
 
 
 def test_pullrequest(arg=None):
@@ -242,8 +289,10 @@ def test_pullrequest(arg=None):
 
 
     """
+    log_info_repo(arg)
+
     from pathlib import Path
-    log("os.getcwd", os.getcwd())
+    # log("os.getcwd", os.getcwd())
     path = str( os.path.join(Path(mlmodels.__path__[0] ).parent , "pullrequest/") )
     log(path)
 
@@ -259,6 +308,7 @@ def test_pullrequest(arg=None):
 
     log("########### Run Check ##############################")
     test_import(arg=None)
+    sleep(20)
     os.system("ml_optim")
     os.system("ml_mlmodels")
 
@@ -267,8 +317,10 @@ def test_pullrequest(arg=None):
     for file in test_list:
         file = file +  to_logfile(prefix="", dateformat='' ) 
         cmd = f"python {file}"
-        log("\n\n\n",cmd)
+        log_separator()
+        log( cmd)
         os.system(cmd)
+        sleep(5)
 
     
     #### Check the logs   ###################################
@@ -284,7 +336,8 @@ def test_pullrequest(arg=None):
 
 
 def test_dataloader(arg=None):
-    log("os.getcwd", os.getcwd())
+    log_info_repo(arg)
+    # log("os.getcwd", os.getcwd())
     path = mlmodels.__path__[0]
     cfg  = json_load(path_norm(arg.config_file))
 
@@ -294,8 +347,39 @@ def test_dataloader(arg=None):
     ]
 
     for cmd in test_list:
-        log("\n\n\n", cmd)
-        os.system(cmd)
+          log_separator()
+          log( cmd)
+          os.system(cmd)
+
+
+
+
+
+def test_json_all(arg):
+    log_info_repo(arg)
+    # log("os.getcwd", os.getcwd())
+    root = os_package_root_path()
+    root = root.replace("\\", "//")
+    log(root)
+    path = str( os.path.join(root, "dataset/json/") )
+    log(path)
+
+    log("############ List of files ################################")
+    #model_list = get_recursive_files2(root, r'/*/*.ipynb')
+    model_list  = get_recursive_files2(path, r'/*/.json')
+    model_list2 = get_recursive_files2(path, r'/*/*.json')
+    model_list  = model_list + model_list2
+    print("List of JSON Files", model_list)
+
+
+    for js_file in model_list:
+        log("\n\n\n", "************", "JSON File", js_file)
+        cfg = json.load(open(js_file, mode='r'))
+        for kmode, ddict in cfg.items():
+            cmd = f"ml_models --do fit --config_file {js_file}  --config_mode {kmode} "   
+            log_separator()
+            log( cmd)
+            os.system(cmd)
 
 
 
@@ -303,7 +387,9 @@ def test_dataloader(arg=None):
 
 
 def test_all(arg=None):
-    log("os.getcwd", os.getcwd())
+    log_info_repo(arg)
+    from time import sleep
+    # log("os.getcwd", os.getcwd())
 
     path = mlmodels.__path__[0]
     log("############Check model ################################")
@@ -318,10 +404,11 @@ def test_all(arg=None):
     log("Used", model_list)
 
     path = path.replace("\\", "//")
-    test_list = [f"python {path}/" + t.replace(".", "//").replace("//py", ".py") for t in model_list]
+    test_list = [f"python {path}/" + t.replace(".", "//") + ".py" for t in model_list]
 
     for cmd in test_list:
-        log("\n\n\n",cmd)
+        log_separator()
+        log( cmd)
         os.system(cmd)
         log_remote_push()
         sleep(5)
@@ -330,8 +417,9 @@ def test_all(arg=None):
 
 
 def test_json(arg):
+    log_info_repo(arg)
     log("os.getcwd", os.getcwd())
-    log("############Check model ################################")
+
     path = mlmodels.__path__[0]
     cfg = json.load(open(arg.config_file, mode='r'))
 
@@ -340,22 +428,25 @@ def test_json(arg):
     test_list = [f"python {path}/{model}" for model in mlist]
 
     for cmd in test_list:
-        log("\n\n\n")
-        log(cmd)
-        os.system(cmd)
+          log_separator()
+          log( cmd)
+          os.system(cmd)
+
 
 
 def test_list(mlist):
-    log("os.getcwd", os.getcwd())
-    log("############Check model ################################")
+    #log("os.getcwd", os.getcwd())
+
     path = mlmodels.__path__[0]
     # mlist = str_list.split(",")
     test_list = [f"python {path}/{model}" for model in mlist]
 
     for cmd in test_list:
-        log("\n\n\n")
-        log(cmd)
-        os.system(cmd)
+          log_separator()
+          log( cmd)
+          os.system(cmd)
+
+
 
 
 def test_custom():
@@ -392,7 +483,7 @@ def test_custom():
 def cli_load_arguments(config_file=None):
     #Load CLI input, load config.toml , overwrite config.toml by CLI Input
     import argparse
-    from mlmodels.util import load_config, path_norm, os_package_root_path
+    from mlmodels.util import load_config, path_norm
     
     config_file =  path_norm( "config/test_config.json" ) if config_file is None  else config_file
     log(config_file)
@@ -416,6 +507,21 @@ def cli_load_arguments(config_file=None):
     ##### out pars
     add("--save_folder", default="ztest/", help=".")
 
+    #### Env Vars :
+    """
+     https://help.github.com/en/actions/configuring-and-managing-workflows/using-environment-variables
+    """
+    add("--repo" , default="GITHUB_REPOSITORT"      , help="test/ prod /uat")
+    add("--sha" , default="GITHUB_SHA"      , help="test/ prod /uat")
+    add("--ref" , default="GITHUB_REF"      , help="test/ prod /uat")
+    add("--workflow" , default="GITHUB_WORKFLOW"      , help="test/ prod /uat")
+
+
+    # add("--event_name" , default="test"      , help="test/ prod /uat")
+    #add("--event_path" , default="test"      , help="test/ prod /uat")
+    # add("--workspace" , default="test"      , help="test/ prod /uat")
+
+
     arg = p.parse_args()
     # arg = load_config(arg, arg.config_file, arg.config_mode, verbose=0)
     return arg
@@ -424,7 +530,7 @@ def cli_load_arguments(config_file=None):
 
 def main():
     arg = cli_load_arguments()
-    log(arg.do)
+    log(arg.do, arg.repo, arg.sha)
 
     #### Input is String list of model name
     if ".py" in arg.do:

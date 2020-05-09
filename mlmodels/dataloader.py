@@ -61,8 +61,9 @@ import tensorflow.data
 """
 
 
+VERBOSE = 0 
+DATASET_TYPES = ["csv_dataset", "text_dataset", "NumpyDataset", "PandasDataset"]
 
-DATASET_TYPES = ["csv_dataset", "text_dataset", "NumpyDataset", "pandasDataset"]
 
 
 #########################################################################
@@ -406,7 +407,6 @@ def test_dataloader(path='dataset/json/refactor/'):
 
 
 
-
 ####################################################################################################
 def cli_load_arguments(config_file=None):
     """
@@ -457,12 +457,7 @@ if __name__ == "__main__":
    main() 
     
     
-
-
-
-
-    
-    
+ 
     
     
 """
