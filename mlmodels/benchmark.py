@@ -79,6 +79,8 @@ def benchmark_run(bench_pars=None, args=None, config_mode="test"):
     bench_df     = pd.DataFrame(columns=["date_run", "model_uri", "json",
                                          "dataset_uri", "metric", "metric_name"])
 
+    log("json_path", json_path)
+ 
     if ".json" in json_path :
        ### All config in ONE BIG JSON #####################################
        ddict     = json.load(open(json_path, mode='r'))
@@ -100,7 +102,7 @@ def benchmark_run(bench_pars=None, args=None, config_mode="test"):
     log("Model List", json_list)
     ii = -1
     for js in json_list :
-        log ( f"### Running {js} #####")
+        log ( f"\n\n\n### Running {js} #####")
         try : 
             log("#### Model URI and Config JSON")
             #config_path = path_norm(jsonf)

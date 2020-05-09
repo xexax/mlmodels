@@ -23,7 +23,7 @@ class to_namespace(object):
 def log(*s, n=0, m=0):
     sspace = "#" * n
     sjump = "\n" * m
-    print(sjump, sspace, s, sspace, flush=True)
+    print(sjump, sspace, *s, sspace, flush=True)
 
 
 
