@@ -198,7 +198,7 @@ def test_jupyter(arg=None, config_mode="test_all"):
     path = str( os.path.join(root, "example/") )
     print(path)
 
-    log("############ List of files ################################")
+    print("############ List of files ################################")
     #model_list = get_recursive_files2(root, r'/*/*.ipynb')
     model_list  = get_recursive_files2(path, r'*.ipynb')
     model_list2 = get_recursive_files2(path, r'*.py')
@@ -216,10 +216,11 @@ def test_jupyter(arg=None, config_mode="test_all"):
     test_list = [f"ipython {t}"  for  t in model_list]
     print(test_list, flush=True) 
 
-    log("############ Running Jupyter files ################################")
+    log_separator()
+    print("############ Running Jupyter files ################################")
     for cmd in test_list:
         log_separator()
-        print( cmd, flush=True)
+        print( cmd, "\n", flush=True)
         os.system(cmd)
 
 
