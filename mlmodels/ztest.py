@@ -64,16 +64,19 @@ def log_info_repo(arg=None):
    sha      = sha.replace("\n", "").replace("\r", "").strip()
    branch   = branch.replace("\n", "").replace("\r", "").strip()
 
+   github_repo_url = f"https://github.com/{repo}/tree/{sha}"
+   url_branch_file = "https://github.com/{repo}/blob/{branch}/" 
 
    log_separator()
    print("\n" * 1, "******** TAG : ", workflow, repo, sha, branch , flush=True)
-
    print("\n" * 1, "******** GITHUB_WOKFLOW : " + f"https://github.com/{repo}/actions?query=workflow%3A{workflow}" , flush=True)
-   print("\n" * 1, "******** GITHUB_REPO_URL : "   + f"https://github.com/{repo}/tree/{sha}" , flush=True)
+   print("\n" * 1, "******** GITHUB_REPO_URL : "   + github_repo_url , flush=True)
    print("\n" * 1, "******** GITHUB_COMMIT_URL : " + f"https://github.com/{repo}/commit/{sha}" , flush=True)
-
    print("\n" * 1, "*" * 120 )
 
+   ### Export
+   dd = { k: locals()[k]  for k in [ "github_repo_url", "url_branch_file", "repo", "branch", "sha", "workflow"  ]}
+   return dd
 
 
 
@@ -188,7 +191,7 @@ def test_jupyter(arg=None, config_mode="test_all"):
 
     """
     #log("os.getcwd", os.getcwd())
-    log_info_repo(arg)
+    git = log_info_repo(arg)
 
     root = os_package_root_path()
     root = root.replace("\\", "//")
@@ -220,7 +223,7 @@ def test_jupyter(arg=None, config_mode="test_all"):
     print("############ Running Jupyter files ################################")
     for cmd in test_list:
         log_separator()
-        print( cmd.replace("/home/runner/work/mlmodels/mlmodels/", ""), "\n", flush=True)
+        print( cmd.replace("/home/runner/work/mlmodels/mlmodels/", git.get("url_branch_file", "")), "\n", flush=True)
         os.system(cmd)
 
 
