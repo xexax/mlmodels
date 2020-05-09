@@ -42,7 +42,7 @@ import cloudpickle as pickle
 
 #########################################################################
 #### mlmodels-internal imports
-from mlmodels.util import load_callable_from_dict, load_callable_from_uri, path_norm, path_norm_dict
+from mlmodels.util import load_callable_from_dict, load_callable_from_uri, path_norm, path_norm_dict, log
 
 from mlmodels.preprocess.generic import pandasDataset, NumpyDataset
 
@@ -363,27 +363,43 @@ def test_run_model():
 
 def test_dataloader(path='dataset/json/refactor/'):
     refactor_path = path_norm( path )
-    data_pars_list = [(f,json.loads(open(refactor_path+f).read())['test']['data_pars']) for f in os.listdir(refactor_path)]
+    # data_pars_list = [(f,json.loads(open(refactor_path+f).read())['test']['data_pars']) for f in os.listdir(refactor_path)]
     
+
+    data_pars_list = [f for f in os.listdir(refactor_path)]
+    print(data_pars_list)
+
+    """
     l1  =  [
-
             # path_norm('dataset/json/refactor/torchhub.json' )
-
             path_norm('dataset/json/refactor/namentity_crm_bilstm_dataloader_new.json' )
-
+            ,path_norm('dataset/json/refactor/namentity_crm_bilstm_dataloader_new.json' )
     ]
-
     data_pars_list = l1
+    """
+
 
     for f in data_pars_list:
-        print(f)
-        data_pars = json.loads(open(f).read())['test']['data_pars']
-        data_pars = path_norm_dict( data_pars)
-        print(data_pars)
-        loader    = DataLoader(data_pars)
-        loader.compute()
-        print(loader.get_data())
+        try :
+          print(f)
+          
+          log("#"*10, " Load JSON data_pars") 
+          d = json.loads(open(f).read())
+          data_pars = d['test']['data_pars']
+          data_pars = path_norm_dict( data_pars)
+          print(data_pars)
+          
 
+          log("#"*10, " Load DataLoader ") 
+          loader    = DataLoader(data_pars)
+
+
+          log("#"*10, " compute DataLoader ")           
+          loader.compute()
+          print(loader.get_data())
+
+        except Exception as e :
+          print("Error", f,  e)
 
 
 
@@ -444,58 +460,6 @@ if __name__ == "__main__":
 
 
 
-
-
-####################################################################################################
-def cli_load_arguments(config_file=None):
-    """
-        Load CLI input, load config.toml , overwrite config.toml by CLI Input
-    """
-    import argparse
-    p = argparse.ArgumentParser()
-    def add(*k, **kw):
-        p.add_argument(*k, **kw)
-
-    add("--config_file" , default=None                     , help="Params File")
-    add("--config_mode" , default="test"                   , help="test/ prod /uat")
-    add("--log_file"    , help="File to save the logging")
-
-    add("--do"          , default="test"                   , help="what to do test or search")
-
-    ###### model_pars
-    add("--path", default='dataset/json/refactor/', help="name of the model for --do test")
-
-    ###### data_pars
-    # add("--data_path", default="dataset/GOOG-year_small.csv", help="path of the training file")
-
-
-    ###### compute params
-
-    ###### out params
-    # add('--save_path', default='ztest/search_save/', help='folder that will contain saved version of best model')
-
-    args = p.parse_args()
-    # args = load_config(args, args.config_file, args.config_mode, verbose=0)
-    return args
-
-
-def main():
-    arg = cli_load_arguments()
-
-    if arg.do == "test":
-        test_dataloader('dataset/json/refactor/')   
-
-    if arg.do == "test_run_model":
-       test_run_model()
-
-
-
-##########################################################################################################
-if __name__ == "__main__":
-   VERBOSE =1  
-   main() 
-    
-    
 
     
     
