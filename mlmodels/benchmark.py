@@ -109,7 +109,9 @@ def benchmark_run(bench_pars=None, args=None, config_mode="test"):
             #model_pars, data_pars, compute_pars, out_pars = params_json_load(config_path, config_mode= config_mode)
 
             model_pars, data_pars, compute_pars, out_pars = js['model_pars'], js['data_pars'], js['compute_pars'], js['out_pars'] 
-            log(model_pars)
+            data_pars = path_norm_dict( data_pars) 
+            out_pars = path_norm_dict( out_pars) 
+            log("data_pars", "out_pars", data_pars, out_pars)
        
 
             log("#### Setup Model   ##############################################")
