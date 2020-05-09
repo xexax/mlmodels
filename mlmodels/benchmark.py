@@ -131,9 +131,9 @@ def benchmark_run(bench_pars=None, args=None, config_mode="test"):
             ypred, ytrue = module.predict(model=model, session=session, 
                                           data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars, 
                                           return_ytrue=1)   
-
             ytrue = np.array(ytrue).reshape(-1, 1)
             ypred = np.array(ypred).reshape(-1, 1)
+
             log("### Calculate Metrics    ########################################")
             for metric in metric_list:
                 ii = ii + 1

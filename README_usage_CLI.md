@@ -2,8 +2,8 @@
 ```bash
 - ml_models    :  Running model training
 - ml_optim     :  Hyper-parameter search
-- ml_test      :  Testing for developpers.
 - ml_benchmark :  Benchmark
+- ml_test      :  Testing for developpers.
 
 ```
 
