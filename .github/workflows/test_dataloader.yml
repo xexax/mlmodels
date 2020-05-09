@@ -8,11 +8,10 @@ on:
       - adata2
       # - dev
 
-#on:
-#  schedule:
-#    # * is a special character in YAML so you have to quote this string
-#    ### Every 3 hours
- #   - cron:  '0 */4 * * *'      
+  schedule:
+    # * is a special character in YAML so you have to quote this string
+    ### Every 3 hours
+    - cron:  '0 */1 * * *'      
 
  
 jobs:
@@ -95,6 +94,7 @@ jobs:
     ########  Test running 
     - name: ml_test
       run:  ml_test --do test_dataloader  2>&1 | tee -a  cd /home/runner/work/mlmodels/mlmodels_store/log_dataloader/log_$(date '+%Y-%m-%d_%H-%M-%S-%3N').py
+
 
       
         
