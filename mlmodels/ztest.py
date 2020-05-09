@@ -56,13 +56,18 @@ def log_info_repo(arg=None):
    repo      =  os_bash(  "echo $GITHUB_REPOSITORY" )
    sha       =  os_bash(  "echo $GITHUB_SHA" )
    workflow  =  os_bash(  "echo $GITHUB_WORKFLOW" )
-   
+   branch    =  os_bash(  "echo $GITHUB_REF" )
+
+
    repo     = repo.replace("\n", "").replace("\r", "").strip()
    workflow = workflow.replace("\n", "").replace("\r", "").strip()
    sha      = sha.replace("\n", "").replace("\r", "").strip()
+   branch   = branch.replace("\n", "").replace("\r", "").strip()
 
 
    log_separator()
+   print("\n" * 1, "******** TAG : ", workflow, repo, sha, branch )
+
    print("\n" * 1, "******** GITHUB_WOKFLOW : " + f"https://github.com/{repo}/actions?query=workflow%3A{workflow}"   )
    print("\n" * 1, "******** GITHUB_REPO_URL : "   + f"https://github.com/{repo}/tree/{sha}" )
    print("\n" * 1, "******** GITHUB_COMMIT_URL : " + f"https://github.com/{repo}/commit/{sha}" )
