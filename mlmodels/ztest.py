@@ -48,10 +48,13 @@ def log_info_repo(arg=None):
       Grab Github Variables
       https://help.github.com/en/actions/configuring-and-managing-workflows/using-environment-variables    
 
+      log_info_repo(arg=None)
+
    """ 
    #print( "Check", os_bash(  "echo $GITHUB_REF" ),  os_bash(  "echo $GITHUB_REPOSITORY" ),  os_bash(  "echo $GITHUB_SHA" )  )
    # repo = arg.repo
    # sha  = arg.sha 
+
 
    repo      =  os_bash(  "echo $GITHUB_REPOSITORY" )
    sha       =  os_bash(  "echo $GITHUB_SHA" )
@@ -67,9 +70,10 @@ def log_info_repo(arg=None):
    github_repo_url = f"https://github.com/{repo}/tree/{sha}"
    url_branch_file = "https://github.com/{repo}/blob/{branch}/" 
 
-
+   # print(locals()["github_repo_url"] )
    ### Export
-   dd = { k: locals()[k]  for k in [ "github_repo_url", "url_branch_file", "repo", "branch", "sha", "workflow"  ]}
+   dlocal = locals()
+   dd = { k: dlocal.get(k, "")  for k in [ "github_repo_url", "url_branch_file", "repo", "branch", "sha", "workflow"  ]}
 
    log_separator()
    print("\n" * 1, "******** TAG :: ", dd, flush=True)
@@ -79,6 +83,9 @@ def log_info_repo(arg=None):
    print("\n" * 1, "*" * 120 )
 
    return dd
+
+
+
 
 
 
