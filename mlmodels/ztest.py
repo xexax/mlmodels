@@ -220,7 +220,7 @@ def test_jupyter(arg=None, config_mode="test_all"):
     print("############ Running Jupyter files ################################")
     for cmd in test_list:
         log_separator()
-        print( cmd, "\n", flush=True)
+        print( cmd.replace("/home/runner/work/mlmodels/mlmodels/", ""), "\n", flush=True)
         os.system(cmd)
 
 
