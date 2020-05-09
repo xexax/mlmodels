@@ -42,7 +42,7 @@ import cloudpickle as pickle
 
 #########################################################################
 #### mlmodels-internal imports
-from mlmodels.util import load_callable_from_dict, load_callable_from_uri, path_norm, path_norm_dict
+from mlmodels.util import load_callable_from_dict, load_callable_from_uri, path_norm, path_norm_dict, log
 
 from mlmodels.preprocess.generic import pandasDataset, NumpyDataset
 
@@ -63,6 +63,7 @@ import tensorflow.data
 
 VERBOSE = 0 
 DATASET_TYPES = ["csv_dataset", "text_dataset", "NumpyDataset", "PandasDataset"]
+
 
 
 #########################################################################
@@ -171,6 +172,51 @@ def get_dataset_type(x) :
 
 
 
+"""
+
+data_pars --> Dataloader.py  :
+  sequence of pre-processors item
+       uri, args
+       return some objects in a sequence way.
+
+
+
+"data_pars": {  
+ "data_info": { 
+                  "name" : "text_dataset",   "data_path": "dataset/nlp/WIKI_QA/" , 
+                  "train": true
+                  } 
+         },
+ 
+
+"preprocessors": [ 
+                {  "uri" : "mlmodels.preprocess.generic.:train_test_val_split",
+                    "arg" : {   "split_if_exists": true, "frac": 0.99, "batch_size": 64,  "val_batch_size": 64,
+                                    "input_path" :    "dataset/nlp/WIKIQA_singleFile/" ,
+                                    "output_path" :  "dataset/nlp/WIKIQA" ,   
+                                    "format" : "csv"
+                               },
+                    "output_type" :  "file_csv"
+                } ,  
+
+
+             {  "name" : "loader"  ,
+                "uri" :  "mlmodels.model_tch.matchzoo:WIKI_QA_loader",
+                "arg" :  {  "name" : "text_dataset",   
+                                        "data_path": "dataset/nlp/WIKI_QA/"   ,
+                                         "data_pack"  : "",   "mode":"pair",  "num_dup":2,   "num_neg":1,
+                                        "batch_size":20,     "resample":true,  
+                                        "sort":false,   "callbacks":"PADDING"
+                                      },
+                 "output_type" :  "pytorch_dataset"
+             } ]
+}
+
+
+"""
+
+
+
 class DataLoader:
 
     default_loaders = {
@@ -217,38 +263,61 @@ class DataLoader:
         if docheck :
             self.check()
 
+
         input_tmp = None
-
         for preprocessor in self.preprocessors:
-            uri = preprocessor.get("uri", None)
-            if not uri:
-                raise Exception(f"Preprocessor {preprocessor} missing uri")
-            preprocessor_func = load_callable_from_uri(uri)
-
+            uri  = preprocessor["uri"]
             args = preprocessor.get("args", {})
-            ### Should match PytorchDataloader, KerasDataloader, PandasDataset, ....
+            print("URL: ",uri, args)
+
+
+            preprocessor_func = load_callable_from_uri(uri)
             if inspect.isclass(preprocessor_func):
+                ### Should match PytorchDataloader, KerasDataloader, PandasDataset, ....
+                ## A class : muti-steps compute
                 cls_name = preprocessor_func.__name__
+                print("cls_name :", cls_name)
+
+
+
                 if cls_name in DATASET_TYPES:  # dataset object
-                    obj_preprocessor = preprocessor_func(args=args, data_info=self.data_info)
-                    if cls_name == "pandasDataset": # get dataframe instead of pytorch dataset
+                    obj_preprocessor = preprocessor_func(**args, data_info=self.data_info)
+
+
+                    if cls_name == "pandasDataset" or cls_name == "NumpyDataset": # get dataframe/numpyarray instead of pytorch dataset
                         out_tmp = obj_preprocessor.get_data()
                     else:
                         out_tmp = obj_preprocessor
-                else:  # pre-process object
+
+
+                else:  # pre-process object defined in preprocessor.py
                     obj_preprocessor = preprocessor_func(**args)
                     obj_preprocessor.compute(input_tmp)
                     out_tmp = obj_preprocessor.get_data()
+
+
+
+
             else:
+                ### Only a function, not a Class : Directly COMPUTED.
+
+                # print("input_tmp: ",input_tmp['X'].shape,input_tmp['y'].shape)
+                # print("input_tmp: ",input_tmp.keys())
                 pos_params = inspect.getfullargspec(preprocessor_func)[0]
+                print("postional parameteres : ", pos_params)
                 if isinstance(input_tmp, (tuple, list)) and len(input_tmp) > 0 and len(pos_params) == 0:
                     out_tmp = preprocessor_func(*input_tmp, **args)
 
+                elif pos_params == ['data_info']:
+                    # function with postional parmater data_info >> get_dataset_torch(data_info, **args)
+                    out_tmp = preprocessor_func(data_info=self.data_info, **args)
                 else:
                     out_tmp = preprocessor_func(input_tmp, **args)
 
 
-            ## Be vareful of Very Large Dataset, not to save ALL 
+
+            ## Be careful of Very Large Dataset, it will not work not to save ALL 
+            ## Save internal States
             if preprocessor.get("internal_states", None):
                 for internal_state in preprocessor.get("internal_states", None):
                     if isinstance(out_tmp, dict):
@@ -270,9 +339,6 @@ def split_xy_from_dict(out, **kwargs):
     X      = [out[n] for n in X_c]
     y      = [out[n] for n in y_c]
     return (*X,*y)
-
-
-
 
 
 def test_run_model():
@@ -298,23 +364,45 @@ def test_run_model():
 
 def test_dataloader(path='dataset/json/refactor/'):
     refactor_path = path_norm( path )
-    data_pars_list = [(f,json.loads(open(refactor_path+f).read())['test']['data_pars']) for f in os.listdir(refactor_path)]
+    # data_pars_list = [(f,json.loads(open(refactor_path+f).read())['test']['data_pars']) for f in os.listdir(refactor_path)]
     
+
+    data_pars_list = [f for f in os.listdir(refactor_path)]
+    print(data_pars_list)
+
+    """
     l1  =  [
-
-            path_norm('dataset/json/refactor/torchhub.json' )
-
-
+            # path_norm('dataset/json/refactor/torchhub.json' )
+            path_norm('dataset/json/refactor/namentity_crm_bilstm_dataloader_new.json' )
+            ,path_norm('dataset/json/refactor/namentity_crm_bilstm_dataloader_new.json' )
     ]
-
     data_pars_list = l1
+    """
 
-    for f, data_pars in data_pars_list:
-        print(f)
-        data_pars = path_norm_dict( data_pars)
-        loader    = DataLoader(data_pars)
-        loader.compute()
-        print(loader.get_data())
+
+    for f in data_pars_list:
+        try :
+          print(f)
+          
+          log("#"*10, " Load JSON data_pars") 
+          d = json.loads(open(f).read())
+          data_pars = d['test']['data_pars']
+          data_pars = path_norm_dict( data_pars)
+          print(data_pars)
+          
+
+          log("#"*10, " Load DataLoader ") 
+          loader    = DataLoader(data_pars)
+
+
+          log("#"*10, " compute DataLoader ")           
+          loader.compute()
+          print(loader.get_data())
+
+        except Exception as e :
+          print("Error", f,  e)
+
+
 
 
 
@@ -369,9 +457,7 @@ if __name__ == "__main__":
    main() 
     
     
-
-
-    
+ 
     
     
 """
