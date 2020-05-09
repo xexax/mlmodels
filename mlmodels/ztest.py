@@ -276,11 +276,11 @@ def test_cli(arg=None):
 
     # fileconfig = path_norm( f"{path}/../config/cli_test_list.md" ) 
     fileconfig = path_norm( f"{path}/../README_usage_CLI.md" ) 
-    log(fileconfig)
+    print("Using :", fileconfig)
 
     def is_valid_cmd(cmd) :
        cmd = cmd.strip() 
-       if len(cmd) > 8 :
+       if len(cmd) > 15 :
           if cmd.startswith("ml_models ") or cmd.startswith("ml_benchmark ") or cmd.startswith("ml_optim ")  :
               return True
        return False 
@@ -297,7 +297,7 @@ def test_cli(arg=None):
         if is_valid_cmd(cmd):
           cmd =  cmd  + to_logfile("cli", '+%Y-%m-%d_%H')
           log_separator()
-          print( cmd)
+          print( cmd, flush=True)
           os.system(cmd)
 
 
