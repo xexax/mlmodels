@@ -40,7 +40,7 @@ def os_bash(cmd):
 
 
 def log_separator():
-   print("\n" * 5, "*" * 120 )
+   print("\n" * 5, "*" * 120, flush=True )
 
 
 def log_info_repo(arg=None):
@@ -66,11 +66,11 @@ def log_info_repo(arg=None):
 
 
    log_separator()
-   print("\n" * 1, "******** TAG : ", workflow, repo, sha, branch )
+   print("\n" * 1, "******** TAG : ", workflow, repo, sha, branch , flush=True)
 
-   print("\n" * 1, "******** GITHUB_WOKFLOW : " + f"https://github.com/{repo}/actions?query=workflow%3A{workflow}"   )
-   print("\n" * 1, "******** GITHUB_REPO_URL : "   + f"https://github.com/{repo}/tree/{sha}" )
-   print("\n" * 1, "******** GITHUB_COMMIT_URL : " + f"https://github.com/{repo}/commit/{sha}" )
+   print("\n" * 1, "******** GITHUB_WOKFLOW : " + f"https://github.com/{repo}/actions?query=workflow%3A{workflow}" , flush=True)
+   print("\n" * 1, "******** GITHUB_REPO_URL : "   + f"https://github.com/{repo}/tree/{sha}" , flush=True)
+   print("\n" * 1, "******** GITHUB_COMMIT_URL : " + f"https://github.com/{repo}/commit/{sha}" , flush=True)
 
    print("\n" * 1, "*" * 120 )
 
@@ -192,11 +192,11 @@ def test_jupyter(arg=None, config_mode="test_all"):
 
     root = os_package_root_path()
     root = root.replace("\\", "//")
-    log(root)
+    #log(root)
 
 
     path = str( os.path.join(root, "example/") )
-    log(path)
+    print(path)
 
     log("############ List of files ################################")
     #model_list = get_recursive_files2(root, r'/*/*.ipynb')
@@ -214,12 +214,12 @@ def test_jupyter(arg=None, config_mode="test_all"):
     model_list = [t for t in model_list if t not in block_list]
 
     test_list = [f"ipython {t}"  for  t in model_list]
-    log(test_list) 
+    print(test_list, flush=True) 
 
-    log("############ Running files ################################")
+    log("############ Running Jupyter files ################################")
     for cmd in test_list:
         log_separator()
-        print( cmd)
+        print( cmd, flush=True)
         os.system(cmd)
 
 
