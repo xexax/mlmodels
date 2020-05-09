@@ -82,7 +82,7 @@ jobs:
 
     ##### Please change BELOW to your model name  
     - name: ml_test Pull Request
-      run: ml_test --do test_pullrequest     2>&1 | tee -a  cd /home/runner/work/mlmodels/mlmodels_store/log_pullrequest/log_pr_$(date '+%Y-%m-%d-%H-%M')_$GITHUB_SHA_.py
+      run: ml_test --do test_pullrequest     2>&1 | tee -a  cd /home/runner/work/mlmodels/mlmodels_store/log_pullrequest/log_pr_$(date '+%Y-%m-%d-%H-%M')_$GITHUB_SHA.py
 
 
     - name: log_gitcommit
