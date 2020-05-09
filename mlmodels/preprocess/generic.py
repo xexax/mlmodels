@@ -179,19 +179,19 @@ def tf_dataset_download(data_info, **args):
 def get_dataset_torch(data_info, **args):
     
     target_transform_info = args.get('target_transform', None)
-    transform_info  = args.get('transform', None)
-    to_image   = args.get('to_image', True)
-    shuffle= args.get('shuffle', True)
-    dataloader = args.get("dataloader", "torchvision.datasets:MNIST")
+    transform_info        = args.get('transform', None)
+    to_image              = args.get('to_image', True)
+    shuffle               = args.get('shuffle', True)
+    dataloader            = args.get("dataloader", "torchvision.datasets:MNIST")
  
-    dataset = data_info.get("dataset", None)
-    data_path = data_info.get("data_path", None)
-    train = data_info.get("train", True)
+    dataset    = data_info.get("dataset", None)
+    data_path  = data_info.get("data_path", None)
+    train      = data_info.get("train", True)
     batch_size = data_info.get("batch_size", 1)
-    data_type = data_info.get('data_type', "tch_dataset")
+    data_type  = data_info.get('data_type', "tch_dataset")
  
     if not dataset or not data_path:
-        raise Exception("['data_path','dataset'] are required fields, please add these ['data_path','dataset'] in data_info")
+        raise Exception("please add these 'data_path','dataset' in data_info")
  
     transform = None
     if transform_info :
