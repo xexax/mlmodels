@@ -34,7 +34,8 @@ from functools import partial
 
 # possibly replace with keras.utils.get_file down the road?
 #### It dowloads from HTTP from Dorpbox, ....  (not urgent)
-from cli_code.cli_download import Downloader
+# from cli_code.cli_download import Downloader
+
 
 from sklearn.model_selection import train_test_split
 import cloudpickle as pickle
@@ -365,7 +366,7 @@ def test_dataloader(path='dataset/json/refactor/'):
     # data_pars_list = [(f,json.loads(open(refactor_path+f).read())['test']['data_pars']) for f in os.listdir(refactor_path)]
     
 
-    data_pars_list = [f for f in os.listdir(refactor_path)]
+    data_pars_list = [f for f in os.listdir(refactor_path)  if not os.path.isdir( refactor_path + "/" + f)  ]
     print(data_pars_list)
 
     """
@@ -381,7 +382,7 @@ def test_dataloader(path='dataset/json/refactor/'):
     for f in data_pars_list:
         try :
           f  = refactor_path + "/" + f
-          
+
           if os.path.isdir(f) : continue
 
           print("\n" *5 , "#" * 100)
