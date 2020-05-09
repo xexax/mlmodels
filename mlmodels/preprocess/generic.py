@@ -154,7 +154,10 @@ def tf_dataset_download(data_info, **args):
  
     Xtemp = np.array(Xtemp)
     ytemp = np.array(ytemp)
-    np.savez_compressed(os.path.join(out_path,'train', f"{name}") , X = Xtemp, y = ytemp )    
+    
+    trainPath = os.path.join(out_path,'train')
+    os.makedirs(trainPath, exist_ok=True)
+    np.savez_compressed(os.path.join(trainPath, f"{name}") , X = Xtemp, y = ytemp )    
  
     Xtemp = []
     ytemp = []
@@ -164,7 +167,10 @@ def tf_dataset_download(data_info, **args):
         ytemp.append(x.get('label'))
     Xtemp = np.array(Xtemp)
     ytemp = np.array(ytemp)
-    np.savez_compressed(os.path.join(out_path,'test', f"{name}"), X = Xtemp, y = ytemp)
+
+    testPath = os.path.join(out_path,'test')
+    os.makedirs(testPath, exist_ok=True)
+    np.savez_compressed(os.path.join(testPath, f"{name}"), X = Xtemp, y = ytemp)
     
     
     log(out_path, os.listdir( out_path ))
@@ -208,9 +214,15 @@ def get_dataset_torch(data_info, **args):
 
     # dset = load_function(d.get("dataset", "torchvision.datasets:MNIST") ) 
 
-
+    print("dset : ",dset)
     if data_type != "tch_dataset":
         ###### Custom Build Dataset   ####################################################
+        
+        ### Romove conflict(Duplicate) Arguments  
+        entriesToRemove = ('download', 'transform','target_transform')
+        for k in entriesToRemove:
+            args.pop(k, None)
+
         dset_inst    = dset(os.path.join(data_path,'train'), train=True, download=True, transform=transform, data_info=data_info, **args)
         train_loader = DataLoader( dset_inst, batch_size=batch_size, shuffle= shuffle)
         
@@ -405,7 +417,7 @@ class pandasDataset(Dataset):
  
         # df = torch.load(os.path.join(path, filename))
         file_path = path_norm(os.path.join(path, filename))
-        df = pd.read_csv(file_path, **args.get("read_csv_parm",None))
+        df = pd.read_csv(file_path, **args.get("read_csv_parm",{}))
         self.df = df
  
  
@@ -495,9 +507,15 @@ class NumpyDataset(Dataset):
             file_path   = os.path.join(root, f"{dataset}.npz")
         else:
             file_path   = os.path.join(root, dataset)
-        data            = np.load( path_norm( file_path))
-        # self.features   = data['X']
-        # self.classes    = data['y']
+        print("Dataset File path : ", file_path)
+        data            = np.load( path_norm( file_path),**args.get("numpy_loader_args", {}))
+        
+        
+        if data_info.get("data_type",None) == 'tf_dataset':
+            self.features   = data['X']
+            self.classes    = data['y']
+        
+        
         self.data = tuple(data[x] for x in sorted(data.files))
         data.close()
  

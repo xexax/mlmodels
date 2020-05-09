@@ -49,7 +49,7 @@
 						"name": "saver",
 						"uri":"mlmodels/dataloader.py::pickle_dump",
 						"args": {
-							"path": "mlmodels/ztest/ml_keras/namentity_crm_bilstm/data.pkl"
+							"path": "ztest/ml_keras/namentity_crm_bilstm/data.pkl"
 						}
 					}
 			],

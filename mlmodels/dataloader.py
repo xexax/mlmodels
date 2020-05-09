@@ -63,7 +63,7 @@ import tensorflow.data
 
 
 VERBOSE = 0 
-DATASET_TYPES = ["csv_dataset", "text_dataset", "NumpyDataset", "PandasDataset"]
+DATASET_TYPES = ["csv_dataset", "text_dataset", "NumpyDataset", "pandasDataset"]
 
 
 
