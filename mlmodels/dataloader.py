@@ -360,8 +360,6 @@ def test_run_model():
 
 
 
-
-
 def test_dataloader(path='dataset/json/refactor/'):
     refactor_path = path_norm( path )
     # data_pars_list = [(f,json.loads(open(refactor_path+f).read())['test']['data_pars']) for f in os.listdir(refactor_path)]
@@ -382,9 +380,11 @@ def test_dataloader(path='dataset/json/refactor/'):
 
     for f in data_pars_list:
         try :
+          if os.path.isdir(f) : pass  
           f  = refactor_path + "/" + f
           print("\n" *5 , "#" * 100)
           print(  f)
+          
           
           print("#"*5, " Load JSON data_pars") 
           d = json.loads(open( f ).read())
@@ -403,10 +403,6 @@ def test_dataloader(path='dataset/json/refactor/'):
 
         except Exception as e :
           print("Error", f,  e)
-
-
-
-
 
 
 ####################################################################################################
@@ -431,9 +427,6 @@ def cli_load_arguments(config_file=None):
     ###### data_pars
     # add("--data_path", default="dataset/GOOG-year_small.csv", help="path of the training file")
 
-
-    ###### compute params
-
     ###### out params
     # add('--save_path', default='ztest/search_save/', help='folder that will contain saved version of best model')
 
@@ -452,15 +445,15 @@ def main():
        test_run_model()
 
 
-
-##########################################################################################################
 if __name__ == "__main__":
    VERBOSE =1  
    main() 
     
     
  
-    
+
+
+
     
 """
     
