@@ -67,15 +67,17 @@ def log_info_repo(arg=None):
    github_repo_url = f"https://github.com/{repo}/tree/{sha}"
    url_branch_file = "https://github.com/{repo}/blob/{branch}/" 
 
+
+   ### Export
+   dd = { k: locals()[k]  for k in [ "github_repo_url", "url_branch_file", "repo", "branch", "sha", "workflow"  ]}
+
    log_separator()
-   print("\n" * 1, "******** TAG : ", workflow, repo, sha, branch , flush=True)
+   print("\n" * 1, "******** TAG :: ", dd, flush=True)
    print("\n" * 1, "******** GITHUB_WOKFLOW : " + f"https://github.com/{repo}/actions?query=workflow%3A{workflow}" , flush=True)
    print("\n" * 1, "******** GITHUB_REPO_URL : "   + github_repo_url , flush=True)
    print("\n" * 1, "******** GITHUB_COMMIT_URL : " + f"https://github.com/{repo}/commit/{sha}" , flush=True)
    print("\n" * 1, "*" * 120 )
 
-   ### Export
-   dd = { k: locals()[k]  for k in [ "github_repo_url", "url_branch_file", "repo", "branch", "sha", "workflow"  ]}
    return dd
 
 
