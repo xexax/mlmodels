@@ -26,7 +26,7 @@ jobs:
            curl -fsSL https://github.com/github/hub/raw/master/script/get | bash -s 2.14.1
            git config --local user.email "noelkev0@gmail.com" &&  git config --local user.name "arita37"
            git config --global hub.protocol ssh
-           bin/hub pull-request --base arita37:feat_dataloader   --head arita37:dev  -m "Auto Sync arita37/Dev"  & \
+           bin/hub pull-request --base arita37:adata2   --head arita37:dev  -m "Auto Sync arita37/Dev"  & \
            bin/hub pull-request --base AsmaDamani:asma_damani  --head arita37:dev   -m "Auto Sync arita37/Dev"  & \
            bin/hub pull-request --base pushkalkatara:dev  --head arita37:dev   -m "Auto Sync arita37/Dev"  & \
            bin/hub pull-request --base arita37:vantam   --head arita37:dev  -m "Auto Sync arita37/Dev"  & \         

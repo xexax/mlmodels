@@ -79,6 +79,8 @@ def benchmark_run(bench_pars=None, args=None, config_mode="test"):
     bench_df     = pd.DataFrame(columns=["date_run", "model_uri", "json",
                                          "dataset_uri", "metric", "metric_name"])
 
+    log("json_path", json_path)
+ 
     if ".json" in json_path :
        ### All config in ONE BIG JSON #####################################
        ddict     = json.load(open(json_path, mode='r'))
@@ -100,14 +102,16 @@ def benchmark_run(bench_pars=None, args=None, config_mode="test"):
     log("Model List", json_list)
     ii = -1
     for js in json_list :
-        log ( f"### Running {js} #####")
+        log ( f"\n\n\n### Running {js} ############################################")
         try : 
             log("#### Model URI and Config JSON")
             #config_path = path_norm(jsonf)
             #model_pars, data_pars, compute_pars, out_pars = params_json_load(config_path, config_mode= config_mode)
 
             model_pars, data_pars, compute_pars, out_pars = js['model_pars'], js['data_pars'], js['compute_pars'], js['out_pars'] 
-            log(model_pars)
+            data_pars = path_norm_dict( data_pars) ### Local path normalizaton
+            out_pars  = path_norm_dict( out_pars) 
+            log("data_pars", "out_pars", data_pars, out_pars)
        
 
             log("#### Setup Model   ##############################################")
@@ -127,9 +131,9 @@ def benchmark_run(bench_pars=None, args=None, config_mode="test"):
             ypred, ytrue = module.predict(model=model, session=session, 
                                           data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars, 
                                           return_ytrue=1)   
-
             ytrue = np.array(ytrue).reshape(-1, 1)
             ypred = np.array(ypred).reshape(-1, 1)
+
             log("### Calculate Metrics    ########################################")
             for metric in metric_list:
                 ii = ii + 1

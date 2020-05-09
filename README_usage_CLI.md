@@ -2,8 +2,8 @@
 ```bash
 - ml_models    :  Running model training
 - ml_optim     :  Hyper-parameter search
-- ml_test      :  Testing for developpers.
 - ml_benchmark :  Benchmark
+- ml_test      :  Testing for developpers.
 
 ```
 
@@ -53,8 +53,9 @@ ml_models --do predict --config_file model_tf/1_lstm.json --config_mode "test"
 ml_models  --do test  --model_uri model_tf.1_lstm
 
 
-#### External  Models by URI
-ml_models --do test  --model_uri "ztest/mycustom/my_lstm.py"
+
+#### External  Models by Absolute path URI
+ml_models --do test  --model_uri "example/custom_model/1_lstm.py"
 
 
 

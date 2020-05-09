@@ -40,7 +40,7 @@ def os_bash(cmd):
 
 
 def log_separator():
-   print("\n" * 5, "*" * 120 )
+   print("\n" * 5, "*" * 120, flush=True )
 
 
 def log_info_repo(arg=None):
@@ -48,26 +48,43 @@ def log_info_repo(arg=None):
       Grab Github Variables
       https://help.github.com/en/actions/configuring-and-managing-workflows/using-environment-variables    
 
+      log_info_repo(arg=None)
+
    """ 
    #print( "Check", os_bash(  "echo $GITHUB_REF" ),  os_bash(  "echo $GITHUB_REPOSITORY" ),  os_bash(  "echo $GITHUB_SHA" )  )
    # repo = arg.repo
    # sha  = arg.sha 
 
+
    repo      =  os_bash(  "echo $GITHUB_REPOSITORY" )
    sha       =  os_bash(  "echo $GITHUB_SHA" )
    workflow  =  os_bash(  "echo $GITHUB_WORKFLOW" )
-   
+   branch    =  os_bash(  "echo $GITHUB_REF" )
+
+
    repo     = repo.replace("\n", "").replace("\r", "").strip()
    workflow = workflow.replace("\n", "").replace("\r", "").strip()
    sha      = sha.replace("\n", "").replace("\r", "").strip()
+   branch   = branch.replace("\n", "").replace("\r", "").strip()
 
+   github_repo_url = f"https://github.com/{repo}/tree/{sha}"
+   url_branch_file = f"https://github.com/{repo}/blob/{branch}/" 
+
+   # print(locals()["github_repo_url"] )
+   ### Export
+   dlocal = locals()
+   dd = { k: dlocal.get(k, "")  for k in [ "github_repo_url", "url_branch_file", "repo", "branch", "sha", "workflow"  ]}
 
    log_separator()
-   print("\n" * 1, "******** GITHUB_WOKFLOW : " + f"https://github.com/{repo}/actions?query=workflow%3A{workflow}"   )
-   print("\n" * 1, "******** GITHUB_REPO_URL : "   + f"https://github.com/{repo}/tree/{sha}" )
-   print("\n" * 1, "******** GITHUB_COMMIT_URL : " + f"https://github.com/{repo}/commit/{sha}" )
-
+   print("\n" * 1, "******** TAG :: ", dd, flush=True)
+   print("\n" * 1, "******** GITHUB_WOKFLOW : " + f"https://github.com/{repo}/actions?query=workflow%3A{workflow}" , flush=True)
+   print("\n" * 1, "******** GITHUB_REPO_URL : "   + github_repo_url , flush=True)
+   print("\n" * 1, "******** GITHUB_COMMIT_URL : " + f"https://github.com/{repo}/commit/{sha}" , flush=True)
    print("\n" * 1, "*" * 120 )
+
+   return dd
+
+
 
 
 
@@ -183,17 +200,17 @@ def test_jupyter(arg=None, config_mode="test_all"):
 
     """
     #log("os.getcwd", os.getcwd())
-    log_info_repo(arg)
+    git = log_info_repo(arg)
 
     root = os_package_root_path()
     root = root.replace("\\", "//")
-    log(root)
+    #log(root)
 
 
     path = str( os.path.join(root, "example/") )
-    log(path)
+    print(path)
 
-    log("############ List of files ################################")
+    print("############ List of files ################################")
     #model_list = get_recursive_files2(root, r'/*/*.ipynb')
     model_list  = get_recursive_files2(path, r'*.ipynb')
     model_list2 = get_recursive_files2(path, r'*.py')
@@ -209,12 +226,13 @@ def test_jupyter(arg=None, config_mode="test_all"):
     model_list = [t for t in model_list if t not in block_list]
 
     test_list = [f"ipython {t}"  for  t in model_list]
-    log(test_list) 
+    print(test_list, flush=True) 
 
-    log("############ Running files ################################")
+    log_separator()
+    print("############ Running Jupyter files ################################")
     for cmd in test_list:
         log_separator()
-        print( cmd)
+        print( cmd.replace("/home/runner/work/mlmodels/mlmodels/", git.get("url_branch_file", "")), "\n", flush=True)
         os.system(cmd)
 
 
@@ -258,11 +276,11 @@ def test_cli(arg=None):
 
     # fileconfig = path_norm( f"{path}/../config/cli_test_list.md" ) 
     fileconfig = path_norm( f"{path}/../README_usage_CLI.md" ) 
-    log(fileconfig)
+    print("Using :", fileconfig)
 
     def is_valid_cmd(cmd) :
        cmd = cmd.strip() 
-       if len(cmd) > 8 :
+       if len(cmd) > 15 :
           if cmd.startswith("ml_models ") or cmd.startswith("ml_benchmark ") or cmd.startswith("ml_optim ")  :
               return True
        return False 
@@ -270,7 +288,7 @@ def test_cli(arg=None):
 
     with open( fileconfig, mode="r" ) as f:
         cmd_list = f.readlines()
-    log(cmd_list[:5])
+    print(cmd_list[:3])
 
 
     #### Parse the CMD from the file .md and Execute
@@ -279,7 +297,7 @@ def test_cli(arg=None):
         if is_valid_cmd(cmd):
           cmd =  cmd  + to_logfile("cli", '+%Y-%m-%d_%H')
           log_separator()
-          print( cmd)
+          print( cmd, flush=True)
           os.system(cmd)
 
 
