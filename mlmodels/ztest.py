@@ -288,7 +288,7 @@ def test_cli(arg=None):
 
     with open( fileconfig, mode="r" ) as f:
         cmd_list = f.readlines()
-    log(cmd_list[:5])
+    print(cmd_list[:3])
 
 
     #### Parse the CMD from the file .md and Execute
