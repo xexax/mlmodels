@@ -383,7 +383,7 @@ def test_dataloader(path='dataset/json/refactor/'):
     for f in data_pars_list:
         try :
           f  = refactor_path + "/" + f
-          print("\n" *5 , "#" * 100,  f)
+          print("\n" *5 , "#" * 5,  f)
           
           log("#"*10, " Load JSON data_pars") 
           d = json.loads(open( f ).read())
