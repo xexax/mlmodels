@@ -380,8 +380,10 @@ def test_dataloader(path='dataset/json/refactor/'):
 
     for f in data_pars_list:
         try :
-          if os.path.isdir(f) : continue
           f  = refactor_path + "/" + f
+          
+          if os.path.isdir(f) : continue
+
           print("\n" *5 , "#" * 100)
           print(  f)
           
