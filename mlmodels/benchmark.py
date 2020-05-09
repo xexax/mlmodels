@@ -102,15 +102,15 @@ def benchmark_run(bench_pars=None, args=None, config_mode="test"):
     log("Model List", json_list)
     ii = -1
     for js in json_list :
-        log ( f"\n\n\n### Running {js} #####")
+        log ( f"\n\n\n### Running {js} ############################################")
         try : 
             log("#### Model URI and Config JSON")
             #config_path = path_norm(jsonf)
             #model_pars, data_pars, compute_pars, out_pars = params_json_load(config_path, config_mode= config_mode)
 
             model_pars, data_pars, compute_pars, out_pars = js['model_pars'], js['data_pars'], js['compute_pars'], js['out_pars'] 
-            data_pars = path_norm_dict( data_pars) 
-            out_pars = path_norm_dict( out_pars) 
+            data_pars = path_norm_dict( data_pars) ### Local path normalizaton
+            out_pars  = path_norm_dict( out_pars) 
             log("data_pars", "out_pars", data_pars, out_pars)
        
 

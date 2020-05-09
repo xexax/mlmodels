@@ -6,7 +6,7 @@ on:
     branches: 
       # - feat_dataloader
       - adata2
-      # - dev
+      - dev
 
   schedule:
     # * is a special character in YAML so you have to quote this string
@@ -93,7 +93,7 @@ jobs:
 
     ########  Test running 
     - name: ml_test
-      run:  ml_test --do test_dataloader  2>&1 | tee -a  cd /home/runner/work/mlmodels/mlmodels_store/log_dataloader/log_$(date '+%Y-%m-%d_%H-%M-%S-%3N').py
+      run:  ml_test --do test_dataloader  2>&1 | tee -a  cd /home/runner/work/mlmodels/mlmodels_store/log_dataloader/log_$(date '+%Y-%m-%d_%H-%M')_$(GITHUB_SHA).py
 
 
       
