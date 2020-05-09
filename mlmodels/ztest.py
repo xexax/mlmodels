@@ -68,7 +68,7 @@ def log_info_repo(arg=None):
    branch   = branch.replace("\n", "").replace("\r", "").strip()
 
    github_repo_url = f"https://github.com/{repo}/tree/{sha}"
-   url_branch_file = "https://github.com/{repo}/blob/{branch}/" 
+   url_branch_file = f"https://github.com/{repo}/blob/{branch}/" 
 
    # print(locals()["github_repo_url"] )
    ### Export
