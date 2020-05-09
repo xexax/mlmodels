@@ -382,10 +382,11 @@ def test_dataloader(path='dataset/json/refactor/'):
 
     for f in data_pars_list:
         try :
+          f  = refactor_path + "/" + f
           print(f)
           
           log("#"*10, " Load JSON data_pars") 
-          d = json.loads(open(f).read())
+          d = json.loads(open( f ).read())
           data_pars = d['test']['data_pars']
           data_pars = path_norm_dict( data_pars)
           print(data_pars)
