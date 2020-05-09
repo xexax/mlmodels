@@ -378,10 +378,20 @@ def test_dataloader(path='dataset/json/refactor/'):
     data_pars_list = l1
     """
 
+    data_pars_list  =  [
+
+            # path_norm('dataset/json/refactor/namentity_crm_bilstm_dataloader_new.json' )
+            path_norm('dataset/json/refactor/torchhub_cnn_dataloader.json' ),
+            path_norm('dataset/json/refactor/model_list_CIFAR.json' ),
+            path_norm('dataset/json/refactor/resnet34_benchmark_mnist.json' ),
+            path_norm('dataset/json/refactor/keras_textcnn.json'),
+            path_norm('dataset/json/refactor/namentity_crm_bilstm_new.json' )
+
+    ] 
 
     for f in data_pars_list:
         try :
-          f  = refactor_path + "/" + f
+          #f  = refactor_path + "/" + f
 
           if os.path.isdir(f) : continue
 
