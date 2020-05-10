@@ -83,15 +83,15 @@ ml_optim --do
 
 
 #### For normal optimization search method
-    ml_optim --do search  --config_file optim_config.json  --config_mode "test"
+    ml_optim --do search  --config_file template/optim_config.json  --config_mode "test"
 
 
 ###### for pruning method
-    ml_optim --do search  --config_file optim_config_prune.json   --config_mode "test"
+    ml_optim --do search  --config_file template/optim_config_prune.json   --config_mode "test"
 
 
 ###### Using Model default params
-    ml_optim --do test   --model_uri model_tf.1_lstm.py   --ntrials 2
+    ml_optim --do test   --model_uri model_tf.1_lstm   --ntrials 2
 
 
 ```
