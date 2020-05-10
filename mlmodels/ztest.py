@@ -65,10 +65,13 @@ def log_info_repo(arg=None):
    repo     = repo.replace("\n", "").replace("\r", "").strip()
    workflow = workflow.replace("\n", "").replace("\r", "").strip()
    sha      = sha.replace("\n", "").replace("\r", "").strip()
-   branch   = branch.replace("\n", "").replace("\r", "").strip()
+   branch   = branch.replace("\n", "").replace("\r", "").strip().replace("refs/heads/", "")
 
    github_repo_url = f"https://github.com/{repo}/tree/{sha}"
    url_branch_file = f"https://github.com/{repo}/blob/{branch}/" 
+
+   url_branch_file2 = f"https://github.com/{repo}/tree/{branch}/" 
+
 
    # print(locals()["github_repo_url"] )
    ### Export
@@ -78,6 +81,8 @@ def log_info_repo(arg=None):
    log_separator()
    print("\n" * 1, "******** TAG :: ", dd, flush=True)
    print("\n" * 1, "******** GITHUB_WOKFLOW : " + f"https://github.com/{repo}/actions?query=workflow%3A{workflow}" , flush=True)
+
+   print("\n" * 1, "******** GITHUB_REPO_BRANCH : "   + url_branch_file2 , flush=True)
    print("\n" * 1, "******** GITHUB_REPO_URL : "   + github_repo_url , flush=True)
    print("\n" * 1, "******** GITHUB_COMMIT_URL : " + f"https://github.com/{repo}/commit/{sha}" , flush=True)
    print("\n" * 1, "*" * 120 )
