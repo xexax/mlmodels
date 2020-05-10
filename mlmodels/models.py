@@ -377,7 +377,7 @@ def config_init(to_path="."):
     json.dump(ddict, open(path_config, mode="w"))
 
     from mlmodels.util import config_path_pretrained, config_path_dataset
-    log("Config path", get_pretrained_path())
+    log("Config path", config_path_pretrained())
 
 
 def config_model_list(folder=None):
@@ -404,7 +404,7 @@ def fit_cli(arg):
     model = model_create(module, model_p, data_p, compute_p)  # Exact map JSON and paramters
 
     log("Fit")
-    model, sess = module.fit(model, data_pars=data_p, compute_pars=compute_p, out_pars=out_p)
+    model, sess = fit(module, model, data_pars=data_p, compute_pars=compute_p, out_pars=out_p)
 
     log("Save")
     save_pars = {"path": f"{arg.path}", "model_uri": arg.model_uri}
@@ -419,8 +419,8 @@ def predict_cli(arg):
 
     load_pars = {"path": f"{arg.path}", "model_uri": model_uri}
     module = module_load(model_uri)  # '1_lstm.py
-    model, session = load(load_pars)
-    ydict = module.predict(model, session, data_pars=data_p, compute_pars=compute_p, out_pars=out_p)
+    model, session = load(module, load_pars)
+    ydict = predict(module, model, session, data_pars=data_p, compute_pars=compute_p, out_pars=out_p)
     return ydict
 
 

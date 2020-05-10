@@ -418,14 +418,18 @@ class pandasDataset(Dataset):
         else:
             path = data_info.get("data_path","")
         filename = dataset if dataset.find('.csv') > -1 else dataset + '.csv'  ## CSV file
-       
+
         colX = args.get('colX',[])
         coly = args.get('coly',[])
  
         # df = torch.load(os.path.join(path, filename))
         file_path = path_norm(os.path.join(path, filename))
+        if not os.path.exists(file_path):
+            file_path = path_norm(os.path.join(path, dataset, 'train.csv' if train else 'test.csv'))
+
         df = pd.read_csv(file_path, **args.get("read_csv_parm",{}))
         self.df = df
+        print(">>>> df: ", df.head())
  
  
         #### Split  ####################
