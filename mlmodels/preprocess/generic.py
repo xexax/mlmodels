@@ -23,6 +23,12 @@ from mlmodels.util import path_norm, log
 from torch.utils.data import Dataset, DataLoader
 
 
+def log2(*v, **kw) :
+  if VERBOSE : log(*v, **kw)
+
+VERBOSE = True
+
+
 ###############################################################################################################
 ###############################################################################################################
 def torch_datasets_wrapper(sets, args_list = None, **args):
@@ -193,6 +199,7 @@ def get_dataset_torch(data_info, **args):
     if not dataset or not data_path:
         raise Exception("please add these 'data_path','dataset' in data_info")
  
+    log2("#### If transformer URI is Provided")
     transform = None
     if transform_info :
         transform_uri = transform_info.get("uri", "mlmodels.preprocess.image:torch_transform_mnist" )
@@ -214,7 +221,7 @@ def get_dataset_torch(data_info, **args):
 
     # dset = load_function(d.get("dataset", "torchvision.datasets:MNIST") ) 
 
-    print("dset : ",dset)
+    print("dataset : ",dset)
     if data_type != "tch_dataset":
         ###### Custom Build Dataset   ####################################################
         

@@ -392,7 +392,7 @@ def test_dataloader(path='dataset/json/refactor/'):
     for f in data_pars_list:
         try :
           #f  = refactor_path + "/" + f
-          f= f.replace("gitdev/mlmodels/",  "gitdev/mlmodels2/" )
+          # f= f.replace("gitdev/mlmodels/",  "gitdev/mlmodels2/" )
 
           if os.path.isdir(f) : continue
 
