@@ -78,6 +78,9 @@ https://github.com/arita37/mlmodels_store
 
 
 
+#### Parsing/Cleaning the logs
+https://github.com/arita37/mlmodels_store/blob/master/.github/workflows/auto.yml
+
 
 
 
