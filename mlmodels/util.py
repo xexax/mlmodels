@@ -436,23 +436,25 @@ def save(model=None, session=None, save_pars=None):
 def load_tf(load_pars=""):
   """
   https://www.mlflow.org/docs/latest/python_api/mlflow.tensorflow.html#
+  https://www.tensorflow.org/api_docs/python/tf/compat/v1/train/Saver#restore
 
  """
   import tensorflow as tf
-  tf_sess = tf.compat.v1.Session() # tf.Session()
+  # tf_sess = tf.compat.v1.Session() # tf.Session()
   model_path = os.path.join(load_pars['path'], "model")
-  saver = tf.compat.v1.train.Saver()
+  saver = tf.compat.v1.train.Saver()  
   with  tf.compat.v1.Session() as sess:
-      saver.restore(tf_sess, model_path)
-  return tf_sess
+      saver.restore(sess, model_path)
+  return sess
 
 
 def save_tf(model=None, sess=None, save_pars= None):
+  # https://www.tensorflow.org/api_docs/python/tf/compat/v1/train/Saver#restore  
   import tensorflow as tf
   saver = tf.compat.v1.train.Saver()
-  if not os.path.exists(save_pars['path']):
-      os.makedirs(save_pars['path'], exist_ok=True)
-  return saver.save(sess, os.path.join(save_pars['path'], "model"))
+  model_path = os.path.join(save_pars['path']  , "/model/")  
+  os.makedirs(model_path, exist_ok=True)
+  return saver.save(sess, model_path)
 
 
 
