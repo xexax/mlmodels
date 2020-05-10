@@ -17,7 +17,7 @@
 		},
 
 		"data_pars": {
-			"data_path": "dataset/timeseries/GOOG-year.csv",
+			"data_path": "dataset/timseries/GOOG-year.csv",
 			"data_type": "pandas",
 			"size": [0, 0, 6],
 			"output_size": [0, 6]
@@ -43,4 +43,3 @@
 
 
 }
-

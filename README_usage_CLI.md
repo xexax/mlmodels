@@ -2,8 +2,8 @@
 ```bash
 - ml_models    :  Running model training
 - ml_optim     :  Hyper-parameter search
-- ml_test      :  Testing for developpers.
 - ml_benchmark :  Benchmark
+- ml_test      :  Testing for developpers.
 
 ```
 
@@ -15,41 +15,57 @@
 =======
 
 ### How to use Command Line
+
 ```bash
 
-
 ml_models --do  
-    model_list  :  list all models in the repo                            
-    testall     :  test all modules inside model_tf
-    test        :  test a certain module inside model_tf
-    fit         :  wrap fit generic m    ethod
-    predict     :  predict  using a pre-trained model and some data
-    generate_config  :  generate config file from code source
+    init            : copy to path  --path "myPath"
+    generate_config : generate config file from code source
+    model_list      : list all models in the repo
+    fit             : wrap fit generic method
+    predict         : predict  using a pre-trained model and some data
+    test            : Test a model
+
     
+#### Examples
 
-  ## --do fit  
-     --model_uri     model_tf.1_lstm
-     --save_folder   myfolder/
-     --config_file   myfile.json
-     --config_mode   "test"
+### Copy Notebooks to path
+ml_models --do init  --path ztest/
 
-
-  ## --do predict  
-     --model_uri     model_tf.1_lstm
-     --save_folder   myfolder/
-     --config_file   myfile.json
-     --config_mode   "test"
+### list all models available in the repo
+ml_models --do model_list  
 
 
-#### generate config file
-    ml_models  --do generate_config  --model_uri model_tf.1_lstm.py  --save_folder "c:\myconfig"
-
-#### TensorFlow LSTM model
-    ml_models  --do test  --model_uri model_tf/1_lstm.py  
+#### generate JSON config file for one model
+ml_models  --do generate_config  --model_uri model_tf.1_lstm  --save_folder "ztest/"
 
 
-#### Custom  Models by URI
-    ml_models --do test  --model_uri "D:\_devs\Python01\gitdev\mlmodels\mlmodels\model_tf.1_lstm.py"
+#### Fit model and Save
+ml_models --do fit     --config_file model_tf/1_lstm.json --config_mode "test"
+
+
+#### Load model and Save results
+ml_models --do predict --config_file model_tf/1_lstm.json --config_mode "test"
+
+
+
+####  Internal model
+ml_models  --do test  --model_uri model_tf.1_lstm
+
+
+
+#### External  Models by Absolute path URI
+ml_models --do test  --model_uri "example/custom_model/1_lstm.py"
+
+
+
+
+
+
+
+
+
+
 
 
 ```
@@ -67,19 +83,15 @@ ml_optim --do
 
 
 #### For normal optimization search method
-    ml_optim --do search --ntrials 1  --config_file optim_config.json --optim_method normal
+    ml_optim --do search  --config_file template/optim_config.json  --config_mode "test"
 
 
 ###### for pruning method
-    ml_optim --do search --ntrials 1  --config_file optim_config.json --optim_method prune  
+    ml_optim --do search  --config_file template/optim_config_prune.json   --config_mode "test"
 
 
 ###### Using Model default params
-    ml_optim --do search --modelname model_tf.1_lstm.py  
-
-
-###### Using Model default params
-    ml_optim --do test  --modelname model_tf.1_lstm.py  
+    ml_optim --do test   --model_uri model_tf.1_lstm   --ntrials 2
 
 
 ```
