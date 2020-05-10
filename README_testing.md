@@ -52,10 +52,6 @@ and add it to the testing process
 
 
 
-
-
-
-
 ### Overview
 
 #### Configuration of auto-test :
@@ -75,7 +71,6 @@ https://github.com/arita37/mlmodels/blob/dev/mlmodels/ztest.py
 #### Log of testing
 Uploaded directly here :
 https://github.com/arita37/mlmodels_store
-
 
 
 #### Parsing/Cleaning the logs
