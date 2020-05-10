@@ -549,7 +549,7 @@ def cli_load_arguments(config_file=None):
 
 def main():
     arg = cli_load_arguments()
-    log(arg.do, arg. config_file)
+    log(arg.do, arg.config_file, arg)
 
     #### Input is String list of model name
     if ".py" in arg.do:
