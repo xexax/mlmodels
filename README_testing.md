@@ -7,17 +7,6 @@ and add it to the testing process
 
 ## Flow of testing
 
-### test_cli : Command Line Testing
-    1. https://github.com/arita37/mlmodels/blob/dev/.github/workflows/test_cli.yml
-    
-    2. ml_test --do test_cli
-
-    3. https://github.com/arita37/mlmodels_store/tree/master/log_test_cli     : Raw Logs
-
-    4. https://github.com/arita37/mlmodels_store/tree/master/error_list/      : Clean Logs
-
-
-
 ### test_fast_linux : Basic Import check
     1. https://github.com/arita37/mlmodels/blob/dev/.github/workflows/test_fast_linux.yml
     
@@ -28,22 +17,65 @@ and add it to the testing process
     4. https://github.com/arita37/mlmodels_store/tree/master/error_list/      : Clean Logs
 
 
-### test_pull_request : PR 
-    1. https://github.com/arita37/mlmodels/blob/dev/.github/workflows/test_pullrequest.yml
-    
-    2. ml_test --do test_pullrequest
+### test_cli : Command Line Testing
+    Test if input CLI is 
 
-    3. https://github.com/arita37/mlmodels_store/tree/master/log_pullrequest     : Raw Logs
+    1. https://github.com/arita37/mlmodels/blob/dev/.github/workflows/test_cli.yml
+    
+    2. ml_test --do test_cli
+
+    3. https://github.com/arita37/mlmodels_store/tree/master/log_test_cli     : Raw Logs
 
     4. https://github.com/arita37/mlmodels_store/tree/master/error_list/      : Clean Logs
 
 
-### test_benchmark : benchmark 
+### test_dataloader : Test if dataloader works
+    Used to assess accuracy of the models, and compare different models.
+
+    1. https://github.com/arita37/mlmodels/blob/dev/.github/workflows/test_dataloader.yml
+    
+    2. ml_test --do test_dataloader
+
+    3. https://github.com/arita37/mlmodels_store/tree/master/log_dataloader     : Raw Logs
+
+    4. https://github.com/arita37/mlmodels_store/tree/master/error_list/      : Clean Logs
+
+
+### test_jupyter : Test if jupyter notebooks works
+    Used to assess accuracy of the models, and compare different models.
+
+    1. https://github.com/arita37/mlmodels/blob/dev/.github/workflows/test_jupyter.yml
+    
+    2. ml_test --do test_jupyter
+
+    3. https://github.com/arita37/mlmodels_store/tree/master/log_jupyter     : Raw Logs
+
+    4. https://github.com/arita37/mlmodels_store/tree/master/error_list/      : Clean Logs
+
+
+
+### test_benchmark : benchmark
+    Used to assess accuracy of the models, and compare different models.
+
     1. https://github.com/arita37/mlmodels/blob/dev/.github/workflows/test_benchmark.yml
     
     2. ml_test --do test_benchmark
 
     3. https://github.com/arita37/mlmodels_store/tree/master/log_benchmark     : Raw Logs
+
+    4. https://github.com/arita37/mlmodels_store/tree/master/error_list/      : Clean Logs
+
+
+
+### test_pull_request : PR 
+    Used when submitting a PR :
+        Run all .py files in the folder pullrequest/
+
+    1. https://github.com/arita37/mlmodels/blob/dev/.github/workflows/test_pullrequest.yml
+    
+    2. ml_test --do test_pullrequest
+
+    3. https://github.com/arita37/mlmodels_store/tree/master/log_pullrequest     : Raw Logs
 
     4. https://github.com/arita37/mlmodels_store/tree/master/error_list/      : Clean Logs
 
