@@ -213,9 +213,9 @@ def get_dataset_torch(data_info, **args):
                
         except Exception as e :
             transform = None
-            print(e)
+            print("transform", e)
  
-           
+    log("#### Loading dataloader URI")           
     dset = load_function(dataloader)
     print("dataset : ",dset)           
 

@@ -370,6 +370,56 @@ def test_run_model():
 
 
 
+
+
+
+
+def test_single(arg):
+    # refactor_path = path_norm( path )
+    # data_pars_list = [(f,json.loads(open(refactor_path+f).read())['test']['data_pars']) for f in os.listdir(refactor_path)]
+    
+
+    #data_pars_list = [ refactor_path + "/" + f for f in os.listdir(refactor_path)  if os.path.isfile( refactor_path + "/" + f)  ]
+    #print(data_pars_list)
+
+    data_pars_list  =  [
+            path_norm( arg.single)
+    ] 
+
+
+    for f in data_pars_list:
+        try :
+          #f  = refactor_path + "/" + f
+          # f= f.replace("gitdev/mlmodels/",  "gitdev/mlmodels2/" )
+
+          if os.path.isdir(f) : continue
+
+          print("\n" *5 , "#" * 100)
+          print(  f, "\n")
+          
+
+          print("#"*5, " Load JSON data_pars") 
+          d = json.loads(open( f ).read())
+          data_pars = d['test']['data_pars']
+          data_pars = path_norm_dict( data_pars)
+          print(data_pars)
+          
+
+          print( "\n", "#"*5, " Load DataLoader ") 
+          loader    = DataLoader(data_pars)
+
+
+          print("\n", "#"*5, " compute DataLoader ")           
+          loader.compute()
+
+          print("\n", "#"*5, " get_Data DataLoader ")  
+          print(loader.get_data())
+
+        except Exception as e :
+          print("Error", f,  e)
+
+
+
 def test_dataloader(path='dataset/json/refactor/'):
     refactor_path = path_norm( path )
     # data_pars_list = [(f,json.loads(open(refactor_path+f).read())['test']['data_pars']) for f in os.listdir(refactor_path)]
@@ -381,12 +431,15 @@ def test_dataloader(path='dataset/json/refactor/'):
 
     data_pars_list  =  [
 
-            # path_norm('dataset/json/refactor/namentity_crm_bilstm_dataloader_new.json' )
+
             path_norm('dataset/json/refactor/torchhub_cnn_dataloader.json' ),
-            #path_norm('dataset/json/refactor/model_list_CIFAR.json' ),
-            #path_norm('dataset/json/refactor/resnet34_benchmark_mnist.json' ),
-            #path_norm('dataset/json/refactor/keras_textcnn.json'),
-            #path_norm('dataset/json/refactor/namentity_crm_bilstm_new.json' )
+
+            path_norm('dataset/json/refactor/namentity_crm_bilstm_dataloader_new.json' )
+
+            path_norm('dataset/json/refactor/model_list_CIFAR.json' ),
+            path_norm('dataset/json/refactor/resnet34_benchmark_mnist.json' ),
+            path_norm('dataset/json/refactor/keras_textcnn.json'),
+            path_norm('dataset/json/refactor/namentity_crm_bilstm_new.json' )
 
     ] 
 
@@ -442,6 +495,11 @@ def cli_load_arguments(config_file=None):
     ###### model_pars
     add("--path", default='dataset/json/refactor/', help="name of the model for --do test")
 
+
+
+    add("--file", default='dataset/json/refactor/', help="name of the model for --do test")
+
+
     ###### data_pars
     # add("--data_path", default="dataset/GOOG-year_small.csv", help="path of the training file")
 
@@ -462,6 +520,9 @@ def main():
     if arg.do == "test_run_model":
        test_run_model()
 
+
+    if arg.do == "test_single":
+        test_single(arg)  
 
 if __name__ == "__main__":
    VERBOSE =1  
