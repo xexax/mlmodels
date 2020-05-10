@@ -83,7 +83,7 @@ ml_optim --do
 
 
 #### For normal optimization search method
-    ml_optim --do search  --config_file optim_config.json  --config_mode "test"
+    ml_optim --do search  --config_file template/optim_config.json  --config_mode "test"
 
 
 ###### for pruning method
