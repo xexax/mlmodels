@@ -41,6 +41,18 @@ and add it to the testing process
     4. https://github.com/arita37/mlmodels_store/tree/master/error_list/      : Clean Logs
 
 
+### test_jupyter : Test if jupyter notebooks works
+    Used to assess accuracy of the models, and compare different models.
+
+    1. https://github.com/arita37/mlmodels/blob/dev/.github/workflows/test_jupyter.yml
+    
+    2. ml_test --do test_jupyter
+
+    3. https://github.com/arita37/mlmodels_store/tree/master/log_jupyter     : Raw Logs
+
+    4. https://github.com/arita37/mlmodels_store/tree/master/error_list/      : Clean Logs
+
+
 
 ### test_benchmark : benchmark
     Used to assess accuracy of the models, and compare different models.
