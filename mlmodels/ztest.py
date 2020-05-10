@@ -65,10 +65,13 @@ def log_info_repo(arg=None):
    repo     = repo.replace("\n", "").replace("\r", "").strip()
    workflow = workflow.replace("\n", "").replace("\r", "").strip()
    sha      = sha.replace("\n", "").replace("\r", "").strip()
-   branch   = branch.replace("\n", "").replace("\r", "").strip()
+   branch   = branch.replace("\n", "").replace("\r", "").strip().replace("refs/heads/", "")
 
    github_repo_url = f"https://github.com/{repo}/tree/{sha}"
    url_branch_file = f"https://github.com/{repo}/blob/{branch}/" 
+
+   url_branch_file2 = f"https://github.com/{repo}/tree/{branch}/" 
+
 
    # print(locals()["github_repo_url"] )
    ### Export
@@ -78,6 +81,8 @@ def log_info_repo(arg=None):
    log_separator()
    print("\n" * 1, "******** TAG :: ", dd, flush=True)
    print("\n" * 1, "******** GITHUB_WOKFLOW : " + f"https://github.com/{repo}/actions?query=workflow%3A{workflow}" , flush=True)
+
+   print("\n" * 1, "******** GITHUB_REPO_BRANCH : "   + url_branch_file2 , flush=True)
    print("\n" * 1, "******** GITHUB_REPO_URL : "   + github_repo_url , flush=True)
    print("\n" * 1, "******** GITHUB_COMMIT_URL : " + f"https://github.com/{repo}/commit/{sha}" , flush=True)
    print("\n" * 1, "*" * 120 )
@@ -503,8 +508,9 @@ def cli_load_arguments(config_file=None):
     import argparse
     from mlmodels.util import load_config, path_norm
     
-    config_file =  path_norm( "config/test_config.json" ) if config_file is None  else config_file
-    log(config_file)
+    config_file = "config/test_config.json" if config_file is None  else config_file
+    config_file = path_norm( config_file)
+    # log(config_file)
 
     p = argparse.ArgumentParser()
     def add(*w, **kw):
@@ -529,10 +535,10 @@ def cli_load_arguments(config_file=None):
     """
      https://help.github.com/en/actions/configuring-and-managing-workflows/using-environment-variables
     """
-    add("--repo" , default="GITHUB_REPOSITORT"      , help="test/ prod /uat")
-    add("--sha" , default="GITHUB_SHA"      , help="test/ prod /uat")
-    add("--ref" , default="GITHUB_REF"      , help="test/ prod /uat")
-    add("--workflow" , default="GITHUB_WORKFLOW"      , help="test/ prod /uat")
+    # add("--repo" , default="GITHUB_REPOSITORT"      , help="test/ prod /uat")
+    # add("--sha" , default="GITHUB_SHA"      , help="test/ prod /uat")
+    # add("--ref" , default="GITHUB_REF"      , help="test/ prod /uat")
+    # add("--workflow" , default="GITHUB_WORKFLOW"      , help="test/ prod /uat")
 
 
     # add("--event_name" , default="test"      , help="test/ prod /uat")
@@ -548,7 +554,7 @@ def cli_load_arguments(config_file=None):
 
 def main():
     arg = cli_load_arguments()
-    log(arg.do, arg.repo, arg.sha)
+    log(arg.do, arg.config_file, arg)
 
     #### Input is String list of model name
     if ".py" in arg.do:
@@ -556,7 +562,7 @@ def main():
         test_list(s.split(","))
 
     else:
-        log("Running command", arg.do)
+        log("ml_test --do " + arg.do)
         globals()[arg.do](arg)
 
 

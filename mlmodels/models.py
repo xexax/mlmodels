@@ -408,19 +408,19 @@ def fit_cli(arg):
 
     log("Save")
     save_pars = {"path": f"{arg.path}", "model_uri": arg.model_uri}
-    save(save_pars, model, sess)
+    save(module, model, sess, save_pars)
 
 
 def predict_cli(arg):
     config_file = path_norm(arg.config_file)
     model_p, data_p, compute_p, out_p = config_get_pars(config_file, arg.config_mode)
     model_uri = model_p['model_uri']
-
-
-    load_pars = {"path": f"{arg.path}", "model_uri": model_uri}
-    module = module_load(model_uri)  # '1_lstm.py
+    path      = out_p['path']
+    
+    load_pars      = {"path": f"{path}", "model_uri": model_uri}
+    module         = module_load(model_uri)  # '1_lstm.py
     model, session = load(module, load_pars)
-    ydict = predict(module, model, session, data_pars=data_p, compute_pars=compute_p, out_pars=out_p)
+    ydict          = predict(module, model, session, data_pars=data_p, compute_pars=compute_p, out_pars=out_p)
     return ydict
 
 
@@ -480,7 +480,7 @@ def main():
 
     if arg.do == "init":
         path = os.getcwd() if arg.path is not None else arg.path
-        config_init(to_path=arg.path)
+        config_init(to_path=path)
         return 0
 
     if arg.do == "generate_config":

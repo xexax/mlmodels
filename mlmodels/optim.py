@@ -240,7 +240,8 @@ def test_all():
 
 def optim_cli(arg):
     # model_pars, data_pars, compute_pars = config_get_pars(arg)
-    config_file = path_norm( "template/optim_config.json") if arg.config_file is None else arg.config_file
+    config_file = "template/optim_config.json" if arg.config_file is None else arg.config_file
+    config_file =  path_norm( config_file )
 
     js = json.load(open(config_file, mode='r'))  # Config
     js = js[arg.config_mode]  # test /uat /prod
