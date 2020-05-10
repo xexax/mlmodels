@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import os
 import re
+import fnmatch
 
 # import toml
 from pathlib import Path
@@ -19,181 +20,15 @@ class to_namespace(object):
         return self.__dict__.get(key)
 
 
-def log(*s, n=0, m=1):
+def log(*s, n=0, m=0):
     sspace = "#" * n
     sjump = "\n" * m
-    print(sjump, sspace, s, sspace, flush=True)
+    print("")
+    print(sjump, sspace, *s, sspace, flush=True)
+
 
 
 ####################################################################################################
-def get_device_torch():
-    import torch, numpy as np
-    if torch.cuda.is_available():
-        device = "cuda:{}".format(np.random.randint(torch.cuda.device_count()))
-    else:
-        device = "cpu"
-    print("use device", device)
-    return device
-
-
-
-
-def load_function(package="mlmodels.util", name="path_norm"):
-  import importlib
-  return  getattr(importlib.import_module(package), name)
-
-
-
-
-def os_folder_copy(src, dst):
-    """Copy a directory structure overwriting existing files"""
-    import shutil
-    for root, dirs, files in os.walk(src):
-        if not os.path.isdir(root):
-            os.makedirs(root)
-
-        for file in files:
-            rel_path = root.replace(src, '').lstrip(os.sep)
-            dest_path = os.path.join(dst, rel_path)
-
-            if not os.path.isdir(dest_path):
-                os.makedirs(dest_path)
-
-            shutil.copyfile(os.path.join(root, file), os.path.join(dest_path, file))
-
-
-
-def os_get_file(folder=None, block_list=[], pattern=r'*.py'):
-    # Get all the model.py into folder
-    folder = os_package_root_path() if folder is None else folder
-    # print(folder)
-    module_names = get_recursive_files3(folder, pattern)
-    print(module_names)
-
-
-    NO_LIST = []
-    NO_LIST = NO_LIST + block_list
-
-    list_select = []
-    for t in module_names:
-        t = t.replace(folder, "").replace("\\", ".").replace(".py", "")
-
-        flag = False
-        for x in NO_LIST:
-            if x in t: flag = True
-
-        if not flag:
-            list_select.append(t)
-
-    return list_select
-
-
-def model_get_list(folder=None, block_list=[]):
-    # Get all the model.py into folder
-    folder = os_package_root_path(__file__) if folder is None else folder
-    # print(folder)
-    module_names = get_recursive_files(folder, r'/*model*/*.py')
-
-    NO_LIST = ["__init__", "util", "preprocess"]
-    NO_LIST = NO_LIST + block_list
-
-    list_select = []
-    for t in module_names:
-        t = t.replace(folder, "").replace("\\", ".")
-
-        flag = False
-        for x in NO_LIST:
-            if x in t: flag = True
-
-        if not flag:
-            list_select.append(t)
-
-    return list_select
-
-
-def get_recursive_files2(folderPath, ext):
-    results = os.listdir(folderPath)
-    outFiles = []
-    for file in results:
-        if os.path.isdir(os.path.join(folderPath, file)):
-            outFiles += get_recursive_files(os.path.join(folderPath, file), ext)
-        elif re.match(ext, file):
-            outFiles.append( folderPath + "/" + file)
-
-    return outFiles
-
-
-def get_recursive_files3(folderPath, ext):
-    results = os.listdir(folderPath)
-    outFiles = []
-    for file in results:
-        if os.path.isdir(os.path.join(folderPath, file)):
-            outFiles += get_recursive_files(os.path.join(folderPath, file), ext)
-        elif re.match(ext, file):
-            outFiles.append(file)
-    return outFiles
-
-
-
-def get_model_uri(file):
-  return Path(os.path.abspath(file)).parent.name + "." + os.path.basename(file).replace(".py", "")
-
-
-
-def get_recursive_files(folderPath, ext='/*model*/*.py'):
-    import glob
-    files = glob.glob(folderPath + ext, recursive=True)
-    return files
-
-
-
-
-
-def json_norm(ddict):
-  """
-    String to Object for JSON on file
-
-
-  """  
-  for k,t in ddict.items(): 
-     if t == "None" :
-         ddict[k] = None
-  return ddict    
-         
-
-
-def path_norm(path=""):
-    root = os_package_root_path(__file__, 0)
-
-    if len(path) == 0 or path is None:
-        path = root
-
-    tag_list = [ "model_", "//model_",  "dataset", "template", "ztest", "example"  ]
-
-
-    for t in tag_list :
-        if path.startswith(t) :
-            path = os.path.join(root, path)
-            return path
-    return path
-
-
-def path_norm_dict(ddict):
-    for k,v in ddict.items():
-        if "path" in k :
-            ddict[k] = path_norm(v)
-    return ddict
-
-
-"""
-def os_module_path():
-    import inspect
-    current_dir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
-    parent_dir = os.path.dirname(current_dir)
-    # sys.path.insert(0, parent_dir)
-    return parent_dir
-"""
-
 def os_package_root_path(filepath="", sublevel=0, path_add=""):
     """
        get the module package root folder
@@ -225,6 +60,151 @@ def os_file_current_path():
     return val
 
 
+
+def os_folder_copy(src, dst):
+    """Copy a directory structure overwriting existing files"""
+    import shutil
+    for root, dirs, files in os.walk(src):
+        if not os.path.isdir(root):
+            os.makedirs(root)
+
+        for file in files:
+            rel_path = root.replace(src, '').lstrip(os.sep)
+            dest_path = os.path.join(dst, rel_path)
+
+            if not os.path.isdir(dest_path):
+                os.makedirs(dest_path)
+
+            shutil.copyfile(os.path.join(root, file), os.path.join(dest_path, file))
+
+
+
+def os_get_file(folder=None, block_list=[], pattern=r'*.py'):
+    # Get all the model.py into folder
+    folder = os_package_root_path() if folder is None else folder
+    # print(folder)
+    module_names = get_recursive_files3(folder, pattern)
+    # print(module_names)
+
+
+    NO_LIST = []
+    NO_LIST = NO_LIST + block_list
+
+    list_select = []
+    for t in module_names:
+        t = t.replace(folder, "").replace("\\", ".").replace(".py", "").replace("/", ".")
+
+        flag = False
+        for x in NO_LIST:
+            if x in t: flag = True
+
+        if not flag:
+            list_select.append(t)
+
+    return list_select
+
+
+def model_get_list(folder=None, block_list=[]):
+    # Get all the model.py into folder
+    folder = os_package_root_path(__file__) if folder is None else folder
+    # print(folder)
+    module_names = get_recursive_files(folder, r'/*model*/*.py')
+
+    NO_LIST = ["__init__", "util", "preprocess"]
+    NO_LIST = NO_LIST + block_list
+
+    list_select = []
+    for t in module_names:
+        t = t.replace(folder, "").replace("\\", ".").replace(".py", "").replace("/", ".")
+
+        flag = False
+        for x in NO_LIST:
+            if x in t: flag = True
+
+        if not flag:
+            list_select.append(t)
+
+    return list_select
+
+
+
+def get_recursive_files(folderPath, ext='/*model*/*.py'):
+    import glob
+    files = glob.glob(folderPath + ext, recursive=True)
+    return files
+
+
+
+def get_recursive_files2(folderPath, ext):
+    import fnmatch  #Unix type match
+    results = os.listdir(folderPath)
+    outFiles = []
+    # print(results)
+
+
+    for file in results:
+        # print(file)
+        if os.path.isdir(os.path.join(folderPath, file)):
+            outFiles += get_recursive_files(os.path.join(folderPath, file), ext)
+
+        elif fnmatch.fnmatch(file, ext):
+            outFiles.append( folderPath + "/" + file)
+
+    return outFiles
+
+
+def get_recursive_files3(folderPath, ext):
+    results = os.listdir(folderPath)
+    outFiles = []
+    for file in results:
+        if os.path.isdir(os.path.join(folderPath, file)):
+            outFiles += get_recursive_files(os.path.join(folderPath, file), ext)
+        # elif re.match(ext, file): 
+        elif fnmatch.fnmatch(file, ext):
+            outFiles.append(file)
+    return outFiles
+
+
+
+def get_model_uri(file):
+  return Path(os.path.abspath(file)).parent.name + "." + os.path.basename(file).replace(".py", "")
+
+
+
+
+def json_norm(ddict):  
+  for k,t in ddict.items(): 
+     if t == "None" :
+         ddict[k] = None
+  return ddict    
+         
+
+
+def path_norm(path=""):
+    root = os_package_root_path(__file__, 0)
+
+    path = path.strip()
+    if len(path) == 0 or path is None:
+        path = root
+
+    tag_list = [ "model_", "//model_",  "dataset", "template", "ztest", "example", "config"  ]
+
+
+    for t in tag_list :
+        if path.startswith(t) :
+            path = os.path.join(root, path)
+            return path
+    return path
+
+
+def path_norm_dict(ddict):
+    for k,v in ddict.items():
+        if "path" in k :
+            ddict[k] = path_norm(v)
+    return ddict
+
+
+
 ####################################################################################################
 def test_module(model_uri="model_tf/1_lstm.py", data_path="dataset/", pars_choice="json", reset=True):
     ###loading the command line arguments
@@ -242,6 +222,9 @@ def test_module(model_uri="model_tf/1_lstm.py", data_path="dataset/", pars_choic
     log("#### Run module test   ##############################################")
     from mlmodels.models import test_module as test_module_global
     test_module_global(model_uri, model_pars, data_pars, compute_pars, out_pars)
+
+
+
 
 
 ####################################################################################################
@@ -273,8 +256,6 @@ def config_set(ddict2):
     json.dump(ddict, open(ddict, mode='w'))
    
 
-
-
 def params_json_load(path, config_mode="test", 
                      tlist= [ "model_pars", "data_pars", "compute_pars", "out_pars"] ):
     import json
@@ -291,12 +272,6 @@ def params_json_load(path, config_mode="test",
             log("error in json, cannot load ", t)
 
     return tuple(list_pars)
-
-
-
-
-
-
 
 
 
@@ -396,7 +371,7 @@ def env_build(model_uri, env_pars):
 
 
 ####################################################################################################
-########## TF specific #############################################################################
+########## Specific ################################################################################
 def tf_deprecation():
     try:
         from tensorflow.python.util import deprecation
@@ -404,6 +379,20 @@ def tf_deprecation():
         print("Deprecaton set to False")
     except:
         pass
+
+
+def get_device_torch():
+    import torch, numpy as np
+    if torch.cuda.is_available():
+        device = "cuda:{}".format(np.random.randint(torch.cuda.device_count()))
+    else:
+        device = "cpu"
+    print("use device", device)
+    return device
+
+
+
+
 
 
 
@@ -447,23 +436,25 @@ def save(model=None, session=None, save_pars=None):
 def load_tf(load_pars=""):
   """
   https://www.mlflow.org/docs/latest/python_api/mlflow.tensorflow.html#
+  https://www.tensorflow.org/api_docs/python/tf/compat/v1/train/Saver#restore
 
  """
   import tensorflow as tf
-  tf_sess = tf.compat.v1.Session() # tf.Session()
+  # tf_sess = tf.compat.v1.Session() # tf.Session()
   model_path = os.path.join(load_pars['path'], "model")
-  saver = tf.compat.v1.train.Saver()
+  saver = tf.compat.v1.train.Saver()  
   with  tf.compat.v1.Session() as sess:
-      saver.restore(tf_sess, model_path)
-  return tf_sess
+      saver.restore(sess, model_path)
+  return sess
 
 
 def save_tf(model=None, sess=None, save_pars= None):
+  # https://www.tensorflow.org/api_docs/python/tf/compat/v1/train/Saver#restore  
   import tensorflow as tf
   saver = tf.compat.v1.train.Saver()
-  if not os.path.exists(save_pars['path']):
-      os.makedirs(save_pars['path'], exist_ok=True)
-  return saver.save(sess, os.path.join(save_pars['path'], "model"))
+  model_path = os.path.join(save_pars['path']  , "/model/")  
+  os.makedirs(model_path, exist_ok=True)
+  return saver.save(sess, model_path)
 
 
 
@@ -589,6 +580,13 @@ def load_gluonts(load_pars=None):
 
 
 
+#########################################################################################
+#########################################################################################
+def load_function(package="mlmodels.util", name="path_norm"):
+  import importlib
+  return  getattr(importlib.import_module(package), name)
+
+
 
 def load_callable_from_uri(uri):
     assert(len(uri)>0 and ('::' in uri or '.' in uri))
@@ -605,6 +603,7 @@ def load_callable_from_uri(uri):
         module = importlib.import_module(module_path)
     return dict(getmembers(module))[callable_name]
         
+
 def load_callable_from_dict(function_dict, return_other_keys=False):
     function_dict = function_dict.copy()
     uri = function_dict.pop('uri')
