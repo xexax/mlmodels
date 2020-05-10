@@ -317,7 +317,7 @@ class DataLoader:
                     out_tmp = preprocessor_func(*input_tmp, **args)
 
                 elif pos_params == ['data_info']:
-                    log("function with postional parmater data_info >> get_dataset_torch(data_info, **args)")
+                    log( f"function with postional parmater data_info {preprocessor_func} , (data_info, **args)")
                     out_tmp = preprocessor_func(data_info=self.data_info, **args)
 
                 else:

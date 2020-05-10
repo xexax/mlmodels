@@ -199,7 +199,7 @@ def get_dataset_torch(data_info, **args):
     if not dataset or not data_path:
         raise Exception("please add these 'data_path','dataset' in data_info")
  
-    log2("#### If transformer URI is Provided")
+    log("#### If transformer URI is Provided")
     transform = None
     if transform_info :
         transform_uri = transform_info.get("uri", "mlmodels.preprocess.image:torch_transform_mnist" )
@@ -217,11 +217,11 @@ def get_dataset_torch(data_info, **args):
  
            
     dset = load_function(dataloader)
-           
+    print("dataset : ",dset)           
 
     # dset = load_function(d.get("dataset", "torchvision.datasets:MNIST") ) 
 
-    print("dataset : ",dset)
+
     if data_type != "tch_dataset":
         ###### Custom Build Dataset   ####################################################
         
