@@ -480,7 +480,7 @@ def main():
 
     if arg.do == "init":
         path = os.getcwd() if arg.path is not None else arg.path
-        config_init(to_path=arg.path)
+        config_init(to_path=path)
         return 0
 
     if arg.do == "generate_config":
