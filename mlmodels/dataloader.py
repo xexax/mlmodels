@@ -144,21 +144,18 @@ def _check_output_shape(self, inter_output, shape, max_len):
             and hasattr(inter_output, "shape")
             and tuple(shape) != inter_output.shape
         ):
-            raise Exception(
-                f"Expected shape {tuple(shape)} does not match shape data shape {inter_output.shape[1:]}"
-            )
+            raise Exception(f"Expected shape {tuple(shape)} does not match  {inter_output.shape[1:]}")
+
         if case == 1:
             for s, o in zip(shape, inter_output):
                 if hasattr(o, "shape") and tuple(s) != o.shape[1:]:
-                    raise Exception(
-                        f"Expected shape {tuple(shape)} does not match shape data shape {inter_output.shape[1:]}"
-                    )
+                    raise Exception(f"Expected shape {tuple(shape)} does not match  {inter_output.shape[1:]}")
+
         if case == 3:
             for s, o in zip(shape, tuple(inter_output.values())):
                 if hasattr(o, "shape") and tuple(s) != o.shape[1:]:
-                    raise Exception(
-                        f"Expected shape {tuple(shape)} does not match shape data shape {inter_output.shape[1:]}"
-                    )
+                    raise Exception(f"Expected shape {tuple(shape)} does not match  {inter_output.shape[1:]}")
+
     self.output_shape = shape
     return inter_output
 
@@ -262,7 +259,7 @@ class DataLoader:
             input_type_prev = preprocessor.get('output_type', "")
        
 
-    def compute(self, docheck=1):
+    def compute(self, docheck=0):
         if docheck :
             self.check()
 
@@ -271,17 +268,16 @@ class DataLoader:
         for preprocessor in self.preprocessors:
             uri  = preprocessor["uri"]
             args = preprocessor.get("args", {})
-            print("URL: ",uri, args)
+            log("URL: ",uri, args)
 
        
             preprocessor_func = load_callable_from_uri(uri)
-            print("\n########## load_callable_from_uri", "finish")
+            print("\n###### load_callable_from_uri LOADED",  preprocessor_func)
             if inspect.isclass(preprocessor_func):
                 ### Should match PytorchDataloader, KerasDataloader, PandasDataset, ....
                 ## A class : muti-steps compute
                 cls_name = preprocessor_func.__name__
                 print("cls_name :", cls_name, flush=True)
-
 
 
                 if cls_name in DATASET_TYPES:  # dataset object
@@ -313,12 +309,15 @@ class DataLoader:
                 # print("input_tmp: ",input_tmp['X'].shape,input_tmp['y'].shape)
                 # print("input_tmp: ",input_tmp.keys())
                 pos_params = inspect.getfullargspec(preprocessor_func)[0]
+
                 print("\n ######### postional parameteres : ", pos_params)
+                print("\n ######### Execute : preprocessor_func", preprocessor_func)
+
                 if isinstance(input_tmp, (tuple, list)) and len(input_tmp) > 0 and len(pos_params) == 0:
                     out_tmp = preprocessor_func(*input_tmp, **args)
 
                 elif pos_params == ['data_info']:
-                    # function with postional parmater data_info >> get_dataset_torch(data_info, **args)
+                    log("function with postional parmater data_info >> get_dataset_torch(data_info, **args)")
                     out_tmp = preprocessor_func(data_info=self.data_info, **args)
 
                 else:
@@ -398,7 +397,7 @@ def test_dataloader(path='dataset/json/refactor/'):
           if os.path.isdir(f) : continue
 
           print("\n" *5 , "#" * 100)
-          print(  f)
+          print(  f, "\n")
           
 
           print("#"*5, " Load JSON data_pars") 
