@@ -434,7 +434,7 @@ def test_dataloader(path='dataset/json/refactor/'):
 
             path_norm('dataset/json/refactor/torchhub_cnn_dataloader.json' ),
 
-            path_norm('dataset/json/refactor/namentity_crm_bilstm_dataloader_new.json' )
+            path_norm('dataset/json/refactor/namentity_crm_bilstm_dataloader_new.json' ),
 
             path_norm('dataset/json/refactor/model_list_CIFAR.json' ),
             path_norm('dataset/json/refactor/resnet34_benchmark_mnist.json' ),
@@ -493,7 +493,7 @@ def cli_load_arguments(config_file=None):
     add("--do"          , default="test"                   , help="what to do test or search")
 
     ###### model_pars
-    add("--path", default='dataset/json/refactor/', help="name of the model for --do test")
+    add("--path", default='dataset/json/refactor/torchhub_cnn_dataloader.json' , help="name of the model for --do test")
 
 
 
