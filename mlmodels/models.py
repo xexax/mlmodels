@@ -391,10 +391,13 @@ def config_model_list(folder=None):
     mlist = []
     for t in module_names:
         t = t.replace(folder, "").replace("\\", ".").replace("/",".").replace(".py","").strip()
-        mlist.append(t)
+        if "__init__" not in t and "util" not in t :
+           mlist.append(t)
         print(t)
 
     return mlist
+
+
 
 ####################################################################################################
 ############CLI Interface############################################################################
