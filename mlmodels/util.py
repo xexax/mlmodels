@@ -452,7 +452,7 @@ def save_tf(model=None, sess=None, save_pars= None):
   # https://www.tensorflow.org/api_docs/python/tf/compat/v1/train/Saver#restore  
   import tensorflow as tf
   saver = tf.compat.v1.train.Saver()
-  model_path = os.path.join(save_pars['path']  , "/model/")  
+  model_path = save_pars['path']  + "/model/"
   os.makedirs(model_path, exist_ok=True)
   return saver.save(sess, model_path)
 
