@@ -386,7 +386,7 @@ def config_init(to_path="."):
 def config_model_list(folder=None):
     # Get all the model.py into folder
     folder = os_package_root_path() if folder is None else folder
-    print( f"model_uri from : {folder}")
+    print( "\n", f"model_uri from : {folder}", "\n")
     module_names = get_recursive_files(folder, r'/*model*/*.py')
     mlist = []
     for t in module_names:
