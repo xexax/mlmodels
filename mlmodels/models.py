@@ -393,7 +393,7 @@ def config_model_list(folder=None):
         t = t.replace(folder, "").replace("\\", ".").replace("/",".").replace(".py","").strip()
         if "__init__" not in t and "util" not in t :
            mlist.append(t)
-        print(t)
+           print(t)
 
     return mlist
 
