@@ -348,8 +348,8 @@ def os_folder_copy(src, dst):
 
 def config_init(to_path="."):
     """
-      Generate template from code source
-      config_init("model_tf.1_lstm", to_folder="ztest/")
+      Generate Config path in user/.mlmodels/
+
     """
     import shutil
     os_root = os_package_root_path()
@@ -359,36 +359,40 @@ def config_init(to_path="."):
     # os.makedirs(to_path, exist_ok=True)
 
     os_folder_copy(os_root + "/template/", to_path + "/template/")
-    os_folder_copy(os_root + "/dataset/", to_path + "/dataset/")
-    os_folder_copy(os_root + "/example/", to_path + "/example/")
+    os_folder_copy(os_root + "/dataset/",  to_path + "/dataset/")
+    os_folder_copy(os_root + "/example/",  to_path + "/example/")
 
     os.makedirs(to_path + "model_trained", exist_ok=True)
-    os.makedirs(to_path + "model_code", exist_ok=True)
+    os.makedirs(to_path + "model_code",    exist_ok=True)
 
-    #### Config files
-    path_user = os.path.expanduser('~')
-    path_config = path_user + "/.mlmodels/config.json"
-    # print("config file", path_config)
-
-    os.makedirs(path_user + "/.mlmodels/", exist_ok=True)
+    
+    #### Config files in user path  #################################
+    path_user   = os.path.expanduser('~')
+    path_user   = path_user + "/.mlmodels/"
+    path_config = path_user + "/config.json"
+    
+    print( f"creating User Path : {path_user}" )
+    os.makedirs(path_user, exist_ok=True)
     ddict = {"model_trained": to_path + "/model_trained/",
-             "dataset": to_path + "/dataset/", }
-    log("Config values", ddict)
+             "dataset":       to_path + "/dataset/", }
+    log("Config values in Path user", ddict)
     json.dump(ddict, open(path_config, mode="w"))
 
+    
     from mlmodels.util import config_path_pretrained, config_path_dataset
-    log("Config path", config_path_pretrained())
+    log("Check Config in Path user", config_path_pretrained())
 
 
 def config_model_list(folder=None):
     # Get all the model.py into folder
     folder = os_package_root_path() if folder is None else folder
-    print(folder)
+    print( f"model_uri from : {folder}")
     module_names = get_recursive_files(folder, r'/*model*/*.py')
     mlist = []
     for t in module_names:
-        mlist.append(t.replace(folder, "").replace("\\", "."))
-        print(mlist[-1])
+        t = t.replace(folder, "").replace("\\", ".").replace("/",".").replace(".py","").strip()
+        mlist.append(t)
+        print(t)
 
     return mlist
 
