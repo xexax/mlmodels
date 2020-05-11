@@ -432,7 +432,6 @@ def save(model=None, session=None, save_pars=None):
 
 
 
-
 def load_tf(load_pars=""):
   """
   https://www.mlflow.org/docs/latest/python_api/mlflow.tensorflow.html#
@@ -442,20 +441,38 @@ def load_tf(load_pars=""):
   import tensorflow as tf
   # tf_sess = tf.compat.v1.Session() # tf.Session()
   model_path = os.path.join(load_pars['path'], "model")
-  saver = tf.compat.v1.train.Saver()  
+  full_name  = model_path + "/model.ckpt"
+  saver      = tf.compat.v1.train.Saver()  
   with  tf.compat.v1.Session() as sess:
-      saver.restore(sess, model_path)
+      saver.restore(sess,  full_name)
   return sess
 
 
 def save_tf(model=None, sess=None, save_pars= None):
+  """
+    # Add ops to save and restore all the variables.
+      saver = tf.train.Saver()
+
+    # Later, launch the model, initialize the variables, do some work, and save the
+    # variables to disk.
+   with tf.Session() as sess:
+  sess.run(init_op)
+  # Do some work with the model.
+  inc_v1.op.run()
+  dec_v2.op.run()
+  # Save the variables to disk.
+  save_path = saver.save(sess, "/tmp/model.ckpt")
+  print("Model saved in path: %s" % save_path)
+  
+  
+  """
   # https://www.tensorflow.org/api_docs/python/tf/compat/v1/train/Saver#restore  
   import tensorflow as tf
   saver = tf.compat.v1.train.Saver()
   model_path = save_pars['path']  + "/model/"
   os.makedirs(model_path, exist_ok=True)
-  return saver.save(sess, model_path)
-
+  save_path = saver.save(sess, model_path + "/model.ckpt")
+  print("Model saved in path: %s" % save_path)
 
 
 def load_tch(load_pars):
