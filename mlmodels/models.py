@@ -34,6 +34,8 @@ from mlmodels.util import (env_build, env_conda_build, env_pip_requirement, os_f
 simplefilter(action='ignore', category=FutureWarning)
 simplefilter(action='ignore', category=DeprecationWarning)
 
+INDENT = "#" * 5
+
 
 ####################################################################################################
 def module_env_build(model_uri="", verbose=0, do_env_build=0):
@@ -403,32 +405,47 @@ def config_model_list(folder=None):
 ############CLI Interface############################################################################
 def fit_cli(arg):
     config_file = path_norm(arg.config_file)
-
+    
+    log(INDENT, "Load JSON", config_file)
     model_p, data_p, compute_p, out_p = config_get_pars(config_file, arg.config_mode)
     model_uri = model_p['model_uri']
+    path      = out_p['path']
+    save_pars = {"path": path, "model_uri": model_uri}
 
+
+    log(INDENT, "Init", model_uri, save_pars)
     module = module_load(model_uri)  # '1_lstm.py
     model = model_create(module, model_p, data_p, compute_p)  # Exact map JSON and paramters
 
-    log("Fit")
+    log(INDENT, "Fit", model)
     model, sess = fit(module, model, data_pars=data_p, compute_pars=compute_p, out_pars=out_p)
 
-    log("Save")
-    save_pars = {"path": f"{arg.path}", "model_uri": arg.model_uri}
+    log(INDENT, "Save", sess)
     save(module, model, sess, save_pars)
 
 
 def predict_cli(arg):
     config_file = path_norm(arg.config_file)
+
+    log(INDENT, "Load JSON", config_file, arg.config_mode)
     model_p, data_p, compute_p, out_p = config_get_pars(config_file, arg.config_mode)
     model_uri = model_p['model_uri']
     path      = out_p['path']
+    load_pars = {"path": path, "model_uri": model_uri}
     
-    load_pars      = {"path": f"{path}", "model_uri": model_uri}
+
+    log(INDENT, "Init", model_uri, load_pars)
     module         = module_load(model_uri)  # '1_lstm.py
+
+
+    log(INDENT, "Load from disk:", load_pars)
     model, session = load(module, load_pars)
+
+
+    log(INDENT, "Predict:", session)
     ydict          = predict(module, model, session, data_pars=data_p, compute_pars=compute_p, out_pars=out_p)
     return ydict
+
 
 
 def test_cli(arg):
