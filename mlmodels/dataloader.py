@@ -461,8 +461,9 @@ def test_dataloader(path='dataset/json/refactor/'):
           d = json.loads(open( f ).read())
           data_pars = d['test']['data_pars']
           data_pars = path_norm_dict( data_pars)
-          print( textwrap.fill( str(data_pars), 90 ) )
-          
+          #print( textwrap.fill( str(data_pars), 90 ) )
+          print( json.dumps(data_pars, indent=2))
+
 
           print( "\n", "#"*5, " Load DataLoader ") 
           loader    = DataLoader(data_pars)
