@@ -383,7 +383,7 @@ def test_single(arg):
     #print(data_pars_list)
 
     data_pars_list  =  [
-            path_norm( arg.single)
+            path_norm( arg.path)
     ] 
 
 
