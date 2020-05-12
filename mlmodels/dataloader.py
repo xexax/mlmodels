@@ -378,8 +378,7 @@ def test_single(arg):
     # refactor_path = path_norm( path )
     # data_pars_list = [(f,json.loads(open(refactor_path+f).read())['test']['data_pars']) for f in os.listdir(refactor_path)]
     
-
-    #data_pars_list = [ refactor_path + "/" + f for f in os.listdir(refactor_path)  if os.path.isfile( refactor_path + "/" + f)  ]
+    # data_pars_list = [ refactor_path + "/" + f for f in os.listdir(refactor_path)  if os.path.isfile( refactor_path + "/" + f)  ]
     #print(data_pars_list)
 
     data_pars_list  =  [
@@ -434,15 +433,14 @@ def test_dataloader(path='dataset/json/refactor/'):
 
     data_pars_list  =  [
 
+        path_norm('dataset/json/refactor/torchhub_cnn_dataloader.json' ),
 
-            path_norm('dataset/json/refactor/torchhub_cnn_dataloader.json' ),
+        path_norm('dataset/json/refactor/namentity_crm_bilstm_dataloader_new.json' ),
 
-            path_norm('dataset/json/refactor/namentity_crm_bilstm_dataloader_new.json' ),
-
-            path_norm('dataset/json/refactor/model_list_CIFAR.json' ),
-            path_norm('dataset/json/refactor/resnet34_benchmark_mnist.json' ),
-            path_norm('dataset/json/refactor/keras_textcnn.json'),
-            path_norm('dataset/json/refactor/namentity_crm_bilstm_new.json' )
+        path_norm('dataset/json/refactor/model_list_CIFAR.json' ),
+        path_norm('dataset/json/refactor/resnet34_benchmark_mnist.json' ),
+        path_norm('dataset/json/refactor/keras_textcnn.json'),
+        path_norm('dataset/json/refactor/namentity_crm_bilstm_new.json' )
 
     ] 
 
@@ -462,7 +460,7 @@ def test_dataloader(path='dataset/json/refactor/'):
           d = json.loads(open( f ).read())
           data_pars = d['test']['data_pars']
           data_pars = path_norm_dict( data_pars)
-          print( textwrap.fill( data_pars, 90 ) )
+          print( textwrap.fill( str(data_pars), 90 ) )
           
 
           print( "\n", "#"*5, " Load DataLoader ") 
