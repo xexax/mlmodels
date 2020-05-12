@@ -19,6 +19,8 @@ def get_dataset(data_pars):
 
 
 
+
+
 """
 #### System utilities
 import os
@@ -63,7 +65,7 @@ import tensorflow.data
 
 
 VERBOSE = 0 
-DATASET_TYPES = ["csv_dataset", "text_dataset", "NumpyDataset", "PandasDataset"]
+DATASET_TYPES = ["csv_dataset", "text_dataset", "NumpyDataset", "pandasDataset"]
 
 
 
@@ -142,21 +144,18 @@ def _check_output_shape(self, inter_output, shape, max_len):
             and hasattr(inter_output, "shape")
             and tuple(shape) != inter_output.shape
         ):
-            raise Exception(
-                f"Expected shape {tuple(shape)} does not match shape data shape {inter_output.shape[1:]}"
-            )
+            raise Exception(f"Expected shape {tuple(shape)} does not match  {inter_output.shape[1:]}")
+
         if case == 1:
             for s, o in zip(shape, inter_output):
                 if hasattr(o, "shape") and tuple(s) != o.shape[1:]:
-                    raise Exception(
-                        f"Expected shape {tuple(shape)} does not match shape data shape {inter_output.shape[1:]}"
-                    )
+                    raise Exception(f"Expected shape {tuple(shape)} does not match  {inter_output.shape[1:]}")
+
         if case == 3:
             for s, o in zip(shape, tuple(inter_output.values())):
                 if hasattr(o, "shape") and tuple(s) != o.shape[1:]:
-                    raise Exception(
-                        f"Expected shape {tuple(shape)} does not match shape data shape {inter_output.shape[1:]}"
-                    )
+                    raise Exception(f"Expected shape {tuple(shape)} does not match  {inter_output.shape[1:]}")
+
     self.output_shape = shape
     return inter_output
 
@@ -260,7 +259,7 @@ class DataLoader:
             input_type_prev = preprocessor.get('output_type', "")
        
 
-    def compute(self, docheck=1):
+    def compute(self, docheck=0):
         if docheck :
             self.check()
 
@@ -269,16 +268,16 @@ class DataLoader:
         for preprocessor in self.preprocessors:
             uri  = preprocessor["uri"]
             args = preprocessor.get("args", {})
-            print("URL: ",uri, args)
+            log("URL: ",uri, args)
 
-
+       
             preprocessor_func = load_callable_from_uri(uri)
+            print("\n###### load_callable_from_uri LOADED",  preprocessor_func)
             if inspect.isclass(preprocessor_func):
                 ### Should match PytorchDataloader, KerasDataloader, PandasDataset, ....
                 ## A class : muti-steps compute
                 cls_name = preprocessor_func.__name__
-                print("cls_name :", cls_name)
-
+                print("cls_name :", cls_name, flush=True)
 
 
                 if cls_name in DATASET_TYPES:  # dataset object
@@ -292,10 +291,15 @@ class DataLoader:
 
 
                 else:  # pre-process object defined in preprocessor.py
+                    print("\n", "Object Creation")
                     obj_preprocessor = preprocessor_func(**args)
-                    obj_preprocessor.compute(input_tmp)
-                    out_tmp = obj_preprocessor.get_data()
 
+                    print("\n", "Object Compute")
+                    obj_preprocessor.compute(input_tmp)
+
+
+                    print("\n", "Object get_data")                    
+                    out_tmp = obj_preprocessor.get_data()
 
 
 
@@ -305,13 +309,17 @@ class DataLoader:
                 # print("input_tmp: ",input_tmp['X'].shape,input_tmp['y'].shape)
                 # print("input_tmp: ",input_tmp.keys())
                 pos_params = inspect.getfullargspec(preprocessor_func)[0]
-                print("postional parameteres : ", pos_params)
+
+                print("\n ######### postional parameteres : ", pos_params)
+                print("\n ######### Execute : preprocessor_func", preprocessor_func)
+
                 if isinstance(input_tmp, (tuple, list)) and len(input_tmp) > 0 and len(pos_params) == 0:
                     out_tmp = preprocessor_func(*input_tmp, **args)
 
                 elif pos_params == ['data_info']:
-                    # function with postional parmater data_info >> get_dataset_torch(data_info, **args)
+                    log( f"function with postional parmater data_info {preprocessor_func} , (data_info, **args)")
                     out_tmp = preprocessor_func(data_info=self.data_info, **args)
+
                 else:
                     out_tmp = preprocessor_func(input_tmp, **args)
 
@@ -342,6 +350,7 @@ def split_xy_from_dict(out, **kwargs):
     return (*X,*y)
 
 
+
 def test_run_model():
     from mlmodels.models import test_module
 
@@ -361,32 +370,31 @@ def test_run_model():
 
 
 
-def test_dataloader(path='dataset/json/refactor/'):
-    refactor_path = path_norm( path )
+
+
+
+
+def test_single(arg):
+    # refactor_path = path_norm( path )
     # data_pars_list = [(f,json.loads(open(refactor_path+f).read())['test']['data_pars']) for f in os.listdir(refactor_path)]
     
+    # data_pars_list = [ refactor_path + "/" + f for f in os.listdir(refactor_path)  if os.path.isfile( refactor_path + "/" + f)  ]
+    #print(data_pars_list)
 
-    data_pars_list = [f for f in os.listdir(refactor_path)  if not os.path.isdir( refactor_path + "/" + f)  ]
-    print(data_pars_list)
-
-    """
-    l1  =  [
-            # path_norm('dataset/json/refactor/torchhub.json' )
-            path_norm('dataset/json/refactor/namentity_crm_bilstm_dataloader_new.json' )
-            ,path_norm('dataset/json/refactor/namentity_crm_bilstm_dataloader_new.json' )
-    ]
-    data_pars_list = l1
-    """
+    data_pars_list  =  [
+            path_norm( arg.path)
+    ] 
 
 
     for f in data_pars_list:
         try :
-          f  = refactor_path + "/" + f
+          #f  = refactor_path + "/" + f
+          # f= f.replace("gitdev/mlmodels/",  "gitdev/mlmodels2/" )
 
           if os.path.isdir(f) : continue
 
           print("\n" *5 , "#" * 100)
-          print(  f)
+          print(  f, "\n")
           
 
           print("#"*5, " Load JSON data_pars") 
@@ -402,6 +410,69 @@ def test_dataloader(path='dataset/json/refactor/'):
 
           print("\n", "#"*5, " compute DataLoader ")           
           loader.compute()
+
+          print("\n", "#"*5, " get_Data DataLoader ")  
+          print(loader.get_data())
+
+        except Exception as e :
+          print("Error", f,  e)
+
+
+
+
+
+def test_dataloader(path='dataset/json/refactor/'):
+    import textwrap
+    refactor_path = path_norm( path )
+    # data_pars_list = [(f,json.loads(open(refactor_path+f).read())['test']['data_pars']) for f in os.listdir(refactor_path)]
+    
+
+    data_pars_list = [ refactor_path + "/" + f for f in os.listdir(refactor_path)  if os.path.isfile( refactor_path + "/" + f)  ]
+    print(data_pars_list)
+
+
+    data_pars_list  =  [
+
+        path_norm('dataset/json/refactor/torchhub_cnn_dataloader.json' ),
+
+        path_norm('dataset/json/refactor/namentity_crm_bilstm_dataloader_new.json' ),
+
+        path_norm('dataset/json/refactor/model_list_CIFAR.json' ),
+        path_norm('dataset/json/refactor/resnet34_benchmark_mnist.json' ),
+        path_norm('dataset/json/refactor/keras_textcnn.json'),
+        path_norm('dataset/json/refactor/namentity_crm_bilstm_new.json' )
+
+    ] 
+
+
+
+    for f in data_pars_list:
+        try :
+          #f  = refactor_path + "/" + f
+          # f= f.replace("gitdev/mlmodels/",  "gitdev/mlmodels2/" )
+
+          if os.path.isdir(f) : continue
+
+          print("\n" *5 , "#" * 100)
+          print(  f, "\n")
+          
+
+          print("#"*5, " Load JSON data_pars") 
+          d = json.loads(open( f ).read())
+          data_pars = d['test']['data_pars']
+          data_pars = path_norm_dict( data_pars)
+          #print( textwrap.fill( str(data_pars), 90 ) )
+          print( json.dumps(data_pars, indent=2))
+
+
+          print( "\n", "#"*5, " Load DataLoader ") 
+          loader    = DataLoader(data_pars)
+
+
+          print("\n", "#"*5, " compute DataLoader ")           
+          loader.compute()
+
+          print("\n", "#"*5, " get_Data DataLoader ")  
           print(loader.get_data())
 
         except Exception as e :
@@ -425,7 +496,12 @@ def cli_load_arguments(config_file=None):
     add("--do"          , default="test"                   , help="what to do test or search")
 
     ###### model_pars
-    add("--path", default='dataset/json/refactor/', help="name of the model for --do test")
+    add("--path", default='dataset/json/refactor/torchhub_cnn_dataloader.json' , help="name of the model for --do test")
+
+
+
+    add("--file", default='dataset/json/refactor/', help="name of the model for --do test")
+
 
     ###### data_pars
     # add("--data_path", default="dataset/GOOG-year_small.csv", help="path of the training file")
@@ -447,6 +523,9 @@ def main():
     if arg.do == "test_run_model":
        test_run_model()
 
+
+    if arg.do == "test_single":
+        test_single(arg)  
 
 if __name__ == "__main__":
    VERBOSE =1  
