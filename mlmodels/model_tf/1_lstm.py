@@ -310,8 +310,13 @@ def test(data_path="dataset/", pars_choice="test01", config_mode="test"):
     log("#### Plot   ########################################################")
 
 
-    log("#### Save/Load   ###################################################")
-    save(model, session, out_pars)
+    log("#### Save   ########################################################")
+    save_pars ={ 'path' : out_pars['path']  }
+    save(model, session, save_pars)
+    
+    
+    log("#### Load   ########################################################")
+    load_pars ={ 'path' : out_pars['path']  }
     session = load(out_pars)
     #     ypred = predict(model2, data_pars, compute_pars, out_pars)
     #     metrics_val = metrics(model2, ypred, data_pars, compute_pars, out_pars)

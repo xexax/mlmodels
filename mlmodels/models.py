@@ -34,6 +34,8 @@ from mlmodels.util import (env_build, env_conda_build, env_pip_requirement, os_f
 simplefilter(action='ignore', category=FutureWarning)
 simplefilter(action='ignore', category=DeprecationWarning)
 
+INDENT = "#" * 5
+
 
 ####################################################################################################
 def module_env_build(model_uri="", verbose=0, do_env_build=0):
@@ -348,8 +350,8 @@ def os_folder_copy(src, dst):
 
 def config_init(to_path="."):
     """
-      Generate template from code source
-      config_init("model_tf.1_lstm", to_folder="ztest/")
+      Generate Config path in user/.mlmodels/
+
     """
     import shutil
     os_root = os_package_root_path()
@@ -359,69 +361,91 @@ def config_init(to_path="."):
     # os.makedirs(to_path, exist_ok=True)
 
     os_folder_copy(os_root + "/template/", to_path + "/template/")
-    os_folder_copy(os_root + "/dataset/", to_path + "/dataset/")
-    os_folder_copy(os_root + "/example/", to_path + "/example/")
+    os_folder_copy(os_root + "/dataset/",  to_path + "/dataset/")
+    os_folder_copy(os_root + "/example/",  to_path + "/example/")
 
     os.makedirs(to_path + "model_trained", exist_ok=True)
-    os.makedirs(to_path + "model_code", exist_ok=True)
+    os.makedirs(to_path + "model_code",    exist_ok=True)
 
-    #### Config files
-    path_user = os.path.expanduser('~')
-    path_config = path_user + "/.mlmodels/config.json"
-    # print("config file", path_config)
-
-    os.makedirs(path_user + "/.mlmodels/", exist_ok=True)
+    
+    #### Config files in user path  #################################
+    path_user   = os.path.expanduser('~')
+    path_user   = path_user + "/.mlmodels/"
+    path_config = path_user + "/config.json"
+    
+    print( f"creating User Path : {path_user}" )
+    os.makedirs(path_user, exist_ok=True)
     ddict = {"model_trained": to_path + "/model_trained/",
-             "dataset": to_path + "/dataset/", }
-    log("Config values", ddict)
+             "dataset":       to_path + "/dataset/", }
+    log("Config values in Path user", ddict)
     json.dump(ddict, open(path_config, mode="w"))
 
+    
     from mlmodels.util import config_path_pretrained, config_path_dataset
-    log("Config path", config_path_pretrained())
+    log("Check Config in Path user", config_path_pretrained())
 
 
 def config_model_list(folder=None):
     # Get all the model.py into folder
     folder = os_package_root_path() if folder is None else folder
-    print(folder)
+    print( "\n", f"model_uri from : {folder}", "\n")
     module_names = get_recursive_files(folder, r'/*model*/*.py')
     mlist = []
     for t in module_names:
-        mlist.append(t.replace(folder, "").replace("\\", "."))
-        print(mlist[-1])
+        t = t.replace(folder, "").replace("\\", ".").replace("/",".").replace(".py","").strip()
+        if "__init__" not in t and "util" not in t :
+           mlist.append(t)
+           print(t)
 
     return mlist
+
+
 
 ####################################################################################################
 ############CLI Interface############################################################################
 def fit_cli(arg):
     config_file = path_norm(arg.config_file)
-
+    
+    log(INDENT, "Load JSON", config_file)
     model_p, data_p, compute_p, out_p = config_get_pars(config_file, arg.config_mode)
     model_uri = model_p['model_uri']
+    path      = out_p['path']
+    save_pars = {"path": path, "model_uri": model_uri}
 
+
+    log(INDENT, "Init", model_uri, save_pars)
     module = module_load(model_uri)  # '1_lstm.py
     model = model_create(module, model_p, data_p, compute_p)  # Exact map JSON and paramters
 
-    log("Fit")
+    log(INDENT, "Fit", model)
     model, sess = fit(module, model, data_pars=data_p, compute_pars=compute_p, out_pars=out_p)
 
-    log("Save")
-    save_pars = {"path": f"{arg.path}", "model_uri": arg.model_uri}
+    log(INDENT, "Save", sess)
     save(module, model, sess, save_pars)
 
 
 def predict_cli(arg):
     config_file = path_norm(arg.config_file)
+
+    log(INDENT, "Load JSON", config_file, arg.config_mode)
     model_p, data_p, compute_p, out_p = config_get_pars(config_file, arg.config_mode)
     model_uri = model_p['model_uri']
     path      = out_p['path']
+    load_pars = {"path": path, "model_uri": model_uri}
     
-    load_pars      = {"path": f"{path}", "model_uri": model_uri}
+
+    log(INDENT, "Init", model_uri, load_pars)
     module         = module_load(model_uri)  # '1_lstm.py
+
+
+    log(INDENT, "Load from disk:", load_pars)
     model, session = load(module, load_pars)
+
+
+    log(INDENT, "Predict:", session)
     ydict          = predict(module, model, session, data_pars=data_p, compute_pars=compute_p, out_pars=out_p)
     return ydict
+
 
 
 def test_cli(arg):
