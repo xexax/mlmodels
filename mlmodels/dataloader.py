@@ -420,7 +420,10 @@ def test_single(arg):
 
 
 
+
+
 def test_dataloader(path='dataset/json/refactor/'):
+    import textwrap
     refactor_path = path_norm( path )
     # data_pars_list = [(f,json.loads(open(refactor_path+f).read())['test']['data_pars']) for f in os.listdir(refactor_path)]
     
@@ -459,7 +462,7 @@ def test_dataloader(path='dataset/json/refactor/'):
           d = json.loads(open( f ).read())
           data_pars = d['test']['data_pars']
           data_pars = path_norm_dict( data_pars)
-          print(data_pars)
+          print( textwrap.fill( data_pars, 90 ) )
           
 
           print( "\n", "#"*5, " Load DataLoader ") 
