@@ -376,6 +376,8 @@ def test_run_model():
             test_module( x['model_uri'],  path_norm_dict(x['pars']))
 
          except Exception as e :
+            import traceback
+            traceback.print_exc()
             print("Error", x,  e)
 
     """
@@ -444,11 +446,9 @@ def test_dataloader(path='dataset/json/refactor/'):
 
 
     data_pars_list  =  [
-
+        path_norm('dataset/json/refactor/charcnn.json'),
         path_norm('dataset/json/refactor/torchhub_cnn_dataloader.json' ),
-
         path_norm('dataset/json/refactor/namentity_crm_bilstm_dataloader_new.json' ),
-
         path_norm('dataset/json/refactor/model_list_CIFAR.json' ),
         path_norm('dataset/json/refactor/resnet34_benchmark_mnist.json' ),
         path_norm('dataset/json/refactor/keras_textcnn.json'),
@@ -487,6 +487,8 @@ def test_dataloader(path='dataset/json/refactor/'):
           print(loader.get_data())
 
         except Exception as e :
+          import traceback
+          traceback.print_exc()
           print("Error", f,  e)
 
 
