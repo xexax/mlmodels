@@ -71,7 +71,8 @@ some of these as part of many models' transformation chains.
 
 
 """
-########################
+
+######## Dynamic Features
 cal_feat = calendar.drop(
     ['date', 'wm_yr_wk', 'weekday', 'wday', 'month', 'year', 'event_name_1', 'event_name_2', 'd'], 
     axis=1
@@ -86,6 +87,8 @@ else:
     train_cal_feat = test_cal_feat[:,:-submission_pred_length-single_pred_length]
     test_cal_feat  = test_cal_feat[:,:-submission_pred_length]
 
+
+#### List of individual time series   Nb Series x Lenght_time_series
 test_cal_feat_list  = [test_cal_feat] * len(sales_train_val)
 train_cal_feat_list = [train_cal_feat] * len(sales_train_val)
 
@@ -97,7 +100,7 @@ train_cal_feat_list = [train_cal_feat] * len(sales_train_val)
 # We then go on to build static features (features which are constant and series-specific).
  Here, we make use of all categorical features that are provided to us as part of the M5 data.
 """
-########################
+####### Static Features 
 state_ids                       = sales_train_val["state_id"].astype('category').cat.codes.values
 state_ids_un , state_ids_counts = np.unique(state_ids, return_counts=True)
 
@@ -114,15 +117,19 @@ item_ids                        = sales_train_val["item_id"].astype('category').
 item_ids_un , item_ids_counts   = np.unique(item_ids, return_counts=True)
 
 
-stat_cat_list          = [item_ids, dept_ids, cat_ids, store_ids, state_ids]
-stat_cat               = np.concatenate(stat_cat_list)
-stat_cat               = stat_cat.reshape(len(stat_cat_list), len(item_ids)).T
-stat_cat_cardinalities = [len(item_ids_un), len(dept_ids_un), len(cat_ids_un), len(store_ids_un), len(state_ids_un)]
+
+##### Static Features 
+static_cat_list          = [item_ids, dept_ids, cat_ids, store_ids, state_ids]
+static_cat               = np.concatenate(static_cat_list)
+static_cat               = static_cat.reshape(len(static_cat_list), len(item_ids)).T
+static_cat_cardinalities = [len(item_ids_un), len(dept_ids_un), len(cat_ids_un), len(store_ids_un), len(state_ids_un)]
+
+
 
 
 
 # Finally, we can build both the training and the testing set from target values and both static and dynamic features.
-########################
+######  Time series ##################
 from gluonts.dataset.common import load_datasets, ListDataset
 from gluonts.dataset.field_names import FieldName
 
@@ -133,9 +140,16 @@ if submission == True:
     test_target_values = [np.append(ts, np.ones(submission_pred_length) * np.nan) for ts in train_df.values]
 
 else:
+
+    #### List of individual timeseries
     test_target_values  = train_target_values.copy()
     train_target_values = [ts[:-single_pred_length] for ts in train_df.values]
 
+
+
+
+
+#### Start Dates for each time series
 m5_dates = [pd.Timestamp("2011-01-29", freq='1D') for _ in range(len(sales_train_val))]
 
 
@@ -146,7 +160,10 @@ train_ds = ListDataset([
         FieldName.START             : start,
         FieldName.FEAT_DYNAMIC_REAL : fdr,
         FieldName.FEAT_STATIC_CAT   : fsc
-    } for (target, start, fdr, fsc) in zip(train_target_values, m5_dates, train_cal_feat_list, stat_cat)
+    } for (target, start, fdr, fsc) in zip(train_target_values,   # list of individual time series
+                                           m5_dates,              # list of start dates
+                                           train_cal_feat_list,   # List of Dynamic Features
+                                           static_cat)              # List of Static Features 
     ],     freq="D")
 
 
@@ -161,7 +178,7 @@ test_ds = ListDataset([
     for (target, start, fdr, fsc) in zip(test_target_values,
                                          m5_dates,
                                          test_cal_feat_list,
-                                         stat_cat)
+                                         static_cat)
 ], freq="D")
 
 
@@ -207,7 +224,7 @@ estimator = DeepAREstimator(
     distr_output          = NegativeBinomialOutput(),
     use_feat_dynamic_real = True,
     use_feat_static_cat   = True,
-    cardinality           = stat_cat_cardinalities,
+    cardinality           = static_cat_cardinalities,
     trainer               = Trainer(
     learning_rate         = 1e-3,
     epochs                = 100,
@@ -283,7 +300,7 @@ if submission == True:
     for i in range(len(forecasts)):
         forecasts_acc[i] = np.mean(forecasts[i].samples, axis=0)
 
-        
+
 # We then reshape the forecasts into the correct data shape for submission ...
 ########################
 if submission == True:
