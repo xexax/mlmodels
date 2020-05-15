@@ -5,8 +5,9 @@ name: test_fast_linux
 on:
   push:
     branches: 
+      - dev
 
- 
+
 jobs:
   build:
 

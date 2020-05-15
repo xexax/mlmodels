@@ -432,29 +432,79 @@ def save(model=None, session=None, save_pars=None):
 
 
 
-
 def load_tf(load_pars=""):
   """
   https://www.mlflow.org/docs/latest/python_api/mlflow.tensorflow.html#
   https://www.tensorflow.org/api_docs/python/tf/compat/v1/train/Saver#restore
 
+           import tensorflow as tf
+
+        import main
+        import Process
+        import Input
+
+        eval_dir = "/Users/Zanhuang/Desktop/NNP/model.ckpt-30"
+        checkpoint_dir = "/Users/Zanhuang/Desktop/NNP/checkpoint"
+
+        init_op = tf.initialize_all_variables()
+
+        ### Here Comes the fake variable that makes defining a saver object possible.
+        _ = tf.Variable(initial_value='fake_variable')
+
+        ###
+        saver = tf.train.Saver()
+
+        with tf.Session() as sess:
+          ckpt = tf.train.get_checkpoint_state('./'):
+          if ckpt: # checkpointがある場合
+        last_model = ckpt.model_checkpoint_path # 最後に保存したmodelへのパス
+        print "load " + last_model
+        saver.restore(sess, last_model) # 変数データの読み込み
+        ...
+
+
  """
   import tensorflow as tf
   # tf_sess = tf.compat.v1.Session() # tf.Session()
   model_path = os.path.join(load_pars['path'], "model")
-  saver = tf.compat.v1.train.Saver()  
+  full_name  = model_path + "/model.ckpt"
+  
+  ## Need Fake
+  _ = tf.Variable(initial_value='xxxxxx_fake')
+  saver      = tf.compat.v1.train.Saver()  
+
   with  tf.compat.v1.Session() as sess:
-      saver.restore(sess, model_path)
+      saver.restore(sess,  full_name)
   return sess
 
 
+
 def save_tf(model=None, sess=None, save_pars= None):
+  """
+    # Add ops to save and restore all the variables.
+      saver = tf.train.Saver()
+
+    # Later, launch the model, initialize the variables, do some work, and save the
+    # variables to disk.
+   with tf.Session() as sess:
+  sess.run(init_op)
+  # Do some work with the model.
+  inc_v1.op.run()
+  dec_v2.op.run()
+  # Save the variables to disk.
+  save_path = saver.save(sess, "/tmp/model.ckpt")
+  print("Model saved in path: %s" % save_path)
+  
+  
+  """
   # https://www.tensorflow.org/api_docs/python/tf/compat/v1/train/Saver#restore  
   import tensorflow as tf
   saver = tf.compat.v1.train.Saver()
-  model_path = os.path.join(save_pars['path']  , "/model/")  
+  model_path = save_pars['path']  + "/model/"
   os.makedirs(model_path, exist_ok=True)
-  return saver.save(sess, model_path)
+  save_path = saver.save(sess, model_path + "/model.ckpt")
+  print("Model saved in path: %s" % save_path)
+
 
 
 

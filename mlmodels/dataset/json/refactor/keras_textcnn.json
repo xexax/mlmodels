@@ -22,6 +22,9 @@
 					"name": "loader",
 					"uri": "mlmodels/preprocess/generic.py::NumpyDataset",
 					"args": {
+                        "numpy_loader_args":{
+                            "allow_pickle":true
+                        },
 						"encoding": "'ISO-8859-1'"
 					}
 				}
