@@ -295,25 +295,12 @@ alexnet: SqueezeNet: AlexNet-level accuracy with 50x fewer parameters and <0.5MB
 
 ### ① Installation Guide:
 
-### (A) Using pre-installed Setup (one click) :
+### (A) Using pre-installed Setup (one click run) :
 
-[Read-more](https://github.com/arita37/mlmodels/issues/101)
+[Read-more](https://cutt.ly/QyWYknC)
 
 
-
-### (B) Manual Install as editable package in Linux
-
-```bash
-conda create -n py36 python=3.6.5 -y
-source activate py36
-
-cd yourfolder
-git clone https://github.com/arita37/mlmodels.git mlmodels
-cd mlmodels
-git checkout dev
-```
-
-### (C) Using Colab :
+### (B) Using Colab :
 [Read-more](https://github.com/arita37/mlmodels/blob/dev/README_usage.md)
 
 
