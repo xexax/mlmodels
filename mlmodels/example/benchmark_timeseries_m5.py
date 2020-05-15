@@ -3,7 +3,6 @@ M5 Forecasting Competition GluonTS Template¶
 This notebook can be used as a starting point for participating in the M5 forecasting competition using GluonTS-based tooling.
 
 
-
 M5 Forecasting - Accuracy source image
 M5 Forecasting - Accuracy
 Estimate the unit sales of Walmart retail goods
@@ -79,15 +78,15 @@ sales_train_evaluation.csv : Available once month before competition deadline. W
 https://www.kaggle.com/steverab/m5-forecasting-competition-gluonts-template
 
 
+(ID x timeStamp ) :
+
+
 
 """
-
 calendar               = pd.read_csv(f'{m5_input_path}/calendar.csv')
 sales_train_val        = pd.read_csv(f'{m5_input_path}/sales_train_val.csv')
 sample_submission      = pd.read_csv(f'{m5_input_path}/sample_submission.csv')
 sell_prices            = pd.read_csv(f'{m5_input_path}/sell_prices.csv')
-
-
 
 
 
@@ -163,6 +162,8 @@ static_cat_cardinalities = [len(item_ids_un), len(dept_ids_un), len(cat_ids_un),
 from gluonts.dataset.common import load_datasets, ListDataset
 from gluonts.dataset.field_names import FieldName
 
+
+#### Remove Categories colum
 train_df            = sales_train_val.drop(["id","item_id","dept_id","cat_id","store_id","state_id"], axis=1)
 train_target_values = train_df.values
 
@@ -198,6 +199,7 @@ train_ds = ListDataset([
 
 
 
+
 test_ds = ListDataset([
     {
         FieldName.TARGET            : target,
@@ -220,6 +222,100 @@ next(iter(train_ds))
 
 ###########################################################################################################
 ###########################################################################################################
+
+
+n_timeseries = len(sales_train_val)
+
+
+
+def create_feature_dynamic(df_feature_dynamic, submission=1, single_pred_length=28, submission_pred_length=10, n_timeseries=1, transpose=1) :
+    """
+        N_cat x N-timseries
+    """
+    v = df_feature_dynamic.values.T if transpose else df_feature_dynamic.values
+
+    train_cal_feat = v[:,:-submission_pred_length-single_pred_length]
+    test_cal_feat  = v[:,:-submission_pred_length]
+
+    #### List of individual time series   Nb Series x Lenght_time_series
+    test_list  = [test_cal_feat] * n_timeseries
+    train_list = [train_cal_feat] * n_timeseries
+    return train_list, test_list
+
+
+
+########## Feature dynamic
+cal_feat = calendar.drop( ['date', 'wm_yr_wk', 'weekday', 'wday', 'month', 'year', 'event_name_1', 'event_name_2', 'd'],  axis=1)
+cal_feat['event_type_1'] = cal_feat['event_type_1'].apply(lambda x: 0 if str(x)=="nan" else 1)
+cal_feat['event_type_2'] = cal_feat['event_type_2'].apply(lambda x: 0 if str(x)=="nan" else 1)
+
+
+train_featdynamic_list, test_featdynamic_list = create_feature_dynamic(cal_feat, single_pred_length=28, submission_pred_length=10, n_timeseries= n_timeseries) 
+
+
+
+
+def create_feature_static(df_feature_static, submission=1, single_pred_length=28, submission_pred_length=10, n_timeseries=1, transpose=1) :
+    """
+        N_cat x N-timseries
+
+    """
+    ####### Static Features 
+    for col in df_feature_static :
+      v_col  = df_feature_static[col].astype('category').cat.codes.values
+      static_cat_list.append(v_col)
+
+
+    static_cat               = np.concatenate(static_cat_list)
+    static_cat               = static_cat.reshape(len(static_cat_list), n_timeseries).T
+    static_cat_cardinalities = [len(df_feature_static[col].unique()) for col in df_feature_static]
+
+    return static_cat, static_cat_cardinalities
+
+
+
+
+def create_feature_timeseries(df_timeseries, submission=1, single_pred_length=28, submission_pred_length=10, n_timeseries=1, transpose=1) :
+    """
+        N_cat x N-timseries
+
+    """
+    #### Remove Categories colum
+    train_target_values = df_timeseries.values
+
+    if submission == True:
+        test_target_values = [np.append(ts, np.ones(submission_pred_length) * np.nan) for ts in df_timeseries.values]
+
+
+    else:
+        #### List of individual timeseries
+        test_target_values  = train_target_values.copy()
+        train_target_values = [ts[:-single_pred_length] for ts in df_timeseries.values]
+
+    return train_target_values, test_target_values
+
+
+
+
+#### Start Dates for each time series
+def create_startdate(date="2011-01-29", freq="1D", n_timeseries=1):
+   start_dates_list = [pd.Timestamp("2011-01-29", freq='1D') for _ in range(n_timeseries)]
+   return start_dates_list
+
+
+
+
+train_ds = ListDataset([
+    {
+        FieldName.TARGET            : target,
+        FieldName.START             : start,
+        FieldName.FEAT_DYNAMIC_REAL : fdr,
+        FieldName.FEAT_STATIC_CAT   : fsc
+    } for (target, start, fdr, fsc) in zip(train_timeseries_list,   # list of individual time series
+                                           start_dates_list,              # list of start dates
+                                           train_dynamic_list,   # List of Dynamic Features
+                                           train_static_list)              # List of Static Features 
+    ],     freq="D")
 
 
 
