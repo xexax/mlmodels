@@ -2,9 +2,28 @@
 M5 Forecasting Competition GluonTS Template¶
 This notebook can be used as a starting point for participating in the M5 forecasting competition using GluonTS-based tooling.
 
+
+
+M5 Forecasting - Accuracy source image
+M5 Forecasting - Accuracy
+Estimate the unit sales of Walmart retail goods
+Last Updated: 2 months ago
+About this Competition
+In the challenge, you are predicting item sales at stores in various locations for two 28-day time periods. Information about the data is found in the M5 Participants Guide.
+
+Files
+calendar.csv - Contains information about the dates on which the products are sold.
+sales_train_validation.csv - Contains the historical daily unit sales data per product and store [d_1 - d_1913]
+sample_submission.csv - The correct format for submissions. Reference the Evaluation tab for more info.
+sell_prices.csv - Contains information about the price of the products sold per store and date.
+sales_train_evaluation.csv - Available once month before competition deadline. Will include sales [d_1 - d_1941]
+
+
+
+
 """
 
-########################
+##########################################################################################################
 # %matplotlib inline
 import mxnet as mx
 from mxnet import gluon
@@ -18,9 +37,16 @@ from pathlib import Path
 
 
 """
-We also define globally accessible variables, such as the pred length and the input path for the M5 data. Note that single_pred_length corresponds to the length of the val/evaluation periods, while submission_pred_length corresponds to the length of both these periods combined.
+We also define globally accessible variables, such as the pred length and the input path for the M5 data.
+ Note that single_pred_length corresponds to the length of the val/evaluation periods, while submission_pred_length corresponds to the length of both these periods combined.
 
-By default the notebook is configured to run in submission mode (submission will be True), which means that we use all of the data for training and predict new values for a total length of submission_pred_length for which we don't have ground truth values available (performance can be assessed by submitting pred results to Kaggle). In contrast, setting submission to False will instead use the last single_pred_length-many values of our training set as val points (and hence these values will not be used for training), which enables us to validate our model's performance offline.
+By default the notebook is configured to run in submission mode (submission will be True), 
+which means that we use all of the data for training and predict new values for a 
+total length of submission_pred_length for which we don't have ground truth values available
+ (performance can be assessed by submitting pred results to Kaggle). 
+ In contrast, setting submission to False will instead use the last single_pred_length-many
+  values of our training set as val points (and hence these values will not be used for training),
+   which enables us to validate our model's performance offline.
 """
 ########################
 single_pred_length = 28
@@ -34,12 +60,28 @@ else:
     pred_length = single_pred_length
 
 
+###########################################################################################################
 """    
 Reading the M5 data into GluonTS
-First we need to convert the provided M5 data into a format that is readable by GluonTS. At this point we assume that the M5 data, which can be downloaded from Kaggle, is present under m5_input_path.
+First we need to convert the provided M5 data into a format that is readable by GluonTS.
+ At this point we assume that the M5 data, which can be downloaded from Kaggle, is present under m5_input_path.
+
+MultiVariat Dataset
+
+Files
+calendar.csv               : Contains information about the dates on which the products are sold.
+sales_train_validation.csv : Contains the historical daily unit sales data per product and store [d_1 - d_1913]
+sample_submission.csv      : The correct format for submissions. Reference the Evaluation tab for more info.
+sell_prices.csv            : Contains information about the price of the products sold per store and date.
+sales_train_evaluation.csv : Available once month before competition deadline. Will include sales [d_1 - d_1941]
+
+
+https://www.kaggle.com/steverab/m5-forecasting-competition-gluonts-template
+
+
+
 """
 
-########################
 calendar               = pd.read_csv(f'{m5_input_path}/calendar.csv')
 sales_train_val        = pd.read_csv(f'{m5_input_path}/sales_train_val.csv')
 sample_submission      = pd.read_csv(f'{m5_input_path}/sample_submission.csv')
@@ -59,23 +101,26 @@ some of these as part of many models' transformation chains.
 
 
 """
-########################
-cal_features = calendar.drop(
+
+######## Dynamic Features
+cal_feat = calendar.drop(
     ['date', 'wm_yr_wk', 'weekday', 'wday', 'month', 'year', 'event_name_1', 'event_name_2', 'd'], 
     axis=1
 )
-cal_features['event_type_1'] = cal_features['event_type_1'].apply(lambda x: 0 if str(x)=="nan" else 1)
-cal_features['event_type_2'] = cal_features['event_type_2'].apply(lambda x: 0 if str(x)=="nan" else 1)
+cal_feat['event_type_1'] = cal_feat['event_type_1'].apply(lambda x: 0 if str(x)=="nan" else 1)
+cal_feat['event_type_2'] = cal_feat['event_type_2'].apply(lambda x: 0 if str(x)=="nan" else 1)
 
-test_cal_features = cal_features.values.T
+test_cal_feat = cal_feat.values.T
 if submission:
-    train_cal_features = test_cal_features[:,:-submission_pred_length]
+    train_cal_feat = test_cal_feat[:,:-submission_pred_length]
 else:
-    train_cal_features = test_cal_features[:,:-submission_pred_length-single_pred_length]
-    test_cal_features = test_cal_features[:,:-submission_pred_length]
+    train_cal_feat = test_cal_feat[:,:-submission_pred_length-single_pred_length]
+    test_cal_feat  = test_cal_feat[:,:-submission_pred_length]
 
-test_cal_features_list = [test_cal_features] * len(sales_train_val)
-train_cal_features_list = [train_cal_features] * len(sales_train_val)
+
+#### List of individual time series   Nb Series x Lenght_time_series
+test_cal_feat_list  = [test_cal_feat] * len(sales_train_val)
+train_cal_feat_list = [train_cal_feat] * len(sales_train_val)
 
 
 
@@ -85,71 +130,109 @@ train_cal_features_list = [train_cal_features] * len(sales_train_val)
 # We then go on to build static features (features which are constant and series-specific).
  Here, we make use of all categorical features that are provided to us as part of the M5 data.
 """
-########################
-state_ids = sales_train_val["state_id"].astype('category').cat.codes.values
+####### Static Features 
+state_ids                       = sales_train_val["state_id"].astype('category').cat.codes.values
 state_ids_un , state_ids_counts = np.unique(state_ids, return_counts=True)
 
-store_ids = sales_train_val["store_id"].astype('category').cat.codes.values
+store_ids                       = sales_train_val["store_id"].astype('category').cat.codes.values
 store_ids_un , store_ids_counts = np.unique(store_ids, return_counts=True)
 
-cat_ids = sales_train_val["cat_id"].astype('category').cat.codes.values
-cat_ids_un , cat_ids_counts = np.unique(cat_ids, return_counts=True)
+cat_ids                         = sales_train_val["cat_id"].astype('category').cat.codes.values
+cat_ids_un , cat_ids_counts     = np.unique(cat_ids, return_counts=True)
 
-dept_ids = sales_train_val["dept_id"].astype('category').cat.codes.values
-dept_ids_un , dept_ids_counts = np.unique(dept_ids, return_counts=True)
+dept_ids                        = sales_train_val["dept_id"].astype('category').cat.codes.values
+dept_ids_un , dept_ids_counts   = np.unique(dept_ids, return_counts=True)
 
-item_ids = sales_train_val["item_id"].astype('category').cat.codes.values
-item_ids_un , item_ids_counts = np.unique(item_ids, return_counts=True)
+item_ids                        = sales_train_val["item_id"].astype('category').cat.codes.values
+item_ids_un , item_ids_counts   = np.unique(item_ids, return_counts=True)
 
-stat_cat_list = [item_ids, dept_ids, cat_ids, store_ids, state_ids]
 
-stat_cat = np.concatenate(stat_cat_list)
-stat_cat = stat_cat.reshape(len(stat_cat_list), len(item_ids)).T
 
-stat_cat_cardinalities = [len(item_ids_un), len(dept_ids_un), len(cat_ids_un), len(store_ids_un), len(state_ids_un)]
+##### Static Features 
+static_cat_list          = [item_ids, dept_ids, cat_ids, store_ids, state_ids]
+static_cat               = np.concatenate(static_cat_list)
+static_cat               = static_cat.reshape(len(static_cat_list), len(item_ids)).T
+static_cat_cardinalities = [len(item_ids_un), len(dept_ids_un), len(cat_ids_un), len(store_ids_un), len(state_ids_un)]
+
+
+
+
 
 # Finally, we can build both the training and the testing set from target values and both static and dynamic features.
-########################
+######  Time series ##################
 from gluonts.dataset.common import load_datasets, ListDataset
 from gluonts.dataset.field_names import FieldName
 
-train_df = sales_train_val.drop(["id","item_id","dept_id","cat_id","store_id","state_id"], axis=1)
+train_df            = sales_train_val.drop(["id","item_id","dept_id","cat_id","store_id","state_id"], axis=1)
 train_target_values = train_df.values
 
 if submission == True:
     test_target_values = [np.append(ts, np.ones(submission_pred_length) * np.nan) for ts in train_df.values]
+
 else:
-    test_target_values = train_target_values.copy()
+
+    #### List of individual timeseries
+    test_target_values  = train_target_values.copy()
     train_target_values = [ts[:-single_pred_length] for ts in train_df.values]
 
+
+
+
+
+#### Start Dates for each time series
 m5_dates = [pd.Timestamp("2011-01-29", freq='1D') for _ in range(len(sales_train_val))]
+
+
 
 train_ds = ListDataset([
     {
-        FieldName.TARGET: target,
-        FieldName.START: start,
-        FieldName.FEAT_DYNAMIC_REAL: fdr,
-        FieldName.FEAT_STATIC_CAT: fsc
-    } for (target, start, fdr, fsc) in zip(train_target_values, m5_dates, train_cal_features_list, stat_cat)
+        FieldName.TARGET            : target,
+        FieldName.START             : start,
+        FieldName.FEAT_DYNAMIC_REAL : fdr,
+        FieldName.FEAT_STATIC_CAT   : fsc
+    } for (target, start, fdr, fsc) in zip(train_target_values,   # list of individual time series
+                                           m5_dates,              # list of start dates
+                                           train_cal_feat_list,   # List of Dynamic Features
+                                           static_cat)              # List of Static Features 
     ],     freq="D")
+
+
 
 test_ds = ListDataset([
     {
-        FieldName.TARGET: target,
-        FieldName.START: start,
-        FieldName.FEAT_DYNAMIC_REAL: fdr,
-        FieldName.FEAT_STATIC_CAT: fsc
+        FieldName.TARGET            : target,
+        FieldName.START             : start,
+        FieldName.FEAT_DYNAMIC_REAL : fdr,
+        FieldName.FEAT_STATIC_CAT   : fsc
     }
     for (target, start, fdr, fsc) in zip(test_target_values,
                                          m5_dates,
-                                         test_cal_features_list,
-                                         stat_cat)
+                                         test_cal_feat_list,
+                                         static_cat)
 ], freq="D")
+
 
 #Just to be sure, we quickly verify that dataset format is correct and that our dataset does indeed 
 # contain the correct target values as well as dynamic and static features.
 ########################
 next(iter(train_ds))
+
+
+###########################################################################################################
+###########################################################################################################
+
+
+
+
+
+
+
+
+
+
+
+
+
 """
 Define the estimator
 Having obtained our training and testing data, we can now create a GluonTS estimator. In our example we will use the DeepAREstimator, an autoregressive RNN which was developed primarily for the purpose of time series forecasting. Note however that you can use a variety of different estimators. Also, since GluonTS is mainly target at probabilistic time series forecasting, lots of different output distributions can be specified. In the M5 case, we think that the NegativeBinomialOutput distribution best describes the output.
@@ -158,6 +241,7 @@ For a full list of available estimators and possible initialization arguments se
 
 For a full list of available output distributions and possible initialization arguments see https://gluon-ts.mxnet.io/api/gluonts/gluonts.distribution.html.
 """
+
 
 ########################
 from gluonts.model.deepar import DeepAREstimator
@@ -170,7 +254,7 @@ estimator = DeepAREstimator(
     distr_output          = NegativeBinomialOutput(),
     use_feat_dynamic_real = True,
     use_feat_static_cat   = True,
-    cardinality           = stat_cat_cardinalities,
+    cardinality           = static_cat_cardinalities,
     trainer               = Trainer(
     learning_rate         = 1e-3,
     epochs                = 100,
@@ -245,8 +329,9 @@ if submission == True:
     forecasts_acc = np.zeros((len(forecasts), pred_length))
     for i in range(len(forecasts)):
         forecasts_acc[i] = np.mean(forecasts[i].samples, axis=0)
-We then reshape the forecasts into the correct data shape for submission ...
 
+
+# We then reshape the forecasts into the correct data shape for submission ...
 ########################
 if submission == True:
     forecasts_acc_sub = np.zeros((len(forecasts)*2, single_pred_length))

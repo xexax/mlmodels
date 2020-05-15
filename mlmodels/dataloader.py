@@ -378,15 +378,6 @@ def test_run_model():
          except Exception as e :
             print("Error", x,  e)
 
-    """
-    param_pars = {
-        "choice": "json",
-        "config_mode": "test",
-        "data_path": "dataset/json/refactor/namentity_crm_bilstm_dataloader_new.json",
-    }
-    test_module("model_keras/namentity_crm_bilstm_dataloader.py", param_pars)
-    """
-
 
 
 def test_single(arg):
