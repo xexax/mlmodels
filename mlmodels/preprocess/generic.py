@@ -426,23 +426,20 @@ class pandasDataset(Dataset):
         file_path = path_norm(os.path.join(path, filename))
         if not os.path.exists(file_path):
             file_path = path_norm(os.path.join(path, dataset, 'train.csv' if train else 'test.csv'))
-
         df = pd.read_csv(file_path, **args.get("read_csv_parm",{}))
         self.df = df
-        print(">>>> df: ", df.head())
- 
+
  
         #### Split  ####################
         X = df[ colX ]
         labels = df[ coly ]
- 
+
  
         #### Compute sample weights from inverse class frequencies
         class_sample_count = np.unique(labels, return_counts=True)[1]
         weight = 1. / class_sample_count
         self.samples_weight = torch.from_numpy(weight) # BUG weight[labels] >> IndexError: only integers, slices (`:`), ellipsis (`...`), numpy.newaxis (`None`) and integer or boolean arrays are valid indices
 
- 
  
         #### Data Joining  ############
         self.data = list(zip(X, labels))
