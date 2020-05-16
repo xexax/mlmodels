@@ -97,7 +97,7 @@ jobs:
     ########  Test running 
     - name: ml_test
       # run: ml_test  --do test_jupyter      2>&1 | tee -a  cd /home/runner/work/mlmodels/mlmodels_store/log_jupyter/log_jupyter_$(date '+%Y-%m-%d-%H-%M')_$GITHUB_SHA.py
-      run: ml_test  --do test_jupyter      2>&1 | tee -a  cd /home/runner/work/mlmodels/mlmodels_store/log_jupyter/log_jupyter.py
+      run: ml_test  --do test_jupyter      2>&1 | tee cd /home/runner/work/mlmodels/mlmodels_store/log_jupyter/log_jupyter.py
       
       
     - name: log_gitcommit
