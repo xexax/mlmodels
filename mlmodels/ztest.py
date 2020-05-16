@@ -87,7 +87,7 @@ def log_info_repo(arg=None):
    print("\n" * 1, "******** GITHUB_COMMIT_URL : " + f"https://github.com/{repo}/commit/{sha}" , flush=True)
    print("\n" * 1, "*" * 120 )
 
-  print("\n" * 1, os.system("pip3 list ") )   
+   os.system("pip3 list ")  
    print("\n" * 1, "*" * 120 )
 
    return dd
