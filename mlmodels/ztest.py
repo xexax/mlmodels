@@ -143,6 +143,7 @@ def log_remote_push(arg=None):
    ### Pushing to mlmodels_store 
    tag ="ml_store"
    s = f""" cd /home/runner/work/mlmodels/mlmodels_store/
+           pip3 freeze > deps.txt
            git config --local user.email "noelkev0@gmail.com" && git config --local user.name "arita37"        
            git pull --all   
            ls &&  git add --all &&  git commit -m "{tag}" 
