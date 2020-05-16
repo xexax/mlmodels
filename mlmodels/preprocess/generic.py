@@ -356,24 +356,25 @@ def get_model_embedding(data_info, **args):
     model_pars = args.get("model_pars",{})
     d          = model_pars
 
-    args       = args("args", {})
+    # args       = args("args", {})
     train      = args.get('train', True)
     download   = args.get("download", True)
 
 
-    log("############## Get mbedding Loader  ")
+    log("############## Get mbedding Loader URI  ")
     transform = None
     if  len(args.get("embedding_transform_uri", ""))  > 1 :
         transform = load_function( d.get("embedding_transform_uri", "mlmodels.preprocess.text:torch_transform_glove" ))()
  
  
-    #### from mlmodels.preprocess.text import embeddingLoader
+    log("#### Get Embedding t embeddingLoader ")
     dset = load_function(d.get("embedding_dataset", "torchtext.embedding:glove") )
  
     dloader = None
     if len(d.get('embedding_path', "")) > 1 :
         ###### Custom Build Dataset   ####################################################
-        dloader    = dset(d['embedding_path'], train=train, download=download, transform= transform, model_pars=model_pars, args = args,  data_info = data_info)
+        dloader    = dset(d['embedding_path'], train=train, download=download, transform= transform, model_pars=model_pars, 
+                          args = args,  data_info = data_info)
         
     else :
         ###### Pre Built Dataset available  #############################################
@@ -437,7 +438,7 @@ class pandasDataset(Dataset):
         labels = df[ coly ]
 
  
-        #### Compute sample weights from inverse class frequencies
+        #### Compute sample weights from inverse class frequencies, pytorch not needed.
         import torch
         class_sample_count = np.unique(labels, return_counts=True)[1]
         weight = 1. / class_sample_count
@@ -480,6 +481,7 @@ class pandasDataset(Dataset):
 
 
 
+from PIL import Image
 class NumpyDataset(Dataset):
     """
   Defines a dataset composed of Features and labels
@@ -495,7 +497,7 @@ class NumpyDataset(Dataset):
                                    
       }        
   """
-    from PIL import Image
+    
  
     def __init__(self, root="", train=True, transform=None, target_transform=None,
                  download=False, data_info={}, **args):
