@@ -92,7 +92,9 @@ jobs:
     ########  Test running 
     - name: ml_test
       # run: ml_test  --do test_all     2>&1 | tee -a  cd /home/runner/work/mlmodels/mlmodels_store/log_testall/log_testall_$(date '+%Y-%m-%d-%H-%M')_$GITHUB_SHA.py
-      run: ml_test  --do test_all     2>&1 | tee -a  cd /home/runner/work/mlmodels/mlmodels_store/log_testall/log_testall.py
+      run: |
+         rm  /home/runner/work/mlmodels/mlmodels_store/log_testall/log_testall.py
+         ml_test  --do test_all     2>&1 | tee -a  cd /home/runner/work/mlmodels/mlmodels_store/log_testall/log_testall.py
 
       
       
