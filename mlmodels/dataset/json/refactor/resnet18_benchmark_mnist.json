@@ -34,9 +34,9 @@
                     "args"  : {
                             "dataloader":"torchvision.datasets:MNIST",
                             "to_image":true,
-                            "transform":    {  "uri": "mlmodels.preprocess.image:torch_transform_generic", 
+                            "transform":    {  "uri": "mlmodels.preprocess.image:torch_transform_mnist", 
                                                 "pass_data_pars": false, 
-                                                "arg": { "fixed_size" : 256 } },
+                                                "arg": {  } },
                             "shuffle": true,
                             "download" : true
                             }
