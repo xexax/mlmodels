@@ -211,6 +211,155 @@ def test_gluonts():
 
 
 
+def gluonts_create_dynamic(df_dynamic, submission=1, single_pred_length=28, submission_pred_length=10, n_timeseries=1, transpose=1) :
+    """
+        N_cat x N-timseries
+    """
+    v = df_dynamic.values.T if transpose else df_dynamic.values
+
+    train_cal_feat = v[:,:-submission_pred_length-single_pred_length]
+    test_cal_feat  = v[:,:-submission_pred_length]
+
+    #### List of individual time series   Nb Series x Lenght_time_series
+    test_list  = [test_cal_feat] * n_timeseries
+    train_list = [train_cal_feat] * n_timeseries
+    return train_list, test_list
+
+
+def gluonts_create_static(df_static, submission=1, single_pred_length=28, submission_pred_length=10, n_timeseries=1, transpose=1) :
+    """
+        N_cat x N-timseries
+
+    """
+    ####### Static Features 
+    stat_cat_list = []
+    for col in df_static :
+      v_col  = df_static[col].astype('category').cat.codes.values
+      static_cat_list.append(v_col)
+
+
+    static_cat               = np.concatenate(static_cat_list)
+    static_cat               = static_cat.reshape(len(static_cat_list), n_timeseries).T
+    # static_cat_cardinalities = [len(df_feature_static[col].unique()) for col in df_feature_static]
+    return static_cat, static_cat
+
+
+def gluonts_create_timeseries(df_timeseries, submission=1, single_pred_length=28, submission_pred_length=10, n_timeseries=1, transpose=1) :
+    """
+        N_cat x N-timseries
+    """
+    #### Remove Categories colum
+    train_target_values = df_timeseries.values
+
+    if submission == True:
+        test_target_values = [np.append(ts, np.ones(submission_pred_length) * np.nan) for ts in df_timeseries.values]
+
+
+    else:
+        #### List of individual timeseries
+        test_target_values  = train_target_values.copy()
+        train_target_values = [ts[:-single_pred_length] for ts in df_timeseries.values]
+
+    return train_target_values, test_target_values
+
+
+
+#### Start Dates for each time series
+def create_startdate(date="2011-01-29", freq="1D", n_timeseries=1):
+   start_dates_list = [pd.Timestamp(date, freq=freq) for _ in range(n_timeseries)]
+   return start_dates_list
+
+
+def gluonts_create_dataset(train_timeseries_list, start_dates_list, train_dynamic_list,  train_static_list, freq="D" ) :
+    from gluonts.dataset.common import load_datasets, ListDataset
+    from gluonts.dataset.field_names import FieldName
+    train_ds = ListDataset([
+        {
+            FieldName.TARGET            : target,
+            FieldName.START             : start,
+            FieldName.FEAT_DYNAMIC_REAL : fdr,
+            FieldName.FEAT_STATIC_CAT   : fsc
+        } for (target, start, fdr, fsc) in zip(train_timeseries_list,   # list of individual time series
+                                               start_dates_list,              # list of start dates
+                                               train_dynamic_list,   # List of Dynamic Features
+                                               train_static_list)              # List of Static Features 
+        ],     freq=freq)
+    return train_ds
+
+
+
+def pandas_to_gluonts_multiseries(df_timeseries, df_dynamic, df_static, pars=None) :
+
+    submission             = pars['submission']
+    single_pred_length     = pars['single_pred_length']
+    submission_pred_length = pars['submission_pred_length']
+    n_timeseries           = pars['n_timeseries']
+    start_date             = pars['start_date']
+
+    train_dynamic_list, test_dynamic_list       = gluonts_create_dynamic(df_dynamic, submission=submission, single_pred_length=single_pred_length, 
+                                                                         submission_pred_length=submission_pred_length, n_timeseries=n_timeseries, transpose=1)
+
+
+    train_static_list, test_static_list          = gluonts_create_static(df_static , submission=submission, single_pred_length=single_pred_length, 
+                                                                         submission_pred_length=submission_pred_length, n_timeseries=n_timeseries, transpose=0)
+
+
+    train_timeseries_list, test_timeseries_list = gluonts_create_timeseries(df_timeseries, submission=submission, single_pred_length=single_pred_length, 
+                                                                            submission_pred_length=submission_pred_length, n_timeseries=n_timeseries, transpose=0)
+
+    start_dates_list = create_startdate(date=start_date, freq=freq, n_timeseries=1)
+
+    train_ds = gluonts_create_dataset(train_timeseries_list, start_dates_list, train_dynamic_list, train_static_list, freq=freq ) 
+    test_ds  = gluonts_create_dataset(test_timeseries_list,  start_dates_list, test_dynamic_list,  test_static_list,  freq=freq ) 
+    
+    return train_ds, test_ds
+
+
+
+
+def test_gluonts2():
+    """
+      https://github.com/arita37/mlmodels/blob/dev/mlmodels/example/benchmark_timeseries_m5.py
+
+    """
+    ######## Dataset generation
+    n_timeseries           = len(sales_train_val)
+    single_pred_length     = 28
+    submission_pred_length = single_pred_length * 2
+    startdate              = "2011-01-29"
+    freq                   = "1D"
+    submission= 0
+
+
+    cal_feat = calendar.drop( ['date', 'wm_yr_wk', 'weekday', 'wday', 'month', 'year', 'event_name_1', 'event_name_2', 'd'],  axis=1 )
+    cal_feat['event_type_1'] = cal_feat['event_type_1'].apply(lambda x: 0 if str(x)=="nan" else 1)
+    cal_feat['event_type_2'] = cal_feat['event_type_2'].apply(lambda x: 0 if str(x)=="nan" else 1)
+
+
+    df_dynamic    = cal_feat
+    df_static     = sales_train_val["item_id","dept_id","cat_id","store_id","state_id"]
+    df_timeseries = sales_train_val.drop(["id","item_id","dept_id","cat_id","store_id","state_id"], axis=1)
+
+
+    train_ds, test_ds = pandas_to_gluonts_multiseries(df_timeseries, df_dynamic, df_static, pars=None) 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 ####################################################################################################

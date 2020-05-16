@@ -33,6 +33,8 @@ import pandas as pd
 import numpy as np
 from collections.abc import MutableMapping
 from functools import partial
+from pprint import PrettyPrinter as print2
+
 
 # possibly replace with keras.utils.get_file down the road?
 #### It dowloads from HTTP from Dorpbox, ....  (not urgent)
@@ -352,6 +354,7 @@ def split_xy_from_dict(out, **kwargs):
 
 
 def test_run_model():
+    print("\n\n\n###### Test_run_model  #############################################################")
     from mlmodels.models import test_module
 
     # param_pars = {
@@ -361,16 +364,21 @@ def test_run_model():
     # }
     # test_module("model_tch/03_nbeats_dataloader.py", param_pars)
 
-    param_pars = {
-        "choice": "json",
-        "config_mode": "test",
-        "data_path": "dataset/json/refactor/namentity_crm_bilstm_dataloader_new.json",
-    }
-    test_module("model_keras/namentity_crm_bilstm_dataloader.py", param_pars)
+    ll = [
+           {  "model_uri" : "model_tch.torchhub",
+              'pars':       { "choice": "json", "config_mode": "test",
+                              "data_path":'dataset/json/refactor/torchhub_cnn_dataloader.json'  }   }
+    ]
 
+    for x in ll :
+         try :
+            print("\n\n\n #########", x )
+            test_module( x['model_uri'],  path_norm_dict(x['pars']))
 
-
-
+         except Exception as e :
+            import traceback
+            traceback.print_exc()
+            print("Error", x,  e)
 
 
 
@@ -419,10 +427,7 @@ def test_single(arg):
 
 
 
-
-
 def test_dataloader(path='dataset/json/refactor/'):
-    import textwrap
     refactor_path = path_norm( path )
     # data_pars_list = [(f,json.loads(open(refactor_path+f).read())['test']['data_pars']) for f in os.listdir(refactor_path)]
     
@@ -432,18 +437,15 @@ def test_dataloader(path='dataset/json/refactor/'):
 
 
     data_pars_list  =  [
-
+        path_norm('dataset/json/refactor/charcnn.json'),
         path_norm('dataset/json/refactor/torchhub_cnn_dataloader.json' ),
-
         path_norm('dataset/json/refactor/namentity_crm_bilstm_dataloader_new.json' ),
-
         path_norm('dataset/json/refactor/model_list_CIFAR.json' ),
         path_norm('dataset/json/refactor/resnet34_benchmark_mnist.json' ),
         path_norm('dataset/json/refactor/keras_textcnn.json'),
         path_norm('dataset/json/refactor/namentity_crm_bilstm_new.json' )
 
     ] 
-
 
 
     for f in data_pars_list:
@@ -476,6 +478,8 @@ def test_dataloader(path='dataset/json/refactor/'):
           print(loader.get_data())
 
         except Exception as e :
+          import traceback
+          traceback.print_exc()
           print("Error", f,  e)
 
 
@@ -527,20 +531,20 @@ def main():
     if arg.do == "test_single":
         test_single(arg)  
 
+
 if __name__ == "__main__":
    VERBOSE =1  
    main() 
     
-    
+   test_run_model()
+
+
  
 
 
 
     
 """
-    
-    
-
 #########################################################################
 def pickle_load(file):
     return pickle.load(open(f, " r"))

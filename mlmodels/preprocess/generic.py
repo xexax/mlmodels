@@ -70,7 +70,7 @@ def load_function(uri_name="path_norm"):
             sys.path.append(path_parent)
             #log(path_parent)
 
-            #### import Absilute Path model_tf.1_lstm
+            #### import Absolute Path model_tf.1_lstm
             model_name   = Path(package).stem  # remove .py
             package_name = str(Path(package).parts[-2]) + "." + str(model_name)
             #log(package_name, model_name)
@@ -78,24 +78,6 @@ def load_function(uri_name="path_norm"):
 
         except Exception as e2:
             raise NameError(f"Module {pkg} notfound, {e1}, {e2}")
-
-
-"""
-def get_dataset_torch(data_pars):
-   
-      torchvison.datasets
-         MNIST Fashion-MNIST KMNIST EMNIST QMNIST  FakeData COCO Captions Detection LSUN ImageFolder DatasetFolder 
-         ImageNet CIFAR STL10 SVHN PhotoTour SBU Flickr VOC Cityscapes SBD USPS Kinetics-400 HMDB51 UCF101 CelebA
-
-      torchtext.datasets
-         Sentiment Analysis:    SST IMDb Question Classification TREC Entailment SNLI MultiNLI 
-         Language Modeling:     WikiText-2 WikiText103  PennTreebank 
-         Machine Translation :  Multi30k IWSLT WMT14 
-         Sequence Tagging    :  UDPOS CoNLL2000Chunking 
-         Question Answering  :  BABI20
-=======
-"""
-
 
 
 
@@ -112,61 +94,56 @@ def tf_dataset_download(data_info, **args):
     import numpy as np
     
 
-    dataset = data_info.get("dataset", None)
-    out_path = data_info.get("data_path", None)
-   
-    if not dataset or not out_path:
-        raise Exception("['data_path','dataset'] is required field, please add these ['data_path','dataset'] in data_info")
- 
-    log(dataset)
-   
-    try:
-        dataset = dataset.lower()
-    except:
-        raise Exception(f"Datatype error 'dataset: {dataset}'")
- 
- 
+    dataset    = data_info.get("dataset", "")
+    out_path   = data_info.get("data_path", "")
     n_train    = args.get("train_samples", 500)
     n_test     = args.get("test_samples", 50)
     batch_size = args.get("batch_size", 10)
-    out_path   = path_norm(out_path)
- 
- 
-    name       = dataset.replace(".","-")    
+
+   
+    if len(dataset) < 1 or len(out_path) < 1 :
+        raise Exception("['data_path','dataset'] is required field, please add these ['data_path','dataset'] in data_info") 
+    log(dataset)
+  
+  
+    dataset  = dataset.lower()
+    out_path = path_norm(out_path)
+    name     = dataset.replace(".","-")
     os.makedirs(out_path, exist_ok=True)
     log("Dataset Name is : ", name)
  
  
- 
-    train_ds =  tfds.as_numpy( tfds.load(dataset, split= f"train[0:{n_train}]") )
+    #### Split is more Complex in TF Dataset
+    train_ds = tfds.as_numpy( tfds.load(dataset, split= f"train[0:{n_train}]") )
     test_ds  = tfds.as_numpy( tfds.load(dataset, split= f"test[0:{n_test}]") )
     # val_ds  = tfds.as_numpy( tfds.load(dataset_id, split= f"test[0:{n_test}]", batch_size=batch_size) )
- 
     # log("train", train_ds.shape )
     # log("test",  test_ds.shape )
  
-    def get_keys(x):
+
+    def get_keys(x):  ### TF Dataset
         if "image" in x.keys() : xkey = "image"
         if "text" in x.keys() : xkey = "text"    
         return xkey
  
-    Xtemp = []
-    ytemp = []
+
+    log("##############", "Saving train dataset", "###############################")
+    Xtemp, ytemp = [], []
     for x in train_ds:
         #log(x)
         xkey =  get_keys(x)
         Xtemp.append(x[xkey])
-        ytemp.append(x.get('label'))
- 
+        ytemp.append(x.get('label')) 
     Xtemp = np.array(Xtemp)
-    ytemp = np.array(ytemp)
+    ytemp = np.array(ytemp)  ### Beware of None
     
     trainPath = os.path.join(out_path,'train')
     os.makedirs(trainPath, exist_ok=True)
     np.savez_compressed(os.path.join(trainPath, f"{name}") , X = Xtemp, y = ytemp )    
  
-    Xtemp = []
-    ytemp = []
+
+    log("##############", "Saving train dataset", "###############################") 
+    Xtemp, ytemp = [], []
     for x in test_ds:
         #log(x)
         Xtemp.append(x[xkey])
@@ -176,13 +153,31 @@ def tf_dataset_download(data_info, **args):
 
     testPath = os.path.join(out_path,'test')
     os.makedirs(testPath, exist_ok=True)
+    ### Multiple files
     np.savez_compressed(os.path.join(testPath, f"{name}"), X = Xtemp, y = ytemp)
     
     
-    log(out_path, os.listdir( out_path ))
- 
+    log("Saved", out_path, os.listdir( out_path ))
+
+
+
  
 def get_dataset_torch(data_info, **args):
+    """
+      From URI path, get dataloader for Pytorch Models
+
+      torchvison.datasets
+         MNIST Fashion-MNIST KMNIST EMNIST QMNIST  FakeData COCO Captions Detection LSUN ImageFolder DatasetFolder 
+         ImageNet CIFAR STL10 SVHN PhotoTour SBU Flickr VOC Cityscapes SBD USPS Kinetics-400 HMDB51 UCF101 CelebA
+
+      torchtext.datasets
+         Sentiment Analysis:    SST IMDb Question Classification TREC Entailment SNLI MultiNLI 
+         Language Modeling:     WikiText-2 WikiText103  PennTreebank 
+         Machine Translation :  Multi30k IWSLT WMT14 
+         Sequence Tagging    :  UDPOS CoNLL2000Chunking 
+         Question Answering  :  BABI20
+
+    """
     
     target_transform_info = args.get('target_transform', None)
     transform_info        = args.get('transform', None)
@@ -199,14 +194,15 @@ def get_dataset_torch(data_info, **args):
     if not dataset or not data_path:
         raise Exception("please add these 'data_path','dataset' in data_info")
  
-    log("#### If transformer URI is Provided")
+    log("#### If transformer URI is Provided", transform_info)
     transform = None
     if transform_info :
         transform_uri = transform_info.get("uri", "mlmodels.preprocess.image:torch_transform_mnist" )
         try:
             transform_args = transform_info.get("args", None)
-            trans_pass = transform_info.get("pass_data_pars", False)
-            if trans_pass:
+            trans_pass     = transform_info.get("pass_data_pars", False)   
+
+            if trans_pass:   ### Maybe no need,  transform_args is not None ???
                transform = load_function(transform_uri)(**transform_args)
             else:
                transform = load_function(transform_uri)()
@@ -217,9 +213,10 @@ def get_dataset_torch(data_info, **args):
  
     log("#### Loading dataloader URI")           
     dset = load_function(dataloader)
-    print("dataset : ",dset)           
+    log("dataset : ",dset)           
 
     # dset = load_function(d.get("dataset", "torchvision.datasets:MNIST") ) 
+
 
 
     if data_type != "tch_dataset":
@@ -267,15 +264,9 @@ def get_dataset_keras(data_info, **args):
        def __len__(self):
            return 100
            
-   #model = Sequential()
-   #model.add(Dense(units=4, input_dim=3))
-   #model.add(Dense(units=1))
-   #model.compile('adam', loss='mse')
- 
+   model.compile('adam', loss='mse')
    data_loader = kerasDataloader(TensorDataset(), batch_size=20, num_workers=0)
- 
-   return data_loader
-   # model.fit_generator(generator=data_loader, epochs=1, verbose=1)
+   model.fit_generator(generator=data_loader, epochs=1, verbose=1)
  
  
    ##### MNIST case : TorchVison TorchText Pre-Built
@@ -298,21 +289,21 @@ def get_dataset_keras(data_info, **args):
     
 
     target_transform_info = args.get('target_transform', None)
-    transform_info  = args.get('transform', None)
-    shuffle= args.get('shuffle', True)
-    dataloader = args.get("dataloader", "mlmodels.preprocess.datasets:MNIST")
+    transform_info        = args.get('transform', None)
+    shuffle               = args.get('shuffle', True)
+    dataloader            = args.get("dataloader", "mlmodels.preprocess.datasets:MNIST")
  
-    dataset = data_info.get("dataset", None)
-    data_path = data_info.get("data_path", None)
-    train = data_info.get("train", True)
-    batch_size = data_info.get("batch_size", 1)
+    dataset               = data_info.get("dataset", None)
+    data_path             = data_info.get("data_path", None)
+    train                 = data_info.get("train", True)
+    batch_size            = data_info.get("batch_size", 1)
    
     transform = None
     if transform_info :
         transform_uri = transform_info.get("uri", "mlmodels.preprocess.image:keras_transform_mnist")
         try:
             transform_args = transform_info.get("args", None)
-            trans_pass = transform_info.get("pass_data_pars", False)
+            trans_pass     = transform_info.get("pass_data_pars", False)
             if trans_pass:
                transform = load_function(transform_uri)(**transform_args)
             else:
@@ -321,8 +312,10 @@ def get_dataset_keras(data_info, **args):
             transform = None
             print(e)
  
+
     #### from mlmodels.preprocess.image import pandasDataset
-    dset = load_function(d.get("dataset", "mlmodels.preprocess.datasets:MNIST") )
+    ### Duplicate from preivous one
+    dset = load_function(data_info.get("dataset", "mlmodels.preprocess.datasets:MNIST") )
  
  
     ######  Dataset Downloader  #############################################
@@ -334,6 +327,8 @@ def get_dataset_keras(data_info, **args):
  
  
     return train_loader, valid_loader
+
+
 
 def get_model_embedding(data_info, **args):
     """"
@@ -358,10 +353,15 @@ def get_model_embedding(data_info, **args):
  
    """
    
-    d = args.get("model_pars",{})
-    args = args("args", {})
+    model_pars = args.get("model_pars",{})
+    d          = model_pars
 
-    ### Embedding Transformer
+    args       = args("args", {})
+    train      = args.get('train', True)
+    download   = args.get("download", True)
+
+
+    log("############## Get mbedding Loader  ")
     transform = None
     if  len(args.get("embedding_transform_uri", ""))  > 1 :
         transform = load_function( d.get("embedding_transform_uri", "mlmodels.preprocess.text:torch_transform_glove" ))()
@@ -370,18 +370,17 @@ def get_model_embedding(data_info, **args):
     #### from mlmodels.preprocess.text import embeddingLoader
     dset = load_function(d.get("embedding_dataset", "torchtext.embedding:glove") )
  
-    data = None
+    dloader = None
     if len(d.get('embedding_path', "")) > 1 :
         ###### Custom Build Dataset   ####################################################
-        data    = dset(d['embedding_path'], train=True, download=True, transform= transform, model_pars=model_parss, args = args,  data_info = data_info)
-       
- 
+        dloader    = dset(d['embedding_path'], train=train, download=download, transform= transform, model_pars=model_pars, args = args,  data_info = data_info)
+        
     else :
         ###### Pre Built Dataset available  #############################################
-        data    = dset(d['embedding_path'], train=True, download=True, transform= transform)
+        dloader    = dset(d['embedding_path'], train=train, download=download, transform= transform)
  
  
-    return data
+    return dloader
  
  
  
@@ -392,59 +391,61 @@ class pandasDataset(Dataset):
        df (Dataframe): Dataframe of the CSV from teh path
        sample_weights(ndarray, shape(len(labels),)): An array with each sample_weight[i] as the weight of the ith sample
        data (list[int, [int]]): The data in the set
+
    """
    
     def __init__(self, root="", train=True, transform=None, target_transform=None, 
                  download=False, data_info={}, **args):
-        import torch
-        
-        if len(data_info) < 1:
-            raise Exception("'data_info' is required fields in pandasDataset")
-        
+        # import torch
+
+        self.train            = train
         self.transform        = transform
         self.target_transform = target_transform
         self.download         = download
- 
-        dataset = data_info.get('dataset', None)
-        if not dataset:
-            raise Exception("'dataset' is required field, please add it in data_info key")
-        try:
-            dataset = dataset.lower()
-        except:
-            raise Exception(f"Datatype error 'dataset':{dataset}")
-            
+        self.data_info        = data_info
+        
+
+        if len(data_info) < 1:
+            raise Exception("'data_info' is required fields in pandasDataset")
+        
+        dataset = data_info.get('dataset', "")
+        if len(dataset) < 1:
+           raise Exception("'dataset' is required field, please add it in data_info key", dataset)
+        filename = dataset if dataset.find('.csv') > -1 else dataset + '.csv'  ## CSV file
+
+
         if len(root) > 1:
             path =  root # os.path.join(root,'train' if train else 'test') #TODO: need re-organize dataset later
         else:
             path = data_info.get("data_path","")
-        filename = dataset if dataset.find('.csv') > -1 else dataset + '.csv'  ## CSV file
 
-        colX = args.get('colX',[])
-        coly = args.get('coly',[])
- 
+
+
+        #### DataFrame Load  ##############################################
         # df = torch.load(os.path.join(path, filename))
         file_path = path_norm(os.path.join(path, filename))
         if not os.path.exists(file_path):
             file_path = path_norm(os.path.join(path, dataset, 'train.csv' if train else 'test.csv'))
-
         df = pd.read_csv(file_path, **args.get("read_csv_parm",{}))
         self.df = df
-        print(">>>> df: ", df.head())
- 
- 
-        #### Split  ####################
-        X = df[ colX ]
-        labels = df[ coly ]
- 
- 
-        #### Compute sample weights from inverse class frequencies
-        class_sample_count = np.unique(labels, return_counts=True)[1]
-        weight = 1. / class_sample_count
-        self.samples_weight = torch.from_numpy(weight) # BUG weight[labels] >> IndexError: only integers, slices (`:`), ellipsis (`...`), numpy.newaxis (`None`) and integer or boolean arrays are valid indices
 
  
+        #### Split  #######################################################
+        colX   = args.get('colX', list( df.columns) )  ### All columns
+        coly   = args.get('coly', [])
+        X      = df[ colX ]
+        labels = df[ coly ]
+
  
-        #### Data Joining  ############
+        #### Compute sample weights from inverse class frequencies
+        import torch
+        class_sample_count = np.unique(labels, return_counts=True)[1]
+        weight = 1. / class_sample_count
+        self.samples_weight = torch.from_numpy(weight) 
+        # BUG weight[labels] >> IndexError: only integers, slices (`:`), ellipsis (`...`), numpy.newaxis (`None`) and integer or boolean arrays are valid indices
+
+ 
+        #### Data Joining  ################################################
         self.data = list(zip(X, labels))
  
  
@@ -460,9 +461,7 @@ class pandasDataset(Dataset):
            tuple: (image, target) where target is index of the target class.
        """
         X, target = self.data[index], int(self.targets[index])
-        
-        
-        
+                        
         if self.transform is not None:
             X = self.transform(X)
             
@@ -471,11 +470,15 @@ class pandasDataset(Dataset):
  
         return X, target
  
-    def shuffle(self, random_state=123):
-        self.df = self._df.sample(frac=1.0, random_state=random_state)
+    def shuffle(self, frac=1.0, random_state=123):
+        self.df = self.df.sample(frac=frac, random_state=random_state)
         
+
     def get_data(self):
+        #### TODO : Mini Batch Load 
         return self.df
+
+
 
 class NumpyDataset(Dataset):
     """
@@ -492,6 +495,7 @@ class NumpyDataset(Dataset):
                                    
       }        
   """
+    from PIL import Image
  
     def __init__(self, root="", train=True, transform=None, target_transform=None,
                  download=False, data_info={}, **args):
