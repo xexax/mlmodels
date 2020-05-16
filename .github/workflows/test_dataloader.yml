@@ -93,10 +93,11 @@ jobs:
 
     ########  Test running 
     - name: ml_test
-      # run:  ml_test --do test_dataloader  2>&1 | tee -a  cd /home/runner/work/mlmodels/mlmodels_store/log_dataloader/log_$(date '+%Y-%m-%d-%H-%M')_$GITHUB_SHA.py
-      run:  |
-        rm  /home/runner/work/mlmodels/mlmodels_store/log_dataloader/log_dataloader.py
-        ml_test --do test_dataloader  2>&1 | tee -a  cd /home/runner/work/mlmodels/mlmodels_store/log_dataloader/log_dataloader.py
+      run : ml_test --do test_dataloader  2>&1 | tee cd /home/runner/work/mlmodels/mlmodels_store/log_dataloader/log_dataloader.py
+
+      #run:  |
+      #run:  ml_test --do test_dataloader  2>&1 | tee -a  cd /home/runner/work/mlmodels/mlmodels_store/log_dataloader/log_$(date '+%Y-%m-%d-%H-%M')_$GITHUB_SHA.py
+      # rm  /home/runner/work/mlmodels/mlmodels_store/log_dataloader/log_dataloader.py
 
 
      
