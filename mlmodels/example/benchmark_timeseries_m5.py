@@ -82,7 +82,6 @@ https://www.kaggle.com/steverab/m5-forecasting-competition-gluonts-template
 
 
 
-
 """
 calendar               = pd.read_csv(f'{m5_input_path}/calendar.csv')
 sales_train_val        = pd.read_csv(f'{m5_input_path}/sales_train_val.csv')
@@ -286,9 +285,6 @@ def create_startdate(date="2011-01-29", freq="1D", n_timeseries=1):
    return start_dates_list
 
 
-
-
-
 def gluonts_create_dataset(train_timeseries_list, start_dates_list, train_dynamic_list,  train_static_list, freq="D" ) :
     from gluonts.dataset.common import load_datasets, ListDataset
     from gluonts.dataset.field_names import FieldName
@@ -304,9 +300,6 @@ def gluonts_create_dataset(train_timeseries_list, start_dates_list, train_dynami
                                                train_static_list)              # List of Static Features 
         ],     freq=freq)
     return train_ds
-
-
-
 
 
 
@@ -358,12 +351,7 @@ def pandas_to_gluonts_multiseries(df_timeseries, df_dynamic, df_static, pars=Non
     return train_ds, test_ds
 
 
-
-
 train_ds, test_ds = pandas_to_gluonts_multiseries(df_timeseries, df_dynamic, df_static, pars=None) 
-
-
-
 
 
 

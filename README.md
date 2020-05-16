@@ -10,9 +10,14 @@ Now, more than **60 recent models** (> 2018) are available in those domains :
 * Gradient Boosting, Automatic Machine Learning tuning, 
 * Hyper-parameter search.
 
-With the goal to transform Script/Research code into re-usable batch/code with minimal code change, we used functional interface instead of pure OOP. This is because functional reduces the amount of code needed which is good to scientific computing. Thus, we can focus on the computing part than design. Also, it is easy to maintain for medium size project. 
+Main characteristics :
 
-A collection of Deep Learning and Machine Learning research papers is available in this repository.
+  * Functional type interface : reduce boilerplate code, good for scientific computing.
+  * JSON based input          : reduce boilerplate code, easy for experiment management.
+  * Focus to move research/script code to prod/batch 
+
+
+We are looking for contributors (!!)
 
 
 ![alt text](docs/mxnetf.png) ![alt text](docs/pytorch.PNG) ![alt text](docs/tenserflow.PNG)
@@ -20,10 +25,9 @@ A collection of Deep Learning and Machine Learning research papers is available 
 ## Benefits :
 
 Having a simple  framework for both machine learning models and deep learning models, without BOILERPLATE code.
-Collection of models, model zoo in Pytorch, Tensorflow, Keras allows richer possibilities in model re-usage, model batching and benchmarking.
-
-Unique and simple interface, zero boilerplate code (!), and recent state of art models/frameworks are the main strength 
+Collection of models, model zoo in Pytorch, Tensorflow, Keras allows richer possibilities in model re-usage, model batching and benchmarking. Unique and simple interface, zero boilerplate code (!), and recent state of art models/frameworks are the main strength 
 of MLMODELS. Different domain fields are available, such as computer vision, NLP, Time Series prediction, tabular data classification.  
+
 
 
 Here you can find usages [guide](https://cutt.ly/tyluzof)
@@ -295,25 +299,12 @@ alexnet: SqueezeNet: AlexNet-level accuracy with 50x fewer parameters and <0.5MB
 
 ### ① Installation Guide:
 
-### (A) Using pre-installed Setup (one click) :
+### (A) Using pre-installed Setup (one click run) :
 
-[Read-more](https://github.com/arita37/mlmodels/issues/101)
+[Read-more](https://cutt.ly/QyWYknC)
 
 
-
-### (B) Manual Install as editable package in Linux
-
-```bash
-conda create -n py36 python=3.6.5 -y
-source activate py36
-
-cd yourfolder
-git clone https://github.com/arita37/mlmodels.git mlmodels
-cd mlmodels
-git checkout dev
-```
-
-### (C) Using Colab :
+### (B) Using Colab :
 [Read-more](https://github.com/arita37/mlmodels/blob/dev/README_usage.md)
 
 
