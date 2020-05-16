@@ -86,7 +86,8 @@ def log_info_repo(arg=None):
    print("\n" * 1, "******** GITHUB_REPO_URL : "   + github_repo_url , flush=True)
    print("\n" * 1, "******** GITHUB_COMMIT_URL : " + f"https://github.com/{repo}/commit/{sha}" , flush=True)
    print("\n" * 1, "*" * 120 )
-   print("\n" * 1, "pip3 list " )   
+
+  print("\n" * 1, os.system("pip3 list ") )   
    print("\n" * 1, "*" * 120 )
 
    return dd
@@ -146,6 +147,7 @@ def log_remote_push(arg=None):
    tag ="ml_store"
    s = f""" cd /home/runner/work/mlmodels/mlmodels_store/
            pip3 freeze > deps.txt
+           pip3 list
            git config --local user.email "noelkev0@gmail.com" && git config --local user.name "arita37"        
            git pull --all   
            ls &&  git add --all &&  git commit -m "{tag}" 
