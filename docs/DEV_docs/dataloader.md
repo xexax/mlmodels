@@ -4,8 +4,8 @@
 
 
 
-Alog base :
-
+Algo base :
+```python
 for processor in processor_list :
    get(uri, args)
    load uri
@@ -15,6 +15,8 @@ for processor in processor_list :
 
 issue is multiple sub-process in processor   
 
+
+```
 
 
 
