@@ -107,11 +107,11 @@ cls_name : Data
        [1, 0, 0, 0],
        [0, 1, 0, 0],
        [0, 0, 1, 0]])), {})
+```
 
 
 
-
-
+```python
  ####################################################################################################
 /home/runner/work/mlmodels/mlmodels/mlmodels/dataset/json/refactor/torchhub_cnn_dataloader.json 
 
@@ -169,10 +169,11 @@ cls_name : Data
 
  #####  get_Data DataLoader 
 ((<torch.utils.data.dataloader.DataLoader object at 0x7f2ddd09f908>, <torch.utils.data.dataloader.DataLoader object at 0x7f2ddd0aa940>), {})
+```
 
 
 
-
+```python
 ########################################################################################
 /home/runner/work/mlmodels/mlmodels/mlmodels/dataset/json/refactor/resnet34_benchmark_mnist.json 
 
@@ -226,11 +227,11 @@ cls_name : Data
 
  #####  get_Data DataLoader 
 ((<torch.utils.data.dataloader.DataLoader object at 0x7f2ddc68a748>, <torch.utils.data.dataloader.DataLoader object at 0x7f2ddc68a7f0>), {})
+```
 
 
 
-
-
+```python
  ####################################################################################################
 /home/runner/work/mlmodels/mlmodels/mlmodels/dataset/json/refactor/keras_textcnn.json 
 
