@@ -1,9 +1,3 @@
-
-
-
-
-
-
 Algo base :
 ```python
 for processor in processor_list :
@@ -17,6 +11,21 @@ issue is multiple sub-process in processor
 
 
 ```
+
+
+
+Files :
+
+Dataloader manager : manage the pipeline.
+https://github.com/arita37/mlmodels/blob/adata2/mlmodels/dataloader.py
+
+
+Generic Wrapper of Dataset:
+https://github.com/arita37/mlmodels/blob/adata2/mlmodels/preprocess/generic.py
+
+
+
+
 
 
 
