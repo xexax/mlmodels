@@ -45,6 +45,55 @@ def config_model_list(folder=None):
 
     return mlist
 
+   
+ """
+ 
+ def create_conda_env()
+ 
+ 
+ def process_launch(uri="mlmodels.utils:myFun", args={}, **kw):
+    
+    write_on_disk(myid, args)
+    
+    create_or_find_conda_env()
+    
+    cmd ="
+       source activate myenv
+       python mymain.py
+    "
+    
+    #### Sync Launch or Asynchronous launch
+    myid = subprocess.launch(   cmd )
+ 
+ 
+    while not finished :
+       sleep(10)
+       
+    ddict = read_from_disk(myid)
+    return ddict
+    
+    
+    
+    mymain.py
+       from mlmodels.utilss import myfun
+       
+       args = read_from_disk(myid)
+       
+       res = myfun(**args)
+       
+       write_on_disk(myid, res)
+       
+       
+       
+    
+ 
+ 
+ 
+ 
+ 
+ 
+ """
+   
 
 
 
