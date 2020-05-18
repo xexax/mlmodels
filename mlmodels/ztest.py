@@ -72,6 +72,8 @@ def log_info_repo(arg=None):
 
    url_branch_file2 = f"https://github.com/{repo}/tree/{branch}/" 
 
+   url_debugger     = f"https://gitpod.io/#https://github.com/{repo}/tree/{sha}"
+           
 
    # print(locals()["github_repo_url"] )
    ### Export
@@ -85,6 +87,9 @@ def log_info_repo(arg=None):
    print("\n" * 1, "******** GITHUB_REPO_BRANCH : "   + url_branch_file2 , flush=True)
    print("\n" * 1, "******** GITHUB_REPO_URL : "   + github_repo_url , flush=True)
    print("\n" * 1, "******** GITHUB_COMMIT_URL : " + f"https://github.com/{repo}/commit/{sha}" , flush=True)
+           
+   print("\n" * 1, "******** Click here for Online DEBUGGER : " + url_debugger , flush=True)
+
    print("\n" * 1, "*" * 120 )
 
    # os.system("pip3 list ") 
