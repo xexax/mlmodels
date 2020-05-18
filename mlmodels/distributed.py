@@ -47,6 +47,9 @@ def config_model_list(folder=None):
 
    
  """
+    ### my values = EXecute( "Myfunction" , args  ) in a separate python interpreter....
+    
+    
  
  def create_conda_env()
  
