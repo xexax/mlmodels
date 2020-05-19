@@ -374,16 +374,21 @@ def test_run_model():
     ll = [
         "dataset/json/refactor/charcnn.json",
         "dataset/json/refactor/charcnn_zhang.json",
+        'dataset/json/refactor/torchhub_cnn_dataloader.json'
+        
     ]
 
     for x in ll :
          try :
-            print("\n\n\n #########", x )
+            print("\n\n\n", "#" * 100)
+            print(x )
 
             data_path = path_norm(x)
             param_pars = {"choice": "json", "data_path": data_path, "config_mode": "test"}
             with open(data_path) as json_file:
                 config = json.load(json_file)
+
+            print2(config)    
             test_module(config['test']['model_pars']['model_uri'], param_pars)
 
          except Exception as e :
