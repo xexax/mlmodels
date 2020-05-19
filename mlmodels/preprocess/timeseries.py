@@ -365,6 +365,7 @@ def test_gluonts2():
 
 
     ##Set parameters of dataset
+    submission             = False
     single_pred_length     = 28
     submission_pred_length = single_pred_length * 2
     startdate              = "2011-01-29"
@@ -375,7 +376,7 @@ def test_gluonts2():
                              'n_timeseries':n_timeseries   ,
                              'start_date':startdate ,'freq':freq}
 
-    train_ds, test_ds, cardinalities   = pandas_to_gluonts_multiseries(df_timeseries, df_dynamic, df_static  pars) 
+    train_ds, test_ds, cardinalities   = pandas_to_gluonts_multiseries(df_timeseries, df_dynamic, df_static,  pars) 
 
 
     """
