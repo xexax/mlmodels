@@ -6,10 +6,10 @@
              },
 
             "model_pars": {
+                "model_uri": "model_tch.torchhub",
                 "repo_uri": "facebookresearch/pytorch_GAN_zoo:hub",
                 "model": "PGAN",
                 "model_name" : "celebAHQ-512",
-
 
 
                 "num_classes": 1000,
