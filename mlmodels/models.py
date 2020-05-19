@@ -268,7 +268,7 @@ def test_module(model_uri="model_xxxx/yyyy.py", param_pars=None):
     print(ypred)
 
     log("#### Get  metrics   ################################################")
-    metrics_val = module.fit_metrics(model, data_pars, compute_pars, out_pars)
+    metrics_val = module.fit_metrics(model, data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)
 
     log("#### Save   ########################################################")
     # save_pars = {}

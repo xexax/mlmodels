@@ -1,6 +1,7 @@
 {
   "test": {
     "model_pars": {
+      "model_uri": "model_keras.dataloader.charcnn.py",
       "embedding_size": 128,
       "conv_layers": [
         [256, 10],
