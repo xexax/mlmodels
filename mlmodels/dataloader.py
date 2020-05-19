@@ -33,8 +33,7 @@ import pandas as pd
 import numpy as np
 from collections.abc import MutableMapping
 from functools import partial
-from pprint import PrettyPrinter as print2
-
+from pprint import pprint as print2
 
 # possibly replace with keras.utils.get_file down the road?
 #### It dowloads from HTTP from Dorpbox, ....  (not urgent)
@@ -68,7 +67,6 @@ import tensorflow.data
 
 VERBOSE = 0 
 DATASET_TYPES = ["csv_dataset", "text_dataset", "NumpyDataset", "pandasDataset"]
-
 
 
 #########################################################################
@@ -389,7 +387,7 @@ def test_run_model():
             with open(data_path) as json_file:
                 config = json.load(json_file)
 
-            print2(config)    
+            print2(config)
             test_module(config['test']['model_pars']['model_uri'], param_pars)
 
          except Exception as e :
@@ -456,7 +454,7 @@ def test_dataloader(path='dataset/json/refactor/'):
         path_norm('dataset/json/refactor/charcnn.json'),
         path_norm('dataset/json/refactor/charcnn_zhang.json'),
         path_norm('dataset/json/refactor/torchhub_cnn_dataloader.json' ),
-        path_norm('dataset/json/refactor/namentity_crm_bilstm_dataloader_new.json' ),
+        # path_norm('dataset/json/refactor/namentity_crm_bilstm_dataloader_new.json' ),
         path_norm('dataset/json/refactor/model_list_CIFAR.json' ),
         path_norm('dataset/json/refactor/resnet34_benchmark_mnist.json' ),
         path_norm('dataset/json/refactor/keras_textcnn.json'),
