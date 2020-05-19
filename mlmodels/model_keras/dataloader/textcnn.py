@@ -93,7 +93,7 @@ def fit_metrics(model, data_pars=None, compute_pars=None, out_pars=None,  **kw):
 def predict(model, sess=None, data_pars=None, out_pars=None, compute_pars=None, **kw):
   ##### Get Data ###############################################
   data_pars['train'] = False
-  X, ytrue = get_dataset(data_pars)
+  X, ytrue, _, _ = get_dataset(data_pars)
 
   #### Do prediction
   ypred = model.model.predict(X)
@@ -147,7 +147,9 @@ def get_dataset(data_pars=None, **kw):
   loader.compute()
   dataset, internal_states = loader.get_data()
 
+  return dataset
   Xtrain, Xtest, ytrain, ytest = dataset
+
 
   if data_pars['data_info'].get('train') :
 

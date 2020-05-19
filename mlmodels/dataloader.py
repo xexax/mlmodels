@@ -374,6 +374,7 @@ def test_run_model():
     ll = [
         "dataset/json/refactor/charcnn.json",
         "dataset/json/refactor/charcnn_zhang.json",
+        # "dataset/json/refactor/keras_textcnn.json",
     ]
 
     for x in ll :
