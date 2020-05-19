@@ -372,10 +372,17 @@ def test_run_model():
 
 
     ll = [
-        "dataset/json/refactor/charcnn.json",
-        "dataset/json/refactor/charcnn_zhang.json",
-        # "dataset/json/refactor/keras_textcnn.json",
-        # 'dataset/json/refactor/torchhub_cnn_dataloader.json'
+        #### Keras
+         "dataset/json/refactor/charcnn.json"
+        ,"dataset/json/refactor/charcnn_zhang.json"
+        , "dataset/json/refactor/keras_textcnn.json",
+
+
+
+        ### Torch
+        ,'dataset/json/refactor/torchhub_cnn_dataloader.json'
+
+
 
     ]
 
