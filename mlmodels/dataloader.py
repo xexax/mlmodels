@@ -33,8 +33,7 @@ import pandas as pd
 import numpy as np
 from collections.abc import MutableMapping
 from functools import partial
-from pprint import PrettyPrinter as print2
-
+from pprint import pprint as print2
 
 # possibly replace with keras.utils.get_file down the road?
 #### It dowloads from HTTP from Dorpbox, ....  (not urgent)
@@ -68,7 +67,6 @@ import tensorflow.data
 
 VERBOSE = 0 
 DATASET_TYPES = ["csv_dataset", "text_dataset", "NumpyDataset", "pandasDataset"]
-
 
 
 #########################################################################
@@ -364,22 +362,45 @@ def test_run_model():
     # }
     # test_module("model_tch/03_nbeats_dataloader.py", param_pars)
 
+    # ll = [
+    #        {  "model_uri" : "model_tch.torchhub",
+    #           'pars':       { "choice": "json", "config_mode": "test",
+    #                           "data_path":'dataset/json/refactor/torchhub_cnn_dataloader.json'  }   }
+    # ]
+
+
     ll = [
-           {  "model_uri" : "model_tch.torchhub",
-              'pars':       { "choice": "json", "config_mode": "test",
-                              "data_path":'dataset/json/refactor/torchhub_cnn_dataloader.json'  }   }
+        #### Keras
+         "dataset/json/refactor/charcnn.json"
+        ,"dataset/json/refactor/charcnn_zhang.json"
+        , "dataset/json/refactor/keras_textcnn.json"
+
+
+
+        ### Torch
+        ,'dataset/json/refactor/torchhub_cnn_dataloader.json'
+
+
+
     ]
 
     for x in ll :
          try :
-            print("\n\n\n #########", x )
-            test_module( x['model_uri'],  path_norm_dict(x['pars']))
+            print("\n\n\n", "#" * 100)
+            print(x )
+
+            data_path = path_norm(x)
+            param_pars = {"choice": "json", "data_path": data_path, "config_mode": "test"}
+            with open(data_path) as json_file:
+                config = json.load(json_file)
+
+            print( json.dumps(config, indent=2))
+            test_module(config['test']['model_pars']['model_uri'], param_pars)
 
          except Exception as e :
             import traceback
             traceback.print_exc()
             print("Error", x,  e)
-
 
 
 def test_single(arg):
@@ -438,8 +459,9 @@ def test_dataloader(path='dataset/json/refactor/'):
 
     data_pars_list  =  [
         path_norm('dataset/json/refactor/charcnn.json'),
+        path_norm('dataset/json/refactor/charcnn_zhang.json'),
         path_norm('dataset/json/refactor/torchhub_cnn_dataloader.json' ),
-        path_norm('dataset/json/refactor/namentity_crm_bilstm_dataloader_new.json' ),
+        # path_norm('dataset/json/refactor/namentity_crm_bilstm_dataloader_new.json' ),
         path_norm('dataset/json/refactor/model_list_CIFAR.json' ),
         path_norm('dataset/json/refactor/resnet34_benchmark_mnist.json' ),
         path_norm('dataset/json/refactor/keras_textcnn.json'),
@@ -534,7 +556,7 @@ def main():
 
 if __name__ == "__main__":
    VERBOSE =1  
-   main() 
+   main()
     
    test_run_model()
 

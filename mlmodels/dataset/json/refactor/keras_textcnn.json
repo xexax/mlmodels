@@ -2,7 +2,7 @@
 	"test": {
 
 		"model_pars": {
-			"model_uri": "model_keras.textcnn.py",
+			"model_uri": "model_keras.dataloader.textcnn.py",
 			"maxlen":40,
 			"max_features": 5,
 			"embedding_dims":50

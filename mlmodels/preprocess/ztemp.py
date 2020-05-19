@@ -979,4 +979,4 @@ if __name__ == "__main__":
     #    "config_mode": "test",
     #    "data_path": f"dataset/json_/textcnn_dataloader.json",
     # }
-    # test_module("model_tch/textcnn_dataloader.py", param_pars)
+    # test_module("model_tch/textcnn.py", param_pars)
