@@ -373,7 +373,7 @@ def test_run_model():
         #### Keras
          "dataset/json/refactor/charcnn.json"
         ,"dataset/json/refactor/charcnn_zhang.json"
-        , "dataset/json/refactor/keras_textcnn.json",
+        , "dataset/json/refactor/keras_textcnn.json"
 
 
 
@@ -394,7 +394,7 @@ def test_run_model():
             with open(data_path) as json_file:
                 config = json.load(json_file)
 
-            print2(config)
+            print( json.dumps(config, indent=2))
             test_module(config['test']['model_pars']['model_uri'], param_pars)
 
          except Exception as e :
