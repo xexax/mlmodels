@@ -54,8 +54,8 @@
                 "learning_rate": 0.001
             },
             "out_pars": {
-                "checkpointdir": "ztest/model_tch/torchhub/restnet18/checkpoints/",
-                "path": "ztest/model_tch/torchhub/restnet18/"
+                "checkpointdir": "ztest/model_tch/torchhub/pytorch_GAN_zoo/checkpoints/",
+                "path": "ztest/model_tch/torchhub/pytorch_GAN_zoo/"
             }
         },
     

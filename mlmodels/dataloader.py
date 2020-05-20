@@ -378,11 +378,16 @@ def test_run_model():
 
 
         ### Torch
+        ,'dataset/json/refactor/resnet18_benchmark_mnist.json'
+        ,'dataset/json/refactor/resnet34_benchmark_mnist.json'
+        ,'dataset/json/refactor/model_list_CIFAR.json'
         ,'dataset/json/refactor/torchhub_cnn_dataloader.json'
 
 
 
     ]
+
+    not_fittable_models = ['dataset/json/refactor/torchhub_cnn_dataloader.json']
 
     for x in ll :
          try :
@@ -395,12 +400,13 @@ def test_run_model():
                 config = json.load(json_file)
 
             print( json.dumps(config, indent=2))
-            test_module(config['test']['model_pars']['model_uri'], param_pars)
+            test_module(config['test']['model_pars']['model_uri'], param_pars, fittable = False if x in not_fittable_models else True)
 
          except Exception as e :
             import traceback
             traceback.print_exc()
             print("Error", x,  e)
+
 
 
 def test_single(arg):
