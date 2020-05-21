@@ -374,15 +374,17 @@ def test_run_model():
         #### Keras
          # "dataset/json/refactor/charcnn.json"
         # ,"dataset/json/refactor/charcnn_zhang.json"
-         "dataset/json/refactor/keras_textcnn.json"
+        # ,"dataset/json/refactor/keras_textcnn.json"
 
 
 
         ### Torch
-        # ,'dataset/json/refactor/resnet18_benchmark_mnist.json'
-        # ,'dataset/json/refactor/resnet34_benchmark_mnist.json'
-        # ,'dataset/json/refactor/model_list_CIFAR.json'
-        # ,'dataset/json/refactor/torchhub_cnn_dataloader.json'
+        'dataset/json/refactor/resnet18_benchmark_mnist.json'
+        ,'dataset/json/refactor/resnet34_benchmark_mnist.json'
+        ,'dataset/json/refactor/model_list_CIFAR.json'
+        ,'dataset/json/refactor/torchhub_cnn_dataloader.json'
+        ,'dataset/json/refactor/resnet18_benchmark_FashionMNIST.json' 
+        ,'dataset/json/refactor/model_list_KMNIST.json'
 
 
 
