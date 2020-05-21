@@ -313,6 +313,7 @@ class DataLoader:
                 print("\n ######### postional parameteres : ", pos_params)
                 print("\n ######### Execute : preprocessor_func", preprocessor_func)
 
+                print(">>>>input_tmp: ",  input_tmp)
                 if isinstance(input_tmp, (tuple, list)) and len(input_tmp) > 0 and len(pos_params) == 0:
                     out_tmp = preprocessor_func(*input_tmp, **args)
 
@@ -371,17 +372,17 @@ def test_run_model():
 
     ll = [
         #### Keras
-         "dataset/json/refactor/charcnn.json"
-        ,"dataset/json/refactor/charcnn_zhang.json"
-        , "dataset/json/refactor/keras_textcnn.json"
+         # "dataset/json/refactor/charcnn.json"
+        # ,"dataset/json/refactor/charcnn_zhang.json"
+         "dataset/json/refactor/keras_textcnn.json"
 
 
 
         ### Torch
-        ,'dataset/json/refactor/resnet18_benchmark_mnist.json'
-        ,'dataset/json/refactor/resnet34_benchmark_mnist.json'
-        ,'dataset/json/refactor/model_list_CIFAR.json'
-        ,'dataset/json/refactor/torchhub_cnn_dataloader.json'
+        # ,'dataset/json/refactor/resnet18_benchmark_mnist.json'
+        # ,'dataset/json/refactor/resnet34_benchmark_mnist.json'
+        # ,'dataset/json/refactor/model_list_CIFAR.json'
+        # ,'dataset/json/refactor/torchhub_cnn_dataloader.json'
 
 
 
@@ -464,14 +465,14 @@ def test_dataloader(path='dataset/json/refactor/'):
 
 
     data_pars_list  =  [
-        path_norm('dataset/json/refactor/charcnn.json'),
-        path_norm('dataset/json/refactor/charcnn_zhang.json'),
-        path_norm('dataset/json/refactor/torchhub_cnn_dataloader.json' ),
+        # path_norm('dataset/json/refactor/charcnn.json'),
+        # path_norm('dataset/json/refactor/charcnn_zhang.json'),
+        # path_norm('dataset/json/refactor/torchhub_cnn_dataloader.json' ),
         # path_norm('dataset/json/refactor/namentity_crm_bilstm_dataloader_new.json' ),
-        path_norm('dataset/json/refactor/model_list_CIFAR.json' ),
-        path_norm('dataset/json/refactor/resnet34_benchmark_mnist.json' ),
+        # path_norm('dataset/json/refactor/model_list_CIFAR.json' ),
+        # path_norm('dataset/json/refactor/resnet34_benchmark_mnist.json' ),
         path_norm('dataset/json/refactor/keras_textcnn.json'),
-        path_norm('dataset/json/refactor/namentity_crm_bilstm_new.json' )
+        # path_norm('dataset/json/refactor/namentity_crm_bilstm_new.json' )
 
     ] 
 
@@ -562,7 +563,7 @@ def main():
 
 if __name__ == "__main__":
    VERBOSE =1  
-   main()
+   # main()
     
    test_run_model()
 

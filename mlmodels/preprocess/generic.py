@@ -532,7 +532,6 @@ class NumpyDataset(Dataset):
             self.features   = data['X']
             self.classes    = data['y']
         
-        
         self.data = tuple(data[x] for x in sorted(data.files))
         data.close()
  
