@@ -405,7 +405,7 @@ def test_run_model():
          except Exception as e :
             import traceback
             traceback.print_exc()
-            print("Error", x,  e)
+            print("######## Error", x,  e, flush=True)
 
 
 
@@ -450,7 +450,7 @@ def test_single(arg):
           print(loader.get_data())
 
         except Exception as e :
-          print("Error", f,  e)
+          print("Error", f,  e, flush=True)
 
 
 
@@ -508,7 +508,7 @@ def test_dataloader(path='dataset/json/refactor/'):
         except Exception as e :
           import traceback
           traceback.print_exc()
-          print("Error", f,  e)
+          print("Error", f,  e, flush=True)
 
 
 ####################################################################################################
