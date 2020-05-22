@@ -239,7 +239,7 @@ def test_jupyter(arg=None, config_mode="test_all"):
     block_list = [ "ipynb_checkpoints" ] 
     model_list = [t for t in model_list if t not in block_list]
 
-    test_list = [f"ipython {t}"  for  t in model_list]
+    test_list = [f"jupyter nbconvert --execute {t}"  for  t in model_list]
     print(test_list, flush=True) 
 
     log_separator()
