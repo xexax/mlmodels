@@ -87,7 +87,7 @@ jobs:
 
 
     - name: Install Jupyter
-      run: pip install notebook==6.0.3 ipython==7.14.0
+      run: pip install notebook==6.0.3 ipython==7.14.0  jupyter
 
 
     - name: Repo path
