@@ -47,11 +47,11 @@ def config_model_list(folder=None):
 
   
 
-  def create_conda_env() :
+def create_conda_env() :
     pass
  
  
- def process_launch(uri="mlmodels.utils:myFun", args={}, **kw):
+def process_launch(uri="mlmodels.utils:myFun", args={}, **kw):
     """
       Execute a function on a new python env and get back results in the current env.
 
@@ -119,7 +119,7 @@ def uri_get_script():
        
 
 
- """
+"""
     ### my values = EXecute( "Myfunction" , args  ) in a separate python interpreter....
     
     
