@@ -27,6 +27,13 @@
                         },
 						"encoding": "'ISO-8859-1'"
 					}
+				},
+				{
+					"name": "imdb_process",
+					"uri": "mlmodels/preprocess/text_keras.py::IMDBDataset",
+					"args": {
+						"num_words": 5
+					}
 				}
 			]
 		},

@@ -24,7 +24,7 @@
 
             "data_pars" :{
                 "data_info": {
-                    "data_path": "mlmodels/dataset/vision/MNIST",
+                    "data_path": "dataset/vision/MNIST",
                     "dataset":"MNIST",
                     "data_type":"tch_dataset",
                     "batch_size": 10,
