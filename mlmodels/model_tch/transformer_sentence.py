@@ -93,7 +93,7 @@ from sentence_transformers import models
 
 
 ####################################################################################################
-from mlmodels.util import os_package_root_path, log, path_norm, get_model_uri
+from mlmodels.util import  log, path_norm, get_model_uri, path_norm_dict
 
 VERBOSE = False
 MODEL_URI = get_model_uri(__file__)
@@ -250,17 +250,20 @@ def get_dataset(data_pars=None, **kw):
 
 
 
+
 ############# Refactor ###########################################################################
 def fit2(model, data_pars=None, model_pars=None, compute_pars=None, out_pars=None, *args, **kw):
     """
     """
     log("############ Dataloader setup  ###########################")
-    train_dataloader, val_dataloader = get_dataset(data_pars)
+    data_pars['is_train'] = 1
+    train_dataloader, val_dataloader, pars = get_dataset2(data_pars, model=model)
 
 
     log("############ Fit setup  ##################################")
     emb_dim          = model.model.get_sentence_embedding_dimension()
-    train_num_labels = train_reader.get_num_labels()
+    train_num_labels = pars["train_num_labels"]
+    # train_num_labels = train_reader.get_num_labels()
 
     train_loss = getattr(losses, compute_pars["loss"])(
         model                        = model.model,
@@ -268,6 +271,7 @@ def fit2(model, data_pars=None, model_pars=None, compute_pars=None, out_pars=Non
         num_labels                   = train_num_labels
     )
     train_loss.float()
+
     evaluator = EmbeddingSimilarityEvaluator(val_dataloader)
     model.model.float()
 
@@ -281,7 +285,26 @@ def fit2(model, data_pars=None, model_pars=None, compute_pars=None, out_pars=Non
     return model, None
 
 
-def get_dataset2(data_pars=None, **kw):
+def predict2(model, session=None, data_pars=None, out_pars=None, compute_pars=None, **kw):
+    data_pars['is_train'] = 1
+    reader, pars      = get_dataset2(data_pars, model=model)
+
+    train_fname = pars['train_fname']
+    examples    = [ex.texts for ex in reader.get_examples(train_fname)]
+    Xpred       = sum(examples, [])
+
+    #### Do prediction
+    ypred = model.model.encode(Xpred)
+
+    ### Save Results
+
+    ### Return val
+    # if compute_pars.get("return_pred_not") is not None :
+    return ypred
+
+
+
+def get_dataset2(data_pars=None, model=None, **kw):
     """
     JSON data_pars to get dataset
     "data_pars":    { "data_path": "dataset/GOOG-year.csv", "data_type": "pandas",
@@ -289,7 +312,7 @@ def get_dataset2(data_pars=None, **kw):
     """
     # data_path = path_norm(data_pars["data_path"])
 
-    istrain   = data_pars.get("train", 0)
+    istrain   = data_pars.get("is_train", 0)
     mode      = "train" if istrain else "test"
     data_type = data_pars[f"{mode}_type"].lower() 
    
@@ -301,12 +324,16 @@ def get_dataset2(data_pars=None, **kw):
 
         path = os.path.join(path)
         reader = Reader(path)
+        return reader
 
 
-    def get_filename(data_pars, mode='test') :
-
-        fname   = 'train.gz' if data_pars["train_type"].lower() == 'nli'else 'sts-train.csv'        
-        fname   = 'dev.gz' if data_pars["test_type"].lower() == 'nli'  else 'sts-dev.csv'
+    def get_filename(data_type, mode='test') :
+        if mode == 'train' :
+            fname   = 'train.gz' if data_pars["train_type"].lower() == 'nli'else 'sts-train.csv'              
+        
+        if mode == 'test' :
+            fname   = 'dev.gz' if data_pars["test_type"].lower() == 'nli'  else 'sts-dev.csv'
+      
         return fname
 
 
@@ -320,19 +347,28 @@ def get_dataset2(data_pars=None, **kw):
         train_data       = SentencesDataset(train_reader.get_examples(train_fname),  model=model.model)
         train_dataloader = DataLoader(train_data, shuffle=True, batch_size=data_pars["batch_size"])
 
+        val_pars                = data_pars.copy()
+        val_pars.update(train=0)
+        val_fname               = get_filename( data_pars, mode='test'  )  #'dev.gz' if data_pars["test_type"].lower() == 'nli'  else 'sts-dev.csv'
+        val_reader            = get_reader(data_type, data_pars['test_path'])    
+        val_data         = SentencesDataset(val_reader.get_examples(val_fname), model=model.model)
+        val_dataloader   = DataLoader(val_data, shuffle=True, batch_size=data_pars["batch_size"])
+
+        pars = { "train_num_labels" :  train_reader.get_num_labels() }
+        return train_dataloader, val_dataloader, pars
 
 
-    val_pars                = data_pars.copy()
-    val_pars.update(train=0)
-    val_fname               = get_filename( data_pars, mode='test'  )  #'dev.gz' if data_pars["test_type"].lower() == 'nli'  else 'sts-dev.csv'
-    val_reader            = get_reader(data_type, data_pars['test_path'])    
-    val_data         = SentencesDataset(val_reader.get_examples(val_fname), model=model.model)
-    val_dataloader   = DataLoader(val_data, shuffle=True, batch_size=data_pars["batch_size"])
+    else :
+        #### Inference part
+        val_pars                = data_pars.copy()
+        val_pars.update(train=0)
+        val_fname               = get_filename( data_pars, mode='test'  )  #'dev.gz' if data_pars["test_type"].lower() == 'nli'  else 'sts-dev.csv'
+        val_reader            = get_reader(data_type, data_pars['test_path'])    
 
+        pars = {"train_fname" : 'train.gz' if data_pars["train_type"].lower() == 'nli' else 'sts-train.csv'}
 
-
-    return train_dataloader, val_dataloader
-
+        return val_reader , pars 
+      
 
 
 
@@ -349,10 +385,12 @@ def get_params(param_pars, **kw):
        data_path = path_norm(data_path)
        cf        = json.load(open(data_path, mode='r'))
        cf        = cf[config_mode]
+       cf        = path_norm_dict(cf)
        return cf['model_pars'], cf['data_pars'], cf['compute_pars'], cf['out_pars']
 
 
     if choice == "test01":
+        """
         log("#### Path params   ##########################################")
         data_path  = path_norm("dataset/text/")
         out_path   = path_norm("ztest/model_tch/transformer_sentence/" )
@@ -385,19 +423,18 @@ def get_params(param_pars, **kw):
             "model_path": model_path,
             "path": out_path
         }
-
-    return model_pars, data_pars, compute_pars, out_pars
-
+        return model_pars, data_pars, compute_pars, out_pars
+        """
 
 
 ##################################################################################################
-def test(data_path="dataset/", pars_choice="test01"):
+def test(data_path="dataset/", pars_choice="test01", config_mode="test"):
     ### Local test
     from mlmodels.util import path_norm
     data_path = path_norm(data_path)
 
     log("#### Loading params   ##############################################") 
-    param_pars = { "choice": pars_choice, "data_path": '', "config_mode" : "test" }
+    param_pars = { "choice": pars_choice, "data_path": data_path, "config_mode" : config_mode }
     model_pars, data_pars, compute_pars, out_pars = get_params(param_pars)
 
 
@@ -443,16 +480,23 @@ if __name__ == '__main__':
     VERBOSE = True
     test_path = os.getcwd() + "/mytest/"
 
+
+    #### Very Slow !!!!!!!!!!!!!!!!!!!!
     ### Local fixed params
     # test(pars_choice="json")
-    test(pars_choice="test01")
+    test(pars_choice="test01", data_path= "model_tch/transformer_sentence.json", config_mode="test")
+
+
+    test(pars_choice="test01", data_path= "model_tch/transformer_sentence_new.json", config_mode="test")
+
+
 
     ### Local json file
     # test(pars_choice="json")
 
     ####    test_module(model_uri="model_xxxx/yyyy.py", param_pars=None)
-    from mlmodels.models import test_module
-    param_pars = {'choice': "test01", 'config_mode': 'test', 'data_path': '/dataset/'}
+    # from mlmodels.models import test_module
+    # param_pars = {'choice': "test01", 'config_mode': 'test', 'data_path': '/dataset/'}
     # test_module(module_uri=MODEL_URI, param_pars=param_pars)
 
     ##### get of get_params
@@ -462,8 +506,8 @@ if __name__ == '__main__':
 
 
     ####    test_api(model_uri="model_xxxx/yyyy.py", param_pars=None)
-    from mlmodels.models import test_api
-    param_pars = {'choice': "test01", 'config_mode': 'test', 'data_path': '/dataset/'}
+    # from mlmodels.models import test_api
+    # param_pars = {'choice': "test01", 'config_mode': 'test', 'data_path': '/dataset/'}
     # test_api(module_uri=MODEL_URI, param_pars=param_pars)
 
 
