@@ -250,10 +250,10 @@ def test_jupyter(arg=None, config_mode="test_all"):
 
         if ".ipynb" in file :
           os.system( f"jupyter nbconvert --to script  {file}")
-          
+
         file2 = file.replace(".ipynb", ".py")
-        os_file_replace(file2, s1="%", s2="# %")   #### Jupyter Flag
-        os.system( f"python {file2}")
+        os_file_replace(file2, s1="get_ipython", s2="# get_ipython")   #### Jupyter Flag
+        os.system( f"ipython {file2}")
 
 
 def os_file_replace(filename, s1="", s2=""):
