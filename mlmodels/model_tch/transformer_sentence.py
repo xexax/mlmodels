@@ -287,7 +287,7 @@ def get_dataset2(data_pars=None, **kw):
     "data_pars":    { "data_path": "dataset/GOOG-year.csv", "data_type": "pandas",
     "size": [0, 0, 6], "output_size": [0, 6] },
     """
-    data_path = path_norm(data_pars["data_path"])
+    # data_path = path_norm(data_pars["data_path"])
 
     istrain   = data_pars.get("train", 0)
     mode      = "train" if istrain else "test"
