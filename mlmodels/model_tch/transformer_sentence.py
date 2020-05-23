@@ -287,49 +287,47 @@ def get_dataset2(data_pars=None, **kw):
     "data_pars":    { "data_path": "dataset/GOOG-year.csv", "data_type": "pandas",
     "size": [0, 0, 6], "output_size": [0, 6] },
     """
-    data_path = path_norm(data_pars["data_path"])
+    # data_path = path_norm(data_pars["data_path"])
 
-    mode = "train" if data_pars["train"] else "test"
+    istrain   = data_pars.get("train", 0)
+    mode      = "train" if istrain else "test"
     data_type = data_pars[f"{mode}_type"].lower() 
-
    
-    def get_reader(data_type) :
-        if data_type == 'nli':
-            Reader = readers.NLIDataReader
-
-        elif data_type == 'sts':
-            Reader = readers.STSDataReader
-
+    def get_reader(data_type, path) :
+        if data_type == 'nli':     Reader = readers.NLIDataReader
+        elif data_type == 'sts':   Reader = readers.STSDataReader
         else :
-            Reader = MyCustomReader
+            Reader = "MyCustomReader()"
 
-        path = os.path.join(data_path, data_pars[f"{mode}_path"])
+        path = os.path.join(path)
         reader = Reader(path)
 
 
-    def get_filename(data_pars) :
+    def get_filename(data_pars, mode='test') :
+
         fname   = 'train.gz' if data_pars["train_type"].lower() == 'nli'else 'sts-train.csv'        
         fname   = 'dev.gz' if data_pars["test_type"].lower() == 'nli'  else 'sts-dev.csv'
         return fname
+
 
     log("############ Dataloader setup  #############################")
     train_dataloader = None
     if istrain :
         train_pars              = data_pars.copy()
         train_pars.update(train=1)
-        train_fname             = get_filename( data_pars  )  # 'train.gz' if data_pars["train_type"].lower() == 'nli'else 'sts-train.csv'
-        train_reader            = get_reader(train_pars)    
+        train_fname             = get_filename( data_pars, mode='train'  )  # 'train.gz' if data_pars["train_type"].lower() == 'nli'else 'sts-train.csv'
+        train_reader            = get_reader(data_type, data_pars['train_path'])    
         train_data       = SentencesDataset(train_reader.get_examples(train_fname),  model=model.model)
-        train_dataloader = DataLoader(train_data, shuffle=True, batch_size=compute_pars["batch_size"])
+        train_dataloader = DataLoader(train_data, shuffle=True, batch_size=data_pars["batch_size"])
 
 
 
     val_pars                = data_pars.copy()
     val_pars.update(train=0)
-    val_fname               = get_filename( data_pars  )  #'dev.gz' if data_pars["test_type"].lower() == 'nli'  else 'sts-dev.csv'
-    val_reader              = get_reader(val_pars)
+    val_fname               = get_filename( data_pars, mode='test'  )  #'dev.gz' if data_pars["test_type"].lower() == 'nli'  else 'sts-dev.csv'
+    val_reader            = get_reader(data_type, data_pars['test_path'])    
     val_data         = SentencesDataset(val_reader.get_examples(val_fname), model=model.model)
-    val_dataloader   = DataLoader(val_data, shuffle=True, batch_size=compute_pars["batch_size"])
+    val_dataloader   = DataLoader(val_data, shuffle=True, batch_size=data_pars["batch_size"])
 
 
 
@@ -424,15 +422,20 @@ def test(data_path="dataset/", pars_choice="test01"):
     log("#### Plot   ########################################################")
 
 
-
-    log("#### Save/Load   ###################################################")
+    log("#### Save   ###################################################")
     save_pars = {"path": out_pars['path']}
     save(model, session, save_pars=save_pars)
-    model2, session2 = load(save_pars)
 
-    log("#### Save/Load - Predict   #########################################")
+
+    log("#### Load #####################################################")
+    model2, session2 = load(save_pars)
     print(model2, session2)
+
+
+    log("#### Predict   ################################################")
     ypred = predict(model2, session2, data_pars, compute_pars, out_pars)
+    print(ypred)
+
 
 
 
