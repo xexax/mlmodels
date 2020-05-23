@@ -239,17 +239,31 @@ def test_jupyter(arg=None, config_mode="test_all"):
     block_list = [ "ipynb_checkpoints" ] 
     model_list = [t for t in model_list if t not in block_list]
 
-    test_list = [f"ipython {t}"  for  t in model_list]
+    test_list = [f"{t}"  for  t in model_list]
     print(test_list, flush=True) 
 
     log_separator()
     print("############ Running Jupyter files ################################")
-    for cmd in test_list:
+    for file in test_list:
         log_separator()
-        print( cmd.replace("/home/runner/work/mlmodels/mlmodels/", git.get("url_branch_file", "")), "\n", flush=True)
-        os.system(cmd)
+        print( file.replace("/home/runner/work/mlmodels/mlmodels/", git.get("url_branch_file", "")), "\n", flush=True)
+        os.system( f"jupyter nbconvert --to script  {file}")
+        file2 = file.replace(".ipny", ".py")
+        os_file_replace(file2, s1="%", s2="# %")   #### Jupyter Flag
+        os.system( f"python {file2}")
 
 
+def os_file_replace(filename, s1="", s2=""):
+  # Read in the file
+  with open(filename, 'r') as file :
+    filedata = file.read()
+
+  # Replace the target string
+  filedata = filedata.replace(s1, s2)
+
+  # Write the file out again
+  with open(filename, 'w') as file:
+    file.write(filedata)
 
 
 
