@@ -247,7 +247,10 @@ def test_jupyter(arg=None, config_mode="test_all"):
     for file in test_list:
         log_separator()
         print( file.replace("/home/runner/work/mlmodels/mlmodels/", git.get("url_branch_file", "")), "\n", flush=True)
-        os.system( f"jupyter nbconvert --to script  {file}")
+
+        if ".ipynb" in file :
+          os.system( f"jupyter nbconvert --to script  {file}")
+          
         file2 = file.replace(".ipynb", ".py")
         os_file_replace(file2, s1="%", s2="# %")   #### Jupyter Flag
         os.system( f"python {file2}")
