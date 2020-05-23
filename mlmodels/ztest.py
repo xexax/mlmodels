@@ -224,7 +224,7 @@ def test_jupyter(arg=None, config_mode="test_all"):
     path = str( os.path.join(root, "example/") )
     print(path)
 
-    print("############ List of files ################################")
+    print("############ List of files #########################################")
     #model_list = get_recursive_files2(root, r'/*/*.ipynb')
     model_list  = get_recursive_files2(path, r'*.ipynb')
     model_list2 = get_recursive_files2(path, r'*.py')
@@ -245,28 +245,34 @@ def test_jupyter(arg=None, config_mode="test_all"):
     log_separator()
     print("############ Running Jupyter files ################################")
     for file in test_list:
-        log_separator()
-        print( file.replace("/home/runner/work/mlmodels/mlmodels/", git.get("url_branch_file", "")), "\n", flush=True)
+        try : 
+          log_separator()
+          print( file.replace("/home/runner/work/mlmodels/mlmodels/", git.get("url_branch_file", "")), "\n", flush=True)
+          if ".ipynb" in file :
+            os.system( f"jupyter nbconvert --to script  {file}")
 
-        if ".ipynb" in file :
-          os.system( f"jupyter nbconvert --to script  {file}")
-
-        file2 = file.replace(".ipynb", ".py")
-        os_file_replace(file2, s1="get_ipython", s2="# get_ipython")   #### Jupyter Flag
-        os.system( f"ipython {file2}")
+          file2 = file.replace(".ipynb", ".py")
+          os_file_replace(file2, s1="get_ipython", s2="# get_ipython")   #### Jupyter Flag
+          os.system( f"python {file2}")
+        except :
+          pass
 
 
 def os_file_replace(filename, s1="", s2=""):
-  # Read in the file
-  with open(filename, 'r') as file :
-    filedata = file.read()
+  try :
+    # Read in the file
+    with open(filename, 'r') as file :
+      filedata = file.read()
 
-  # Replace the target string
-  filedata = filedata.replace(s1, s2)
+    # Replace the target string
+    filedata = filedata.replace(s1, s2)
 
-  # Write the file out again
-  with open(filename, 'w') as file:
-    file.write(filedata)
+    # Write the file out again
+    with open(filename, 'w') as file:
+      file.write(filedata)
+
+  except :
+    print("No replacement")
 
 
 
