@@ -369,9 +369,16 @@ ________________________________________________________________________________
 
 ## Testing 
 
-[Read-more](https://github.com/arita37/mlmodels/blob/dev/testing.md)
+[Read-more](https://github.com/arita37/mlmodels/blob/dev/docs/README_docs/README_testing.md)
 
+Testing : debugging Process
+[Read-more]https://github.com/arita37/mlmodels/issues/290
 
+Tutorial : Code Design, Testing
+[Read-more]https://github.com/arita37/mlmodels/issues/347
+
+Tests: github actions to add
+[Read-more]https://github.com/arita37/mlmodels/issues/193
 _______________________________________________________________________________________
 
 
@@ -383,14 +390,14 @@ ________________________________________________________________________________
 
 ## Tutorials
 
+Tutorial : New contributors 
+[Read-more](https://github.com/arita37/mlmodels/issues/307)
+
 Tutorial : Code Design, Testing 
 [Read-more](https://github.com/arita37/mlmodels/issues/347)
 
 Tutorial : Usage of dataloader directs to dataloader.md 
 [Read-more](https://github.com/arita37/mlmodels/issues/336)
-
-Tutorial : New contributors 
-[Read-more](https://github.com/arita37/mlmodels/issues/307)
 
 TUTORIAL : Use Colab for Code Development 
 [Read-more](https://github.com/arita37/mlmodels/issues/262)
