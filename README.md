@@ -369,6 +369,20 @@ ________________________________________________________________________________
 
 _______________________________________________________________________________________
 
+## Testing 
+
+[Read-more](https://github.com/arita37/mlmodels/blob/dev/testing.md)
+
+_______________________________________________________________________________________
+
+
+## Research Papers
+
+[Read-more](https://github.com/arita37/mlmodels/blob/dev/README_research_papers.md)
+
+_______________________________________________________________________________________
+
+
 
 
 ### LSTM example in TensorFlow ([Example notebook](mlmodels/example/1_lstm.ipynb))
