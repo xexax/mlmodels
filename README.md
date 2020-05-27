@@ -384,12 +384,19 @@ ________________________________________________________________________________
 _______________________________________________________________________________________
 
 ##Tutorials
-Tutorial : Code Design, Testing [Read-more](https://github.com/arita37/mlmodels/issues/347)
-Tutorial : Usage of dataloader directs to dataloader.md [Read-more](https://github.com/arita37/mlmodels/issues/336)
-Tutorial : New contributors [Read-more](https://github.com/arita37/mlmodels/issues/307)
-TUTORIAL : Use Colab for Code Development [Read-more](https://github.com/arita37/mlmodels/issues/262)
-TUTORIAL : Do a PR or add model in mlmodels [Read-more](https://github.com/arita37/mlmodels/issues/102)
-TUTORIAL : Using Online editor for mlmodels [Read-more](https://github.com/arita37/mlmodels/issues/101)
+
+Tutorial : Code Design, Testing 
+[Read-more](https://github.com/arita37/mlmodels/issues/347)
+Tutorial : Usage of dataloader directs to dataloader.md 
+[Read-more](https://github.com/arita37/mlmodels/issues/336)
+Tutorial : New contributors 
+[Read-more](https://github.com/arita37/mlmodels/issues/307)
+TUTORIAL : Use Colab for Code Development 
+[Read-more](https://github.com/arita37/mlmodels/issues/262)
+TUTORIAL : Do a PR or add model in mlmodels 
+[Read-more](https://github.com/arita37/mlmodels/issues/102)
+TUTORIAL : Using Online editor for mlmodels 
+[Read-more](https://github.com/arita37/mlmodels/issues/101)
 
 ### LSTM example in TensorFlow ([Example notebook](mlmodels/example/1_lstm.ipynb))
 
