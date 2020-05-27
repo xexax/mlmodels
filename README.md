@@ -293,7 +293,7 @@ alexnet: SqueezeNet: AlexNet-level accuracy with 50x fewer parameters and <0.5MB
 29. mobilenet_v2: MobileNetV2: Inverted Residuals and Linear Bottlenecks
 [[Link](http://openaccess.thecvf.com/content_cvpr_2018/papers/Sandler_MobileNetV2_Inverted_Residuals_CVPR_2018_paper.pdf)]
 
-***More resources are available [here](https://github.com/arita37/mlmodels/blob/dev/README_model_list.md)***
+***More resources are available [here](https://github.com/arita37/mlmodels/blob/dev/docs/README_docs/README_model_list.md)***
 
 ######################################################################################
 
@@ -305,7 +305,7 @@ alexnet: SqueezeNet: AlexNet-level accuracy with 50x fewer parameters and <0.5MB
 
 
 ### (B) Using Colab :
-[Read-more](https://github.com/arita37/mlmodels/blob/dev/README_usage.md)
+[Read-more](https://github.com/arita37/mlmodels/blob/dev/docs/README_docs/README_usage.md)
 
 
 ### Initialize template and Tests
@@ -339,13 +339,13 @@ ________________________________________________________________________________
 
 ## Usage in Jupyter/Colab
 
-[Read-more](https://github.com/arita37/mlmodels/blob/dev/README_usage.md)
+[Read-more](https://github.com/arita37/mlmodels/blob/dev/docs/README_docs/README_usage.md)
 
 _______________________________________________________________________________________
 
 ## Command Line tools:
 
-[Read-more](https://github.com/arita37/mlmodels/blob/dev/README_usage_CLI.md)
+[Read-more](https://github.com/arita37/mlmodels/blob/dev/docs/README_docs/README_usage_CLI.md)
 
 
 
@@ -353,13 +353,13 @@ ________________________________________________________________________________
 
 ## Model List
 
-[Read-more](https://github.com/arita37/mlmodels/blob/dev/README_model_list.md)
+[Read-more](https://github.com/arita37/mlmodels/blob/dev/docs/README_docs/README_model_list.md)
 
 _______________________________________________________________________________________
 
 ## How to add a new model
 
-[Read-more](https://github.com/arita37/mlmodels/blob/dev/README_addmodel.md)
+[Read-more](https://github.com/arita37/mlmodels/blob/dev/docs/README_docs/README_addmodel.md)
 
 _______________________________________________________________________________________
 
@@ -378,7 +378,7 @@ ________________________________________________________________________________
 
 ## Research Papers
 
-[Read-more](https://github.com/arita37/mlmodels/blob/dev/README_research_papers.md)
+[Read-more](https://github.com/arita37/mlmodels/blob/dev/docs/README_docs/README_research_papers.md)
 
 _______________________________________________________________________________________
 
