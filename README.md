@@ -347,8 +347,6 @@ ________________________________________________________________________________
 
 [Read-more](https://github.com/arita37/mlmodels/blob/dev/docs/README_docs/README_usage_CLI.md)
 
-
-
 _______________________________________________________________________________________
 
 ## Model List
@@ -387,14 +385,19 @@ ________________________________________________________________________________
 
 Tutorial : Code Design, Testing 
 [Read-more](https://github.com/arita37/mlmodels/issues/347)
+
 Tutorial : Usage of dataloader directs to dataloader.md 
 [Read-more](https://github.com/arita37/mlmodels/issues/336)
+
 Tutorial : New contributors 
 [Read-more](https://github.com/arita37/mlmodels/issues/307)
+
 TUTORIAL : Use Colab for Code Development 
 [Read-more](https://github.com/arita37/mlmodels/issues/262)
+
 TUTORIAL : Do a PR or add model in mlmodels 
 [Read-more](https://github.com/arita37/mlmodels/issues/102)
+
 TUTORIAL : Using Online editor for mlmodels 
 [Read-more](https://github.com/arita37/mlmodels/issues/101)
 
