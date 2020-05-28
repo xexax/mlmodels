@@ -454,7 +454,7 @@ TUTORIAL : Using Online editor for mlmodels
 ### LSTM example in TensorFlow ([Example notebook](mlmodels/example/1_lstm.ipynb))
 
 <details>
-<summary></summary>
+<summary>LSTM example in TensorFlow </summary>
 <br>
 
 #### Define model and data definitions
@@ -492,6 +492,10 @@ ypred         = module.predict(model, sess,  data_pars, compute_pars, out_pars) 
 ---
 
 ### AutoML example in Gluon ([Example notebook](mlmodels/example/gluon_automl.ipynb))
+<details>
+<summary>AutoML example in Gluon </summary>
+<br>
+
 ```python
 # import library
 import mlmodels
@@ -538,10 +542,13 @@ ypred       = module.predict(model, data_pars, compute_pars, out_pars)     # pre
 
 
 ```
-
+</details>
 ---
 
 ### RandomForest example in Scikit-learn ([Example notebook](mlmodels/example/sklearn.ipynb))
+<details>
+<summary>RandomForest example in Scikit-learn </summary>
+<br>
 ```
 # import library
 import mlmodels
@@ -570,10 +577,14 @@ model, sess   =  module.fit(model, data_pars=data_pars, compute_pars=compute_par
 ypred       = module.predict(model,  data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)     # predict pipeline
 ```
 
-
+</details>
 ---
 
 ### TextCNN example in keras ([Example notebook](example/textcnn.ipynb))
+
+<details>
+<summary> TextCNN example in keras </summary>
+<br>
 
 ```python
 # import library
@@ -605,11 +616,13 @@ module.fit(model, data_pars=data_pars, compute_pars=compute_pars, out_pars=out_p
 data_pars['train'] = 0
 ypred       = module.predict(model,  data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)
 ```
-
+</details>
 ---
 
 ### Using json config file for input ([Example notebook](example/1_lstm_json.ipynb), [JSON file](mlmodels/mlmodels/example/1_lstm.json))
-
+<details>
+<summary> Using json config file for input </summary>
+<br>
 #### Import library and functions
 ```python
 # import library
@@ -637,11 +650,13 @@ ypred       = module.predict(model, sess=sess,  data_pars=data_pars, compute_par
 
 
 ```
-
+</details>
 ---
 
 ### Using Scikit-learn's SVM for Titanic Problem from json file ([Example notebook](mlmodels/example/sklearn_titanic_svm.ipynb), [JSON file](mlmodels/example/sklearn_titanic_svm.json))
-
+<details>
+<summary> Using Scikit-learn's SVM for Titanic Problem from json file </summary>
+<br>
 #### Import library and functions
 ```python
 # import library
@@ -680,11 +695,13 @@ roc_auc_score(y, ypred)
 
 
 ```
-
+</details>
 ---
 
 ### Using Scikit-learn's Random Forest for Titanic Problem from json file ([Example notebook](mlmodels/example/sklearn_titanic_randomForest.ipynb), [JSON file](mlmodels/example/sklearn_titanic_randomForest.json))
-
+<details>
+<summary> Using Scikit-learn's Random Forest for Titanic Problem from json file </summary>
+<br>
 #### Import library and functions
 ```python
 # import library
@@ -723,10 +740,14 @@ roc_auc_score(y, ypred)
 
 ```
 
+</details>
+
 ---
 
 ### Using Autogluon for Titanic Problem from json file ([Example notebook](mlmodels/example/gluon_automl_titanic.ipynb), [JSON file](mlmodels/example/gluon_automl.json))
-
+<details>
+<summary> Using Autogluon for Titanic Problem from json file </summary>
+<br>
 #### Import library and functions
 ```python
 # import library
@@ -766,6 +787,7 @@ roc_auc_score(y, ypred)
 
 
 ```
+</details>
 
 ---
 ---
