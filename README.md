@@ -909,7 +909,7 @@ metrics_val = module.fit_metrics(model, data_pars, compute_pars, out_pars)
 metrics_val 
 
 ```
-<details>
+</details>
 
 ---
 
