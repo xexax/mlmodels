@@ -790,10 +790,12 @@ roc_auc_score(y, ypred)
 </details>
 
 ---
----
+
 
 ### Using hyper-params (optuna) for Titanic Problem from json file ([Example notebook](mlmodels/example/sklearn_titanic_randomForest_example2.ipynb), [JSON file](mlmodels/example/hyper_titanic_randomForest.json))
-
+<details>
+<summary> Using hyper-params (optuna) for Titanic Problem from json file </summary>
+<br>
 #### Import library and functions
 ```python
 # import library
@@ -844,12 +846,14 @@ y = pd.read_csv( path_norm('dataset/tabular/titanic_train_preprocessed.csv') )
 y = y['Survived'].values
 roc_auc_score(y, ypred)
 ```
-
+</details>
 
 ---
 
 ### Using LightGBM for Titanic Problem from json file ([Example notebook](mlmodels/example/model_lightgbm.ipynb), [JSON file](mlmodels/example/lightgbm_titanic.json))
-
+<details>
+<summary> Using LightGBM for Titanic Problem from json file </summary>
+<br>
 #### Import library and functions
 ```python
 # import library
@@ -886,12 +890,14 @@ metrics_val = module.fit_metrics(model, data_pars, compute_pars, out_pars)
 metrics_val 
 
 ```
-
+<details>
 ---
 
 
 ### Using Vision CNN RESNET18 for MNIST dataset  ([Example notebook](mlmodels/example/model_restnet18.ipynb), [JSON file](mlmodels/model_tch/torchhub_cnn.json))
-
+<details>
+<summary> Using Vision CNN RESNET18 for MNIST dataset </summary>
+<br>
 ```python
 # import library
 import mlmodels
@@ -929,11 +935,14 @@ print(ypred)
 
 
 ```
+</details>
 ---
 
 ### Using ARMDN Time Series   ([Example notebook](mlmodels/example/model_timeseries_armdn.ipynb), [JSON file](mlmodels/model_keras/armdn.json))
 
-
+<details>
+<summary> Using ARMDN Time Serie </summary>
+<br>
 
 ```python
 # import library
@@ -978,6 +987,7 @@ module.save(model, save_pars ={ 'path': out_pars['path'] +"/model/"})
 model2 = module.load(load_pars ={ 'path': out_pars['path'] +"/model/"})
 
 ```
+</details>
 ---
 
 
