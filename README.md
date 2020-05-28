@@ -44,7 +44,7 @@ If you want to contribute,  [contribution guide](https://cutt.ly/Xylux3Q)
 ### Time Series:
 
 <details>
-<summary>### Time Series:</summary>
+<summary>Time Series:</summary>
 <br>
 
 
@@ -66,7 +66,7 @@ If you want to contribute,  [contribution guide](https://cutt.ly/Xylux3Q)
 ### NLP:
 
 <details>
-<summary>### NLP:</summary>
+<summary>NLP:</summary>
 <br>
 
 1. Sentence Transformers : 2019, Embedding of full sentences using BERT, [[Link](https://arxiv.org/pdf/1908.10084.pdf)]
@@ -130,10 +130,11 @@ If you want to contribute,  [contribution guide](https://cutt.ly/Xylux3Q)
 22. HBMP:  Sentence Embeddings in NLI with Iterative Refinement Encoders
 [[Link](https://www.cambridge.org/core/journals/natural-language-engineering/article/sentence-embeddings-in-nli-with-iterative-refinement-encoders/AC811644D52446E414333B20FEACE00F)]
 </details>
+
 ### TABULAR:
 
 <details>
-<summary>### TABULAR:</summary>
+<summary>TABULAR:</summary>
 <br>
 
 #### LightGBM  : Light Gradient Boosting
@@ -146,7 +147,7 @@ If you want to contribute,  [contribution guide](https://cutt.ly/Xylux3Q)
 #### All sklearn models :
 
 <details>
-<summary>### TABULAR:</summary>
+<summary>All sklearn models :</summary>
 <br>
 
 linear_model.ElasticNet\
@@ -176,7 +177,12 @@ neighbors.KNeighborsClassifier\
 neighbors.KNeighborsRegressor\
 neighbors.KNeighborsTransformer
 </details>
+
 </details>
+
+<details>
+<summary>Binary Neural Prediction from tabular data:</summary>
+<br>
 
 #### Binary Neural Prediction from tabular data:
 
@@ -215,6 +221,11 @@ neighbors.KNeighborsTransformer
 17. FiBiNET: Combining Feature Importance and Bilinear feature Interaction for Click-Through Rate Prediction]([[Link](https://arxiv.org/pdf/1905.09433.pdf)   |)]
 
 
+</details>
+
+<details>
+<summary>Binary Neural Prediction from tabular data:</summary>
+<br>
 
 
 ### VISION:
@@ -313,6 +324,8 @@ alexnet: SqueezeNet: AlexNet-level accuracy with 50x fewer parameters and <0.5MB
 
 29. mobilenet_v2: MobileNetV2: Inverted Residuals and Linear Bottlenecks
 [[Link](http://openaccess.thecvf.com/content_cvpr_2018/papers/Sandler_MobileNetV2_Inverted_Residuals_CVPR_2018_paper.pdf)]
+
+</details>
 
 ***More resources are available [here](https://github.com/arita37/mlmodels/blob/dev/docs/README_docs/README_model_list.md)***
 
