@@ -578,6 +578,7 @@ ypred       = module.predict(model,  data_pars=data_pars, compute_pars=compute_p
 ```
 
 </details>
+
 ---
 
 ### TextCNN example in keras ([Example notebook](example/textcnn.ipynb))
@@ -616,13 +617,17 @@ module.fit(model, data_pars=data_pars, compute_pars=compute_pars, out_pars=out_p
 data_pars['train'] = 0
 ypred       = module.predict(model,  data_pars=data_pars, compute_pars=compute_pars, out_pars=out_pars)
 ```
+
 </details>
+
 ---
 
 ### Using json config file for input ([Example notebook](example/1_lstm_json.ipynb), [JSON file](mlmodels/mlmodels/example/1_lstm.json))
+
 <details>
 <summary> Using json config file for input </summary>
 <br>
+
 #### Import library and functions
 ```python
 # import library
@@ -650,13 +655,17 @@ ypred       = module.predict(model, sess=sess,  data_pars=data_pars, compute_par
 
 
 ```
+
 </details>
+
 ---
 
 ### Using Scikit-learn's SVM for Titanic Problem from json file ([Example notebook](mlmodels/example/sklearn_titanic_svm.ipynb), [JSON file](mlmodels/example/sklearn_titanic_svm.json))
+
 <details>
 <summary> Using Scikit-learn's SVM for Titanic Problem from json file </summary>
 <br>
+
 #### Import library and functions
 ```python
 # import library
@@ -695,13 +704,17 @@ roc_auc_score(y, ypred)
 
 
 ```
+
 </details>
+
 ---
 
 ### Using Scikit-learn's Random Forest for Titanic Problem from json file ([Example notebook](mlmodels/example/sklearn_titanic_randomForest.ipynb), [JSON file](mlmodels/example/sklearn_titanic_randomForest.json))
+
 <details>
 <summary> Using Scikit-learn's Random Forest for Titanic Problem from json file </summary>
 <br>
+
 #### Import library and functions
 ```python
 # import library
@@ -745,9 +758,11 @@ roc_auc_score(y, ypred)
 ---
 
 ### Using Autogluon for Titanic Problem from json file ([Example notebook](mlmodels/example/gluon_automl_titanic.ipynb), [JSON file](mlmodels/example/gluon_automl.json))
+
 <details>
 <summary> Using Autogluon for Titanic Problem from json file </summary>
 <br>
+
 #### Import library and functions
 ```python
 # import library
@@ -793,9 +808,11 @@ roc_auc_score(y, ypred)
 
 
 ### Using hyper-params (optuna) for Titanic Problem from json file ([Example notebook](mlmodels/example/sklearn_titanic_randomForest_example2.ipynb), [JSON file](mlmodels/example/hyper_titanic_randomForest.json))
+
 <details>
 <summary> Using hyper-params (optuna) for Titanic Problem from json file </summary>
 <br>
+
 #### Import library and functions
 ```python
 # import library
@@ -851,9 +868,11 @@ roc_auc_score(y, ypred)
 ---
 
 ### Using LightGBM for Titanic Problem from json file ([Example notebook](mlmodels/example/model_lightgbm.ipynb), [JSON file](mlmodels/example/lightgbm_titanic.json))
+
 <details>
 <summary> Using LightGBM for Titanic Problem from json file </summary>
 <br>
+
 #### Import library and functions
 ```python
 # import library
@@ -891,13 +910,16 @@ metrics_val
 
 ```
 <details>
+
 ---
 
 
 ### Using Vision CNN RESNET18 for MNIST dataset  ([Example notebook](mlmodels/example/model_restnet18.ipynb), [JSON file](mlmodels/model_tch/torchhub_cnn.json))
+
 <details>
 <summary> Using Vision CNN RESNET18 for MNIST dataset </summary>
 <br>
+
 ```python
 # import library
 import mlmodels
@@ -987,9 +1009,9 @@ module.save(model, save_pars ={ 'path': out_pars['path'] +"/model/"})
 model2 = module.load(load_pars ={ 'path': out_pars['path'] +"/model/"})
 
 ```
-</details>
----
 
+---
+</details>
 
 ![Pytorch](https://cutt.ly/Ayk8hji )
 
