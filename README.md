@@ -330,11 +330,11 @@ alexnet: SqueezeNet: AlexNet-level accuracy with 50x fewer parameters and <0.5MB
 
 </details>
 
-***More resources are available [here](https://github.com/arita37/mlmodels/blob/dev/docs/README_docs/README_model_list.md)***
+***More resources are available on model list[here](https://github.com/arita37/mlmodels/blob/dev/docs/README_docs/README_model_list.md)***
 
-######################################################################################
 
-### ① Installation Guide:
+
+## Installation Guide:
 
 <details>
 <summary>Installation Guide:</summary>
