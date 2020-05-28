@@ -41,9 +41,12 @@ If you want to contribute,  [contribution guide](https://cutt.ly/Xylux3Q)
 *	[TABULAR](#TABULAR)
 *	[VISION](#VISION)
 
-
-
 ### Time Series:
+
+<details>
+<summary>### Time Series:</summary>
+<br>
+
 
 1. Montreal AI, Nbeats: 2019, Advanced interpretable Time Series Neural Network, [[Link](https://arxiv.org/abs/1905.10437)]
 
@@ -54,6 +57,10 @@ If you want to contribute,  [contribution guide](https://cutt.ly/Xylux3Q)
 4. ARMDN, Advanced Multi-variate Time series Prediction : 2019, Associative and Recurrent Mixture Density Networks for time series. [[Link]](https://arxiv.org/pdf/1803.03800)
 
 5. LSTM Neural Network prediction : Stacked Bidirectional and Unidirectional LSTM Recurrent Neural Network for Network-wide Traffic Speed Prediction [[Link]](https://arxiv.org/ftp/arxiv/papers/1801/1801.02143.pdf)
+
+
+</details>
+
 
 
 ### NLP:
