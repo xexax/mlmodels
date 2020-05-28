@@ -180,11 +180,13 @@ neighbors.KNeighborsTransformer
 
 </details>
 
+
+
+#### Binary Neural Prediction from tabular data:
+
 <details>
 <summary>Binary Neural Prediction from tabular data:</summary>
 <br>
-
-#### Binary Neural Prediction from tabular data:
 
 1. A Convolutional Click Prediction Model]([[Link](http://ir.ia.ac.cn/bitstream/173211/12337/1/A%20Convolutional%20Click%20Prediction%20Model.pdf)             |)]
 
@@ -223,13 +225,14 @@ neighbors.KNeighborsTransformer
 
 </details>
 
-<details>
-<summary>Binary Neural Prediction from tabular data:</summary>
-<br>
+
 
 
 ### VISION:
 
+<details>
+<summary>VISION:</summary>
+<br>
 
 1. Vision Models (pre-trained) :  
 alexnet: SqueezeNet: AlexNet-level accuracy with 50x fewer parameters and <0.5MB model size
@@ -332,6 +335,10 @@ alexnet: SqueezeNet: AlexNet-level accuracy with 50x fewer parameters and <0.5MB
 ######################################################################################
 
 ### ① Installation Guide:
+
+<details>
+<summary>Installation Guide:</summary>
+<br>
 
 ### (A) Using pre-installed Setup (one click run) :
 
@@ -442,7 +449,13 @@ TUTORIAL : Do a PR or add model in mlmodels
 TUTORIAL : Using Online editor for mlmodels 
 [Read-more](https://github.com/arita37/mlmodels/issues/101)
 
+</details>
+
 ### LSTM example in TensorFlow ([Example notebook](mlmodels/example/1_lstm.ipynb))
+
+<details>
+<summary></summary>
+<br>
 
 #### Define model and data definitions
 ```python
@@ -475,7 +488,7 @@ metrics_val   =  module.fit_metrics( model, sess, data_pars, compute_pars, out_p
 ypred         = module.predict(model, sess,  data_pars, compute_pars, out_pars)     # predict pipeline
 ```
 
-
+</details>
 ---
 
 ### AutoML example in Gluon ([Example notebook](mlmodels/example/gluon_automl.ipynb))
