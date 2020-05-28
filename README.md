@@ -65,6 +65,10 @@ If you want to contribute,  [contribution guide](https://cutt.ly/Xylux3Q)
 
 ### NLP:
 
+<details>
+<summary>### NLP:</summary>
+<br>
+
 1. Sentence Transformers : 2019, Embedding of full sentences using BERT, [[Link](https://arxiv.org/pdf/1908.10084.pdf)]
 
 2. Transformers Classifier : Using Transformer for Text Classification, [[Link](https://arxiv.org/abs/1905.05583)]
@@ -125,8 +129,12 @@ If you want to contribute,  [contribution guide](https://cutt.ly/Xylux3Q)
 
 22. HBMP:  Sentence Embeddings in NLI with Iterative Refinement Encoders
 [[Link](https://www.cambridge.org/core/journals/natural-language-engineering/article/sentence-embeddings-in-nli-with-iterative-refinement-encoders/AC811644D52446E414333B20FEACE00F)]
-
+</details>
 ### TABULAR:
+
+<details>
+<summary>### TABULAR:</summary>
+<br>
 
 #### LightGBM  : Light Gradient Boosting
 
@@ -136,6 +144,10 @@ If you want to contribute,  [contribution guide](https://cutt.ly/Xylux3Q)
 
 
 #### All sklearn models :
+
+<details>
+<summary>### TABULAR:</summary>
+<br>
 
 linear_model.ElasticNet\
 linear_model.ElasticNetCV\
@@ -163,6 +175,8 @@ svm.l1_min_c
 neighbors.KNeighborsClassifier\
 neighbors.KNeighborsRegressor\
 neighbors.KNeighborsTransformer
+</details>
+</details>
 
 #### Binary Neural Prediction from tabular data:
 
