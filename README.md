@@ -462,6 +462,12 @@ TUTORIAL : Using Online editor for mlmodels
 
 </details>
 
+## Example Notebooks
+
+<details>
+<summary> Example Notebooks </summary>
+<br>
+
 ### LSTM example in TensorFlow ([Example notebook](mlmodels/example/1_lstm.ipynb))
 
 <details>
@@ -1022,6 +1028,8 @@ model2 = module.load(load_pars ={ 'path': out_pars['path'] +"/model/"})
 ```
 
 ---
+</details>
+
 </details>
 
 ![Pytorch](https://cutt.ly/Ayk8hji )
