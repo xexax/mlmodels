@@ -332,13 +332,11 @@ alexnet: SqueezeNet: AlexNet-level accuracy with 50x fewer parameters and <0.5MB
 
 ***More resources are available on model list[here](https://github.com/arita37/mlmodels/blob/dev/docs/README_docs/README_model_list.md)***
 
-##Contribution
-
-Starting with contribution
+## Contribution
 
 Starting contributing : [link] (https://github.com/arita37/mlmodels/issues/307)
 Colab creation :[link] (https://github.com/arita37/mlmodels/issues/262)
-Model benchmarking : [https://github.com/arita37/mlmodels/blob/dev/docs/README_docs/README_testing.md]
+Model benchmarking : [link](https://github.com/arita37/mlmodels/blob/dev/docs/README_docs/README_testing.md)
 Add new models : [link] (https://github.com/arita37/mlmodels/blob/dev/docs/README_docs/README_addmodel.md)
 Core engine : [link](https://github.com/arita37/mlmodels/issues?q=is%3Aissue+is%3Aopen+label%3A%22Core+compute%22)
 
