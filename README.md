@@ -178,7 +178,7 @@ neighbors.KNeighborsRegressor\
 neighbors.KNeighborsTransformer
 </details>
 
-</details>
+
 
 #### Binary Neural Prediction from tabular data:
 
@@ -225,7 +225,7 @@ neighbors.KNeighborsTransformer
 
 </details>
 
-
+</details>
 
 
 ### VISION:
