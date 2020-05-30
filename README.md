@@ -20,7 +20,9 @@ Main characteristics :
 We are looking for contributors (!!)
 
 
-![alt text](docs/mxnetf.png) ![alt text](docs/pytorch.PNG) ![alt text](docs/tenserflow.PNG)
+![alt text](docs/mxnetf.png) ![alt text](docs/pytorch.PNG) ![alt text](docs/tenserflow.PNG) 
+
+![Pytorch](https://cutt.ly/Ayk8hji )
 
 ## Benefits :
 
@@ -1032,6 +1034,6 @@ model2 = module.load(load_pars ={ 'path': out_pars['path'] +"/model/"})
 
 </details>
 
-![Pytorch](https://cutt.ly/Ayk8hji )
+
 
 
