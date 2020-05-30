@@ -180,12 +180,12 @@ neighbors.KNeighborsTransformer
 
 </details>
 
-
-
 #### Binary Neural Prediction from tabular data:
 
 <details>
+
 <summary>Binary Neural Prediction from tabular data:</summary>
+
 <br>
 
 1. A Convolutional Click Prediction Model]([[Link](http://ir.ia.ac.cn/bitstream/173211/12337/1/A%20Convolutional%20Click%20Prediction%20Model.pdf)             |)]
