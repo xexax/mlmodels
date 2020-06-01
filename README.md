@@ -1044,6 +1044,6 @@ model2 = module.load(load_pars ={ 'path': out_pars['path'] +"/model/"})
 
 ![Pytorch](https://cutt.ly/Ayk8hji )
 
-<img src="https://cutt.ly/Ayk8hji " width="100">
+<img src="https://cutt.ly/Ayk8hji " >
 
 
