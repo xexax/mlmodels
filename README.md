@@ -21,7 +21,7 @@ Main characteristics :
 We are looking for contributors (!!)
 
 
-![alt text](docs/mxnetf.png) ![alt text](docs/pytorch.PNG) ![alt text](docs/tenserflow.PNG)![alt text](https://cutt.ly/Ayk8hji )
+![alt text](docs/mxnetf.png) ![alt text](docs/pytorch.PNG) ![alt text](docs/tenserflow.PNG)
 
 ## Benefits of mlmodels repo :
 ---
@@ -1042,4 +1042,7 @@ model2 = module.load(load_pars ={ 'path': out_pars['path'] +"/model/"})
 </details>
 
 
+<a href="https://cutt.ly/Ayk8hji ">
+  <img src="https://cutt.ly/Ayk8hji " width="100" />
+</a>
 
