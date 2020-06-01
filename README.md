@@ -1,8 +1,9 @@
 # mlmodels : Model ZOO
 
 
-This repository is the ***Model ZOO for Pytorch, Tensorflow, Keras, Gluon, LightGBM, Keras, Sklearn models etc*** with Lightweight Functional interface to wrap access to Recent and State of Art Deep Learning, ML models and Hyper-Parameter Search, cross platforms that follows the logic of sklearn, such as fit, predict, transform, metrics, save, load etc. 
+	This repository is the ***Model ZOO for Pytorch, Tensorflow, Keras, Gluon, LightGBM, Keras, Sklearn models etc*** with Lightweight Functional interface to wrap access to Recent and State of Art Deep Learning, ML models and Hyper-Parameter Search, cross platforms that follows the logic of sklearn, such as fit, predict, transform, metrics, save, load etc. 
 Now, more than **60 recent models** (> 2018) are available in those domains : 
+
 * Time Series, 
 * Text classification, 
 * Vision, 
@@ -24,7 +25,7 @@ We are looking for contributors (!!)
 
 ![Pytorch](https://cutt.ly/Ayk8hji )
 
-## Benefits :
+## Benefits of mlmodels repo :
 
 Having a simple  framework for both machine learning models and deep learning models, without BOILERPLATE code.
 Collection of models, model zoo in Pytorch, Tensorflow, Keras allows richer possibilities in model re-usage, model batching and benchmarking. Unique and simple interface, zero boilerplate code (!), and recent state of art models/frameworks are the main strength 
