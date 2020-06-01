@@ -21,14 +21,13 @@ Main characteristics :
 We are looking for contributors (!!)
 
 
-![alt text](docs/mxnetf.png) ![alt text](docs/pytorch.PNG) ![alt text](docs/tenserflow.PNG) 
-
-![Pytorch](https://cutt.ly/Ayk8hji )
+![alt text](docs/mxnetf.png) ![alt text](docs/pytorch.PNG) ![alt text](docs/tenserflow.PNG)![alt text](https://cutt.ly/Ayk8hji )
 
 ## Benefits of mlmodels repo :
+---
+Having a simple  framework for both machine learning models and deep learning models, **without BOILERPLATE code**.
 
-Having a simple  framework for both machine learning models and deep learning models, without BOILERPLATE code.
-Collection of models, model zoo in Pytorch, Tensorflow, Keras allows richer possibilities in model re-usage, model batching and benchmarking. Unique and simple interface, zero boilerplate code (!), and recent state of art models/frameworks are the main strength 
+**Collection of models**, model zoo in Pytorch, Tensorflow, Keras allows richer possibilities in **model re-usage**, **model batching** and **benchmarking**. Unique and simple interface, zero boilerplate code (!), and recent state of art models/frameworks are the main strength 
 of MLMODELS. Different domain fields are available, such as computer vision, NLP, Time Series prediction, tabular data classification.  
 
 
@@ -39,12 +38,12 @@ Here you can find usages [guide](https://cutt.ly/tyluzof)
 If you want to contribute,  [contribution guide](https://cutt.ly/Xylux3Q)
 
 ## Model List :
+---
 *	[Time Series](#Time-series)
 *	[NLP](#NLP)
 *	[TABULAR](#TABULAR)
 *	[VISION](#VISION)
 
-### Time Series:
 
 <details>
 <summary>Time Series:</summary>
@@ -64,9 +63,6 @@ If you want to contribute,  [contribution guide](https://cutt.ly/Xylux3Q)
 
 </details>
 
-
-
-### NLP:
 
 <details>
 <summary>NLP:</summary>
@@ -134,7 +130,6 @@ If you want to contribute,  [contribution guide](https://cutt.ly/Xylux3Q)
 [[Link](https://www.cambridge.org/core/journals/natural-language-engineering/article/sentence-embeddings-in-nli-with-iterative-refinement-encoders/AC811644D52446E414333B20FEACE00F)]
 </details>
 
-### TABULAR:
 
 <details>
 <summary>TABULAR:</summary>
@@ -231,7 +226,7 @@ neighbors.KNeighborsTransformer
 </details>
 
 
-### VISION:
+
 
 <details>
 <summary>VISION:</summary>
@@ -333,10 +328,10 @@ alexnet: SqueezeNet: AlexNet-level accuracy with 50x fewer parameters and <0.5MB
 
 </details>
 
-***More resources are available on model list[here](https://github.com/arita37/mlmodels/blob/dev/docs/README_docs/README_model_list.md)***
+***More resources are available on model list [here](https://github.com/arita37/mlmodels/blob/dev/README_model_list.md)***
 
 ## Contribution
-
+---
 Dev-Documentation [link](https://github.com/arita37/mlmodels/issues?q=is%3Aissue+is%3Aopen+label%3Adev-documentation)
 
 Starting contributing : [link](https://github.com/arita37/mlmodels/issues/307)
@@ -347,18 +342,20 @@ Model benchmarking : [link](https://github.com/arita37/mlmodels/issues?q=is%3Ais
 
 Add new models : [link](https://github.com/arita37/mlmodels/issues?q=is%3Aissue+is%3Aopen+label%3Adev-documentation)
 
-Core engine : [link](https://github.com/arita37/mlmodels/issues?q=is%3Aissue+is%3Aopen+label%3A%22Core+compute%22)
+Core compute : [link](https://github.com/arita37/mlmodels/issues?q=is%3Aissue+is%3Aopen+label%3A%22Core+compute%22)
 
 ## User Documentation
-
+---
 User-Documentation: [link](https://github.com/arita37/mlmodels/issues?q=is%3Aissue+is%3Aopen+label%3Auser-documentation)
 
-## Colab
 
+
+## Colab
+---
 Colab :[link](https://github.com/arita37/mlmodels/issues?q=is%3Aissue+is%3Aopen+label%3AColab)
 
 ## Installation Guide:
-
+---
 <details>
 <summary>Installation Guide:</summary>
 <br>
@@ -369,7 +366,7 @@ Colab :[link](https://github.com/arita37/mlmodels/issues?q=is%3Aissue+is%3Aopen+
 
 
 ### (B) Using Colab :
-[Read-more](https://github.com/arita37/mlmodels/blob/dev/docs/README_docs/README_usage.md)
+[Read-more](https://github.com/arita37/mlmodels/blob/dev/README_usage.md)
 
 
 ### Initialize template and Tests
@@ -403,25 +400,25 @@ ________________________________________________________________________________
 
 ## Usage in Jupyter/Colab
 
-[Read-more](https://github.com/arita37/mlmodels/blob/dev/docs/README_docs/README_usage.md)
+[Read-more](https://github.com/arita37/mlmodels/blob/dev/README_usage.md)
 
 _______________________________________________________________________________________
 
 ## Command Line tools:
 
-[Read-more](https://github.com/arita37/mlmodels/blob/dev/docs/README_docs/README_usage_CLI.md)
+[Read-more](https://github.com/arita37/mlmodels/blob/dev/README_usage_CLI.md)
 
 _______________________________________________________________________________________
 
 ## Model List
 
-[Read-more](https://github.com/arita37/mlmodels/blob/dev/docs/README_docs/README_model_list.md)
+[Read-more](https://github.com/arita37/mlmodels/blob/dev/README_model_list.md)
 
 _______________________________________________________________________________________
 
 ## How to add a new model
 
-[Read-more](https://github.com/arita37/mlmodels/blob/dev/docs/README_docs/README_addmodel.md)
+[Read-more](https://github.com/arita37/mlmodels/blob/dev/README_addmodel.md)
 
 _______________________________________________________________________________________
 
@@ -433,34 +430,34 @@ ________________________________________________________________________________
 
 ## Testing 
 
-[Read-more](https://github.com/arita37/mlmodels/blob/dev/docs/README_docs/README_testing.md)
+[Read-more](https://github.com/arita37/mlmodels/blob/dev/README_testing.md)
 
 Testing : debugging Process
-[Read-more]https://github.com/arita37/mlmodels/issues/290
+[Read-more](https://github.com/arita37/mlmodels/issues?q=is%3Aissue+is%3Aopen+label%3ATest)
 
 Tutorial : Code Design, Testing
-[Read-more]https://github.com/arita37/mlmodels/issues/347
+[Read-more]((https://github.com/arita37/mlmodels/issues?q=is%3Aissue+is%3Aopen+label%3ATest))
 
 Tests: github actions to add
-[Read-more]https://github.com/arita37/mlmodels/issues/193
+[Read-more]((https://github.com/arita37/mlmodels/issues?q=is%3Aissue+is%3Aopen+label%3ATest))
 _______________________________________________________________________________________
 
 
 ## Research Papers
 
-[Read-more](https://github.com/arita37/mlmodels/blob/dev/docs/README_docs/README_research_papers.md)
+[Read-more](https://github.com/arita37/mlmodels/blob/dev/README_research_papers.md)
 
 _______________________________________________________________________________________
 
 ## Tutorials
-
+---
 Tutorial : New contributors 
 [Read-more](https://github.com/arita37/mlmodels/issues/307)
 
 Tutorial : Code Design, Testing 
 [Read-more](https://github.com/arita37/mlmodels/issues/347)
 
-Tutorial : Usage of dataloader directs to dataloader.md 
+Tutorial : Usage of dataloader 
 [Read-more](https://github.com/arita37/mlmodels/issues/336)
 
 TUTORIAL : Use Colab for Code Development 
@@ -475,7 +472,7 @@ TUTORIAL : Using Online editor for mlmodels
 </details>
 
 ## Example Notebooks
-
+---
 <details>
 <summary> Example Notebooks </summary>
 <br>
@@ -1043,7 +1040,6 @@ model2 = module.load(load_pars ={ 'path': out_pars['path'] +"/model/"})
 </details>
 
 </details>
-
 
 
 
