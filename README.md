@@ -39,10 +39,6 @@ If you want to contribute,  [contribution guide](https://cutt.ly/Xylux3Q)
 
 ## Model List :
 ---
-*	[Time Series](#Time-series)
-*	[NLP](#NLP)
-*	[TABULAR](#TABULAR)
-*	[VISION](#VISION)
 
 
 <details>
@@ -1044,8 +1040,4 @@ model2 = module.load(load_pars ={ 'path': out_pars['path'] +"/model/"})
 
 ![Pytorch](https://cutt.ly/Ayk8hji )
 
-<p align="left">
-<img src="https://cutt.ly/Ayk8hji " width="100" title="PyTorch Logo" />
-</p>
 
-<img src="https://cutt.ly/Ayk8hji " width="100" title="PyTorch Logo" />
