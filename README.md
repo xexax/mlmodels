@@ -1042,7 +1042,7 @@ model2 = module.load(load_pars ={ 'path': out_pars['path'] +"/model/"})
 </details>
 
 
-<a href="https://cutt.ly/Ayk8hji ">
-  <img src="https://cutt.ly/Ayk8hji " width="100" />
-</a>
+
+<img src="https://cutt.ly/Ayk8hji " width="100" />
+
 
