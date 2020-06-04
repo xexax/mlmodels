@@ -324,7 +324,7 @@ alexnet: SqueezeNet: AlexNet-level accuracy with 50x fewer parameters and <0.5MB
 
 </details>
 
-***More resources are available on model list [here](https://github.com/arita37/mlmodels/blob/dev/README_model_list.md)***
+***More resources are available on model list [here](https://github.com/arita37/mlmodels/blob/dev/docs/README_docs/README_model_list.md)***
 
 ## Contribution
 ---
@@ -362,7 +362,7 @@ Colab :[link](https://github.com/arita37/mlmodels/issues?q=is%3Aissue+is%3Aopen+
 
 
 ### (B) Using Colab :
-[Read-more](https://github.com/arita37/mlmodels/blob/dev/README_usage.md)
+[Read-more](https://github.com/arita37/mlmodels/blob/dev/docs/README_docs/README_usage.md)
 
 
 ### Initialize template and Tests
@@ -396,25 +396,25 @@ ________________________________________________________________________________
 
 ## Usage in Jupyter/Colab
 
-[Read-more](https://github.com/arita37/mlmodels/blob/dev/README_usage.md)
+[Read-more](https://github.com/arita37/mlmodels/blob/dev/docs/README_docs/README_usage.md)
 
 _______________________________________________________________________________________
 
 ## Command Line tools:
 
-[Read-more](https://github.com/arita37/mlmodels/blob/dev/README_usage_CLI.md)
+[Read-more](https://github.com/arita37/mlmodels/blob/dev/docs/README_docs/README_usage_CLI.md)
 
 _______________________________________________________________________________________
 
 ## Model List
 
-[Read-more](https://github.com/arita37/mlmodels/blob/dev/README_model_list.md)
+[Read-more](https://github.com/arita37/mlmodels/blob/dev/docs/README_docs/README_model_list.md)
 
 _______________________________________________________________________________________
 
 ## How to add a new model
 
-[Read-more](https://github.com/arita37/mlmodels/blob/dev/README_addmodel.md)
+[Read-more](https://github.com/arita37/mlmodels/blob/dev/docs/README_docs/README_addmodel.md)
 
 _______________________________________________________________________________________
 
@@ -426,22 +426,22 @@ ________________________________________________________________________________
 
 ## Testing 
 
-[Read-more](https://github.com/arita37/mlmodels/blob/dev/README_testing.md)
+[Read-more](https://github.com/arita37/mlmodels/blob/dev/docs/README_docs/README_testing.md)
 
 Testing : debugging Process
 [Read-more](https://github.com/arita37/mlmodels/issues?q=is%3Aissue+is%3Aopen+label%3ATest)
 
 Tutorial : Code Design, Testing
-[Read-more]((https://github.com/arita37/mlmodels/issues?q=is%3Aissue+is%3Aopen+label%3ATest))
+[Read-more](https://github.com/arita37/mlmodels/issues?q=is%3Aissue+is%3Aopen+label%3ATest)
 
 Tests: github actions to add
-[Read-more]((https://github.com/arita37/mlmodels/issues?q=is%3Aissue+is%3Aopen+label%3ATest))
+[Read-more](https://github.com/arita37/mlmodels/issues?q=is%3Aissue+is%3Aopen+label%3ATest)
 _______________________________________________________________________________________
 
 
 ## Research Papers
 
-[Read-more](https://github.com/arita37/mlmodels/blob/dev/README_research_papers.md)
+[Read-more](https://github.com/arita37/mlmodels/blob/dev/docs/README_docs/README_research_papers.md)
 
 _______________________________________________________________________________________
 
