@@ -362,7 +362,7 @@ Colab :[link](https://github.com/arita37/mlmodels/issues?q=is%3Aissue+is%3Aopen+
 
 
 ### (B) Using Colab :
-[Read-more](https://github.com/arita37/mlmodels/blob/dev/docs/README_docs/README_usage.md)
+[Read-more](https://github.com/arita37/mlmodels/blob/dev/README_usage.md)
 
 
 ### Initialize template and Tests
@@ -396,13 +396,13 @@ ________________________________________________________________________________
 
 ## Usage in Jupyter/Colab
 
-[Read-more](https://github.com/arita37/mlmodels/blob/dev/docs/README_docs/README_usage.md)
+[Read-more](https://github.com/arita37/mlmodels/blob/dev/README_usage.md)
 
 _______________________________________________________________________________________
 
 ## Command Line tools:
 
-[Read-more](https://github.com/arita37/mlmodels/blob/dev/docs/README_docs/README_usage_CLI.md)
+[Read-more](https://github.com/arita37/mlmodels/blob/dev/README_usage_CLI.md)
 
 _______________________________________________________________________________________
 
@@ -414,7 +414,7 @@ ________________________________________________________________________________
 
 ## How to add a new model
 
-[Read-more](https://github.com/arita37/mlmodels/blob/dev/docs/README_docs/README_addmodel.md)
+[Read-more](https://github.com/arita37/mlmodels/blob/dev/README_addmodel.md)
 
 _______________________________________________________________________________________
 
@@ -426,7 +426,7 @@ ________________________________________________________________________________
 
 ## Testing 
 
-[Read-more](https://github.com/arita37/mlmodels/blob/dev/docs/README_docs/README_testing.md)
+[Read-more](https://github.com/arita37/mlmodels/blob/dev/README_testing.md)
 
 Testing : debugging Process
 [Read-more](https://github.com/arita37/mlmodels/issues?q=is%3Aissue+is%3Aopen+label%3ATest)
@@ -441,7 +441,7 @@ ________________________________________________________________________________
 
 ## Research Papers
 
-[Read-more](https://github.com/arita37/mlmodels/blob/dev/docs/README_docs/README_research_papers.md)
+[Read-more](https://github.com/arita37/mlmodels/blob/dev/README_research_papers.md)
 
 _______________________________________________________________________________________
 
